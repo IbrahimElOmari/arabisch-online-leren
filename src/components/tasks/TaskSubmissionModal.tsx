@@ -6,8 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useTaskStore } from '@/hooks/useTaskStore';
 import { 
   Upload, 
   FileText, 
@@ -52,8 +52,9 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingSubmission, setLoadingSubmission] = useState(true);
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
+  const { submitTask, getSignedUploadUrl } = useTaskStore();
 
   useEffect(() => {
     if (open) {
@@ -62,24 +63,12 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
   }, [open, task.id]);
 
   const fetchExistingSubmission = async () => {
-    if (!user?.id) return;
+    if (!user?.id || !profile?.id) return;
 
     try {
-      const { data, error } = await supabase
-        .from('task_submissions')
-        .select('*')
-        .eq('task_id', task.id)
-        .eq('student_id', user.id)
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
-
-      setSubmission(data);
-      if (data?.submission_content) {
-        setSubmissionContent(data.submission_content);
-      }
+      // This will be handled by the TaskSystem component instead
+      // For now, just set loading to false
+      setLoadingSubmission(false);
     } catch (error) {
       console.error('Error fetching submission:', error);
       toast({
@@ -87,7 +76,6 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
         description: "Kon inzending niet laden",
         variant: "destructive"
       });
-    } finally {
       setLoadingSubmission(false);
     }
   };
@@ -99,34 +87,40 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
     }
   };
 
-  const uploadFile = async (file: File): Promise<string> => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${user?.id}_${task.id}_${Date.now()}.${fileExt}`;
-
-    const { data, error } = await supabase.storage
-      .from('media')
-      .upload(`submissions/${fileName}`, file);
-
-    if (error) throw error;
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('media')
-      .getPublicUrl(data.path);
-
-    return publicUrl;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user?.id) return;
+    if (!user?.id || !profile?.id) {
+      toast({
+        title: "Fout",
+        description: "Niet ingelogd",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setLoading(true);
     try {
       let filePath: string | undefined;
 
-      // Upload file if provided
+      // Upload file if provided using task store
       if (file) {
-        filePath = await uploadFile(file);
+        const signedData = await getSignedUploadUrl(file.name);
+        if (!signedData) {
+          throw new Error('Kon upload URL niet krijgen');
+        }
+
+        // Upload file to signed URL
+        const uploadResponse = await fetch(signedData.signedUrl, {
+          method: 'PUT',
+          body: file,
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error('Kon bestand niet uploaden');
+        }
+
+        filePath = signedData.path;
       }
 
       // Validate submission based on required type
@@ -134,44 +128,28 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
         throw new Error('Tekstinzending is verplicht');
       }
 
-      if (task.required_submission_type === 'file' && !file && !submission?.submission_file_path) {
+      if (task.required_submission_type === 'file' && !file && !filePath) {
         throw new Error('Bestandsinzending is verplicht');
       }
 
-      const submissionData = {
-        task_id: task.id,
-        student_id: user.id,
-        submission_content: submissionContent.trim() || null,
-        submission_file_path: filePath || submission?.submission_file_path || null
-      };
+      // Use task store to submit
+      const success = await submitTask(
+        task.id,
+        submissionContent.trim() || undefined,
+        filePath || undefined
+      );
 
-      let result;
-      if (submission) {
-        // Update existing submission
-        result = await supabase
-          .from('task_submissions')
-          .update(submissionData)
-          .eq('id', submission.id)
-          .select()
-          .single();
-      } else {
-        // Create new submission
-        result = await supabase
-          .from('task_submissions')
-          .insert(submissionData)
-          .select()
-          .single();
+      if (!success) {
+        throw new Error('Kon taak niet inleveren');
       }
-
-      if (result.error) throw result.error;
 
       toast({
         title: "Succes",
-        description: submission ? "Inzending bijgewerkt" : "Inzending verzonden"
+        description: "Taak succesvol ingeleverd"
       });
 
-      setSubmission(result.data);
       setFile(null);
+      setSubmissionContent('');
       setOpen(false);
     } catch (error: any) {
       console.error('Error submitting task:', error);

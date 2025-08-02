@@ -78,6 +78,40 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
+        // Check if user has permission to create threads in this class
+        let hasPermission = false;
+        
+        if (profile.role === 'admin') {
+          hasPermission = true;
+        } else if (profile.role === 'leerkracht') {
+          // Check if teacher is assigned to this class
+          const { data: classData } = await supabase
+            .from('klassen')
+            .select('teacher_id')
+            .eq('id', body.classId)
+            .single();
+          
+          hasPermission = classData?.teacher_id === user.id;
+        } else if (profile.role === 'leerling') {
+          // Check if student is enrolled in this class
+          const { data: enrollment } = await supabase
+            .from('inschrijvingen')
+            .select('id')
+            .eq('student_id', user.id)
+            .eq('class_id', body.classId)
+            .eq('payment_status', 'paid')
+            .single();
+          
+          hasPermission = !!enrollment;
+        }
+
+        if (!hasPermission) {
+          return new Response(JSON.stringify({ error: 'Geen toestemming om een onderwerp te maken in deze klas' }), {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
         const { data, error } = await supabase
           .from('forum_threads')
           .insert({
@@ -106,6 +140,53 @@ const handler = async (req: Request): Promise<Response> => {
         if (!body.threadId || !body.content) {
           return new Response(JSON.stringify({ error: 'ThreadId and content are required' }), {
             status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        // Check if user has permission to post in this thread's class
+        const { data: threadData, error: threadError } = await supabase
+          .from('forum_threads')
+          .select('class_id')
+          .eq('id', body.threadId)
+          .single();
+
+        if (threadError || !threadData) {
+          return new Response(JSON.stringify({ error: 'Thread niet gevonden' }), {
+            status: 404,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        let hasPermission = false;
+        
+        if (profile.role === 'admin') {
+          hasPermission = true;
+        } else if (profile.role === 'leerkracht') {
+          // Check if teacher is assigned to this class
+          const { data: classData } = await supabase
+            .from('klassen')
+            .select('teacher_id')
+            .eq('id', threadData.class_id)
+            .single();
+          
+          hasPermission = classData?.teacher_id === user.id;
+        } else if (profile.role === 'leerling') {
+          // Check if student is enrolled in this class
+          const { data: enrollment } = await supabase
+            .from('inschrijvingen')
+            .select('id')
+            .eq('student_id', user.id)
+            .eq('class_id', threadData.class_id)
+            .eq('payment_status', 'paid')
+            .single();
+          
+          hasPermission = !!enrollment;
+        }
+
+        if (!hasPermission) {
+          return new Response(JSON.stringify({ error: 'Geen toestemming om te reageren in dit forum' }), {
+            status: 403,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
         }

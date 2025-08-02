@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -53,6 +54,7 @@ interface Level {
 
 const AdminDashboard = () => {
   const { signOut, profile } = useAuth();
+  const navigate = useNavigate();
   const [klassen, setKlassen] = useState<ClassData[]>([]);
   const [selectedClass, setSelectedClass] = useState<string>('');
   const [selectedLevel, setSelectedLevel] = useState<string>('');
@@ -224,7 +226,7 @@ const AdminDashboard = () => {
 
                     <Button 
                       variant="outline"
-                      onClick={() => window.location.href = '/forum-moderation'}
+                      onClick={() => navigate('/forum-moderation')}
                       className="h-20 flex flex-col items-center gap-2"
                     >
                       <MessageSquare className="h-6 w-6" />

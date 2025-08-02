@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { LogOut, GraduationCap, BookOpen, MessageSquare, Video } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 import { WelcomeWidget } from './WelcomeWidget';
 import { LevelOverview, type LevelData } from './LevelOverview';
 import { LevelDetail } from './LevelDetail';
@@ -25,6 +26,7 @@ type ViewState = 'classes' | 'levels' | 'detail';
 
 const StudentDashboard = () => {
   const { signOut, profile } = useAuth();
+  const navigate = useNavigate();
   const [enrolledClasses, setEnrolledClasses] = useState<EnrolledClass[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewState, setViewState] = useState<ViewState>('classes');
@@ -236,7 +238,7 @@ const StudentDashboard = () => {
                         Discussieer met je klasgenoten en leerkrachten
                       </p>
                       <Button 
-                        onClick={() => window.location.href = '/forum'}
+                        onClick={() => navigate('/forum')}
                         className="flex items-center gap-2"
                       >
                         <MessageSquare className="h-4 w-4" />
