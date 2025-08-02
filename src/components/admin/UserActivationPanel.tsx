@@ -117,11 +117,12 @@ const UserActivationPanel = () => {
     }
 
     try {
-      // Call the mock-enroll function to activate the user
-      const { data, error } = await supabase.functions.invoke('mock-enroll', {
+      // Use manage-enrollment function for admin actions (proper admin flow)
+      const { data, error } = await supabase.functions.invoke('manage-enrollment', {
         body: {
-          class_id: activation.classId,
-          student_id: userId
+          action: 'assign-student',
+          studentId: userId,
+          classId: activation.classId
         }
       });
 
