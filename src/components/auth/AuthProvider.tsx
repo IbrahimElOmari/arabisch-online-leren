@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 export type UserRole = 'admin' | 'leerkracht' | 'leerling';
@@ -34,6 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -59,15 +61,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
+          fetchProfile(session.user.id);
           if (event === 'SIGNED_IN') {
-            // Force navigate to dashboard on sign in
+            // Navigate to dashboard on sign in using router
             setTimeout(() => {
-              window.location.href = '/dashboard';
+              navigate('/dashboard');
             }, 100);
           }
-          setTimeout(() => {
-            fetchProfile(session.user.id);
-          }, 0);
         } else {
           setProfile(null);
         }

@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { AuthForm, type AuthFormData } from '@/components/auth/AuthForm';
 import { RoleSelection } from '@/components/auth/RoleSelection';
 import { ForgotPasswordModal } from '@/components/auth/ForgotPasswordModal';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth as useAuthForm } from '@/hooks/useAuth';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -27,7 +27,7 @@ const Auth = () => {
     handleSubmit,
     handleRoleSelection,
     resetRoleSelection
-  } = useAuth();
+  } = useAuthForm();
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
