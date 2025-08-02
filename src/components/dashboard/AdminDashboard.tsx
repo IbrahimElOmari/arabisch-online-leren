@@ -36,6 +36,7 @@ import { AdminModal } from '@/components/admin/AdminModals';
 import ClassOverviewModal from '@/components/admin/ClassOverviewModal';
 import { ClassOptionsDropdown } from '@/components/admin/ClassOptionsDropdown';
 import UserActivationPanel from '@/components/admin/UserActivationPanel';
+import PastLessonsManager from '@/components/lessons/PastLessonsManager';
 
 interface ClassData {
   id: string;
@@ -464,6 +465,21 @@ const AdminDashboard = () => {
                         }
                       />
                     </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Video className="h-5 w-5" />
+                      Voorbije Lessen - {selectedLevelName}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <PastLessonsManager 
+                      classId={selectedClass} 
+                      niveauId={getCurrentNiveauId()}
+                    />
                   </CardContent>
                 </Card>
               </div>

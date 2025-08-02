@@ -14,7 +14,7 @@ serve(async (req) => {
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
     // Get authenticated user
@@ -27,22 +27,38 @@ serve(async (req) => {
       throw new Error('User not authenticated');
     }
 
-    // Get class_id from request body
-    const { class_id } = await req.json();
+    // Get request body
+    const { class_id, student_id } = await req.json();
     
     if (!class_id) {
       throw new Error('class_id is required');
     }
 
-    // Check if user is a student
-    const { data: profile } = await supabaseClient
+    // Check if admin or allow self-enrollment for students
+    const { data: adminProfile } = await supabaseClient
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single();
 
-    if (!profile || profile.role !== 'leerling') {
-      throw new Error('Only students can enroll in classes');
+    const targetStudentId = student_id || user.id;
+
+    if (adminProfile?.role === 'admin') {
+      // Admin can enroll any student
+      if (!student_id) {
+        throw new Error('student_id is required for admin enrollment');
+      }
+    } else {
+      // Students can only enroll themselves
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile || profile.role !== 'leerling') {
+        throw new Error('Only students can enroll in classes');
+      }
     }
 
     // Check if class exists
@@ -60,7 +76,7 @@ serve(async (req) => {
     const { data: existingEnrollment } = await supabaseClient
       .from('inschrijvingen')
       .select('id')
-      .eq('student_id', user.id)
+      .eq('student_id', targetStudentId)
       .eq('class_id', class_id)
       .single();
 
@@ -72,7 +88,7 @@ serve(async (req) => {
     const { data: enrollment, error: enrollmentError } = await supabaseClient
       .from('inschrijvingen')
       .insert({
-        student_id: user.id,
+        student_id: targetStudentId,
         class_id: class_id,
         payment_status: 'paid'
       })
@@ -81,22 +97,18 @@ serve(async (req) => {
 
     if (enrollmentError) throw enrollmentError;
 
-    // Log action using service role
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-      { auth: { persistSession: false } }
-    );
-
-    await supabaseAdmin
+    // Log action
+    await supabaseClient
       .from('audit_log')
       .insert({
         user_id: user.id,
-        actie: 'mock_enrollment',
+        actie: adminProfile?.role === 'admin' ? 'admin_enrollment' : 'mock_enrollment',
         details: { 
           class_id,
           class_name: klas.name,
           enrollment_id: enrollment.id,
+          student_id: targetStudentId,
+          enrolled_by: user.id,
           timestamp: new Date().toISOString()
         },
         ip_address: req.headers.get('x-forwarded-for') || 'unknown',

@@ -120,7 +120,8 @@ const UserActivationPanel = () => {
       // Call the mock-enroll function to activate the user
       const { data, error } = await supabase.functions.invoke('mock-enroll', {
         body: {
-          class_id: activation.classId
+          class_id: activation.classId,
+          student_id: userId
         }
       });
 
