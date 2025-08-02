@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
+import { NotificationBell } from '@/components/ui/NotificationBell';
 import { Shield } from 'lucide-react';
 
 const Navigation = () => {
@@ -46,6 +47,14 @@ const Navigation = () => {
               >
                 Kalender
               </button>
+              {user && (
+                <button 
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => navigate('/forum')}
+                >
+                  Forum
+                </button>
+              )}
               <button 
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => navigate('/visie')}
@@ -53,18 +62,27 @@ const Navigation = () => {
                 Visie
               </button>
               {user && ['admin', 'leerkracht'].includes((user as any).profile?.role) && (
-                <button 
-                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
-                  onClick={() => navigate('/security')}
-                >
-                  <Shield className="h-4 w-4" />
-                  Beveiliging
-                </button>
+                <>
+                  <button 
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => navigate('/forum-moderation')}
+                  >
+                    Forum Moderatie
+                  </button>
+                  <button 
+                    className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                    onClick={() => navigate('/security')}
+                  >
+                    <Shield className="h-4 w-4" />
+                    Beveiliging
+                  </button>
+                </>
               )}
             </div>
           </div>
           {user && (
             <div className="flex items-center space-x-4">
+              <NotificationBell />
               <span className="text-sm text-muted-foreground">
                 Welkom, {user.email}
               </span>

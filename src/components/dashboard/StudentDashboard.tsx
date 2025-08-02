@@ -8,6 +8,7 @@ import { LevelDetail } from './LevelDetail';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import PastLessonsManager from '@/components/lessons/PastLessonsManager';
+import { StudentTaskNotifications } from '@/components/tasks/StudentTaskNotifications';
 
 interface EnrolledClass {
   id: string;
@@ -206,6 +207,8 @@ const StudentDashboard = () => {
 
               {enrolledClasses.length > 0 && (
                 <>
+                  <StudentTaskNotifications />
+                  
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">

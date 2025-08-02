@@ -141,7 +141,10 @@ const ForumStructure: React.FC<ForumStructureProps> = ({ classId }) => {
   const handleNiveauSelect = (niveauId: string) => {
     setSelectedNiveau(niveauId);
     setView('threads');
-    fetchThreads(selectedClass?.id || '');
+    // Use the selected class ID for fetching threads
+    if (selectedClass?.id) {
+      fetchThreads(selectedClass.id);
+    }
   };
 
   const handleThreadSelect = (thread: any) => {

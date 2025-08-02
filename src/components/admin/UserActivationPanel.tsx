@@ -117,6 +117,8 @@ const UserActivationPanel = () => {
     }
 
     try {
+      console.log('Activating user:', { userId, activation });
+      
       // Use manage-enrollment function for admin actions (proper admin flow)
       const { data, error } = await supabase.functions.invoke('manage-enrollment', {
         body: {
@@ -126,9 +128,12 @@ const UserActivationPanel = () => {
         }
       });
 
+      console.log('Activation response:', { data, error });
+
       if (error) {
         console.error('Supabase function error:', error);
-        throw error;
+        // Show more detailed error message
+        throw new Error(error.message || error.toString());
       }
 
       toast({

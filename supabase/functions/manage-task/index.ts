@@ -132,6 +132,20 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
+        // Send notifications to students
+        try {
+          await supabase.functions.invoke('notify-task-created', {
+            body: {
+              taskId: data.id,
+              taskTitle: body.title,
+              levelId: levelId
+            }
+          });
+        } catch (notificationError) {
+          console.error('Failed to send notifications:', notificationError);
+          // Don't fail the task creation if notifications fail
+        }
+
         return new Response(JSON.stringify({ success: true, data }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
