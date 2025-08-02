@@ -59,6 +59,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
+          if (event === 'SIGNED_IN') {
+            // Force navigate to dashboard on sign in
+            setTimeout(() => {
+              window.location.href = '/dashboard';
+            }, 100);
+          }
           setTimeout(() => {
             fetchProfile(session.user.id);
           }, 0);

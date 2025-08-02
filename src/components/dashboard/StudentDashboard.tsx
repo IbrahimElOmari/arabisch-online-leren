@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, GraduationCap, BookOpen, MessageSquare } from 'lucide-react';
+import { LogOut, GraduationCap, BookOpen, MessageSquare, Video } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { WelcomeWidget } from './WelcomeWidget';
 import { LevelOverview, type LevelData } from './LevelOverview';
 import { LevelDetail } from './LevelDetail';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
+import PastLessonsManager from '@/components/lessons/PastLessonsManager';
 
 interface EnrolledClass {
   id: string;
@@ -204,26 +205,43 @@ const StudentDashboard = () => {
               </div>
 
               {enrolledClasses.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <MessageSquare className="h-5 w-5" />
-                      Forum
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground mb-4">
-                      Discussieer met je klasgenoten en leerkrachten
-                    </p>
-                    <Button 
-                      onClick={() => window.location.href = '/forum'}
-                      className="flex items-center gap-2"
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                      Ga naar Forum
-                    </Button>
-                  </CardContent>
-                </Card>
+                <>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Video className="h-5 w-5" />
+                        Voorbije Lessen
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <PastLessonsManager 
+                        classId={enrolledClasses[0]?.class_id}
+                        niveauId={undefined}
+                      />
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <MessageSquare className="h-5 w-5" />
+                        Forum
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground mb-4">
+                        Discussieer met je klasgenoten en leerkrachten
+                      </p>
+                      <Button 
+                        onClick={() => window.location.href = '/forum'}
+                        className="flex items-center gap-2"
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                        Ga naar Forum
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </>
               )}
             </div>
           </>

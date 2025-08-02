@@ -26,6 +26,7 @@ import { TeachingModal } from '@/components/teaching/TeachingModal';
 import { AttendanceModal } from '@/components/teaching/AttendanceModal';
 import { PerformanceModal } from '@/components/teaching/PerformanceModal';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import PastLessonsManager from '@/components/lessons/PastLessonsManager';
 
 interface AssignedClass {
   id: string;
@@ -260,9 +261,10 @@ const TeacherDashboard = () => {
 
           {selectedClass && selectedLevel && (
             <Tabs defaultValue="lessons" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="lessons">Lesbeheer</TabsTrigger>
                 <TabsTrigger value="evaluation">Evaluatie & Opvolging</TabsTrigger>
+                <TabsTrigger value="past-lessons">Voorbije Lessen</TabsTrigger>
                 <TabsTrigger value="students">Leerlingoverzicht</TabsTrigger>
                 <TabsTrigger value="forum">Forum</TabsTrigger>
               </TabsList>
@@ -457,6 +459,13 @@ const TeacherDashboard = () => {
                     </div>
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent value="past-lessons" className="space-y-6">
+                <PastLessonsManager 
+                  classId={selectedClass}
+                  niveauId={getCurrentNiveauId()}
+                />
               </TabsContent>
 
               <TabsContent value="students" className="space-y-6">

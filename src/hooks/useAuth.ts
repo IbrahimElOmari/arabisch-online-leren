@@ -54,7 +54,6 @@ export const useAuth = () => {
         title: "Registratie succesvol",
         description: "Nieuwe rol toegevoegd aan bestaand account.",
       });
-      navigate('/dashboard');
       return true;
     } else {
       // New user, create Supabase auth user
@@ -81,7 +80,6 @@ export const useAuth = () => {
         title: "Registratie succesvol",
         description: "Controleer je e-mail voor verificatie.",
       });
-      navigate('/dashboard');
       return true;
     }
   };
@@ -144,7 +142,6 @@ export const useAuth = () => {
         setShowRoleSelection(true);
         return false;
       } else {
-        navigate('/dashboard');
         return true;
       }
     }
@@ -173,8 +170,9 @@ export const useAuth = () => {
   const handleRoleSelection = () => {
     if (selectedRole) {
       setShowRoleSelection(false);
-      navigate('/dashboard');
+      return true;
     }
+    return false;
   };
 
   const resetRoleSelection = () => {

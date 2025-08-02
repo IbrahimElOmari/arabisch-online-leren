@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
-import ForumMain from '@/components/forum/ForumMain';
+import ForumStructure from '@/components/forum/ForumStructure';
 
 interface EnrolledClass {
   id: string;
@@ -161,11 +161,9 @@ const Forum = () => {
           )}
         </div>
 
-        {selectedClass && (
-          <div className="main-content-card">
-            <ForumMain classId={selectedClass} />
-          </div>
-        )}
+        <div className="main-content-card">
+          <ForumStructure classId={selectedClass || ''} />
+        </div>
       </div>
     </div>
   );
