@@ -39,7 +39,7 @@ import { ClassOptionsDropdown } from '@/components/admin/ClassOptionsDropdown';
 import UserActivationPanel from '@/components/admin/UserActivationPanel';
 import PastLessonsManager from '@/components/lessons/PastLessonsManager';
 import { GradingInterface } from '@/components/teacher/GradingInterface';
-import { TaskQuestionManagement } from '@/components/management/TaskQuestionManagement';
+import { TaskQuestionManagementNew } from '@/components/management/TaskQuestionManagementNew';
 
 interface ClassData {
   id: string;
@@ -302,7 +302,7 @@ const AdminDashboard = () => {
             </TabsContent>
 
             <TabsContent value="management" className="space-y-6">
-              <TaskQuestionManagement />
+              <TaskQuestionManagementNew />
             </TabsContent>
 
           <TabsContent value="teaching" className="space-y-6">

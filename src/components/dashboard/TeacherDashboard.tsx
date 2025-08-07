@@ -28,7 +28,7 @@ import { PerformanceModal } from '@/components/teaching/PerformanceModal';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import PastLessonsManager from '@/components/lessons/PastLessonsManager';
 import { GradingInterface } from '@/components/teacher/GradingInterface';
-import { TaskQuestionManagement } from '@/components/management/TaskQuestionManagement';
+import { TaskQuestionManagementNew } from '@/components/management/TaskQuestionManagementNew';
 
 interface AssignedClass {
   id: string;
@@ -469,7 +469,7 @@ const TeacherDashboard = () => {
               </TabsContent>
 
               <TabsContent value="management" className="space-y-6">
-                <TaskQuestionManagement />
+                <TaskQuestionManagementNew />
               </TabsContent>
 
               <TabsContent value="past-lessons" className="space-y-6">

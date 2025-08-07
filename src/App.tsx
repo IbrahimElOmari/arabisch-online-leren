@@ -29,14 +29,15 @@ const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <ThemeToggle />
-            <AnalyticsTracker />
-            <Navigation />
-            <Routes>
+        <div className="min-h-screen bg-background">
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <ThemeToggle />
+              <AnalyticsTracker />
+              <Navigation />
+              <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/reset-password" element={<ResetPassword />} />
@@ -55,6 +56,7 @@ const App = () => (
             </Routes>
           </AuthProvider>
         </BrowserRouter>
+        </div>
       </TooltipProvider>
     </QueryClientProvider>
   </ErrorBoundary>
