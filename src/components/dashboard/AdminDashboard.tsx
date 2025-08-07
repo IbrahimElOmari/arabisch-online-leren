@@ -38,6 +38,8 @@ import ClassOverviewModal from '@/components/admin/ClassOverviewModal';
 import { ClassOptionsDropdown } from '@/components/admin/ClassOptionsDropdown';
 import UserActivationPanel from '@/components/admin/UserActivationPanel';
 import PastLessonsManager from '@/components/lessons/PastLessonsManager';
+import { GradingInterface } from '@/components/teacher/GradingInterface';
+import { TaskQuestionManagement } from '@/components/management/TaskQuestionManagement';
 
 interface ClassData {
   id: string;
@@ -152,7 +154,7 @@ const AdminDashboard = () => {
         <WelcomeWidget recentActivity={getRecentActivity()} />
 
         <Tabs defaultValue="admin" className="w-full">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-9">
             <TabsTrigger value="admin" className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4" />
               Admin Beheer
@@ -164,6 +166,14 @@ const AdminDashboard = () => {
             <TabsTrigger value="teaching" className="flex items-center gap-2">
               <GraduationCap className="h-4 w-4" />
               Leerkracht Functionaliteiten
+            </TabsTrigger>
+            <TabsTrigger value="grading" className="flex items-center gap-2">
+              <CheckSquare className="h-4 w-4" />
+              Beoordelen
+            </TabsTrigger>
+            <TabsTrigger value="management" className="flex items-center gap-2">
+              <ClipboardList className="h-4 w-4" />
+              Overzicht
             </TabsTrigger>
             <TabsTrigger value="security" className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4" />
@@ -285,6 +295,14 @@ const AdminDashboard = () => {
                   <UserActivationPanel />
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="grading" className="space-y-6">
+              <GradingInterface />
+            </TabsContent>
+
+            <TabsContent value="management" className="space-y-6">
+              <TaskQuestionManagement />
             </TabsContent>
 
           <TabsContent value="teaching" className="space-y-6">

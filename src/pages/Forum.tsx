@@ -110,7 +110,7 @@ const Forum = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-lg">Laden...</div>
       </div>
     );
@@ -118,7 +118,7 @@ const Forum = () => {
 
   if (enrolledClasses.length === 0) {
     return (
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6">
           <Card className="main-content-card">
             <CardContent className="text-center py-12">
@@ -137,7 +137,7 @@ const Forum = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
         <div className="main-content-card mb-6">
           <h1 className="text-2xl font-bold mb-4">Forum</h1>
