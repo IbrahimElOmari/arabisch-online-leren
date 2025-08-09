@@ -16,6 +16,8 @@ import {
   Clock,
   Users
 } from 'lucide-react';
+import { TaskSystem } from '@/components/tasks/TaskSystem';
+import { LevelQuestions } from '@/components/tasks/LevelQuestions';
 
 interface LevelDetailProps {
   levelId: string;
@@ -40,7 +42,7 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="preparation" className="flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
             <span className="hidden sm:inline">Voorbereiding</span>
@@ -60,6 +62,10 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
           <TabsTrigger value="evaluation" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
             <span className="hidden sm:inline">Evaluatie</span>
+          </TabsTrigger>
+          <TabsTrigger value="tasks" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            <span className="hidden sm:inline">Taken & Vragen</span>
           </TabsTrigger>
         </TabsList>
 
@@ -154,6 +160,32 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
                 <CheckCircle2 className="h-4 w-4 mr-2" />
                 Antwoorden Indienen
               </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="tasks" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Taken voor {levelName}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TaskSystem levelId={levelId} levelName={levelName} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Radio className="h-5 w-5" />
+                Vragen voor {levelName}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <LevelQuestions levelId={levelId} />
             </CardContent>
           </Card>
         </TabsContent>

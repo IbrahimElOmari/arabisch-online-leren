@@ -325,16 +325,16 @@ const ForumMain = ({ classId }: ForumMainProps) => {
                         )}
                         {thread.title}
                       </CardTitle>
-                      <p className="text-sm text-muted-foreground">
+                      <div className="text-sm text-muted-foreground">
                         Door {thread.profiles?.full_name} • {new Date(thread.created_at).toLocaleDateString('nl-NL')}
-                      </p>
+                      </div>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
+                  <div className="text-sm text-muted-foreground line-clamp-2">
                     {thread.content}
-                  </p>
+                  </div>
                 </CardContent>
               </Card>
             ))}

@@ -72,7 +72,21 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
 
       if (error) throw error;
       
-      setPosts((data as any) || []);
+      const flatPosts = (data as any) || [];
+      // Build nested replies structure
+      const postMap = new Map<string, any>();
+      flatPosts.forEach((p: any) => postMap.set(p.id, { ...p, replies: [] }));
+      const roots: any[] = [];
+      flatPosts.forEach((p: any) => {
+        if (p.parent_post_id) {
+          const parent = postMap.get(p.parent_post_id);
+          if (parent) parent.replies.push(postMap.get(p.id));
+        } else {
+          roots.push(postMap.get(p.id));
+        }
+      });
+
+      setPosts(roots as any);
     } catch (error) {
       console.error('Error fetching posts:', error);
       toast({
@@ -192,12 +206,14 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
         />
       ) : (
         <div className="space-y-4">
-          {posts.map((post) => (
+          {posts.map((post: any) => (
             <ForumPost
               key={post.id}
               post={post}
               onLike={handleLike}
               onDelete={handleDelete}
+              onReply={() => fetchPosts()}
+              replies={post.replies || []}
             />
           ))}
         </div>

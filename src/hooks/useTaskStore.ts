@@ -68,7 +68,20 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         author: { full_name: task.profiles?.full_name || 'Onbekend' }
       })) || [];
 
-      set({ tasks: tasksWithAuthor, loading: false });
+      // Also fetch current user's submissions for these tasks to show status/feedback
+      let userSubs: any[] = [];
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
+      if (userId && tasksWithAuthor.length) {
+        const { data: subs } = await supabase
+          .from('task_submissions')
+          .select('id, task_id, student_id, submission_content, submission_file_path, grade, feedback, submitted_at')
+          .in('task_id', tasksWithAuthor.map((t: any) => t.id))
+          .eq('student_id', userId);
+        userSubs = subs || [];
+      }
+
+      set({ tasks: tasksWithAuthor, submissions: userSubs, loading: false });
     } catch (error: any) {
       set({ error: error.message, loading: false });
     }

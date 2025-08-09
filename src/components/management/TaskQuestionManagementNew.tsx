@@ -434,9 +434,10 @@ export const TaskQuestionManagementNew = () => {
 
             {selectedClass && selectedLevel && (
               <div className="mt-4 p-3 bg-muted rounded-lg">
-                <p className="text-sm font-medium">
-                  Actief: <Badge variant="outline">{selectedClassName} - {selectedLevelName}</Badge>
-                </p>
+                <div className="text-sm font-medium flex items-center gap-2">
+                  <span>Actief:</span>
+                  <Badge variant="outline">{selectedClassName} - {selectedLevelName}</Badge>
+                </div>
               </div>
             )}
           </CardContent>
@@ -814,7 +815,7 @@ export const TaskQuestionManagementNew = () => {
                       placeholder="Cijfer" 
                       className="w-20 px-2 py-1 border rounded text-sm"
                       min="0"
-                      max="10"
+                      max="100"
                       id={`grade-${submission.id}`}
                     />
                     <input 

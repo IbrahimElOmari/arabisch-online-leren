@@ -103,7 +103,8 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     background-color: hsl(var(--background));
-    background-image: url('/src/assets/arabic-pattern-bg.png');
+    /* Use relative path from src/index.css to src/assets */
+    background-image: url('./assets/arabic-pattern-bg.png');
     background-repeat: repeat;
     background-size: 200px 200px;
     background-attachment: fixed;

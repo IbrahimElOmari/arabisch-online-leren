@@ -56,17 +56,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          fetchProfile(session.user.id);
+          // Ensure profile is loaded before clearing loading state
+          await fetchProfile(session.user.id);
           if (event === 'SIGNED_IN') {
             // Navigate to dashboard on sign in using router
-            setTimeout(() => {
-              navigate('/dashboard');
-            }, 100);
+            navigate('/dashboard');
           }
         } else {
           setProfile(null);
@@ -77,12 +76,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        fetchProfile(session.user.id);
+        await fetchProfile(session.user.id);
+        setLoading(false);
       } else {
         setLoading(false);
       }
