@@ -7,9 +7,9 @@ import TeacherDashboard from '@/components/dashboard/TeacherDashboard';
 import StudentDashboard from '@/components/dashboard/StudentDashboard';
 
 const Dashboard = () => {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, authReady } = useAuth();
 
-  if (loading) {
+  if (loading || !authReady) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-lg">Laden...</div>

@@ -110,15 +110,13 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
     }
 
     try {
-      const { error } = await supabase
-        .from('forum_posts')
-        .insert({
-          titel: 'Reactie',
-          inhoud: replyContent,
-          author_id: profile?.id,
-          thread_id: threadId,
-          class_id: classId
-        });
+      const { data, error } = await supabase.functions.invoke('manage-forum', {
+        body: {
+          action: 'create-post',
+          threadId: threadId,
+          content: replyContent
+        }
+      });
 
       if (error) throw error;
 

@@ -6,14 +6,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { BookOpen, Users, Star, CheckCircle, Globe, Clock } from 'lucide-react';
 
 const Index = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, authReady } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user && !loading) {
+    if (user && authReady && !loading) {
       navigate('/dashboard');
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, authReady, navigate]);
 
   if (loading) {
     return (

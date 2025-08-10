@@ -17,6 +17,7 @@ interface AuthContextType {
   session: Session | null;
   profile: UserProfile | null;
   loading: boolean;
+  authReady: boolean;
   signOut: () => Promise<void>;
 }
 
@@ -35,6 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authReady, setAuthReady] = useState(false);
   const navigate = useNavigate();
 
   const fetchProfile = async (userId: string) => {
@@ -63,7 +65,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (session?.user) {
           // Ensure profile is loaded before clearing loading state
           await fetchProfile(session.user.id);
-          if (event === 'SIGNED_IN') {
+          if (event === 'SIGNED_IN' && authReady) {
             // Navigate to dashboard on sign in using router
             navigate('/dashboard');
           }
@@ -72,6 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
         
         setLoading(false);
+        if (!authReady) setAuthReady(true);
       }
     );
 
@@ -82,14 +85,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       if (session?.user) {
         await fetchProfile(session.user.id);
-        setLoading(false);
-      } else {
-        setLoading(false);
       }
+      
+      setLoading(false);
+      setAuthReady(true);
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [authReady]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -101,6 +104,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       session,
       profile,
       loading,
+      authReady,
       signOut
     }}>
       {children}
