@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -5,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { AuthFormData } from '@/components/auth/AuthForm';
 import type { RoleOption } from '@/components/auth/RoleSelection';
 
-export const useAuth = () => {
+export const useAuthForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [availableRoles, setAvailableRoles] = useState<RoleOption[]>([]);
   const [selectedRole, setSelectedRole] = useState<RoleOption | null>(null);

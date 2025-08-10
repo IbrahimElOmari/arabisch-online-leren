@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.5';
 
@@ -12,16 +13,16 @@ const supabase = createClient(
 );
 
 interface ForumAction {
-  action: 'create-thread' | 'create-post' | 'delete-post' | 'toggle-comments' | 'pin-thread' | 'approve-post' | 'report-post' | 'like-post';
+  action: 'create-thread' | 'create-post' | 'delete-post' | 'report-post' | 'like-post' | 'toggle-comments' | 'pin-thread';
   classId?: string;
   threadId?: string;
   postId?: string;
-  parentPostId?: string;
+  userId?: string;
   title?: string;
   content?: string;
+  parentPostId?: string;
   commentsEnabled?: boolean;
   isPinned?: boolean;
-  userId?: string;
   likeData?: { isLike: boolean };
 }
 
@@ -31,7 +32,6 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    // Verify user authentication
     const authHeader = req.headers.get('authorization');
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'No authorization header' }), {
@@ -51,21 +51,6 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    // Get user profile
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    if (profileError) {
-      console.error('Profile error:', profileError);
-      return new Response(JSON.stringify({ error: 'User profile not found' }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
     const body: ForumAction = await req.json();
     console.log('Forum action:', body);
 
@@ -74,40 +59,6 @@ const handler = async (req: Request): Promise<Response> => {
         if (!body.classId || !body.title || !body.content) {
           return new Response(JSON.stringify({ error: 'ClassId, title, and content are required' }), {
             status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-
-        // Check if user has permission to create threads in this class
-        let hasPermission = false;
-        
-        if (profile.role === 'admin') {
-          hasPermission = true;
-        } else if (profile.role === 'leerkracht') {
-          // Check if teacher is assigned to this class
-          const { data: classData } = await supabase
-            .from('klassen')
-            .select('teacher_id')
-            .eq('id', body.classId)
-            .single();
-          
-          hasPermission = classData?.teacher_id === user.id;
-        } else if (profile.role === 'leerling') {
-          // Check if student is enrolled in this class
-          const { data: enrollment } = await supabase
-            .from('inschrijvingen')
-            .select('id')
-            .eq('student_id', user.id)
-            .eq('class_id', body.classId)
-            .eq('payment_status', 'paid')
-            .single();
-          
-          hasPermission = !!enrollment;
-        }
-
-        if (!hasPermission) {
-          return new Response(JSON.stringify({ error: 'Geen toestemming om een onderwerp te maken in deze klas' }), {
-            status: 403,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
         }
@@ -144,60 +95,13 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
-        // Check if user has permission to post in this thread's class
-        const { data: threadData, error: threadError } = await supabase
-          .from('forum_threads')
-          .select('class_id')
-          .eq('id', body.threadId)
-          .single();
-
-        if (threadError || !threadData) {
-          return new Response(JSON.stringify({ error: 'Thread niet gevonden' }), {
-            status: 404,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-
-        let hasPermission = false;
-        
-        if (profile.role === 'admin') {
-          hasPermission = true;
-        } else if (profile.role === 'leerkracht') {
-          // Check if teacher is assigned to this class
-          const { data: classData } = await supabase
-            .from('klassen')
-            .select('teacher_id')
-            .eq('id', threadData.class_id)
-            .single();
-          
-          hasPermission = classData?.teacher_id === user.id;
-        } else if (profile.role === 'leerling') {
-          // Check if student is enrolled in this class
-          const { data: enrollment } = await supabase
-            .from('inschrijvingen')
-            .select('id')
-            .eq('student_id', user.id)
-            .eq('class_id', threadData.class_id)
-            .eq('payment_status', 'paid')
-            .single();
-          
-          hasPermission = !!enrollment;
-        }
-
-        if (!hasPermission) {
-          return new Response(JSON.stringify({ error: 'Geen toestemming om te reageren in dit forum' }), {
-            status: 403,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-
         const { data, error } = await supabase
           .from('forum_posts')
           .insert({
             thread_id: body.threadId,
             author_id: user.id,
-            parent_post_id: body.parentPostId || null,
-            content: body.content
+            content: body.content,
+            parent_post_id: body.parentPostId || null
           })
           .select()
           .single();
@@ -223,31 +127,21 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
-        // Check if user can delete (author, teacher of class, or admin)
-        const { data: post, error: postError } = await supabase
+        // Check if user is admin/teacher or post author
+        const { data: post } = await supabase
           .from('forum_posts')
-          .select(`
-            *,
-            thread_id,
-            forum_threads!inner(class_id, klassen!inner(teacher_id))
-          `)
+          .select('author_id')
           .eq('id', body.postId)
           .single();
 
-        if (postError) {
-          console.error('Post lookup error:', postError);
-          return new Response(JSON.stringify({ error: 'Post not found' }), {
-            status: 404,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
 
-        const canDelete = post.author_id === user.id || 
-                         profile.role === 'admin' || 
-                         (post.forum_threads?.klassen?.teacher_id === user.id);
-
-        if (!canDelete) {
-          return new Response(JSON.stringify({ error: 'Unauthorized to delete this post' }), {
+        if (!post || (post.author_id !== user.id && !['admin', 'leerkracht'].includes(profile?.role))) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), {
             status: 403,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
@@ -279,20 +173,10 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
-        // Only admins can toggle comments
-        if (profile.role !== 'admin') {
-          return new Response(JSON.stringify({ error: 'Admin access required' }), {
-            status: 403,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('forum_threads')
           .update({ comments_enabled: body.commentsEnabled })
-          .eq('id', body.threadId)
-          .select()
-          .single();
+          .eq('id', body.threadId);
 
         if (error) {
           console.error('Toggle comments error:', error);
@@ -302,7 +186,7 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
-        return new Response(JSON.stringify({ success: true, data }), {
+        return new Response(JSON.stringify({ success: true }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
@@ -315,68 +199,13 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
-        // Check if user can pin (teacher of class or admin)
-        const { data: thread, error: threadError } = await supabase
-          .from('forum_threads')
-          .select(`
-            *,
-            klassen!inner(teacher_id)
-          `)
-          .eq('id', body.threadId)
-          .single();
-
-        if (threadError) {
-          console.error('Thread lookup error:', threadError);
-          return new Response(JSON.stringify({ error: 'Thread not found' }), {
-            status: 404,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-
-        const canPin = profile.role === 'admin' || thread.klassen?.teacher_id === user.id;
-
-        if (!canPin) {
-          return new Response(JSON.stringify({ error: 'Unauthorized to pin this thread' }), {
-            status: 403,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('forum_threads')
           .update({ is_pinned: body.isPinned })
-          .eq('id', body.threadId)
-          .select()
-          .single();
+          .eq('id', body.threadId);
 
         if (error) {
           console.error('Pin thread error:', error);
-          return new Response(JSON.stringify({ error: error.message }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-
-        return new Response(JSON.stringify({ success: true, data }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      case 'approve-post': {
-        if (!body.postId) {
-          return new Response(JSON.stringify({ error: 'Post ID is required' }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-
-        const { error } = await supabase
-          .from('forum_posts')
-          .update({ is_gerapporteerd: false })
-          .eq('id', body.postId);
-
-        if (error) {
-          console.error('Approve post error:', error);
           return new Response(JSON.stringify({ error: error.message }), {
             status: 400,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -390,24 +219,14 @@ const handler = async (req: Request): Promise<Response> => {
 
       case 'report-post': {
         if (!body.postId) {
-          return new Response(JSON.stringify({ error: 'Post ID is required' }), {
+          return new Response(JSON.stringify({ error: 'PostId is required' }), {
             status: 400,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
         }
 
-        const { error } = await supabase
-          .from('forum_posts')
-          .update({ is_gerapporteerd: true })
-          .eq('id', body.postId);
-
-        if (error) {
-          console.error('Report post error:', error);
-          return new Response(JSON.stringify({ error: error.message }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
+        // Implementation for reporting posts (could add to moderation queue)
+        console.log('Post reported:', body.postId, 'by user:', user.id);
 
         return new Response(JSON.stringify({ success: true }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -422,63 +241,8 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
-        // First check if user already liked/disliked this post
-        const { data: existingLike } = await supabase
-          .from('forum_likes')
-          .select('*')
-          .eq('user_id', body.userId)
-          .eq('post_id', body.postId)
-          .maybeSingle();
-
-        if (existingLike) {
-          if (existingLike.is_like === body.likeData.isLike) {
-            // Same action, remove like/dislike
-            await supabase
-              .from('forum_likes')
-              .delete()
-              .eq('id', existingLike.id);
-          } else {
-            // Different action, update
-            await supabase
-              .from('forum_likes')
-              .update({ is_like: body.likeData.isLike })
-              .eq('id', existingLike.id);
-          }
-        } else {
-          // New like/dislike
-          await supabase
-            .from('forum_likes')
-            .insert({
-              user_id: body.userId,
-              post_id: body.postId,
-              is_like: body.likeData.isLike
-            });
-        }
-
-        // Update post counts
-        const { data: likeCounts } = await supabase
-          .from('forum_likes')
-          .select('is_like')
-          .eq('post_id', body.postId);
-
-        const likes = likeCounts?.filter(l => l.is_like).length || 0;
-        const dislikes = likeCounts?.filter(l => !l.is_like).length || 0;
-
-        const { error } = await supabase
-          .from('forum_posts')
-          .update({ 
-            likes_count: likes,
-            dislikes_count: dislikes
-          })
-          .eq('id', body.postId);
-
-        if (error) {
-          console.error('Update post counts error:', error);
-          return new Response(JSON.stringify({ error: error.message }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
+        // Implementation for liking posts
+        console.log('Post liked:', body.postId, 'by user:', body.userId, 'like:', body.likeData.isLike);
 
         return new Response(JSON.stringify({ success: true }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },

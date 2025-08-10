@@ -1,9 +1,10 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AuthForm, type AuthFormData } from '@/components/auth/AuthForm';
 import { RoleSelection } from '@/components/auth/RoleSelection';
 import { ForgotPasswordModal } from '@/components/auth/ForgotPasswordModal';
-import { useAuth as useAuthForm } from '@/hooks/useAuth';
+import { useAuthForm } from '@/hooks/useAuthForm';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);

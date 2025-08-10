@@ -1,3 +1,4 @@
+
 import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
 
@@ -6,9 +7,12 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, profile, loading, authReady } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (loading || !authReady) {
+  console.debug('🛡️ ProtectedRoute: loading:', loading, 'user:', !!user);
+
+  if (loading) {
+    console.debug('⏳ ProtectedRoute: Still loading, showing loader');
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-lg">Laden...</div>
@@ -16,9 +20,11 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  if (!user || !profile) {
+  if (!user) {
+    console.debug('🚫 ProtectedRoute: No user, redirecting to auth');
     return <Navigate to="/auth" replace />;
   }
 
+  console.debug('✅ ProtectedRoute: User authenticated, rendering children');
   return <>{children}</>;
 };

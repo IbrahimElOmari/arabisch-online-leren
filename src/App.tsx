@@ -1,9 +1,11 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { AppGate } from "@/components/auth/AppGate";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Navigation from "@/components/Navigation";
 import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
@@ -35,28 +37,29 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <AuthProvider>
-              <ThemeToggle />
-              <AnalyticsTracker />
-              <Navigation />
-              <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/visie" element={<Visie />} />
-              <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
-              <Route path="/forum" element={<ProtectedRoute><Forum /></ProtectedRoute>} />
-              <Route path="/forum-moderation" element={<ProtectedRoute><ForumModeration /></ProtectedRoute>} />
-              <Route path="/security" element={<ProtectedRoute><Security /></ProtectedRoute>} />
-              <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-              <Route path="/enroll-confirm/:classId" element={<ProtectedRoute><EnrollConfirmPage /></ProtectedRoute>} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AuthProvider>
-        </BrowserRouter>
+              <AppGate>
+                <ThemeToggle />
+                <AnalyticsTracker />
+                <Navigation />
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                  <Route path="/visie" element={<Visie />} />
+                  <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
+                  <Route path="/forum" element={<ProtectedRoute><Forum /></ProtectedRoute>} />
+                  <Route path="/forum-moderation" element={<ProtectedRoute><ForumModeration /></ProtectedRoute>} />
+                  <Route path="/security" element={<ProtectedRoute><Security /></ProtectedRoute>} />
+                  <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+                  <Route path="/enroll-confirm/:classId" element={<ProtectedRoute><EnrollConfirmPage /></ProtectedRoute>} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/terms-of-service" element={<TermsOfService />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </AppGate>
+            </AuthProvider>
+          </BrowserRouter>
         </div>
       </TooltipProvider>
     </QueryClientProvider>

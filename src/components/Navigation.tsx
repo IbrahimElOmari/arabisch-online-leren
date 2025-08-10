@@ -1,3 +1,4 @@
+
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,7 @@ import { Shield } from 'lucide-react';
 
 const Navigation = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   return (
     <nav className="bg-card border-b border-border sticky top-0 z-50">
@@ -61,7 +62,7 @@ const Navigation = () => {
               >
                 Visie
               </button>
-              {user && ['admin', 'leerkracht'].includes((user as any).profile?.role) && (
+              {user && profile && ['admin', 'leerkracht'].includes(profile.role) && (
                 <>
                   <button 
                     className="text-muted-foreground hover:text-foreground transition-colors"
@@ -84,7 +85,7 @@ const Navigation = () => {
             <div className="flex items-center space-x-4">
               <NotificationBell />
               <span className="text-sm text-muted-foreground">
-                Welkom, {user.email}
+                Welkom, {profile?.full_name || user.email}
               </span>
               <Button 
                 variant="outline" 

@@ -1,7 +1,6 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 export type UserRole = 'admin' | 'leerkracht' | 'leerling';
@@ -19,6 +18,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   loading: boolean;
   authReady: boolean;
+  profileSyncing: boolean;
   signOut: () => Promise<void>;
 }
 
@@ -32,100 +32,108 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthProviderEnhanced = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [authReady, setAuthReady] = useState(false);
+  const [profileSyncing, setProfileSyncing] = useState(false);
 
-  const fetchProfile = async (userId: string) => {
-    console.debug('🔍 AuthProvider: Starting fetchProfile for userId:', userId);
+  const fetchProfileWithTimeout = async (userId: string, timeout = 3000) => {
+    console.debug('🔍 AuthProvider: Starting fetchProfileWithTimeout for userId:', userId);
+    setProfileSyncing(true);
+    
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
+        .abortSignal(controller.signal)
         .single();
-      
+
+      clearTimeout(timeoutId);
+
       if (error) {
         console.error('❌ AuthProvider: Profile fetch error:', error);
-        // Fallback to user metadata if available
-        const { data: userData } = await supabase.auth.getUser();
-        if (userData.user?.user_metadata) {
-          console.debug('🔄 AuthProvider: Using fallback profile from metadata');
-          setProfile({
-            id: userId,
-            full_name: userData.user.user_metadata.full_name || 'Gebruiker',
-            role: userData.user.user_metadata.role || 'leerling',
-            parent_email: userData.user.user_metadata.parent_email
-          });
-        }
-        return;
+        throw error;
       }
-      
+
       console.debug('✅ AuthProvider: Profile fetched successfully:', data);
       setProfile(data);
-    } catch (error) {
-      console.error('❌ AuthProvider: Profile fetch exception:', error);
+      setProfileSyncing(false);
+      return data;
+    } catch (error: any) {
+      console.error('❌ AuthProvider: Profile fetch failed:', error);
+      
+      // Fallback to user metadata
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData.user?.user_metadata) {
+        console.debug('🔄 AuthProvider: Using fallback profile from metadata');
+        const fallbackProfile = {
+          id: userId,
+          full_name: userData.user.user_metadata.full_name || 'Gebruiker',
+          role: (userData.user.user_metadata.role || 'leerling') as UserRole,
+          parent_email: userData.user.user_metadata.parent_email
+        };
+        setProfile(fallbackProfile);
+        
+        // Start background retry
+        setTimeout(() => {
+          console.debug('🔄 AuthProvider: Starting background profile retry');
+          fetchProfileWithTimeout(userId, 5000).catch(console.error);
+        }, 5000);
+      }
+      setProfileSyncing(false);
     }
   };
 
   useEffect(() => {
-    console.debug('🚀 AuthProvider: Starting initialization');
+    console.debug('🚀 AuthProvider: Starting enhanced initialization');
     
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.debug('🔄 AuthProvider: Auth state change event:', event, 'Session:', !!session);
         
         setSession(session);
         setUser(session?.user ?? null);
-        
-        // Set loading/authReady immediately (non-blocking)
         setLoading(false);
         setAuthReady(true);
         
         if (session?.user) {
-          console.debug('👤 AuthProvider: User authenticated, fetching profile in background');
-          // Fetch profile in background without blocking
-          void fetchProfile(session.user.id);
+          await fetchProfileWithTimeout(session.user.id);
         } else {
-          console.debug('🚫 AuthProvider: No user session, clearing profile');
           setProfile(null);
+          setProfileSyncing(false);
         }
       }
     );
 
-    // Check for existing session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       console.debug('📋 AuthProvider: Initial session check:', !!session);
       
       setSession(session);
       setUser(session?.user ?? null);
-      
-      // Set loading/authReady immediately
       setLoading(false);
       setAuthReady(true);
       
       if (session?.user) {
-        console.debug('👤 AuthProvider: Existing session found, fetching profile in background');
-        void fetchProfile(session.user.id);
+        await fetchProfileWithTimeout(session.user.id);
       }
     });
 
-    return () => {
-      console.debug('🧹 AuthProvider: Cleaning up subscription');
-      subscription.unsubscribe();
-    };
-  }, []); // Remove authReady dependency
+    return () => subscription.unsubscribe();
+  }, []);
 
   const signOut = async () => {
     console.debug('🚪 AuthProvider: Signing out');
     await supabase.auth.signOut();
+    setProfile(null);
+    setProfileSyncing(false);
   };
-
-  console.debug('🔄 AuthProvider: Render state - loading:', loading, 'authReady:', authReady, 'user:', !!user, 'profile:', !!profile);
 
   return (
     <AuthContext.Provider value={{
@@ -134,6 +142,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       profile,
       loading,
       authReady,
+      profileSyncing,
       signOut
     }}>
       {children}
