@@ -51,6 +51,7 @@ export const StudentTasksAndQuestions = () => {
   const [loading, setLoading] = useState(true);
   const [submissionTexts, setSubmissionTexts] = useState<{ [key: string]: string }>({});
   const [submissionFiles, setSubmissionFiles] = useState<{ [key: string]: File }>({});
+  const [submittedTaskIds, setSubmittedTaskIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchTasksAndQuestions();

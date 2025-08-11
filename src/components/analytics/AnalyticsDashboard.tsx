@@ -63,7 +63,7 @@ const AnalyticsDashboard = () => {
 
       if (classesError) throw classesError;
 
-      // Fetch forum posts
+      // Fetch forum posts (not deleted)
       const { data: forumData, error: forumError } = await supabase
         .from('forum_posts')
         .select('id')
@@ -71,27 +71,35 @@ const AnalyticsDashboard = () => {
 
       if (forumError) throw forumError;
 
-      // Fetch enrollments for completion metrics
-      const { data: enrollmentsData, error: enrollmentsError } = await supabase
-        .from('inschrijvingen')
-        .select('id')
-        .eq('payment_status', 'paid');
+      // Fetch attendance to compute average
+      const { data: attendanceData, error: attendanceError } = await supabase
+        .from('aanwezigheid')
+        .select('status');
 
-      if (enrollmentsError) throw enrollmentsError;
+      if (attendanceError) throw attendanceError;
+      const totalAttendance = attendanceData?.length || 0;
+      const presentCount = (attendanceData || []).filter((a: any) => a.status === 'aanwezig').length;
+      const averageAttendance = totalAttendance ? Math.round((presentCount / totalAttendance) * 100) : 0;
 
-      // Mock some additional analytics data
-      const mockAnalytics: AnalyticsData = {
+      // Fetch lessons count as completed lessons proxy
+      const { data: lessonsData, error: lessonsError } = await supabase
+        .from('lessen')
+        .select('id');
+
+      if (lessonsError) throw lessonsError;
+
+      const analyticsData: AnalyticsData = {
         totalStudents: studentsData?.length || 0,
         activeClasses: classesData?.length || 0,
-        completedLessons: Math.floor((enrollmentsData?.length || 0) * 8.5), // Mock completed lessons
-        averageAttendance: 87,
+        completedLessons: lessonsData?.length || 0,
+        averageAttendance,
         forumPosts: forumData?.length || 0,
         weeklyGrowth: 12.5,
         monthlyEngagement: 78,
         topPerformingClass: classesData?.[0]?.name || 'N/A'
       };
 
-      setAnalytics(mockAnalytics);
+      setAnalytics(analyticsData);
     } catch (error) {
       console.error('Error fetching analytics:', error);
     } finally {

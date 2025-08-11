@@ -117,8 +117,9 @@ export const useForumStore = create<ForumState>((set, get) => ({
 
       if (error) throw error;
       
-      const postsWithAuthor = data?.map(post => ({
+      const postsWithAuthor = data?.map((post: any) => ({
         ...post,
+        content: post.content ?? post.inhoud,
         author: { full_name: post.profiles?.full_name || 'Onbekend' }
       })) || [];
 

@@ -95,13 +95,16 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
+        // Insert using existing schema (Dutch column names) for forum_posts
         const { data, error } = await supabase
           .from('forum_posts')
           .insert({
             thread_id: body.threadId,
             author_id: user.id,
-            content: body.content,
-            parent_post_id: body.parentPostId || null
+            titel: 'Reactie',
+            inhoud: body.content,
+            parent_post_id: body.parentPostId || null,
+            is_verwijderd: false
           })
           .select()
           .single();
@@ -147,9 +150,10 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
+        // Soft delete: mark as removed instead of hard delete
         const { error } = await supabase
           .from('forum_posts')
-          .delete()
+          .update({ is_verwijderd: true })
           .eq('id', body.postId);
 
         if (error) {
@@ -225,8 +229,46 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
-        // Implementation for reporting posts (could add to moderation queue)
-        console.log('Post reported:', body.postId, 'by user:', user.id);
+        // Mark post as reported
+        const { error } = await supabase
+          .from('forum_posts')
+          .update({ is_gerapporteerd: true })
+          .eq('id', body.postId);
+
+        if (error) {
+          console.error('Report post error:', error);
+          return new Response(JSON.stringify({ error: error.message }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      case 'approve-post': {
+        if (!body.postId) {
+          return new Response(JSON.stringify({ error: 'PostId is required' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        // Clear report flag
+        const { error } = await supabase
+          .from('forum_posts')
+          .update({ is_gerapporteerd: false })
+          .eq('id', body.postId);
+
+        if (error) {
+          console.error('Approve post error:', error);
+          return new Response(JSON.stringify({ error: error.message }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
 
         return new Response(JSON.stringify({ success: true }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
