@@ -7,18 +7,9 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
-  console.debug('🛡️ ProtectedRoute: loading:', loading, 'user:', !!user);
-
-  if (loading) {
-    console.debug('⏳ ProtectedRoute: Still loading, showing loader');
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-lg">Laden...</div>
-      </div>
-    );
-  }
+  console.debug('🛡️ ProtectedRoute: user present:', !!user);
 
   if (!user) {
     console.debug('🚫 ProtectedRoute: No user, redirecting to auth');
