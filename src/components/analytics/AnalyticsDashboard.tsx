@@ -49,10 +49,10 @@ const AnalyticsDashboard = () => {
   const fetchAnalytics = async () => {
     try {
       // Fetch total students
-      const { data: studentsData, error: studentsError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('role', 'leerling');
+const { data: studentsData, error: studentsError } = await supabase
+  .from('profiles')
+  .select('id')
+  .eq('role', 'leerling');
 
       if (studentsError) throw studentsError;
 

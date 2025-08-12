@@ -50,51 +50,71 @@ const CalendarPage = () => {
     fetchClasses();
   }, [user]);
 
-  const fetchUserRole = async () => {
-    if (!user) return;
-    
-    const { data, error } = await supabase
-      .rpc('get_user_role', { user_id: user.id });
-    
-    if (!error && data) {
-      setUserRole(data);
-    }
-  };
+const fetchUserRole = async () => {
+  if (!user) return;
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+  if (!error && data) {
+    setUserRole(data.role);
+  }
+};
 
-  const fetchEvents = async () => {
-    const { data, error } = await supabase
-      .from('calendar_events')
-      .select('*')
-      .order('start_date');
-    
-    if (error) {
-      console.error('Error fetching events:', error);
-      return;
-    }
-    
-    setEvents(data || []);
-  };
+const fetchEvents = async () => {
+  let query = supabase.from('calendar_events').select('*').order('start_date');
 
-  const fetchClasses = async () => {
-    if (userRole === 'leerkracht') {
-      const { data, error } = await supabase
-        .from('klassen')
-        .select('id, name')
-        .eq('teacher_id', user?.id);
-      
-      if (!error && data) {
-        setClasses(data);
-      }
-    } else if (userRole === 'admin') {
-      const { data, error } = await supabase
-        .from('klassen')
-        .select('id, name');
-      
-      if (!error && data) {
-        setClasses(data);
-      }
+  if (userRole === 'leerkracht' || userRole === 'teacher') {
+    const { data: teacherClasses } = await supabase
+      .from('klassen')
+      .select('id')
+      .eq('teacher_id', user?.id);
+    const ids = (teacherClasses || []).map(c => c.id);
+    if (ids.length > 0) query = query.in('class_id', ids).or('class_id.is.null');
+  } else if (userRole === 'leerling' || userRole === 'student') {
+    const { data: enrollments } = await supabase
+      .from('inschrijvingen')
+      .select('class_id')
+      .eq('student_id', user?.id)
+      .eq('payment_status', 'paid');
+    const ids = (enrollments || []).map(e => e.class_id);
+    if (ids.length > 0) query = query.in('class_id', ids).or('class_id.is.null');
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    console.error('Error fetching events:', error);
+    return;
+  }
+  setEvents(data || []);
+};
+
+const fetchClasses = async () => {
+  if (userRole === 'leerkracht' || userRole === 'teacher') {
+    const { data, error } = await supabase
+      .from('klassen')
+      .select('id, name')
+      .eq('teacher_id', user?.id);
+    if (!error && data) setClasses(data);
+  } else if (userRole === 'admin') {
+    const { data, error } = await supabase
+      .from('klassen')
+      .select('id, name');
+    if (!error && data) setClasses(data);
+  } else if (userRole === 'leerling' || userRole === 'student') {
+    const { data: enrollments } = await supabase
+      .from('inschrijvingen')
+      .select('class_id')
+      .eq('student_id', user?.id)
+      .eq('payment_status', 'paid');
+    const ids = (enrollments || []).map(e => e.class_id);
+    if (ids.length > 0) {
+      const { data } = await supabase.from('klassen').select('id, name').in('id', ids);
+      setClasses(data || []);
     }
-  };
+  }
+};
 
   const handleAddEvent = async () => {
     if (!newEvent.title || !newEvent.start_date || !newEvent.end_date) {
@@ -159,7 +179,7 @@ const CalendarPage = () => {
     });
   };
 
-  const canAddEvents = userRole === 'admin' || userRole === 'leerkracht';
+  const canAddEvents = userRole === 'admin' || userRole === 'leerkracht' || userRole === 'teacher';
 
   return (
     <div className="container mx-auto p-6 bg-background min-h-screen">

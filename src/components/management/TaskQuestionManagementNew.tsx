@@ -329,27 +329,36 @@ export const TaskQuestionManagementNew = () => {
     }
   };
 
-  const gradeSubmission = async (submissionId: string, grade: number, feedback?: string) => {
-    try {
-      const { error } = await supabase
-        .from('task_submissions')
-        .update({ grade, feedback })
-        .eq('id', submissionId);
+const gradeSubmission = async (submissionId: string, grade: number, feedback?: string) => {
+  try {
+    const { error } = await supabase
+      .from('task_submissions')
+      .update({ grade, feedback })
+      .eq('id', submissionId);
 
-      if (error) throw error;
+    if (error) throw error;
 
-      toast.success('Beoordeling opgeslagen');
-      // Refresh submissions
-      if (submissionModal.taskId) {
-        viewTaskSubmissions(submissionModal.taskId, submissionModal.taskTitle);
-      }
-      // Refresh tasks to update counts
-      fetchTasksAndQuestions();
-    } catch (error) {
-      console.error('Error grading submission:', error);
-      toast.error('Fout bij het opslaan van beoordeling');
+    // Create notification for student
+    const sub = submissions.find(s => s.id === submissionId);
+    if (sub) {
+      await supabase.from('user_notifications').insert({
+        user_id: sub.student_id,
+        message: `Je opdracht is beoordeeld met cijfer ${grade}${feedback ? '. ' + feedback : ''}`
+      });
     }
-  };
+
+    toast.success('Beoordeling opgeslagen');
+    // Refresh submissions
+    if (submissionModal.taskId) {
+      viewTaskSubmissions(submissionModal.taskId, submissionModal.taskTitle);
+    }
+    // Refresh tasks to update counts
+    fetchTasksAndQuestions();
+  } catch (error) {
+    console.error('Error grading submission:', error);
+    toast.error('Fout bij het opslaan van beoordeling');
+  }
+};
 
   const gradeAnswer = async (answerId: string, isCorrect: boolean, points: number, feedback?: string) => {
     try {
