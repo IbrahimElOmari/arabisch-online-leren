@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.5';
 
@@ -95,15 +94,41 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
+        // Get thread info to determine class_id
+        const { data: thread, error: threadError } = await supabase
+          .from('forum_threads')
+          .select('class_id')
+          .eq('id', body.threadId)
+          .single();
+
+        if (threadError) {
+          console.error('Thread lookup error:', threadError);
+          return new Response(JSON.stringify({ error: 'Thread not found' }), {
+            status: 404,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        console.log('Creating post with data:', {
+          thread_id: body.threadId,
+          author_id: user.id,
+          titel: body.parentPostId ? 'Reactie' : 'Hoofdbericht',
+          inhoud: body.content,
+          parent_post_id: body.parentPostId || null,
+          class_id: thread.class_id,
+          is_verwijderd: false
+        });
+
         // Insert using existing schema (Dutch column names) for forum_posts
         const { data, error } = await supabase
           .from('forum_posts')
           .insert({
             thread_id: body.threadId,
             author_id: user.id,
-            titel: 'Reactie',
+            titel: body.parentPostId ? 'Reactie' : 'Hoofdbericht',
             inhoud: body.content,
             parent_post_id: body.parentPostId || null,
+            class_id: thread.class_id,
             is_verwijderd: false
           })
           .select()
@@ -169,6 +194,33 @@ const handler = async (req: Request): Promise<Response> => {
         });
       }
 
+      case 'report-post': {
+        if (!body.postId) {
+          return new Response(JSON.stringify({ error: 'PostId is required' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        // Mark post as reported
+        const { error } = await supabase
+          .from('forum_posts')
+          .update({ is_gerapporteerd: true })
+          .eq('id', body.postId);
+
+        if (error) {
+          console.error('Report post error:', error);
+          return new Response(JSON.stringify({ error: error.message }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       case 'toggle-comments': {
         if (!body.threadId || body.commentsEnabled === undefined) {
           return new Response(JSON.stringify({ error: 'ThreadId and commentsEnabled are required' }), {
@@ -210,33 +262,6 @@ const handler = async (req: Request): Promise<Response> => {
 
         if (error) {
           console.error('Pin thread error:', error);
-          return new Response(JSON.stringify({ error: error.message }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-
-        return new Response(JSON.stringify({ success: true }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      case 'report-post': {
-        if (!body.postId) {
-          return new Response(JSON.stringify({ error: 'PostId is required' }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-
-        // Mark post as reported
-        const { error } = await supabase
-          .from('forum_posts')
-          .update({ is_gerapporteerd: true })
-          .eq('id', body.postId);
-
-        if (error) {
-          console.error('Report post error:', error);
           return new Response(JSON.stringify({ error: error.message }), {
             status: 400,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },

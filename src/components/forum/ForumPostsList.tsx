@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -67,25 +68,31 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
           )
         `)
         .eq('thread_id', threadId)
-        .eq('is_verwijderd', false)
+        .in('is_verwijderd', [false])
         .order('created_at', { ascending: true });
 
       if (error) throw error;
       
       const flatPosts = (data as any) || [];
+      console.log('Fetched posts:', flatPosts);
+      
       // Build nested replies structure
       const postMap = new Map<string, any>();
       flatPosts.forEach((p: any) => postMap.set(p.id, { ...p, replies: [] }));
       const roots: any[] = [];
+      
       flatPosts.forEach((p: any) => {
         if (p.parent_post_id) {
           const parent = postMap.get(p.parent_post_id);
-          if (parent) parent.replies.push(postMap.get(p.id));
+          if (parent) {
+            parent.replies.push(postMap.get(p.id));
+          }
         } else {
           roots.push(postMap.get(p.id));
         }
       });
 
+      console.log('Organized posts:', roots);
       setPosts(roots as any);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -162,10 +169,12 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
 
   const handleDelete = async (postId: string) => {
     try {
-      const { error } = await supabase
-        .from('forum_posts')
-        .update({ is_verwijderd: true })
-        .eq('id', postId);
+      const { error } = await supabase.functions.invoke('manage-forum', {
+        body: {
+          action: 'delete-post',
+          postId: postId
+        }
+      });
 
       if (error) throw error;
       

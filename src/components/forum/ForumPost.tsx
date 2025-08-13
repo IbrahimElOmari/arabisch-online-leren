@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -72,21 +73,25 @@ export function ForumPost({
   const canModerate = profile?.role === 'admin' || profile?.role === 'leerkracht';
 
   const handleReply = async () => {
-    if (!replyContent.trim() || !user) return;
+    if (!replyContent.trim() || !user || !post.thread_id) return;
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase
-        .from('forum_posts')
-        .insert({
-          titel: `Re: ${post.titel}`,
-          inhoud: replyContent,
-          author_id: user.id,
-          class_id: post.class_id,
-          niveau_id: post.niveau_id,
-          parent_post_id: post.id,
-          thread_id: post.thread_id
-        });
+      console.log('Creating reply with:', {
+        action: 'create-post',
+        threadId: post.thread_id,
+        content: replyContent,
+        parentPostId: post.id
+      });
+
+      const { error } = await supabase.functions.invoke('manage-forum', {
+        body: {
+          action: 'create-post',
+          threadId: post.thread_id,
+          content: replyContent,
+          parentPostId: post.id
+        }
+      });
 
       if (error) throw error;
 
@@ -174,10 +179,12 @@ export function ForumPost({
     if (!user) return;
     
     try {
-      const { error } = await supabase
-        .from('forum_posts')
-        .update({ is_gerapporteerd: true })
-        .eq('id', post.id);
+      const { error } = await supabase.functions.invoke('manage-forum', {
+        body: {
+          action: 'report-post',
+          postId: post.id
+        }
+      });
 
       if (error) throw error;
 

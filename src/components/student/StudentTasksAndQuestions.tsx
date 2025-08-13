@@ -1,15 +1,27 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { FileText, Clock, CheckCircle, Upload, ExternalLink } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-
+import { 
+  FileText, 
+  HelpCircle, 
+  CheckCircle, 
+  Clock, 
+  Star,
+  Upload,
+  Play,
+  Video,
+  Mic
+} from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { nl } from 'date-fns/locale';
 
 interface Task {
   id: string;
@@ -18,15 +30,13 @@ interface Task {
   required_submission_type: 'text' | 'file';
   grading_scale: number;
   created_at: string;
-  level_id: string;
-  external_link?: string;
-  youtube_url?: string;
-  submissions?: any[];
-  niveaus: {
-    naam: string;
-    klassen: {
-      name: string;
-    };
+  submission?: {
+    id: string;
+    submission_content?: string;
+    submission_file_path?: string;
+    grade?: number;
+    feedback?: string;
+    submitted_at: string;
   };
 }
 
@@ -34,14 +44,14 @@ interface Question {
   id: string;
   vraag_tekst: string;
   vraag_type: string;
-  opties: any;
   created_at: string;
-  niveau_id: string;
-  niveaus: {
-    naam: string;
-    klassen: {
-      name: string;
-    };
+  answer?: {
+    id: string;
+    antwoord: string;
+    is_correct?: boolean;
+    punten?: number;
+    feedback?: string;
+    created_at: string;
   };
 }
 
@@ -50,369 +60,572 @@ export const StudentTasksAndQuestions = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
-const [submissionTexts, setSubmissionTexts] = useState<{ [key: string]: string }>({});
-const [submissionFiles, setSubmissionFiles] = useState<{ [key: string]: File }>({});
-const [submittedTaskIds, setSubmittedTaskIds] = useState<Set<string>>(new Set());
-const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: Set<string> }>({});
-const [openAnswers, setOpenAnswers] = useState<{ [key: string]: string }>({});
-const [questionFiles, setQuestionFiles] = useState<{ [key: string]: File | undefined }>({});
+  const [submissionData, setSubmissionData] = useState<{[key: string]: string}>({});
+  const [answerData, setAnswerData] = useState<{[key: string]: string}>({});
 
   useEffect(() => {
-    fetchTasksAndQuestions();
+    if (profile?.id) {
+      fetchTasksAndQuestions();
+    }
   }, [profile?.id]);
 
-const fetchTasksAndQuestions = async () => {
-  if (!profile?.id) return;
+  const fetchTasksAndQuestions = async () => {
+    if (!profile?.id) return;
 
-  try {
-    // Find paid class enrollments for this student
-    const { data: enrollments, error: enrollError } = await supabase
-      .from('inschrijvingen')
-      .select('class_id')
-      .eq('student_id', profile.id)
-      .eq('payment_status', 'paid');
+    try {
+      setLoading(true);
 
-    if (enrollError) throw enrollError;
-    const classIds = (enrollments || []).map((e: any) => e.class_id);
+      // Fetch tasks from enrolled classes
+      const { data: tasksData, error: tasksError } = await supabase
+        .from('tasks')
+        .select(`
+          *,
+          task_submissions!left (
+            id,
+            submission_content,
+            submission_file_path,
+            grade,
+            feedback,
+            submitted_at
+          ),
+          niveaus!inner (
+            id,
+            klassen!inner (
+              id,
+              inschrijvingen!inner (
+                student_id,
+                payment_status
+              )
+            )
+          )
+        `)
+        .eq('niveaus.klassen.inschrijvingen.student_id', profile.id)
+        .eq('niveaus.klassen.inschrijvingen.payment_status', 'paid')
+        .eq('task_submissions.student_id', profile.id)
+        .order('created_at', { ascending: false });
 
-    if (classIds.length === 0) {
-      setTasks([]);
-      setQuestions([]);
+      if (tasksError) throw tasksError;
+
+      // Fetch questions from enrolled classes
+      const { data: questionsData, error: questionsError } = await supabase
+        .from('vragen')
+        .select(`
+          *,
+          antwoorden!left (
+            id,
+            antwoord,
+            is_correct,
+            punten,
+            feedback,
+            created_at
+          ),
+          niveaus!inner (
+            id,
+            klassen!inner (
+              id,
+              inschrijvingen!inner (
+                student_id,
+                payment_status
+              )
+            )
+          )
+        `)
+        .eq('niveaus.klassen.inschrijvingen.student_id', profile.id)
+        .eq('niveaus.klassen.inschrijvingen.payment_status', 'paid')
+        .eq('antwoorden.student_id', profile.id)
+        .order('created_at', { ascending: false });
+
+      if (questionsError) throw questionsError;
+
+      // Process tasks
+      const processedTasks = (tasksData || []).map(task => ({
+        ...task,
+        submission: task.task_submissions?.[0] || null
+      }));
+
+      // Process questions  
+      const processedQuestions = (questionsData || []).map(question => ({
+        ...question,
+        answer: question.antwoorden?.[0] || null
+      }));
+
+      setTasks(processedTasks);
+      setQuestions(processedQuestions);
+    } catch (error) {
+      console.error('Error fetching tasks and questions:', error);
+      toast.error('Fout bij het ophalen van opdrachten en vragen');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitTask = async (taskId: string, type: 'text' | 'file') => {
+    const content = submissionData[taskId];
+    if (!content?.trim()) {
+      toast.error('Vul je antwoord in');
       return;
     }
 
-    // Get levels for these classes
-    const { data: levels, error: levelsError } = await supabase
-      .from('niveaus')
-      .select('id, class_id, naam, klassen:class_id (name)')
-      .in('class_id', classIds);
+    try {
+      let submissionContent = null;
+      let submissionFilePath = null;
 
-    if (levelsError) throw levelsError;
-    const levelIds = (levels || []).map((l: any) => l.id);
-
-    // Fetch tasks for these levels
-    const { data: tasksData, error: tasksError } = await supabase
-      .from('tasks')
-      .select('*')
-      .in('level_id', levelIds)
-      .order('created_at', { ascending: false });
-
-    if (tasksError) throw tasksError;
-
-    // Fetch student's submissions for these tasks
-    let submissionsByTask: Record<string, any[]> = {};
-    if (tasksData && tasksData.length) {
-      const { data: subs, error: subsError } = await supabase
-        .from('task_submissions')
-        .select('id, task_id, grade, feedback, submitted_at')
-        .eq('student_id', profile.id)
-        .in('task_id', tasksData.map(t => t.id));
-      if (subsError) throw subsError;
-      (subs || []).forEach((s: any) => {
-        if (!submissionsByTask[s.task_id]) submissionsByTask[s.task_id] = [];
-        submissionsByTask[s.task_id].push(s);
-      });
-    }
-
-    // Enrich tasks with level/class names via levels map
-    const levelsMap: Record<string, any> = {};
-    (levels || []).forEach((l: any) => { levelsMap[l.id] = l; });
-    const tasksEnriched = (tasksData || []).map((t: any) => ({
-      ...t,
-      submissions: submissionsByTask[t.id] || [],
-      niveaus: {
-        naam: levelsMap[t.level_id]?.naam || '',
-        klassen: { name: levelsMap[t.level_id]?.klassen?.name || '' }
+      if (type === 'text') {
+        submissionContent = content;
+      } else {
+        // For file submissions, content should be a file path or URL
+        submissionFilePath = content;
       }
-    }));
 
-    // Fetch questions for these levels
-    const { data: questionsData, error: questionsError } = await supabase
-      .from('vragen')
-      .select(`*, niveaus:niveau_id (naam, klassen:class_id (name))`)
-      .in('niveau_id', levelIds)
-      .order('created_at', { ascending: false });
-
-    if (questionsError) throw questionsError;
-
-    setTasks(tasksEnriched || []);
-    setQuestions(questionsData || []);
-  } catch (error) {
-    console.error('Error fetching tasks and questions:', error);
-    toast.error('Fout bij het ophalen van taken en vragen');
-  } finally {
-    setLoading(false);
-  }
-};
-
-const submitTask = async (taskId: string) => {
-  try {
-    const task = tasks.find(t => t.id === taskId);
-    if (!task) return;
-
-    let submissionContent: string | undefined = undefined;
-    let submissionFilePath: string | undefined = undefined;
-
-    if (task.required_submission_type === 'text') {
-      submissionContent = (submissionTexts[taskId] || '').trim();
-      if (!submissionContent) {
-        toast.error('Voer een antwoord in');
-        return;
-      }
-    } else if (task.required_submission_type === 'file' && submissionFiles[taskId]) {
-      const file = submissionFiles[taskId];
-      // Get signed URL from edge function then upload
-      const { data, error } = await supabase.functions.invoke('manage-task', {
-        body: { action: 'get-signed-url', fileName: file.name }
+      const { error } = await supabase.functions.invoke('manage-task', {
+        body: {
+          action: 'submit-task',
+          taskId,
+          submissionContent,
+          submissionFilePath
+        }
       });
+
       if (error) throw error;
-      const { signedUrl, path } = data as { signedUrl: string; path: string };
-      const uploadRes = await fetch(signedUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
-      if (!uploadRes.ok) throw new Error('Upload mislukt');
-      submissionFilePath = path;
+
+      toast.success('Opdracht ingediend');
+      setSubmissionData(prev => ({ ...prev, [taskId]: '' }));
+      fetchTasksAndQuestions();
+    } catch (error) {
+      console.error('Error submitting task:', error);
+      toast.error('Fout bij indienen opdracht');
+    }
+  };
+
+  const submitAnswer = async (questionId: string) => {
+    const answer = answerData[questionId];
+    if (!answer?.trim()) {
+      toast.error('Vul je antwoord in');
+      return;
     }
 
-    const { error } = await supabase.functions.invoke('manage-task', {
-      body: {
-        action: 'submit-task',
-        taskId,
-        submissionContent,
-        submissionFilePath
+    try {
+      const { error } = await supabase
+        .from('antwoorden')
+        .insert({
+          vraag_id: questionId,
+          student_id: profile?.id,
+          antwoord: answer
+        });
+
+      if (error) throw error;
+
+      toast.success('Antwoord ingediend');
+      setAnswerData(prev => ({ ...prev, [questionId]: '' }));
+      fetchTasksAndQuestions();
+    } catch (error) {
+      console.error('Error submitting answer:', error);
+      toast.error('Fout bij indienen antwoord');
+    }
+  };
+
+  const getTaskStatus = (task: Task) => {
+    if (task.submission) {
+      if (task.submission.grade !== null) {
+        return { status: 'graded', label: 'Beoordeeld', variant: 'default' as const };
       }
-    });
+      return { status: 'submitted', label: 'Ingediend', variant: 'secondary' as const };
+    }
+    return { status: 'open', label: 'Te maken', variant: 'destructive' as const };
+  };
 
-    if (error) throw error;
+  const getQuestionStatus = (question: Question) => {
+    if (question.answer) {
+      if (question.answer.is_correct !== null) {
+        return { status: 'graded', label: 'Beoordeeld', variant: 'default' as const };
+      }
+      return { status: 'submitted', label: 'Beantwoord', variant: 'secondary' as const };
+    }
+    return { status: 'open', label: 'Te beantwoorden', variant: 'destructive' as const };
+  };
 
-    toast.success('Opdracht succesvol ingediend!');
-    fetchTasksAndQuestions();
-    // Clear form
-    setSubmissionTexts(prev => ({ ...prev, [taskId]: '' }));
-    setSubmissionFiles(prev => { const n = { ...prev }; delete n[taskId]; return n; });
-  } catch (error) {
-    console.error('Error submitting task:', error);
-    toast.error('Fout bij het indienen van de opdracht');
-  }
-};
+  const renderQuestionInput = (question: Question) => {
+    if (question.answer) return null;
 
-const submitAnswer = async (questionId: string, answer: any) => {
-  try {
-    const payload: any = {
-      vraag_id: questionId,
-      student_id: profile?.id,
-      antwoord: answer
-    };
-
-    const { error } = await supabase
-      .from('antwoorden')
-      .insert(payload);
-
-    if (error) throw error;
-
-    toast.success('Antwoord succesvol ingediend!');
-    fetchTasksAndQuestions();
-  } catch (error) {
-    console.error('Error submitting answer:', error);
-    toast.error('Fout bij het indienen van het antwoord');
-  }
-};
+    switch (question.vraag_type) {
+      case 'upload':
+      case 'bestand':
+        return (
+          <div className="space-y-2">
+            <Input
+              type="file"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  // In a real implementation, you'd upload this file first
+                  setAnswerData(prev => ({ ...prev, [question.id]: file.name }));
+                }
+              }}
+            />
+            <Button 
+              onClick={() => submitAnswer(question.id)}
+              disabled={!answerData[question.id]}
+              className="w-full"
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Bestand Uploaden
+            </Button>
+          </div>
+        );
+      
+      case 'audio':
+        return (
+          <div className="space-y-2">
+            <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+              <Mic className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+              <p className="text-sm text-gray-500">Audio opname functionaliteit</p>
+              <p className="text-xs text-gray-400">Nog niet geïmplementeerd</p>
+            </div>
+          </div>
+        );
+      
+      case 'video':
+        return (
+          <div className="space-y-2">
+            <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+              <Video className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+              <p className="text-sm text-gray-500">Video opname functionaliteit</p>
+              <p className="text-xs text-gray-400">Nog niet geïmplementeerd</p>
+            </div>
+          </div>
+        );
+      
+      default:
+        return (
+          <div className="space-y-2">
+            <Textarea
+              placeholder="Typ je antwoord hier..."
+              value={answerData[question.id] || ''}
+              onChange={(e) => setAnswerData(prev => ({ ...prev, [question.id]: e.target.value }))}
+              rows={4}
+            />
+            <Button 
+              onClick={() => submitAnswer(question.id)}
+              disabled={!answerData[question.id]?.trim()}
+              className="w-full"
+            >
+              Antwoord Versturen
+            </Button>
+          </div>
+        );
+    }
+  };
 
   if (loading) {
     return <div className="text-center py-8">Laden...</div>;
   }
 
+  // Categorize tasks and questions
+  const openTasks = tasks.filter(t => getTaskStatus(t).status === 'open');
+  const submittedTasks = tasks.filter(t => getTaskStatus(t).status === 'submitted');
+  const gradedTasks = tasks.filter(t => getTaskStatus(t).status === 'graded');
+
+  const openQuestions = questions.filter(q => getQuestionStatus(q).status === 'open');
+  const submittedQuestions = questions.filter(q => getQuestionStatus(q).status === 'submitted');
+  const gradedQuestions = questions.filter(q => getQuestionStatus(q).status === 'graded');
+
   return (
     <div className="space-y-6">
       <div className="main-content-card">
-        <h2 className="text-2xl font-bold mb-6">Mijn Taken & Vragen</h2>
-        
-        <Tabs defaultValue="tasks" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="tasks">
-              Taken ({tasks.filter(t => !t.submissions?.length).length})
+        <h2 className="text-2xl font-bold mb-6">Mijn Opdrachten en Vragen</h2>
+
+        <Tabs defaultValue="open" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="open">
+              Te Maken ({openTasks.length + openQuestions.length})
             </TabsTrigger>
-            <TabsTrigger value="questions">
-              Vragen ({questions.length})
+            <TabsTrigger value="submitted">
+              Ingediend ({submittedTasks.length + submittedQuestions.length})
+            </TabsTrigger>
+            <TabsTrigger value="graded">
+              Beoordeeld ({gradedTasks.length + gradedQuestions.length})
             </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="tasks" className="space-y-4">
-            {tasks.filter(task => !task.submissions?.length).map((task) => (
-              <Card key={task.id} className="floating-content">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{task.title}</CardTitle>
-                      <p className="text-sm text-muted-foreground">
-                        {task.niveaus.klassen.name} - {task.niveaus.naam}
-                      </p>
-                    </div>
-                    <Badge variant="outline">
-                      <FileText className="w-3 h-3 mr-1" />
-                      {task.required_submission_type === 'text' ? 'Tekst' : 'Bestand'}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm">{task.description}</p>
-                  
-                  {task.external_link && (
-                    <Button variant="outline" size="sm" asChild>
-                      <a href={task.external_link} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        Externe link
-                      </a>
-                    </Button>
-                  )}
 
-                  <div className="border-t pt-4">
-                    {task.required_submission_type === 'text' ? (
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">Jouw antwoord:</label>
-                        <Textarea
-                          placeholder="Typ hier je antwoord..."
-                          value={submissionTexts[task.id] || ''}
-                          onChange={(e) => setSubmissionTexts(prev => ({
-                            ...prev,
-                            [task.id]: e.target.value
-                          }))}
-                        />
+          {/* Open Tasks and Questions */}
+          <TabsContent value="open" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Open Tasks */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Opdrachten ({openTasks.length})
+                </h3>
+                {openTasks.map((task) => (
+                  <Card key={task.id} className="floating-content mb-3">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <CardTitle className="text-base">{task.title}</CardTitle>
+                          {task.description && (
+                            <p className="text-sm text-muted-foreground mt-1">{task.description}</p>
+                          )}
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Max: {task.grading_scale} punten
+                          </p>
+                        </div>
+                        <Badge variant="destructive">Te maken</Badge>
                       </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">Upload bestand:</label>
-                        <Input
-                          type="file"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              setSubmissionFiles(prev => ({
-                                ...prev,
-                                [task.id]: file
-                              }));
-                            }
-                          }}
-                        />
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      {task.required_submission_type === 'text' ? (
+                        <div className="space-y-3">
+                          <Textarea
+                            placeholder="Typ je antwoord hier..."
+                            value={submissionData[task.id] || ''}
+                            onChange={(e) => setSubmissionData(prev => ({ ...prev, [task.id]: e.target.value }))}
+                            rows={4}
+                          />
+                          <Button 
+                            onClick={() => submitTask(task.id, 'text')}
+                            disabled={!submissionData[task.id]?.trim()}
+                            className="w-full"
+                          >
+                            Opdracht Indienen
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          <Input
+                            type="file"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setSubmissionData(prev => ({ ...prev, [task.id]: file.name }));
+                              }
+                            }}
+                          />
+                          <Button 
+                            onClick={() => submitTask(task.id, 'file')}
+                            disabled={!submissionData[task.id]}
+                            className="w-full"
+                          >
+                            <Upload className="w-4 h-4 mr-2" />
+                            Bestand Uploaden
+                          </Button>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+                {openTasks.length === 0 && (
+                  <Card className="floating-content">
+                    <CardContent className="text-center py-4">
+                      <CheckCircle className="w-8 h-8 mx-auto text-green-500 mb-2" />
+                      <p className="text-sm text-muted-foreground">Alle opdrachten zijn gemaakt!</p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+
+              {/* Open Questions */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <HelpCircle className="h-5 w-5" />
+                  Vragen ({openQuestions.length})
+                </h3>
+                {openQuestions.map((question) => (
+                  <Card key={question.id} className="floating-content mb-3">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <CardTitle className="text-base">{question.vraag_tekst}</CardTitle>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Type: {question.vraag_type}
+                          </p>
+                        </div>
+                        <Badge variant="destructive">Te beantwoorden</Badge>
                       </div>
-                    )}
-                    
-                    <Button 
-                      onClick={() => submitTask(task.id)}
-                      className="mt-3"
-                      disabled={
-                        task.required_submission_type === 'text' 
-                          ? !submissionTexts[task.id]?.trim()
-                          : !submissionFiles[task.id]
-                      }
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Indienen
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-            
-            {tasks.filter(t => !t.submissions?.length).length === 0 && (
-              <Card className="floating-content">
-                <CardContent className="text-center py-8">
-                  <CheckCircle className="w-12 h-12 mx-auto text-green-500 mb-4" />
-                  <p className="text-muted-foreground">Geen openstaande taken</p>
-                </CardContent>
-              </Card>
-            )}
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      {renderQuestionInput(question)}
+                    </CardContent>
+                  </Card>
+                ))}
+                {openQuestions.length === 0 && (
+                  <Card className="floating-content">
+                    <CardContent className="text-center py-4">
+                      <CheckCircle className="w-8 h-8 mx-auto text-green-500 mb-2" />
+                      <p className="text-sm text-muted-foreground">Alle vragen zijn beantwoord!</p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            </div>
           </TabsContent>
-          
-          <TabsContent value="questions" className="space-y-4">
-            {questions.map((question) => (
-              <Card key={question.id} className="floating-content">
-<CardHeader>
-  <CardTitle className="text-lg">{question.vraag_tekst}</CardTitle>
-  <p className="text-sm text-muted-foreground">
-    {question.niveaus.klassen.name} - {question.niveaus.naam}
-  </p>
-</CardHeader>
-                <CardContent>
-{(question.vraag_type === 'enkelvoudig' || question.vraag_type === 'meervoudig') && question.opties && (
-  <div className="space-y-2">
-    {question.opties.map((option: string, index: number) => {
-      const selectedSet = selectedOptions[question.id] || new Set<string>();
-      const isSelected = selectedSet.has(option);
-      return (
-        <Button
-          key={index}
-          variant={isSelected ? 'default' : 'outline'}
-          className="w-full justify-start"
-          onClick={() => {
-            setSelectedOptions(prev => {
-              const set = new Set(prev[question.id] || []);
-              if (question.vraag_type === 'enkelvoudig') {
-                return { ...prev, [question.id]: new Set([option]) };
-              } else {
-                if (set.has(option)) set.delete(option); else set.add(option);
-                return { ...prev, [question.id]: set };
-              }
-            });
-          }}
-        >
-          {option}
-        </Button>
-      );
-    })}
-    <Button
-      onClick={() => {
-        const ansSet = selectedOptions[question.id] || new Set<string>();
-        const answer = question.vraag_type === 'enkelvoudig' ? Array.from(ansSet)[0] : Array.from(ansSet);
-        if (!answer || (Array.isArray(answer) && answer.length === 0)) return;
-        submitAnswer(question.id, answer);
-      }}
-    >
-      Antwoord indienen
-    </Button>
-  </div>
-)}
 
-{question.vraag_type === 'open' && (
-  <div className="space-y-2">
-    <Textarea
-      placeholder="Typ hier je antwoord..."
-      value={openAnswers[question.id] || ''}
-      onChange={(e) => setOpenAnswers(prev => ({ ...prev, [question.id]: e.target.value }))}
-    />
-    <Button 
-      onClick={() => {
-        const val = (openAnswers[question.id] || '').trim();
-        if (val) submitAnswer(question.id, val);
-      }}
-    >
-      Antwoord indienen
-    </Button>
-  </div>
-)}
+          {/* Submitted Tab */}
+          <TabsContent value="submitted" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Submitted Tasks */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Ingediende Opdrachten ({submittedTasks.length})
+                </h3>
+                {submittedTasks.map((task) => (
+                  <Card key={task.id} className="floating-content mb-3">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <CardTitle className="text-base">{task.title}</CardTitle>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Ingediend: {formatDistanceToNow(new Date(task.submission!.submitted_at), { 
+                              addSuffix: true, 
+                              locale: nl 
+                            })}
+                          </p>
+                        </div>
+                        <Badge variant="secondary">
+                          <Clock className="w-3 h-3 mr-1" />
+                          Wachten op beoordeling
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      {task.submission?.submission_content && (
+                        <div className="p-3 bg-muted rounded-lg">
+                          <p className="text-sm">{task.submission.submission_content}</p>
+                        </div>
+                      )}
+                      {task.submission?.submission_file_path && (
+                        <div className="p-3 bg-muted rounded-lg">
+                          <p className="text-sm">📎 {task.submission.submission_file_path}</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
 
-{/* Media support */}
-{(question as any).audio_url && (
-  <div className="mt-4">
-    <audio controls src={(question as any).audio_url} />
-  </div>
-)}
-{(question as any).video_url && (
-  <div className="mt-4">
-    <a href={(question as any).video_url} target="_blank" rel="noopener noreferrer" className="underline text-primary">
-      Bekijk video
-    </a>
-  </div>
-)}
-                </CardContent>
-              </Card>
-            ))}
-            
-            {questions.length === 0 && (
-              <Card className="floating-content">
-                <CardContent className="text-center py-8">
-                  <p className="text-muted-foreground">Geen vragen beschikbaar</p>
-                </CardContent>
-              </Card>
-            )}
+              {/* Submitted Questions */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <HelpCircle className="h-5 w-5" />
+                  Beantwoorde Vragen ({submittedQuestions.length})
+                </h3>
+                {submittedQuestions.map((question) => (
+                  <Card key={question.id} className="floating-content mb-3">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <CardTitle className="text-base line-clamp-2">{question.vraag_tekst}</CardTitle>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Beantwoord: {formatDistanceToNow(new Date(question.answer!.created_at), { 
+                              addSuffix: true, 
+                              locale: nl 
+                            })}
+                          </p>
+                        </div>
+                        <Badge variant="secondary">
+                          <Clock className="w-3 h-3 mr-1" />
+                          Wachten op beoordeling
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="p-3 bg-muted rounded-lg">
+                        <p className="text-sm">{question.answer?.antwoord}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Graded Tab */}
+          <TabsContent value="graded" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Graded Tasks */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Beoordeelde Opdrachten ({gradedTasks.length})
+                </h3>
+                {gradedTasks.map((task) => (
+                  <Card key={task.id} className="floating-content mb-3">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <CardTitle className="text-base">{task.title}</CardTitle>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Beoordeeld: {formatDistanceToNow(new Date(task.submission!.submitted_at), { 
+                              addSuffix: true, 
+                              locale: nl 
+                            })}
+                          </p>
+                        </div>
+                        <Badge variant="default">
+                          <Star className="w-3 h-3 mr-1" />
+                          {task.submission?.grade}/{task.grading_scale}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      {task.submission?.submission_content && (
+                        <div className="p-3 bg-muted rounded-lg mb-3">
+                          <p className="text-sm font-medium mb-1">Je antwoord:</p>
+                          <p className="text-sm">{task.submission.submission_content}</p>
+                        </div>
+                      )}
+                      {task.submission?.feedback && (
+                        <div className="p-3 bg-green-50 rounded-lg">
+                          <p className="text-sm font-medium mb-1">Feedback:</p>
+                          <p className="text-sm">{task.submission.feedback}</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Graded Questions */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <HelpCircle className="h-5 w-5" />
+                  Beoordeelde Vragen ({gradedQuestions.length})
+                </h3>
+                {gradedQuestions.map((question) => (
+                  <Card key={question.id} className="floating-content mb-3">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <CardTitle className="text-base line-clamp-2">{question.vraag_tekst}</CardTitle>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Beoordeeld: {formatDistanceToNow(new Date(question.answer!.created_at), { 
+                              addSuffix: true, 
+                              locale: nl 
+                            })}
+                          </p>
+                        </div>
+                        <Badge variant={question.answer?.is_correct ? "default" : "destructive"}>
+                          <Star className="w-3 h-3 mr-1" />
+                          {question.answer?.punten || 0} pts
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="p-3 bg-muted rounded-lg mb-3">
+                        <p className="text-sm font-medium mb-1">Je antwoord:</p>
+                        <p className="text-sm">{question.answer?.antwoord}</p>
+                      </div>
+                      {question.answer?.feedback && (
+                        <div className="p-3 bg-green-50 rounded-lg">
+                          <p className="text-sm font-medium mb-1">Feedback:</p>
+                          <p className="text-sm">{question.answer.feedback}</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

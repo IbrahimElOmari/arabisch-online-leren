@@ -17,12 +17,16 @@ import {
   Calendar,
   BookOpen,
   Star,
-  AlertCircle
+  AlertCircle,
+  Edit,
+  Trash2
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { nl } from 'date-fns/locale';
 import { TaskSubmissionModal } from '@/components/tasks/TaskSubmissionModal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { TaskEditModal } from './TaskEditModal';
+import { QuestionEditModal } from './QuestionEditModal';
 
 interface Task {
   id: string;
@@ -113,6 +117,14 @@ export const TaskQuestionManagementNew = () => {
     questionId: string;
     questionText: string;
   }>({ open: false, questionId: '', questionText: '' });
+  const [editTaskModal, setEditTaskModal] = useState<{
+    open: boolean;
+    task: Task | null;
+  }>({ open: false, task: null });
+  const [editQuestionModal, setEditQuestionModal] = useState<{
+    open: boolean;
+    question: Question | null;
+  }>({ open: false, question: null });
 
   useEffect(() => {
     fetchClasses();
@@ -329,36 +341,110 @@ export const TaskQuestionManagementNew = () => {
     }
   };
 
-const gradeSubmission = async (submissionId: string, grade: number, feedback?: string) => {
-  try {
-    const { error } = await supabase
+  const deleteTask = async (taskId: string, taskTitle: string) => {
+    // Check if task has submissions
+    const { data: submissions, error: submissionError } = await supabase
       .from('task_submissions')
-      .update({ grade, feedback })
-      .eq('id', submissionId);
+      .select('id')
+      .eq('task_id', taskId);
 
-    if (error) throw error;
-
-    // Create notification for student
-    const sub = submissions.find(s => s.id === submissionId);
-    if (sub) {
-      await supabase.from('user_notifications').insert({
-        user_id: sub.student_id,
-        message: `Je opdracht is beoordeeld met cijfer ${grade}${feedback ? '. ' + feedback : ''}`
-      });
+    if (submissionError) {
+      toast.error('Fout bij controleren inzendingen');
+      return;
     }
 
-    toast.success('Beoordeling opgeslagen');
-    // Refresh submissions
-    if (submissionModal.taskId) {
-      viewTaskSubmissions(submissionModal.taskId, submissionModal.taskTitle);
+    if (submissions && submissions.length > 0) {
+      toast.error('Kan opdracht niet verwijderen: er zijn al inzendingen');
+      return;
     }
-    // Refresh tasks to update counts
-    fetchTasksAndQuestions();
-  } catch (error) {
-    console.error('Error grading submission:', error);
-    toast.error('Fout bij het opslaan van beoordeling');
-  }
-};
+
+    if (!confirm(`Weet je zeker dat je "${taskTitle}" wilt verwijderen?`)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('id', taskId);
+
+      if (error) throw error;
+
+      toast.success('Opdracht verwijderd');
+      fetchTasksAndQuestions();
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      toast.error('Fout bij verwijderen opdracht');
+    }
+  };
+
+  const deleteQuestion = async (questionId: string, questionText: string) => {
+    // Check if question has answers
+    const { data: answers, error: answerError } = await supabase
+      .from('antwoorden')
+      .select('id')
+      .eq('vraag_id', questionId);
+
+    if (answerError) {
+      toast.error('Fout bij controleren antwoorden');
+      return;
+    }
+
+    if (answers && answers.length > 0) {
+      toast.error('Kan vraag niet verwijderen: er zijn al antwoorden');
+      return;
+    }
+
+    if (!confirm(`Weet je zeker dat je deze vraag wilt verwijderen?`)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('vragen')
+        .delete()
+        .eq('id', questionId);
+
+      if (error) throw error;
+
+      toast.success('Vraag verwijderd');
+      fetchTasksAndQuestions();
+    } catch (error) {
+      console.error('Error deleting question:', error);
+      toast.error('Fout bij verwijderen vraag');
+    }
+  };
+
+  const gradeSubmission = async (submissionId: string, grade: number, feedback?: string) => {
+    try {
+      const { error } = await supabase
+        .from('task_submissions')
+        .update({ grade, feedback })
+        .eq('id', submissionId);
+
+      if (error) throw error;
+
+      // Create notification for student
+      const sub = submissions.find(s => s.id === submissionId);
+      if (sub) {
+        await supabase.from('user_notifications').insert({
+          user_id: sub.student_id,
+          message: `Je opdracht is beoordeeld met cijfer ${grade}${feedback ? '. ' + feedback : ''}`
+        });
+      }
+
+      toast.success('Beoordeling opgeslagen');
+      // Refresh submissions
+      if (submissionModal.taskId) {
+        viewTaskSubmissions(submissionModal.taskId, submissionModal.taskTitle);
+      }
+      // Refresh tasks to update counts
+      fetchTasksAndQuestions();
+    } catch (error) {
+      console.error('Error grading submission:', error);
+      toast.error('Fout bij het opslaan van beoordeling');
+    }
+  };
 
   const gradeAnswer = async (answerId: string, isCorrect: boolean, points: number, feedback?: string) => {
     try {
@@ -632,15 +718,32 @@ const gradeSubmission = async (submissionId: string, grade: number, feedback?: s
                             <div className="text-xs text-orange-600">Wachten</div>
                           </div>
                         </div>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => viewTaskSubmissions(task.id, task.title)}
-                          className="w-full"
-                        >
-                          <Eye className="w-4 h-4 mr-2" />
-                          Bekijk Details
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => viewTaskSubmissions(task.id, task.title)}
+                            className="flex-1"
+                          >
+                            <Eye className="w-4 h-4 mr-2" />
+                            Bekijk Details
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => setEditTaskModal({ open: true, task })}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => deleteTask(task.id, task.title)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
@@ -720,15 +823,32 @@ const gradeSubmission = async (submissionId: string, grade: number, feedback?: s
                             <div className="text-xs text-orange-600">Wachten</div>
                           </div>
                         </div>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => viewQuestionAnswers(question.id, question.vraag_tekst)}
-                          className="w-full"
-                        >
-                          <Eye className="w-4 h-4 mr-2" />
-                          Bekijk Details
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => viewQuestionAnswers(question.id, question.vraag_tekst)}
+                            className="flex-1"
+                          >
+                            <Eye className="w-4 h-4 mr-2" />
+                            Bekijk Details
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => setEditQuestionModal({ open: true, question })}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => deleteQuestion(question.id, question.vraag_tekst)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
@@ -954,6 +1074,22 @@ const gradeSubmission = async (submissionId: string, grade: number, feedback?: s
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Task Edit Modal */}
+      <TaskEditModal
+        open={editTaskModal.open}
+        onOpenChange={(open) => setEditTaskModal({ open, task: null })}
+        task={editTaskModal.task}
+        onSuccess={fetchTasksAndQuestions}
+      />
+
+      {/* Question Edit Modal */}
+      <QuestionEditModal
+        open={editQuestionModal.open}
+        onOpenChange={(open) => setEditQuestionModal({ open, question: null })}
+        question={editQuestionModal.question}
+        onSuccess={fetchTasksAndQuestions}
+      />
     </div>
   );
 };
