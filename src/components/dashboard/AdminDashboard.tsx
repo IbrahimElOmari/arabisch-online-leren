@@ -39,7 +39,7 @@ import { ClassOptionsDropdown } from '@/components/admin/ClassOptionsDropdown';
 import UserActivationPanel from '@/components/admin/UserActivationPanel';
 import PastLessonsManager from '@/components/lessons/PastLessonsManager';
 import { GradingInterface } from '@/components/teacher/GradingInterface';
-import { TaskQuestionManagementNew } from '@/components/management/TaskQuestionManagementNew';
+import TaskQuestionManagementNew from '@/components/management/TaskQuestionManagementNew';
 
 interface ClassData {
   id: string;
