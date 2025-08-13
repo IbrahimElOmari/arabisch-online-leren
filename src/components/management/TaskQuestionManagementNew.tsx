@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -68,7 +69,7 @@ const TaskQuestionManagementNew = () => {
       
       const tasksWithAuthor = data?.map(task => ({
         ...task,
-        required_submission_type: task.required_submission_type || 'text',
+        required_submission_type: task.required_submission_type || 'text' as 'text' | 'file',
         author: { full_name: task.profiles?.full_name || 'Onbekend' }
       })) || [];
 
@@ -87,7 +88,20 @@ const TaskQuestionManagementNew = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setQuestions(data || []);
+      
+      // Map database fields to interface
+      const mappedQuestions = data?.map(item => ({
+        id: item.id,
+        niveau_id: item.niveau_id,
+        vraag: item.vraag_tekst || '', // Map vraag_tekst to vraag
+        audio_url: item.audio_url,
+        correct_antwoord: typeof item.correct_antwoord === 'string' 
+          ? item.correct_antwoord 
+          : JSON.stringify(item.correct_antwoord) || '',
+        created_at: item.created_at,
+      })) || [];
+
+      setQuestions(mappedQuestions);
     } catch (error: any) {
       console.error('Error fetching questions:', error);
     }
@@ -139,7 +153,8 @@ const TaskQuestionManagementNew = () => {
         .insert([
           {
             niveau_id: levelId,
-            vraag: newQuestionText,
+            vraag_tekst: newQuestionText, // Use correct database field name
+            vraag_type: 'text', // Add required field
           },
         ]);
 
@@ -160,6 +175,10 @@ const TaskQuestionManagementNew = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleTaskTypeChange = (value: string) => {
+    setNewTaskType(value as 'text' | 'file');
   };
 
   return (
@@ -204,7 +223,7 @@ const TaskQuestionManagementNew = () => {
               />
               <div className="mt-2 flex items-center space-x-2">
                 <Label htmlFor="taskType">Type:</Label>
-                <Select value={newTaskType} onValueChange={setNewTaskType}>
+                <Select value={newTaskType} onValueChange={handleTaskTypeChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecteer type" />
                   </SelectTrigger>

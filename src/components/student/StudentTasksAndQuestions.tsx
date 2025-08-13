@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, Radio, CheckCircle2, Clock, Loader2 } from 'lucide-react';
+import { FileText, Radio, CheckCircle2, Clock, Loader2, Upload } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -112,16 +113,21 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
       if (error) throw error;
 
       const questionsWithAnswers = data?.map(question => ({
-        ...question,
+        id: question.id,
+        niveau_id: question.niveau_id,
+        vraag: question.vraag_tekst || '', // Map vraag_tekst to vraag
+        audio_url: question.audio_url,
         correct_antwoord: typeof question.correct_antwoord === 'string' 
           ? question.correct_antwoord 
           : JSON.stringify(question.correct_antwoord) || '',
+        created_at: question.created_at,
         answer: question.antwoorden?.[0] ? {
           ...question.antwoorden[0],
           antwoord: typeof question.antwoorden[0].antwoord === 'string'
             ? question.antwoorden[0].antwoord
             : JSON.stringify(question.antwoorden[0].antwoord) || ''
-        } : undefined
+        } : undefined,
+        niveaus: question.niveaus
       })) || [];
 
       setQuestions(questionsWithAnswers);
@@ -147,6 +153,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
 
       const tasksWithAuthor = data?.map(task => ({
         ...task,
+        required_submission_type: task.required_submission_type || 'text' as 'text' | 'file',
         author: { full_name: task.profiles?.full_name || 'Onbekend' }
       })) || [];
 
@@ -171,22 +178,25 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
             student_id: profile?.id,
             submission_content: submissionText,
           },
-        ]);
+        ])
+        .select();
 
       if (error) {
         throw new Error(`Taak kon niet worden ingediend: ${error.message}`);
       }
 
-      setTaskSubmissions((prevSubmissions) => [
-        ...prevSubmissions,
-        {
-          id: data[0].id,
-          task_id: taskId,
-          student_id: profile?.id,
-          submission_content: submissionText,
-          submitted_at: new Date().toISOString(),
-        },
-      ]);
+      if (data && data.length > 0) {
+        setTaskSubmissions((prevSubmissions) => [
+          ...prevSubmissions,
+          {
+            id: data[0].id,
+            task_id: taskId,
+            student_id: profile?.id || '',
+            submission_content: submissionText,
+            submitted_at: new Date().toISOString(),
+          },
+        ]);
+      }
       setSubmissionText('');
       alert('Taak succesvol ingediend!');
     } catch (error: any) {
@@ -244,7 +254,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
         {
           id: data.path,
           task_id: taskId,
-          student_id: profile?.id,
+          student_id: profile?.id || '',
           submission_file_path: filePath,
           submitted_at: new Date().toISOString(),
         },
