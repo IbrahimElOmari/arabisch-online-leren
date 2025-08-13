@@ -3,99 +3,226 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { NotificationBell } from '@/components/ui/NotificationBell';
-import { Shield } from 'lucide-react';
+import { Shield, Home, Calendar, MessageSquare, Eye, BookOpen, Users, LogIn, User } from 'lucide-react';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@/components/ui/navigation-menu';
+import { cn } from '@/lib/utils';
 
 const Navigation = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
 
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
+
   return (
-    <nav className="bg-card border-b border-border sticky top-0 z-50">
+    <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-8">
+          {/* Logo */}
+          <div className="flex items-center">
             <button 
               onClick={() => navigate('/')}
-              className="text-xl font-bold text-foreground hover:text-primary transition-colors"
+              className="text-2xl font-bold text-foreground hover:text-primary transition-colors duration-200 flex items-center gap-2"
             >
+              <BookOpen className="h-7 w-7 text-primary" />
               Leer Arabisch
             </button>
-            <div className="hidden md:flex space-x-6">
-              <button 
-                onClick={() => navigate('/')}
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Home
-              </button>
-              {!user ? (
-                <button 
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center">
+            <NavigationMenu>
+              <NavigationMenuList className="flex items-center space-x-2">
+                {/* Home */}
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    className={cn(
+                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
+                    )}
+                    onClick={() => handleNavigation('/')}
+                  >
+                    <Home className="mr-2 h-4 w-4" />
+                    Home
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+
+                {/* Learning Platform - alleen voor ingelogde gebruikers */}
+                {user && (
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="flex items-center gap-2">
+                      <BookOpen className="h-4 w-4" />
+                      Leerplatform
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <div className="grid gap-3 p-6 w-[400px]">
+                        <div className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <button
+                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md hover:bg-accent transition-colors text-left"
+                              onClick={() => handleNavigation('/dashboard')}
+                            >
+                              <User className="h-6 w-6 mb-2" />
+                              <div className="mb-2 mt-4 text-lg font-medium">
+                                Dashboard
+                              </div>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                Toegang tot je persoonlijke leeromgeving en voortgang.
+                              </p>
+                            </button>
+                          </NavigationMenuLink>
+                        </div>
+                        <div className="grid gap-2">
+                          <NavigationMenuLink asChild>
+                            <button
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground text-left w-full"
+                              onClick={() => handleNavigation('/calendar')}
+                            >
+                              <Calendar className="h-4 w-4 mb-1" />
+                              <div className="text-sm font-medium leading-none">Kalender</div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                Bekijk geplande lessen en activiteiten.
+                              </p>
+                            </button>
+                          </NavigationMenuLink>
+                          <NavigationMenuLink asChild>
+                            <button
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground text-left w-full"
+                              onClick={() => handleNavigation('/forum')}
+                            >
+                              <MessageSquare className="h-4 w-4 mb-1" />
+                              <div className="text-sm font-medium leading-none">Forum</div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                Deel ervaringen met andere leerlingen.
+                              </p>
+                            </button>
+                          </NavigationMenuLink>
+                        </div>
+                      </div>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                )}
+
+                {/* Kalender - altijd zichtbaar */}
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    className={cn(
+                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
+                    )}
+                    onClick={() => handleNavigation('/calendar')}
+                  >
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Kalender
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+
+                {/* Visie */}
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    className={cn(
+                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
+                    )}
+                    onClick={() => handleNavigation('/visie')}
+                  >
+                    <Eye className="mr-2 h-4 w-4" />
+                    Visie
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+
+                {/* Admin/Teacher Menu - alleen voor admin en leerkrachten */}
+                {user && profile && ['admin', 'leerkracht'].includes(profile.role) && (
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Beheer
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <div className="grid gap-3 p-6 w-[350px]">
+                        <NavigationMenuLink asChild>
+                          <button
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground text-left w-full"
+                            onClick={() => handleNavigation('/forum-moderation')}
+                          >
+                            <MessageSquare className="h-4 w-4 mb-1" />
+                            <div className="text-sm font-medium leading-none">Forum Moderatie</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              Beheer forum posts en berichten.
+                            </p>
+                          </button>
+                        </NavigationMenuLink>
+                        <NavigationMenuLink asChild>
+                          <button
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground text-left w-full"
+                            onClick={() => handleNavigation('/security')}
+                          >
+                            <Shield className="h-4 w-4 mb-1" />
+                            <div className="text-sm font-medium leading-none">Beveiliging</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              Beveiligingsinstellingen en monitoring.
+                            </p>
+                          </button>
+                        </NavigationMenuLink>
+                      </div>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                )}
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+
+          {/* Right Side */}
+          <div className="flex items-center space-x-4">
+            {user ? (
+              <>
+                <NotificationBell />
+                <div className="hidden sm:flex items-center space-x-3">
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-foreground">
+                      {profile?.full_name || user.email}
+                    </p>
+                    <p className="text-xs text-muted-foreground capitalize">
+                      {profile?.role || 'Gebruiker'}
+                    </p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="h-9 px-3"
+                    onClick={() => navigate('/dashboard')}
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="h-9 px-3"
                   onClick={() => navigate('/auth')}
                 >
+                  <LogIn className="h-4 w-4 mr-2" />
                   Inloggen
-                </button>
-              ) : (
-                <button 
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => navigate('/dashboard')}
+                </Button>
+                <Button 
+                  size="sm"
+                  className="h-9 px-4"
+                  onClick={() => navigate('/auth')}
                 >
-                  Dashboard
-                </button>
-              )}
-              <button 
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => navigate('/calendar')}
-              >
-                Kalender
-              </button>
-              {user && (
-                <button 
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => navigate('/forum')}
-                >
-                  Forum
-                </button>
-              )}
-              <button 
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => navigate('/visie')}
-              >
-                Visie
-              </button>
-              {user && profile && ['admin', 'leerkracht'].includes(profile.role) && (
-                <>
-                  <button 
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                    onClick={() => navigate('/forum-moderation')}
-                  >
-                    Forum Moderatie
-                  </button>
-                  <button 
-                    className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
-                    onClick={() => navigate('/security')}
-                  >
-                    <Shield className="h-4 w-4" />
-                    Beveiliging
-                  </button>
-                </>
-              )}
-            </div>
+                  Registreren
+                </Button>
+              </div>
+            )}
           </div>
-          {user && (
-            <div className="flex items-center space-x-4">
-              <NotificationBell />
-              <span className="text-sm text-muted-foreground">
-                Welkom, {profile?.full_name || user.email}
-              </span>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => navigate('/dashboard')}
-              >
-                Dashboard
-              </Button>
-            </div>
-          )}
         </div>
       </div>
     </nav>
