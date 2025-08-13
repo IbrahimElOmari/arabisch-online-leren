@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -45,6 +44,8 @@ interface Question {
   vraag_tekst: string;
   vraag_type: string;
   created_at: string;
+  opties?: any;
+  correct_antwoord?: any;
   answer?: {
     id: string;
     antwoord: string;
@@ -139,14 +140,33 @@ export const StudentTasksAndQuestions = () => {
 
       // Process tasks
       const processedTasks = (tasksData || []).map(task => ({
-        ...task,
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        required_submission_type: task.required_submission_type,
+        grading_scale: task.grading_scale,
+        created_at: task.created_at,
         submission: task.task_submissions?.[0] || null
       }));
 
-      // Process questions  
+      // Process questions - handle Json to string conversion
       const processedQuestions = (questionsData || []).map(question => ({
-        ...question,
-        answer: question.antwoorden?.[0] || null
+        id: question.id,
+        vraag_tekst: question.vraag_tekst,
+        vraag_type: question.vraag_type,
+        created_at: question.created_at,
+        opties: question.opties,
+        correct_antwoord: question.correct_antwoord,
+        answer: question.antwoorden?.[0] ? {
+          id: question.antwoorden[0].id,
+          antwoord: typeof question.antwoorden[0].antwoord === 'string' 
+            ? question.antwoorden[0].antwoord 
+            : JSON.stringify(question.antwoorden[0].antwoord),
+          is_correct: question.antwoorden[0].is_correct,
+          punten: question.antwoorden[0].punten,
+          feedback: question.antwoorden[0].feedback,
+          created_at: question.antwoorden[0].created_at
+        } : null
       }));
 
       setTasks(processedTasks);
