@@ -1,250 +1,227 @@
 
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { ArrowRight, BookOpen, Users, Star, Award, Play, CheckCircle, Globe, Heart, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  BookOpen, 
-  Users, 
-  Star, 
-  CheckCircle, 
-  Globe, 
-  Clock, 
-  Play,
-  Trophy,
-  Heart,
-  ArrowRight,
-  Sparkles,
-  Target,
-  Award
-} from 'lucide-react';
+import { CourseCatalog } from '@/components/ui/course-catalog';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
-  const { user, loading, authReady } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user && authReady && !loading) {
-      navigate('/dashboard');
+  const features = [
+    {
+      icon: BookOpen,
+      title: "Interactieve Lessen",
+      description: "Leer Arabisch met onze moderne, interactieve lesmethoden die aangepast zijn aan jouw tempo."
+    },
+    {
+      icon: Users,
+      title: "Expert Instructeurs", 
+      description: "Onze ervaren native speakers begeleiden je stap voor stap naar vloeiend Arabisch."
+    },
+    {
+      icon: Award,
+      title: "Gecertificeerde Cursussen",
+      description: "Ontvang erkende certificaten die je vooruitgang en kennis officieel bevestigen."
+    },
+    {
+      icon: Globe,
+      title: "Culturele Context",
+      description: "Ontdek niet alleen de taal, maar ook de rijke cultuur en tradities van de Arabische wereld."
     }
-  }, [user, loading, authReady, navigate]);
+  ];
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-lg">Laden...</div>
-      </div>
-    );
-  }
+  const testimonials = [
+    {
+      name: "Sarah van der Berg",
+      role: "Student",
+      content: "Dankzij deze platform heb ik in 6 maanden basis Arabisch geleerd. De lessen zijn duidelijk en boeiend!",
+      rating: 5
+    },
+    {
+      name: "Ahmed Khalil", 
+      role: "Zakenman",
+      content: "Perfect voor professionals. De zakelijke Arabische cursus heeft mijn carrière een boost gegeven.",
+      rating: 5
+    },
+    {
+      name: "Lisa Janssen",
+      role: "Reiziger", 
+      content: "Fantastische voorbereiding voor mijn reis naar Marokko. Ik kon me al snel verstaanbaar maken!",
+      rating: 4
+    }
+  ];
+
+  const stats = [
+    { number: "2,500+", label: "Tevreden Studenten" },
+    { number: "15+", label: "Expert Instructeurs" }, 
+    { number: "98%", label: "Slaagpercentage" },
+    { number: "24/7", label: "Online Toegang" }
+  ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section - Revolutionair ontwerp */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-secondary/10 to-accent/5">
-        <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
-        <div className="relative max-w-7xl mx-auto px-4 py-24 sm:py-32">
-          <div className="text-center space-y-8">
-            <div className="flex justify-center mb-6">
-              <Badge variant="secondary" className="px-4 py-2 text-sm font-medium">
-                <Sparkles className="h-4 w-4 mr-2" />
-                Nieuw: Interactieve Live Lessen
-              </Badge>
-            </div>
-            
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-foreground tracking-tight">
-              Ontdek de{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60">
-                Schoonheid
-              </span>
-              <br />
-              van het Arabisch
-            </h1>
-            
-            <p className="mx-auto max-w-3xl text-xl sm:text-2xl text-muted-foreground leading-relaxed">
-              Verbind je met je wortels door de rijke Arabische taal te leren. 
-              Onze platform biedt persoonlijke begeleiding, interactieve lessen 
-              en een ondersteunende gemeenschap.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-              <Button 
-                size="lg" 
-                className="text-lg px-8 py-4 h-14 shadow-lg hover:shadow-xl transition-all duration-200"
-                onClick={() => navigate('/auth')}
-              >
-                <Play className="mr-2 h-5 w-5" />
-                Begin Je Reis
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="text-lg px-8 py-4 h-14 border-2"
-                onClick={() => navigate('/visie')}
-              >
-                <Heart className="mr-2 h-5 w-5" />
-                Onze Visie
-              </Button>
-            </div>
-
-            {/* Trust Indicators */}
-            <div className="pt-12 grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
-              <div className="space-y-2">
-                <div className="text-3xl font-bold text-primary">500+</div>
-                <div className="text-sm text-muted-foreground">Actieve Leerlingen</div>
-              </div>
-              <div className="space-y-2">
-                <div className="text-3xl font-bold text-primary">15+</div>
-                <div className="text-sm text-muted-foreground">Ervaren Docenten</div>
-              </div>
-              <div className="space-y-2">
-                <div className="text-3xl font-bold text-primary">1000+</div>
-                <div className="text-sm text-muted-foreground">Voltooide Lessen</div>
-              </div>
-              <div className="space-y-2">
-                <div className="text-3xl font-bold text-primary">4.9/5</div>
-                <div className="text-sm text-muted-foreground">Tevredenheid</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Vision Section - Verbeterd */}
-      <section className="py-20 bg-card/30">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
-              Onze Missie & Visie
-            </h2>
-            <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
-          </div>
-          
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10">
+        <div className="absolute inset-0 bg-[url('/arabic-pattern-bg.png')] opacity-5"></div>
+        <div className="relative max-w-7xl mx-auto px-4 py-20 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Target className="h-6 w-6 text-primary" />
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <Badge variant="outline" className="w-fit px-4 py-2 text-sm font-medium">
+                  <Star className="mr-2 h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  #1 Platform voor Arabisch Leren
+                </Badge>
+                
+                <h1 className="text-5xl lg:text-7xl font-bold tracking-tight">
+                  <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                    أهلاً وسهلاً
+                  </span>
+                  <br />
+                  <span className="text-foreground">Leer Arabisch</span>
+                </h1>
+                
+                <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
+                  Ontdek de schoonheid van de Arabische taal met onze innovatieve, 
+                  interactieve lesmethoden. Van beginner tot gevorderd - wij begeleiden 
+                  je reis naar vloeiend Arabisch.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  size="lg" 
+                  className="text-lg px-8 py-6 group"
+                  onClick={() => navigate('/auth')}
+                >
+                  Begin Je Reis
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="text-lg px-8 py-6 group"
+                  onClick={() => navigate('/visie')}
+                >
+                  <Play className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+                  Bekijk Demo
+                </Button>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="flex items-center gap-6 pt-8">
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="w-8 h-8 rounded-full bg-primary/20 border-2 border-background"></div>
+                    ))}
+                  </div>
+                  <span className="text-sm text-muted-foreground">2,500+ studenten</span>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Onze Missie</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Een generatie jongeren begeleiden die zelfverzekerd schakelt tussen Europese steden 
-                    en de diepe rijkdom van Arabische verhalen. Ons platform is een kompas naar culturele verbinding.
+                
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                  <span className="text-sm text-muted-foreground ml-1">4.9/5 sterren</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="relative z-10 bg-card border rounded-2xl p-8 shadow-2xl">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Gratis Proefles</h3>
+                    <Badge className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+                      Live Nu
+                    </Badge>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                      <span className="text-sm">Arabisch alfabet in 30 min</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                      <span className="text-sm">Basis uitspraak oefeningen</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                      <span className="text-sm">Eerste woorden & zinnen</span>
+                    </div>
+                  </div>
+
+                  <Button className="w-full" onClick={() => navigate('/auth')}>
+                    Doe Gratis Mee
+                    <Heart className="ml-2 h-4 w-4" />
+                  </Button>
+                  
+                  <p className="text-xs text-center text-muted-foreground">
+                    Geen verplichtingen • Cancel op elk moment
                   </p>
                 </div>
               </div>
               
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Award className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Kwaliteit Voorop</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    We bieden kwalitatief Arabisch onderwijs dat verder gaat dan taal alleen – 
-                    het is een brug naar historische ontdekkingen en islamitische identiteit.
-                  </p>
-                </div>
-              </div>
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/20 rounded-full blur-xl"></div>
+              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-secondary/20 rounded-full blur-xl"></div>
             </div>
-            
-            <Card className="p-8 bg-gradient-to-br from-primary/5 to-secondary/10 border-primary/20">
-              <CardContent className="p-0">
-                <div className="text-center space-y-4">
-                  <Trophy className="h-16 w-16 text-primary mx-auto" />
-                  <h3 className="text-2xl font-bold">Waarom Kiezen Voor Ons?</h3>
-                  <ul className="space-y-3 text-left">
-                    <li className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span>Persoonlijke begeleiding van native speakers</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span>Flexibele online lessen en live sessies</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span>Interactieve oefeningen en voortgangstracking</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span>Ondersteunende leergemeenschap</span>
-                    </li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </section>
 
-      {/* Features Section - Modernized */}
-      <section className="py-20 bg-background">
+      {/* Stats Section */}
+      <section className="py-16 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
-              Waarom Duizenden Studenten Voor Ons Kiezen
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center space-y-2">
+                <div className="text-3xl lg:text-4xl font-bold text-primary">
+                  {stat.number}
+                </div>
+                <div className="text-sm lg:text-base text-muted-foreground">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center space-y-4 mb-16">
+            <Badge variant="outline" className="px-4 py-2">
+              <Zap className="mr-2 h-4 w-4" />
+              Waarom Kiezen Voor Ons
+            </Badge>
+            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight">
+              De Beste Manier Om <span className="text-primary">Arabisch Te Leren</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Ontdek de voordelen van ons innovatieve leerplatform
+              Onze bewezen methode combineert moderne technologie met traditionele 
+              lesmethoden voor optimale resultaten.
             </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Users,
-                title: "Ervaren Native Speakers",
-                description: "Leer van gecertificeerde docenten die gepassioneerd zijn over het onderwijzen van Arabisch en hun cultuur.",
-                color: "text-blue-500"
-              },
-              {
-                icon: Clock,
-                title: "Flexibele Schema's",
-                description: "Plan je lessen wanneer het jou uitkomt met onze 24/7 toegankelijke platform en flexibele live sessies.",
-                color: "text-green-500"
-              },
-              {
-                icon: BookOpen,
-                title: "Interactieve Methoden",
-                description: "Geniet van multimedia lessen, gamification en praktische oefeningen die het leren tot een avontuur maken.",
-                color: "text-purple-500"
-              },
-              {
-                icon: CheckCircle,
-                title: "Voortgang Tracking",
-                description: "Volg je ontwikkeling met gedetailleerde rapporten, certificates en persoonlijke feedback van docenten.",
-                color: "text-orange-500"
-              },
-              {
-                icon: Globe,
-                title: "Wereldwijde Toegang",
-                description: "Leer vanuit elke locatie met onze cloud-based platform die werkt op alle apparaten.",
-                color: "text-cyan-500"
-              },
-              {
-                icon: Star,
-                title: "Excellentie Garantie",
-                description: "Hoogwaardige content, continue updates en een team dat zich inzet voor jouw succes.",
-                color: "text-yellow-500"
-              }
-            ].map((feature, index) => (
-              <Card key={index} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 border-l-transparent hover:border-l-primary">
-                <CardHeader className="text-center pb-4">
-                  <div className={`w-16 h-16 ${feature.color} mx-auto mb-4 p-3 bg-muted rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                    <feature.icon className="h-8 w-8" />
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <Card key={index} className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
+                <CardHeader className="text-center space-y-4">
+                  <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <feature.icon className="h-8 w-8 text-primary" />
                   </div>
-                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                    {feature.title}
-                  </CardTitle>
+                  <CardTitle className="text-xl">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-center leading-relaxed">
+                  <p className="text-center text-muted-foreground leading-relaxed">
                     {feature.description}
-                  </CardDescription>
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -252,84 +229,85 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Section - Enhanced */}
-      <section className="py-20 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="space-y-8">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-              Klaar Om Je Arabische Avontuur Te Beginnen?
-            </h2>
-            <p className="text-xl text-muted-foreground leading-relaxed">
-              Sluit je aan bij een groeiende gemeenschap van gepassioneerde leerlingen 
-              en ontdek de schoonheid van de Arabische taal en cultuur.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button 
-                size="lg" 
-                className="text-lg px-8 py-4 h-14 shadow-lg hover:shadow-xl transition-all duration-200"
-                onClick={() => navigate('/auth')}
-              >
-                <BookOpen className="mr-2 h-5 w-5" />
-                Start Vandaag
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="text-lg px-8 py-4 h-14 border-2"
-                onClick={() => navigate('/visie')}
-              >
-                <Heart className="mr-2 h-5 w-5" />
-                Meer Over Ons
-              </Button>
-            </div>
+      {/* Course Catalog Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4">
+          <CourseCatalog />
+        </div>
+      </section>
 
-            <div className="pt-8 text-sm text-muted-foreground">
-              <p>✨ Geen verborgen kosten • 🎯 Persoonlijke begeleiding • 🏆 Certificaten inbegrepen</p>
-            </div>
+      {/* Testimonials Section */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight">
+              Wat Onze <span className="text-primary">Studenten Zeggen</span>
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Ontdek waarom duizenden studenten voor ons platform hebben gekozen
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
+                <CardHeader>
+                  <div className="flex items-center gap-1 mb-4">
+                    {Array.from({ length: testimonial.rating }).map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <CardTitle className="text-lg">{testimonial.name}</CardTitle>
+                  <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground italic leading-relaxed">
+                    "{testimonial.content}"
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Footer - Simplified */}
-      <footer className="bg-card border-t border-border py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <BookOpen className="h-6 w-6 text-primary" />
-                <span className="text-xl font-bold">Leer Arabisch</span>
-              </div>
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                Ontdek de schoonheid van het Arabisch met onze innovatieve online leerplatform. 
-                Van beginners tot gevorderden, wij begeleiden je op elke stap van je leerreis.
-              </p>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-3">Platform</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><button onClick={() => navigate('/visie')} className="hover:text-primary transition-colors">Onze Visie</button></li>
-                <li><button onClick={() => navigate('/calendar')} className="hover:text-primary transition-colors">Kalender</button></li>
-                <li><button onClick={() => navigate('/auth')} className="hover:text-primary transition-colors">Registreren</button></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-3">Juridisch</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><button onClick={() => navigate('/privacy-policy')} className="hover:text-primary transition-colors">Privacy</button></li>
-                <li><button onClick={() => navigate('/terms-of-service')} className="hover:text-primary transition-colors">Voorwaarden</button></li>
-              </ul>
-            </div>
-          </div>
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-primary to-primary/80">
+        <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
+          <h2 className="text-4xl lg:text-5xl font-bold text-primary-foreground">
+            Klaar Om Te Beginnen?
+          </h2>
+          <p className="text-xl text-primary-foreground/90 leading-relaxed">
+            Sluit je aan bij duizenden studenten die al hun Arabische taaldoelen hebben bereikt. 
+            Begin vandaag nog met je gratis proefles!
+          </p>
           
-          <div className="border-t border-border mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>© 2024 Leer Arabisch Online. Met ❤️ gemaakt voor onze gemeenschap.</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              size="lg" 
+              variant="secondary"
+              className="text-lg px-8 py-6 group"
+              onClick={() => navigate('/auth')}
+            >
+              Start Gratis Proefles
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+            
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="text-lg px-8 py-6 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10"
+              onClick={() => navigate('/visie')}
+            >
+              Meer Informatie
+            </Button>
           </div>
+
+          <p className="text-sm text-primary-foreground/70">
+            30 dagen geld-terug-garantie • Geen verborgen kosten
+          </p>
         </div>
-      </footer>
+      </section>
     </div>
   );
 };

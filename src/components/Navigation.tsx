@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { NotificationBell } from '@/components/ui/NotificationBell';
+import { MobileNav } from '@/components/ui/mobile-nav';
+import { SearchCommand } from '@/components/ui/search-command';
 import { Shield, Home, Calendar, MessageSquare, Eye, BookOpen, Users, LogIn, User } from 'lucide-react';
 import {
   NavigationMenu,
@@ -33,7 +35,7 @@ const Navigation = () => {
               className="text-2xl font-bold text-foreground hover:text-primary transition-colors duration-200 flex items-center gap-2"
             >
               <BookOpen className="h-7 w-7 text-primary" />
-              Leer Arabisch
+              <span className="hidden sm:block">Leer Arabisch</span>
             </button>
           </div>
 
@@ -177,8 +179,10 @@ const Navigation = () => {
             </NavigationMenu>
           </div>
 
-          {/* Right Side */}
+          {/* Search and Mobile Navigation */}
           <div className="flex items-center space-x-4">
+            <SearchCommand />
+            
             {user ? (
               <>
                 <NotificationBell />
@@ -203,7 +207,7 @@ const Navigation = () => {
                 </div>
               </>
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="hidden sm:flex items-center space-x-2">
                 <Button 
                   variant="ghost" 
                   size="sm"
@@ -222,6 +226,8 @@ const Navigation = () => {
                 </Button>
               </div>
             )}
+
+            <MobileNav />
           </div>
         </div>
       </div>
