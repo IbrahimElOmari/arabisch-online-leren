@@ -6,6 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { WelcomeWidget } from './WelcomeWidget';
 import { LevelOverview, type LevelData } from './LevelOverview';
 import { LevelDetail } from './LevelDetail';
+import { StudentStats } from './StudentStats';
+import { ActivityFeed } from './ActivityFeed';
+import { QuickActions } from './QuickActions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import PastLessonsManager from '@/components/lessons/PastLessonsManager';
@@ -60,6 +63,50 @@ const StudentDashboard = () => {
       console.error('Error fetching enrolled classes:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const mockActivities = [
+    {
+      id: '1',
+      type: 'lesson_completed' as const,
+      title: 'Les 4 voltooid',
+      description: 'Arabische Grammatica - Niveau 1',
+      timestamp: '2 uur geleden',
+      points: 50
+    },
+    {
+      id: '2',
+      type: 'achievement' as const,
+      title: 'Eerste week voltooid!',
+      description: 'Je hebt je eerste week van leren afgerond',
+      timestamp: '1 dag geleden',
+      points: 100
+    },
+    {
+      id: '3',
+      type: 'forum_post' as const,
+      title: 'Vraag gesteld in forum',
+      description: 'Over uitspraak van de letter ض',
+      timestamp: '2 dagen geleden'
+    }
+  ];
+
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case 'continue-learning':
+        if (enrolledClasses.length > 0) {
+          handleClassClick(enrolledClasses[0]);
+        }
+        break;
+      case 'forum':
+        navigate('/forum');
+        break;
+      case 'schedule':
+        navigate('/calendar');
+        break;
+      default:
+        console.log('Action:', action);
     }
   };
 
@@ -156,98 +203,123 @@ const StudentDashboard = () => {
       <main className="max-w-7xl mx-auto p-6">
         {viewState === 'classes' && (
           <>
-            <WelcomeWidget recentActivity={getRecentActivity()} />
-            
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <GraduationCap className="h-5 w-5" />
-                  Mijn Klassen
-                </h2>
-                
-                {enrolledClasses.length === 0 ? (
-                  <Card>
-                    <CardContent className="text-center py-8">
-                      <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground">
-                        Je bent nog niet ingeschreven voor een klas.
-                      </p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {enrolledClasses.map((enrollment) => (
-                      <Card 
-                        key={enrollment.id}
-                        className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105"
-                        onClick={() => handleClassClick(enrollment)}
-                      >
+            <div className="space-y-8">
+              {/* Stats Overview */}
+              <StudentStats
+                completedLessons={12}
+                totalLessons={15}
+                averageScore={85}
+                studyTime={24}
+                currentStreak={7}
+              />
+
+              {/* Quick Actions */}
+              <QuickActions onAction={handleQuickAction} />
+
+              {/* Main Content Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left Column - Classes */}
+                <div className="lg:col-span-2 space-y-6">
+                  <div>
+                    <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <GraduationCap className="h-5 w-5" />
+                      Mijn Klassen
+                    </h2>
+                    
+                    {enrolledClasses.length === 0 ? (
+                      <Card>
+                        <CardContent className="text-center py-8">
+                          <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                          <p className="text-muted-foreground">
+                            Je bent nog niet ingeschreven voor een klas.
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {enrolledClasses.map((enrollment) => (
+                          <Card 
+                            key={enrollment.id}
+                            className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] bg-gradient-to-br from-card to-muted/20"
+                            onClick={() => handleClassClick(enrollment)}
+                          >
+                            <CardHeader className="pb-3">
+                              <CardTitle className="flex items-center gap-2 text-lg">
+                                <BookOpen className="h-5 w-5 text-primary" />
+                                {enrollment.klassen.name}
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="text-muted-foreground text-sm mb-4">
+                                {enrollment.klassen.description}
+                              </p>
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-green-600 flex items-center gap-1">
+                                  ✓ Ingeschreven
+                                </span>
+                                <Button variant="outline" size="sm" className="text-xs">
+                                  Open Klas →
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Additional sections for enrolled students */}
+                  {enrolledClasses.length > 0 && (
+                    <>
+                      <StudentTaskNotifications />
+                      
+                      <Card>
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">
-                            <BookOpen className="h-5 w-5 text-primary" />
-                            {enrollment.klassen.name}
+                            <Video className="h-5 w-5" />
+                            Voorbije Lessen
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <p className="text-muted-foreground text-sm mb-4">
-                            {enrollment.klassen.description}
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-green-600">
-                              ✓ Ingeschreven
-                            </span>
-                            <Button variant="outline" size="sm">
-                              Open Klas →
-                            </Button>
-                          </div>
+                          <PastLessonsManager 
+                            classId={enrolledClasses[0]?.class_id}
+                            niveauId={undefined}
+                          />
                         </CardContent>
                       </Card>
-                    ))}
-                  </div>
-                )}
-              </div>
+                    </>
+                  )}
+                </div>
 
-              {enrolledClasses.length > 0 && (
-                <>
-                  <StudentTaskNotifications />
+                {/* Right Column - Activity Feed */}
+                <div className="space-y-6">
+                  <ActivityFeed activities={mockActivities} />
                   
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Video className="h-5 w-5" />
-                        Voorbije Lessen
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <PastLessonsManager 
-                        classId={enrolledClasses[0]?.class_id}
-                        niveauId={undefined}
-                      />
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <MessageSquare className="h-5 w-5" />
-                        Forum
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground mb-4">
-                        Discussieer met je klasgenoten en leerkrachten
-                      </p>
-                      <Button 
-                        onClick={() => navigate('/forum')}
-                        className="flex items-center gap-2"
-                      >
-                        <MessageSquare className="h-4 w-4" />
-                        Ga naar Forum
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </>
-              )}
+                  {enrolledClasses.length > 0 && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <MessageSquare className="h-5 w-5" />
+                          Community
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground mb-4 text-sm">
+                          Discussieer met je klasgenoten en leerkrachten
+                        </p>
+                        <Button 
+                          onClick={() => navigate('/forum')}
+                          className="w-full flex items-center gap-2"
+                          variant="outline"
+                        >
+                          <MessageSquare className="h-4 w-4" />
+                          Ga naar Forum
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </div>
             </div>
           </>
         )}
