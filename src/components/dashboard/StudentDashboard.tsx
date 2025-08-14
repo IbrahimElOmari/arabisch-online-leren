@@ -13,6 +13,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import PastLessonsManager from '@/components/lessons/PastLessonsManager';
 import { StudentTaskNotifications } from '@/components/tasks/StudentTaskNotifications';
+import { BadgeSystem, type UserBadge, type UserLevel } from '@/components/gamification/BadgeSystem';
+import { StreakCounter } from '@/components/gamification/StreakCounter';
 
 interface EnrolledClass {
   id: string;
@@ -35,6 +37,60 @@ const StudentDashboard = () => {
   const [viewState, setViewState] = useState<ViewState>('classes');
   const [selectedClass, setSelectedClass] = useState<EnrolledClass | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+
+  // Mock gamification data
+  const mockBadges: UserBadge[] = [
+    {
+      id: '1',
+      name: 'Eerste Les',
+      description: 'Voltooi je eerste les',
+      icon: 'star',
+      earned: true,
+      earnedAt: '2024-01-15'
+    },
+    {
+      id: '2',
+      name: 'Week Warrior',
+      description: 'Leer 7 dagen op rij',
+      icon: 'trophy',
+      earned: true,
+      earnedAt: '2024-01-20'
+    },
+    {
+      id: '3',
+      name: 'Alfabet Master',
+      description: 'Beheers het Arabische alfabet',
+      icon: 'crown',
+      earned: false,
+      progress: 18,
+      maxProgress: 28
+    },
+    {
+      id: '4',
+      name: 'Quiz Champion',
+      description: 'Haal 90%+ op 5 quizzes',
+      icon: 'target',
+      earned: false,
+      progress: 2,
+      maxProgress: 5
+    }
+  ];
+
+  const mockUserLevel: UserLevel = {
+    currentLevel: 3,
+    currentXP: 850,
+    nextLevelXP: 1000,
+    totalXP: 2850
+  };
+
+  const mockStreakData = {
+    currentStreak: 7,
+    longestStreak: 12,
+    lastActivity: '2024-01-21T10:30:00Z',
+    todayCompleted: true,
+    weeklyGoal: 5,
+    weeklyProgress: 4
+  };
 
   useEffect(() => {
     fetchEnrolledClasses();
@@ -204,17 +260,44 @@ const StudentDashboard = () => {
         {viewState === 'classes' && (
           <>
             <div className="space-y-8">
+              {/* Gamification Section */}
+              <div className="space-y-6">
+                <StreakCounter streakData={mockStreakData} />
+                <BadgeSystem 
+                  badges={mockBadges} 
+                  userLevel={mockUserLevel}
+                  showProgress={true}
+                />
+              </div>
+
               {/* Stats Overview */}
               <StudentStats
                 completedLessons={12}
                 totalLessons={15}
                 averageScore={85}
                 studyTime={24}
-                currentStreak={7}
+                currentStreak={mockStreakData.currentStreak}
               />
 
               {/* Quick Actions */}
-              <QuickActions onAction={handleQuickAction} />
+              <QuickActions onAction={(action) => {
+                switch (action) {
+                  case 'continue-learning':
+                    if (enrolledClasses.length > 0) {
+                      setSelectedClass(enrolledClasses[0]);
+                      setViewState('levels');
+                    }
+                    break;
+                  case 'forum':
+                    navigate('/forum');
+                    break;
+                  case 'schedule':
+                    navigate('/calendar');
+                    break;
+                  default:
+                    console.log('Action:', action);
+                }
+              }} />
 
               {/* Main Content Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -241,7 +324,10 @@ const StudentDashboard = () => {
                           <Card 
                             key={enrollment.id}
                             className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] bg-gradient-to-br from-card to-muted/20"
-                            onClick={() => handleClassClick(enrollment)}
+                            onClick={() => {
+                              setSelectedClass(enrollment);
+                              setViewState('levels');
+                            }}
                           >
                             <CardHeader className="pb-3">
                               <CardTitle className="flex items-center gap-2 text-lg">
@@ -293,7 +379,31 @@ const StudentDashboard = () => {
 
                 {/* Right Column - Activity Feed */}
                 <div className="space-y-6">
-                  <ActivityFeed activities={mockActivities} />
+                  <ActivityFeed activities={[
+                    {
+                      id: '1',
+                      type: 'lesson_completed' as const,
+                      title: 'Les 4 voltooid',
+                      description: 'Arabische Grammatica - Niveau 1',
+                      timestamp: '2 uur geleden',
+                      points: 50
+                    },
+                    {
+                      id: '2',
+                      type: 'achievement' as const,
+                      title: 'Eerste week voltooid!',
+                      description: 'Je hebt je eerste week van leren afgerond',
+                      timestamp: '1 dag geleden',
+                      points: 100
+                    },
+                    {
+                      id: '3',
+                      type: 'forum_post' as const,
+                      title: 'Vraag gesteld in forum',
+                      description: 'Over uitspraak van de letter ض',
+                      timestamp: '2 dagen geleden'
+                    }
+                  ]} />
                   
                   {enrolledClasses.length > 0 && (
                     <Card>
@@ -324,19 +434,57 @@ const StudentDashboard = () => {
           </>
         )}
 
+        {/* Level Overview */}
         {viewState === 'levels' && selectedClass && (
           <LevelOverview
             classId={selectedClass.class_id}
             className={selectedClass.klassen.name}
-            levels={mockLevels}
-            onLevelClick={handleLevelClick}
+            levels={[
+              {
+                id: 'level-1',
+                name: 'Niveau 1',
+                isCompleted: true,
+                isAccessible: true,
+                currentLesson: 15,
+                totalLessons: 15
+              },
+              {
+                id: 'level-2',
+                name: 'Niveau 2',
+                isCompleted: false,
+                isAccessible: true,
+                currentLesson: 8,
+                totalLessons: 15
+              },
+              {
+                id: 'level-3',
+                name: 'Niveau 3',
+                isCompleted: false,
+                isAccessible: false,
+                currentLesson: 0,
+                totalLessons: 15
+              },
+              {
+                id: 'level-4',
+                name: 'Niveau 4',
+                isCompleted: false,
+                isAccessible: false,
+                currentLesson: 0,
+                totalLessons: 15
+              }
+            ]}
+            onLevelClick={(levelId) => {
+              setSelectedLevel(levelId);
+              setViewState('detail');
+            }}
           />
         )}
 
+        {/* Level Detail */}
         {viewState === 'detail' && selectedClass && selectedLevel && (
           <LevelDetail
             levelId={selectedLevel}
-            levelName={mockLevels.find(l => l.id === selectedLevel)?.name || ''}
+            levelName={['Niveau 1', 'Niveau 2', 'Niveau 3', 'Niveau 4'].find((_, i) => `level-${i+1}` === selectedLevel) || ''}
             className={selectedClass.klassen.name}
             onBack={handleBackToLevels}
           />

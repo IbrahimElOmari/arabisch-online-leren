@@ -4,66 +4,59 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { AppGate } from "@/components/auth/AppGate";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import Navigation from "@/components/Navigation";
-import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
-import ErrorBoundary from "@/components/ui/error-boundary";
-import ThemeToggle from "@/components/ui/theme-toggle";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
-import Security from "./pages/Security";
-import Visie from "./pages/Visie";
 import Calendar from "./pages/Calendar";
 import Forum from "./pages/Forum";
 import ForumModeration from "./pages/ForumModeration";
 import Analytics from "./pages/Analytics";
+import Security from "./pages/Security";
+import ResetPassword from "./pages/ResetPassword";
+import EnrollConfirm from "./pages/EnrollConfirm";
 import NotFound from "./pages/NotFound";
-import EnrollConfirmPage from "./pages/EnrollConfirm";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Visie from "./pages/Visie";
 import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import CourseDetail from "./pages/CourseDetail";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <TooltipProvider>
-        <div className="min-h-screen bg-background">
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AuthProvider>
-              <AppGate>
-                <ThemeToggle />
-                <AnalyticsTracker />
-                <Navigation />
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                  <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                  <Route path="/visie" element={<Visie />} />
-                  <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
-                  <Route path="/forum" element={<ProtectedRoute><Forum /></ProtectedRoute>} />
-                  <Route path="/forum-moderation" element={<ProtectedRoute><ForumModeration /></ProtectedRoute>} />
-                  <Route path="/security" element={<ProtectedRoute><Security /></ProtectedRoute>} />
-                  <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-                  <Route path="/enroll-confirm/:classId" element={<ProtectedRoute><EnrollConfirmPage /></ProtectedRoute>} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                  <Route path="/terms-of-service" element={<TermsOfService />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </AppGate>
-            </AuthProvider>
-          </BrowserRouter>
-        </div>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <AppGate>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/calendar" element={<Calendar />} />
+                <Route path="/forum" element={<Forum />} />
+                <Route path="/forum-moderation" element={<ForumModeration />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/security" element={<Security />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/enroll-confirm" element={<EnrollConfirm />} />
+                <Route path="/course/:id" element={<CourseDetail />} />
+                <Route path="/visie" element={<Visie />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AppGate>
+          </AuthProvider>
+        </BrowserRouter>
       </TooltipProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
+    </ThemeProvider>
+  </QueryClientProvider>
 );
 
 export default App;
