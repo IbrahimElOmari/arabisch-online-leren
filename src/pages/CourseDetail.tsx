@@ -1,6 +1,6 @@
 
 import { useParams } from 'react-router-dom';
-import { Navigation } from '@/components/Navigation';
+import Navigation from '@/components/Navigation';
 import { CourseDetailPage } from '@/components/course/CourseDetailPage';
 
 const CourseDetail = () => {
