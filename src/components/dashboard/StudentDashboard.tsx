@@ -21,6 +21,13 @@ import {
   GraduationCap
 } from 'lucide-react';
 
+// Updated: beschrijving en description kunnen null zijn
+type NiveauItem = {
+  id: string;
+  naam: string;
+  beschrijving: string | null;
+};
+
 interface EnrolledClass {
   id: string;
   class_id: string;
@@ -28,12 +35,8 @@ interface EnrolledClass {
   klassen: {
     id: string;
     name: string;
-    description: string;
-    niveaus: Array<{
-      id: string;
-      naam: string;
-      beschrijving: string;
-    }>;
+    description: string | null;
+    niveaus: NiveauItem[];
   };
 }
 
@@ -50,10 +53,13 @@ const StudentDashboard = () => {
     }
   }, [profile?.id]);
 
+  // Fix: split query - eerst inschrijvingen + klassen, dan niveaus per class_id laden en samenvoegen
   const fetchEnrolledClasses = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      console.debug('🔎 Fetching enrolled classes for student:', profile?.id);
+
+      const { data: enrollmentData, error: enrollmentError } = await supabase
         .from('inschrijvingen')
         .select(`
           id,
@@ -62,31 +68,84 @@ const StudentDashboard = () => {
           klassen:class_id (
             id,
             name,
-            description,
-            niveaus (
-              id,
-              naam,
-              beschrijving
-            )
+            description
           )
         `)
-        .eq('student_id', profile?.id)
+        .eq('student_id', profile?.id as string)
         .eq('payment_status', 'paid');
 
-      if (error) throw error;
-      
-      console.log('Enrolled classes data:', data);
-      setEnrolledClasses(data || []);
-      
-      // Auto-select first class and level
-      if (data && data.length > 0) {
-        setSelectedClass(data[0].class_id);
-        if (data[0].klassen.niveaus && data[0].klassen.niveaus.length > 0) {
-          setSelectedLevel(data[0].klassen.niveaus[0].id);
-        }
+      if (enrollmentError) throw enrollmentError;
+
+      type RawEnrollment = {
+        id: string;
+        class_id: string;
+        payment_status: string;
+        klassen: {
+          id: string;
+          name: string;
+          description: string | null;
+        } | null;
+      };
+
+      const enrollments = (enrollmentData ?? []) as unknown as RawEnrollment[];
+      console.debug('✅ Enrollments loaded:', enrollments);
+
+      const classIds = enrollments.map((e) => e.class_id).filter(Boolean);
+      if (classIds.length === 0) {
+        setEnrolledClasses([]);
+        setSelectedClass('');
+        setSelectedLevel('');
+        return;
+      }
+
+      // Fetch niveaus per klas
+      const { data: niveausData, error: niveausError } = await supabase
+        .from('niveaus')
+        .select('id, naam, beschrijving, class_id')
+        .in('class_id', classIds);
+
+      if (niveausError) throw niveausError;
+
+      type NiveauRow = {
+        id: string;
+        naam: string;
+        beschrijving: string | null;
+        class_id: string;
+      };
+
+      const niveausByClass = new Map<string, NiveauItem[]>();
+      (niveausData as unknown as NiveauRow[] | null)?.forEach((n) => {
+        const arr = niveausByClass.get(n.class_id) ?? [];
+        arr.push({ id: n.id, naam: n.naam, beschrijving: n.beschrijving });
+        niveausByClass.set(n.class_id, arr);
+      });
+
+      const merged: EnrolledClass[] = enrollments.map((e) => ({
+        id: e.id,
+        class_id: e.class_id,
+        payment_status: e.payment_status,
+        klassen: {
+          id: e.klassen?.id ?? e.class_id,
+          name: e.klassen?.name ?? 'Onbekende klas',
+          description: e.klassen?.description ?? null,
+          niveaus: niveausByClass.get(e.class_id) ?? [],
+        },
+      }));
+
+      console.debug('📚 Merged enrolled classes with levels:', merged);
+      setEnrolledClasses(merged);
+
+      // Auto-selecteer eerste klas en eerste niveau
+      if (merged.length > 0) {
+        setSelectedClass(merged[0].class_id);
+        const firstLevelId = merged[0].klassen.niveaus[0]?.id ?? '';
+        setSelectedLevel(firstLevelId);
       }
     } catch (error) {
       console.error('Error fetching enrolled classes:', error);
+      setEnrolledClasses([]);
+      setSelectedClass('');
+      setSelectedLevel('');
     } finally {
       setLoading(false);
     }
@@ -173,6 +232,8 @@ const StudentDashboard = () => {
                       setSelectedClass(enrollment.class_id);
                       if (enrollment.klassen.niveaus.length > 0) {
                         setSelectedLevel(enrollment.klassen.niveaus[0].id);
+                      } else {
+                        setSelectedLevel('');
                       }
                     }}
                     className="flex items-center gap-2"
@@ -302,3 +363,4 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
+
