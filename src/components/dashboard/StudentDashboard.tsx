@@ -1,393 +1,302 @@
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { supabase } from '@/integrations/supabase/client';
+import { StudentTasksAndQuestions } from '@/components/student/StudentTasksAndQuestions';
+import { LevelQuestions } from '@/components/tasks/LevelQuestions';
+import Navigation from '@/components/Navigation';
 import { 
-  LogOut, 
   BookOpen, 
-  Trophy, 
+  Calendar, 
   MessageSquare, 
-  Calendar,
-  TrendingUp,
-  Users,
-  Star,
+  Trophy,
   Clock,
-  Target,
-  Award,
-  Flame,
-  User
+  CheckCircle,
+  AlertCircle,
+  Users,
+  GraduationCap
 } from 'lucide-react';
 
-import { useAuth } from '@/components/auth/AuthProvider';
-import { WelcomeWidget } from './WelcomeWidget';
-import { BadgeSystem, UserBadge, UserLevel } from '@/components/gamification/BadgeSystem';
-import { StreakCounter } from '@/components/gamification/StreakCounter';
-import { LeaderboardSystem } from '@/components/gamification/LeaderboardSystem';
-import { MentorSystem } from '@/components/community/MentorSystem';
-import { RealtimeChat } from '@/components/community/RealtimeChat';
-import { CourseRecommendations } from '@/components/ai/CourseRecommendations';
-import { ActivityFeed } from './ActivityFeed';
+interface EnrolledClass {
+  id: string;
+  class_id: string;
+  payment_status: string;
+  klassen: {
+    id: string;
+    name: string;
+    description: string;
+    niveaus: Array<{
+      id: string;
+      naam: string;
+      beschrijving: string;
+    }>;
+  };
+}
 
 const StudentDashboard = () => {
-  const { signOut, profile } = useAuth();
-  const navigate = useNavigate();
+  const { profile } = useAuth();
+  const [enrolledClasses, setEnrolledClasses] = useState<EnrolledClass[]>([]);
+  const [selectedClass, setSelectedClass] = useState<string>('');
+  const [selectedLevel, setSelectedLevel] = useState<string>('');
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - replace with actual API calls
-  const mockBadges: UserBadge[] = [
-    {
-      id: '1',
-      name: 'Eerste Les',
-      description: 'Voltooi je eerste Arabische les',
-      icon: 'star',
-      earned: true,
-      earnedAt: '2024-01-15'
-    },
-    {
-      id: '2',
-      name: 'Weekstreak',
-      description: '7 dagen achter elkaar geoefend',
-      icon: 'trophy',
-      earned: true,
-      earnedAt: '2024-01-22'
-    },
-    {
-      id: '3',
-      name: 'Spraakmeester',
-      description: 'Voltooi 50 uitspraakoefeningen',
-      icon: 'target',
-      earned: false,
-      progress: 23,
-      maxProgress: 50
+  useEffect(() => {
+    if (profile?.id) {
+      fetchEnrolledClasses();
     }
-  ];
+  }, [profile?.id]);
 
-  const mockUserLevel: UserLevel = {
-    currentLevel: 3,
-    currentXP: 1250,
-    nextLevelXP: 1500,
-    totalXP: 3750
+  const fetchEnrolledClasses = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('inschrijvingen')
+        .select(`
+          id,
+          class_id,
+          payment_status,
+          klassen:class_id (
+            id,
+            name,
+            description,
+            niveaus (
+              id,
+              naam,
+              beschrijving
+            )
+          )
+        `)
+        .eq('student_id', profile?.id)
+        .eq('payment_status', 'paid');
+
+      if (error) throw error;
+      
+      console.log('Enrolled classes data:', data);
+      setEnrolledClasses(data || []);
+      
+      // Auto-select first class and level
+      if (data && data.length > 0) {
+        setSelectedClass(data[0].class_id);
+        if (data[0].klassen.niveaus && data[0].klassen.niveaus.length > 0) {
+          setSelectedLevel(data[0].klassen.niveaus[0].id);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching enrolled classes:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const mockStreakData = {
-    currentStreak: 12,
-    longestStreak: 18,
-    lastActivity: '2024-01-20T10:30:00',
-    todayCompleted: true,
-    weeklyGoal: 5,
-    weeklyProgress: 3
+  const getCurrentClass = () => {
+    return enrolledClasses.find(enrollment => enrollment.class_id === selectedClass);
   };
 
-  const mockLeaderboardUsers = [
-    {
-      id: '1',
-      name: 'Ahmed Al-Rashid',
-      points: 2500,
-      rank: 1,
-      streak: 25,
-      coursesCompleted: 3,
-      level: 4
-    },
-    {
-      id: '2',
-      name: 'Fatima Hassan',
-      points: 2200,
-      rank: 2,
-      streak: 15,
-      coursesCompleted: 2,
-      level: 3
-    },
-    {
-      id: 'current',
-      name: profile?.full_name || 'Jij',
-      points: 1250,
-      rank: 8,
-      streak: 12,
-      coursesCompleted: 1,
-      level: 3
-    }
-  ];
-
-  const mockMentors = [
-    {
-      id: '1',
-      name: 'Dr. Amira Khalil',
-      expertise: ['Grammatica', 'Conversatie', 'Klassiek Arabisch'],
-      rating: 4.9,
-      totalSessions: 150,
-      languages: ['Arabisch', 'Nederlands', 'Engels'],
-      availability: [
-        { day: 'Maandag', time: '14:00', available: true },
-        { day: 'Woensdag', time: '16:00', available: true },
-        { day: 'Vrijdag', time: '10:00', available: true }
-      ]
-    }
-  ];
-
-  const mockChatChannels = [
-    {
-      id: 'general',
-      name: 'algemeen',
-      description: 'Algemene discussies over Arabisch leren',
-      memberCount: 45,
-      isActive: true
-    },
-    {
-      id: 'beginner',
-      name: 'beginners',
-      description: 'Voor nieuwe leerlingen',
-      memberCount: 23,
-      isActive: false
-    }
-  ];
-
-  const mockChatMessages = [
-    {
-      id: '1',
-      userId: 'user1',
-      userName: 'Ahmed',
-      content: 'Heeft iemand tips voor het onthouden van werkwoorden?',
-      timestamp: new Date(Date.now() - 300000),
-      type: 'message' as const
-    },
-    {
-      id: '2',
-      userId: 'user2',
-      userName: 'Fatima',
-      content: 'Ik gebruik flashcards, werkt heel goed!',
-      timestamp: new Date(Date.now() - 240000),
-      type: 'message' as const
-    }
-  ];
-
-  const mockRecommendations = [
-    {
-      id: 'course-1',
-      title: 'Arabische Grammatica Diepduik',
-      description: 'Versterk je grammaticakennis met praktische oefeningen',
-      instructor: 'Dr. Omar Mansour',
-      duration: '6 weken',
-      level: 'intermediate' as const,
-      rating: 4.8,
-      enrollments: 234,
-      matchScore: 92,
-      reasons: [
-        'Past bij je huidige niveau',
-        'Helpt met geïdentificeerde zwakke punten',
-        'Hoge waardering van andere leerlingen'
-      ],
-      price: 89
-    }
-  ];
-
-  const mockActivities = [
-    {
-      id: '1',
-      type: 'lesson_completed' as const,
-      title: 'Les 5 voltooid',
-      description: 'Arabische werkwoorden - verleden tijd',
-      timestamp: '2 uur geleden',
-      points: 50
-    },
-    {
-      id: '2',
-      type: 'achievement' as const,
-      title: 'Badge behaald',
-      description: 'Weekstreak - 7 dagen achter elkaar geoefend',
-      timestamp: '1 dag geleden',
-      points: 100
-    }
-  ];
-
-  const mockUserProgress = {
-    completedCourses: 1,
-    currentLevel: 'Niveau 3',
-    interests: ['Grammatica', 'Conversatie', 'Cultuur'],
-    weakAreas: ['Werkwoorden', 'Luistervaardigheden']
+  const getCurrentLevel = () => {
+    const currentClass = getCurrentClass();
+    return currentClass?.klassen.niveaus.find(niveau => niveau.id === selectedLevel);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto p-6">
+          <div className="animate-pulse">
+            <div className="h-8 bg-muted rounded mb-6 w-48"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-32 bg-muted rounded"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (enrolledClasses.length === 0) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto p-6">
+          <Card>
+            <CardContent className="text-center py-12">
+              <GraduationCap className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <h2 className="text-xl font-semibold mb-4">Geen ingeschreven klassen</h2>
+              <p className="text-muted-foreground mb-4">
+                Je bent nog niet ingeschreven voor een klas. Neem contact op met je leerkracht of admin.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  const currentClass = getCurrentClass();
+  const currentLevel = getCurrentLevel();
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card border-b border-border p-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Mijn Leeromgeving</h1>
-            <p className="text-muted-foreground">Welkom terug, {profile?.full_name}</p>
-          </div>
-          <Button onClick={signOut} variant="outline" className="flex items-center gap-2">
-            <LogOut className="h-4 w-4" />
-            Uitloggen
-          </Button>
+      <Navigation />
+      <div className="container mx-auto p-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">
+            Welkom, {profile?.full_name}!
+          </h1>
+          <p className="text-muted-foreground">
+            Hier vind je je lessen, taken en voortgang.
+          </p>
         </div>
-      </header>
 
-      <main className="max-w-7xl mx-auto p-6">
-        <WelcomeWidget recentActivity="Je hebt vandaag 2 lessen voltooid!" />
-
-        <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="dashboard" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Dashboard
-            </TabsTrigger>
-            <TabsTrigger value="learning" className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4" />
-              Leren
-            </TabsTrigger>
-            <TabsTrigger value="progress" className="flex items-center gap-2">
-              <Trophy className="h-4 w-4" />
-              Voortgang
-            </TabsTrigger>
-            <TabsTrigger value="community" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Community
-            </TabsTrigger>
-            <TabsTrigger value="mentors" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              Mentoren
-            </TabsTrigger>
-            <TabsTrigger value="recommendations" className="flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              Aanbevelingen
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="dashboard" className="space-y-6">
-            <StreakCounter streakData={mockStreakData} />
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ActivityFeed activities={mockActivities} />
+        {/* Class and Level Selection */}
+        <div className="grid gap-4 mb-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Mijn Klassen
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {enrolledClasses.map((enrollment) => (
+                  <Button
+                    key={enrollment.id}
+                    variant={selectedClass === enrollment.class_id ? "default" : "outline"}
+                    onClick={() => {
+                      setSelectedClass(enrollment.class_id);
+                      if (enrollment.klassen.niveaus.length > 0) {
+                        setSelectedLevel(enrollment.klassen.niveaus[0].id);
+                      }
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    {enrollment.klassen.name}
+                  </Button>
+                ))}
+              </div>
               
+              {currentClass && currentClass.klassen.niveaus.length > 0 && (
+                <div>
+                  <h4 className="font-medium mb-2">Niveaus in {currentClass.klassen.name}:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {currentClass.klassen.niveaus.map((niveau) => (
+                      <Button
+                        key={niveau.id}
+                        variant={selectedLevel === niveau.id ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedLevel(niveau.id)}
+                      >
+                        {niveau.naam}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Tabs */}
+        {currentClass && currentLevel && (
+          <Tabs defaultValue="tasks" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="tasks" className="flex items-center gap-2">
+                <CheckCircle className="h-4 w-4" />
+                Taken
+              </TabsTrigger>
+              <TabsTrigger value="questions" className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4" />
+                Vragen
+              </TabsTrigger>
+              <TabsTrigger value="forum" className="flex items-center gap-2">
+                <MessageSquare className="h-4 w-4" />
+                Forum
+              </TabsTrigger>
+              <TabsTrigger value="progress" className="flex items-center gap-2">
+                <Trophy className="h-4 w-4" />
+                Voortgang
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="tasks" className="mt-6">
+              <StudentTasksAndQuestions 
+                levelId={selectedLevel} 
+                levelName={currentLevel.naam}
+              />
+            </TabsContent>
+
+            <TabsContent value="questions" className="mt-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="h-5 w-5" />
-                    Recente Cursussen
-                  </CardTitle>
+                  <CardTitle>Vragen voor {currentLevel.naam}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted/50 cursor-pointer">
-                      <div className="flex items-center gap-3">
-                        <BookOpen className="h-5 w-5 text-primary" />
-                        <div>
-                          <h4 className="font-medium">Arabisch voor Beginners</h4>
-                          <p className="text-sm text-muted-foreground">Les 5 van 12</p>
-                        </div>
-                      </div>
-                      <Progress value={42} className="w-16" />
-                    </div>
-                  </div>
+                  <LevelQuestions levelId={selectedLevel} />
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value="learning" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <BookOpen className="h-8 w-8 text-primary" />
-                    <div>
-                      <h3 className="font-semibold">Huidige Les</h3>
-                      <p className="text-sm text-muted-foreground">Werkwoorden - Verleden Tijd</p>
-                    </div>
-                  </div>
-                  <Button className="w-full">
-                    Verder Leren
+            <TabsContent value="forum" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Klasforum</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">
+                    Ga naar het forum om te discussiëren met je klasgenoten.
+                  </p>
+                  <Button asChild>
+                    <a href="/forum">
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Naar Forum
+                    </a>
                   </Button>
                 </CardContent>
               </Card>
+            </TabsContent>
 
-              <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <MessageSquare className="h-8 w-8 text-blue-500" />
-                    <div>
-                      <h3 className="font-semibold">Oefenopdrachten</h3>
-                      <p className="text-sm text-muted-foreground">3 nieuwe opdrachten</p>
-                    </div>
-                  </div>
-                  <Button variant="outline" className="w-full">
-                    Bekijk Opdrachten
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Calendar className="h-8 w-8 text-green-500" />
-                    <div>
-                      <h3 className="font-semibold">Live Lessen</h3>
-                      <p className="text-sm text-muted-foreground">Volgende les: Morgen 19:00</p>
-                    </div>
-                  </div>
-                  <Button variant="outline" className="w-full">
-                    Bekijk Schema
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="progress" className="space-y-6">
-            <BadgeSystem 
-              badges={mockBadges} 
-              userLevel={mockUserLevel}
-              showProgress={true}
-            />
-            
-            <LeaderboardSystem 
-              users={mockLeaderboardUsers}
-              currentUserId="current"
-              timeframe="week"
-            />
-          </TabsContent>
-
-          <TabsContent value="community" className="space-y-6">
-            <RealtimeChat
-              channels={mockChatChannels}
-              currentChannel="general"
-              messages={mockChatMessages}
-              currentUser={{
-                id: 'current',
-                name: profile?.full_name || 'Jij'
-              }}
-              onSendMessage={(content, channelId) => {
-                console.log('Send message:', content, 'to channel:', channelId);
-              }}
-              onJoinChannel={(channelId) => {
-                console.log('Join channel:', channelId);
-              }}
-            />
-          </TabsContent>
-
-          <TabsContent value="mentors" className="space-y-6">
-            <MentorSystem
-              mentors={mockMentors}
-              onBookSession={(mentorId, timeSlot) => {
-                console.log('Book session with mentor:', mentorId, 'at:', timeSlot);
-              }}
-            />
-          </TabsContent>
-
-          <TabsContent value="recommendations" className="space-y-6">
-            <CourseRecommendations
-              recommendations={mockRecommendations}
-              userProgress={mockUserProgress}
-              onEnrollCourse={(courseId) => {
-                console.log('Enroll in course:', courseId);
-                navigate(`/course/${courseId}`);
-              }}
-            />
-          </TabsContent>
-        </Tabs>
-      </main>
+            <TabsContent value="progress" className="mt-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Trophy className="h-5 w-5" />
+                      Behaalde Resultaten
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Hier zie je binnenkort je behaalde punten en badges.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Clock className="h-5 w-5" />
+                      Recente Activiteit
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Hier zie je je recente inzendingen en beoordelingen.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -16,7 +15,6 @@ export const useAuthForm = () => {
   const { toast } = useToast();
 
   const signUp = async (formData: AuthFormData) => {
-    // Validation for under 16 users
     if (formData.isUnder16 && !formData.parentEmail) {
       toast({
         title: "Fout",
@@ -26,7 +24,6 @@ export const useAuthForm = () => {
       return false;
     }
 
-    // Check if user already exists with this email
     const { data: existingUser } = await supabase
       .from('profiles')
       .select('id, email')
@@ -34,7 +31,6 @@ export const useAuthForm = () => {
       .limit(1);
 
     if (existingUser && existingUser.length > 0) {
-      // User exists, create additional profile with same user ID
       const userId = existingUser[0].id;
       
       const { error: profileError } = await supabase
@@ -57,7 +53,6 @@ export const useAuthForm = () => {
       });
       return true;
     } else {
-      // New user, create Supabase auth user
       const redirectUrl = `${window.location.origin}/`;
       
       const { error } = await supabase.auth.signUp({
@@ -88,9 +83,7 @@ export const useAuthForm = () => {
   const signIn = async (formData: AuthFormData) => {
     let loginEmail = formData.emailOrName;
     
-    // Check if input contains @ (likely an email)
     if (!formData.emailOrName.includes('@')) {
-      // Search for user by name to get their email
       const { data: profiles, error: profileError } = await supabase
         .from('profiles')
         .select('email, full_name, role')
@@ -106,7 +99,6 @@ export const useAuthForm = () => {
       }
       
       if (profiles.length > 1) {
-        // Multiple profiles with same name, show role selection
         setAvailableRoles(profiles.map(p => ({ role: p.role, fullName: p.full_name })));
         setShowRoleSelection(true);
         return false;
@@ -143,6 +135,9 @@ export const useAuthForm = () => {
         setShowRoleSelection(true);
         return false;
       } else {
+        // Explicit redirect to dashboard after successful login
+        console.debug('🎯 useAuthForm: Login successful, navigating to dashboard');
+        navigate('/dashboard', { replace: true });
         return true;
       }
     }
@@ -152,10 +147,10 @@ export const useAuthForm = () => {
     setIsLoading(true);
 
     try {
-      if (isSignUp) {
-        await signUp(formData);
-      } else {
-        await signIn(formData);
+      const success = isSignUp ? await signUp(formData) : await signIn(formData);
+      if (success && !showRoleSelection) {
+        console.debug('🎯 useAuthForm: Auth successful, redirecting to dashboard');
+        navigate('/dashboard', { replace: true });
       }
     } catch (error: any) {
       toast({
@@ -171,6 +166,8 @@ export const useAuthForm = () => {
   const handleRoleSelection = () => {
     if (selectedRole) {
       setShowRoleSelection(false);
+      console.debug('🎯 useAuthForm: Role selected, navigating to dashboard');
+      navigate('/dashboard', { replace: true });
       return true;
     }
     return false;

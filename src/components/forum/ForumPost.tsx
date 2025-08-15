@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -122,7 +121,6 @@ export function ForumPost({
     if (!user || !onLike) return;
     
     try {
-      // Check if user already liked/disliked this post
       const { data: existingLike } = await supabase
         .from('forum_likes')
         .select('*')
@@ -132,20 +130,17 @@ export function ForumPost({
 
       if (existingLike) {
         if (existingLike.is_like === isLike) {
-          // Remove like/dislike
           await supabase
             .from('forum_likes')
             .delete()
             .eq('id', existingLike.id);
         } else {
-          // Update like/dislike
           await supabase
             .from('forum_likes')
             .update({ is_like: isLike })
             .eq('id', existingLike.id);
         }
       } else {
-        // Create new like/dislike
         await supabase
           .from('forum_likes')
           .insert({
@@ -311,7 +306,7 @@ export function ForumPost({
               )}
             </div>
             
-            {!isReply && user && (
+            {user && (
               <Button
                 variant="outline"
                 size="sm"
@@ -366,8 +361,9 @@ export function ForumPost({
               post={reply}
               onDelete={onDelete}
               onLike={onLike}
+              onReply={onReply}
               isReply={true}
-              showReplies={false}
+              showReplies={true}
             />
           ))}
         </div>
