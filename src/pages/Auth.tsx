@@ -1,10 +1,12 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AuthForm, type AuthFormData } from '@/components/auth/AuthForm';
 import { RoleSelection } from '@/components/auth/RoleSelection';
 import { ForgotPasswordModal } from '@/components/auth/ForgotPasswordModal';
 import { useAuthForm } from '@/hooks/useAuthForm';
+import { useAuth } from '@/components/auth/AuthProvider';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -29,6 +31,17 @@ const Auth = () => {
     handleRoleSelection,
     resetRoleSelection
   } = useAuthForm();
+
+  const { user, authReady } = useAuth();
+  const navigate = useNavigate();
+
+  // Auto-redirect: als je al ingelogd bent, ga direct naar dashboard
+  useEffect(() => {
+    if (authReady && user) {
+      console.debug('🔁 Auth page: user already authenticated, redirecting to /dashboard');
+      navigate('/dashboard', { replace: true });
+    }
+  }, [authReady, user, navigate]);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();

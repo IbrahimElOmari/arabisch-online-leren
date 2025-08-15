@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,6 +14,21 @@ export const useAuthForm = () => {
   
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Wacht helper: navigeer pas als sessie bevestigd is
+  const waitForSession = async (timeoutMs = 3000) => {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      const { data } = await supabase.auth.getSession();
+      if (data.session?.user) {
+        console.debug('✅ useAuthForm: Session confirmed, proceeding to dashboard');
+        return true;
+      }
+      await new Promise((r) => setTimeout(r, 150));
+    }
+    console.warn('⏱️ useAuthForm: Session not detected within timeout');
+    return false;
+  };
 
   const signUp = async (formData: AuthFormData) => {
     if (formData.isUnder16 && !formData.parentEmail) {
@@ -76,6 +92,7 @@ export const useAuthForm = () => {
         title: "Registratie succesvol",
         description: "Controleer je e-mail voor verificatie.",
       });
+      // Belangrijk: bij signup is de gebruiker meestal nog NIET ingelogd (verificatie nodig)
       return true;
     }
   };
@@ -124,7 +141,7 @@ export const useAuthForm = () => {
       }
       return false;
     } else {
-      // Check if user has multiple roles
+      // Check of gebruiker meerdere rollen heeft
       const { data: userProfiles } = await supabase
         .from('profiles')
         .select('role, full_name')
@@ -135,9 +152,8 @@ export const useAuthForm = () => {
         setShowRoleSelection(true);
         return false;
       } else {
-        // Explicit redirect to dashboard after successful login
-        console.debug('🎯 useAuthForm: Login successful, navigating to dashboard');
-        navigate('/dashboard', { replace: true });
+        // Geen directe navigate hier meer; wacht op sessiebevestiging in handleSubmit
+        console.debug('🎯 useAuthForm: Login successful, waiting for session confirmation');
         return true;
       }
     }
@@ -148,9 +164,16 @@ export const useAuthForm = () => {
 
     try {
       const success = isSignUp ? await signUp(formData) : await signIn(formData);
-      if (success && !showRoleSelection) {
-        console.debug('🎯 useAuthForm: Auth successful, redirecting to dashboard');
-        navigate('/dashboard', { replace: true });
+      // Alleen navigeren na LOGIN (niet signup), en alleen als er geen rolkeuze nodig is
+      if (!isSignUp && success && !showRoleSelection) {
+        console.debug('🎯 useAuthForm: Auth successful, awaiting session then redirecting');
+        const hasSession = await waitForSession();
+        if (hasSession) {
+          navigate('/dashboard', { replace: true });
+        } else {
+          // Falls back, maar geen navigate om race conditions te vermijden
+          console.warn('⚠️ useAuthForm: Session not ready, not navigating to avoid redirect loop');
+        }
       }
     } catch (error: any) {
       toast({
