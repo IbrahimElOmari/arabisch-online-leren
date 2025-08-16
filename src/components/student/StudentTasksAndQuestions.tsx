@@ -84,13 +84,19 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    fetchQuestions(levelId);
-    fetchTasks(levelId);
-  }, [levelId, profile]);
+    // Eén gecoördineerde laadstap voorkomt flicker en “feedback loop”
+    const loadAll = async () => {
+      setLoading(true);
+      await Promise.all([fetchQuestions(levelId), fetchTasks(levelId)]);
+      setLoading(false);
+    };
+    loadAll();
+    // Beperk dependency tot id, niet het hele object, om onnodige reruns te vermijden
+  }, [levelId, profile?.id]);
 
   const fetchQuestions = async (levelId: string) => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('vragen')
         .select(`
           *,
@@ -107,15 +113,20 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
           )
         `)
         .eq('niveau_id', levelId)
-        .eq('antwoorden.student_id', profile?.id)
         .order('created_at', { ascending: false });
+
+      if (profile?.id) {
+        query = query.eq('antwoorden.student_id', profile.id);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
       const questionsWithAnswers = data?.map(question => ({
         id: question.id,
         niveau_id: question.niveau_id,
-        vraag: question.vraag_tekst || '', // Map vraag_tekst to vraag
+        vraag: question.vraag_tekst || '',
         audio_url: question.audio_url,
         correct_antwoord: typeof question.correct_antwoord === 'string' 
           ? question.correct_antwoord 
@@ -133,8 +144,6 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
       setQuestions(questionsWithAnswers);
     } catch (error: any) {
       console.error('Error fetching questions:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -160,8 +169,6 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
       setTasks(tasksWithAuthor);
     } catch (error: any) {
       console.error('Error fetching tasks:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -252,7 +259,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
       setTaskSubmissions((prevSubmissions) => [
         ...prevSubmissions,
         {
-          id: data.path,
+          id: (data as any).path,
           task_id: taskId,
           student_id: profile?.id || '',
           submission_file_path: filePath,

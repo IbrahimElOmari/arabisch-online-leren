@@ -13,25 +13,28 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { organizePosts } from '@/utils/forumUtils';
 
 interface Post {
   id: string;
-  titel: string;
-  inhoud: string;
+  titel?: string | null;
+  title?: string | null;
+  inhoud?: string | null;
+  content?: string | null;
   author_id: string;
   created_at: string;
   updated_at: string;
   likes_count: number;
   dislikes_count: number;
   thread_id: string;
-  parent_post_id?: string;
+  parent_post_id?: string | null;
   is_verwijderd: boolean;
   class_id: string;
-  niveau_id?: string;
-  media_type?: string;
-  media_url?: string;
+  niveau_id?: string | null;
+  media_type?: string | null;
+  media_url?: string | null;
   is_gerapporteerd?: boolean;
-  verwijderd_door?: string;
+  verwijderd_door?: string | null;
   profiles?: {
     full_name: string;
     role: string;
@@ -46,7 +49,7 @@ interface ForumPostsListProps {
 const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
   const { profile } = useAuth();
   const { toast } = useToast();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [replyContent, setReplyContent] = useState('');
 
@@ -68,32 +71,14 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
           )
         `)
         .eq('thread_id', threadId)
-        .in('is_verwijderd', [false])
+        .eq('is_verwijderd', false)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
       
-      const flatPosts = (data as any) || [];
-      console.log('Fetched posts:', flatPosts);
-      
-      // Build nested replies structure
-      const postMap = new Map<string, any>();
-      flatPosts.forEach((p: any) => postMap.set(p.id, { ...p, replies: [] }));
-      const roots: any[] = [];
-      
-      flatPosts.forEach((p: any) => {
-        if (p.parent_post_id) {
-          const parent = postMap.get(p.parent_post_id);
-          if (parent) {
-            parent.replies.push(postMap.get(p.id));
-          }
-        } else {
-          roots.push(postMap.get(p.id));
-        }
-      });
-
-      console.log('Organized posts:', roots);
-      setPosts(roots as any);
+      const flat: Post[] = (data as any) || [];
+      const organized = organizePosts(flat as any);
+      setPosts(organized as any);
     } catch (error) {
       console.error('Error fetching posts:', error);
       toast({
@@ -117,7 +102,7 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke('manage-forum', {
+      const { error } = await supabase.functions.invoke('manage-forum', {
         body: {
           action: 'create-post',
           threadId: threadId,

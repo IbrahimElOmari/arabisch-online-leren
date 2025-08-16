@@ -63,6 +63,12 @@ export function ForumPost({
   const [replyContent, setReplyContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Normalize content/labels so component works with both schemas
+  const displayTitle = (post as any).titel ?? (post as any).title ?? '';
+  const displayContent = (post as any).inhoud ?? (post as any).content ?? '';
+  const likeCount = (post as any).likes_count ?? 0;
+  const dislikeCount = (post as any).dislikes_count ?? 0;
+
   const canDelete = user && (
     post.author_id === user.id || 
     profile?.role === 'admin' || 
@@ -268,12 +274,12 @@ export function ForumPost({
         </CardHeader>
         
         <CardContent className="space-y-4">
-          {!isReply && (
-            <h3 className="font-semibold text-lg">{post.titel}</h3>
+          {!isReply && displayTitle && (
+            <h3 className="font-semibold text-lg">{displayTitle}</h3>
           )}
           
           <div className="prose prose-sm max-w-none">
-            <p className="whitespace-pre-wrap">{post.inhoud}</p>
+            <p className="whitespace-pre-wrap">{displayContent}</p>
           </div>
           
           <div className="flex items-center justify-between pt-2 border-t">
@@ -285,7 +291,7 @@ export function ForumPost({
                 onClick={() => handleLike(true)}
               >
                 <ThumbsUp className="h-4 w-4" />
-                <span>{post.likes_count}</span>
+                <span>{likeCount}</span>
               </Button>
               
               <Button
@@ -295,7 +301,7 @@ export function ForumPost({
                 onClick={() => handleLike(false)}
               >
                 <ThumbsDown className="h-4 w-4" />
-                <span>{post.dislikes_count}</span>
+                <span>{dislikeCount}</span>
               </Button>
               
               {replies.length > 0 && (
@@ -364,6 +370,7 @@ export function ForumPost({
               onReply={onReply}
               isReply={true}
               showReplies={true}
+              replies={reply.replies || []}
             />
           ))}
         </div>
