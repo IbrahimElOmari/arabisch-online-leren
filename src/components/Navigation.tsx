@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { NotificationBell } from '@/components/ui/NotificationBell';
-import { MobileNav } from '@/components/ui/mobile-nav';
 import { SearchCommand } from '@/components/ui/search-command';
-import { Shield, Home, Calendar, MessageSquare, Eye, BookOpen, Users, LogIn, User } from 'lucide-react';
+import { UserDropdown } from '@/components/ui/UserDropdown';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Shield, Home, Calendar, MessageSquare, Eye, BookOpen, LogIn } from 'lucide-react';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -28,8 +29,9 @@ const Navigation = () => {
     <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center">
+          {/* Mobile Sidebar Trigger + Logo */}
+          <div className="flex items-center gap-4">
+            <SidebarTrigger />
             <button 
               onClick={() => navigate('/')}
               className="text-2xl font-bold text-foreground hover:text-primary transition-colors duration-200 flex items-center gap-2"
@@ -39,8 +41,8 @@ const Navigation = () => {
             </button>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center">
+          {/* Desktop Navigation - Hidden on mobile when sidebar is available */}
+          <div className="hidden lg:flex items-center">
             <NavigationMenu>
               <NavigationMenuList className="flex items-center space-x-2">
                 {/* Home */}
@@ -64,14 +66,13 @@ const Navigation = () => {
                       Leerplatform
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <div className="grid gap-3 p-6 w-[400px]">
+                      <div className="grid gap-3 p-6 w-[400px] bg-popover">
                         <div className="row-span-3">
                           <NavigationMenuLink asChild>
                             <button
                               className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md hover:bg-accent transition-colors text-left"
                               onClick={() => handleNavigation('/dashboard')}
                             >
-                              <User className="h-6 w-6 mb-2" />
                               <div className="mb-2 mt-4 text-lg font-medium">
                                 Dashboard
                               </div>
@@ -112,32 +113,6 @@ const Navigation = () => {
                   </NavigationMenuItem>
                 )}
 
-                {/* Kalender - altijd zichtbaar */}
-                <NavigationMenuItem>
-                  <NavigationMenuLink
-                    className={cn(
-                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
-                    )}
-                    onClick={() => handleNavigation('/calendar')}
-                  >
-                    <Calendar className="mr-2 h-4 w-4" />
-                    Kalender
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-
-                {/* Visie */}
-                <NavigationMenuItem>
-                  <NavigationMenuLink
-                    className={cn(
-                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
-                    )}
-                    onClick={() => handleNavigation('/visie')}
-                  >
-                    <Eye className="mr-2 h-4 w-4" />
-                    Visie
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-
                 {/* Admin/Teacher Menu - alleen voor admin en leerkrachten */}
                 {user && profile && ['admin', 'leerkracht'].includes(profile.role) && (
                   <NavigationMenuItem>
@@ -146,7 +121,7 @@ const Navigation = () => {
                       Beheer
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <div className="grid gap-3 p-6 w-[350px]">
+                      <div className="grid gap-3 p-6 w-[350px] bg-popover">
                         <NavigationMenuLink asChild>
                           <button
                             className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground text-left w-full"
@@ -179,31 +154,15 @@ const Navigation = () => {
             </NavigationMenu>
           </div>
 
-          {/* Search and Mobile Navigation */}
+          {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
             <SearchCommand />
             
             {user ? (
               <>
                 <NotificationBell />
-                <div className="hidden sm:flex items-center space-x-3">
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-foreground">
-                      {profile?.full_name || user.email}
-                    </p>
-                    <p className="text-xs text-muted-foreground capitalize">
-                      {profile?.role || 'Gebruiker'}
-                    </p>
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="h-9 px-3"
-                    onClick={() => navigate('/dashboard')}
-                  >
-                    <User className="h-4 w-4 mr-2" />
-                    Dashboard
-                  </Button>
+                <div className="hidden lg:block">
+                  <UserDropdown />
                 </div>
               </>
             ) : (
@@ -226,8 +185,6 @@ const Navigation = () => {
                 </Button>
               </div>
             )}
-
-            <MobileNav />
           </div>
         </div>
       </div>
