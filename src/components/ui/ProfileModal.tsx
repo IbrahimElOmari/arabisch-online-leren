@@ -28,14 +28,14 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: '',
-    phone: '',
+    phone_number: '',
   });
 
   useEffect(() => {
     if (profile) {
       setFormData({
         full_name: profile.full_name || '',
-        phone: profile.phone || '',
+        phone_number: profile.phone_number || '',
       });
     }
   }, [profile]);
@@ -49,7 +49,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
         .from('profiles')
         .update({
           full_name: formData.full_name,
-          phone: formData.phone,
+          phone_number: formData.phone_number,
         })
         .eq('id', user.id);
 
@@ -76,7 +76,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
   const handleCancel = () => {
     setFormData({
       full_name: profile.full_name || '',
-      phone: profile.phone || '',
+      phone_number: profile.phone_number || '',
     });
     setIsEditing(false);
   };
@@ -132,17 +132,17 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Telefoonnummer</Label>
+              <Label htmlFor="phone_number">Telefoonnummer</Label>
               {isEditing ? (
                 <Input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  id="phone_number"
+                  value={formData.phone_number}
+                  onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
                   placeholder="Voer je telefoonnummer in"
                 />
               ) : (
                 <div className="p-2 bg-muted rounded-md">
-                  {profile.phone || 'Niet ingesteld'}
+                  {profile.phone_number || 'Niet ingesteld'}
                 </div>
               )}
             </div>
