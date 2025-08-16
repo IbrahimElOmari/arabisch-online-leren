@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { User, Edit, Save, X } from 'lucide-react';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -35,7 +36,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
     if (profile) {
       setFormData({
         full_name: profile.full_name || '',
-        phone_number: profile.phone_number || '',
+        phone_number: (profile as Tables<'profiles'>).phone_number || '',
       });
     }
   }, [profile]);
@@ -76,7 +77,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
   const handleCancel = () => {
     setFormData({
       full_name: profile.full_name || '',
-      phone_number: profile.phone_number || '',
+      phone_number: (profile as Tables<'profiles'>).phone_number || '',
     });
     setIsEditing(false);
   };
@@ -142,16 +143,16 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
                 />
               ) : (
                 <div className="p-2 bg-muted rounded-md">
-                  {profile.phone_number || 'Niet ingesteld'}
+                  {(profile as Tables<'profiles'>).phone_number || 'Niet ingesteld'}
                 </div>
               )}
             </div>
 
-            {profile.parent_email && (
+            {(profile as Tables<'profiles'>).parent_email && (
               <div className="space-y-2">
                 <Label htmlFor="parent_email">Ouder e-mailadres</Label>
                 <div className="p-2 bg-muted rounded-md text-muted-foreground">
-                  {profile.parent_email}
+                  {(profile as Tables<'profiles'>).parent_email}
                 </div>
               </div>
             )}
