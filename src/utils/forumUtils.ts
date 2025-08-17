@@ -1,14 +1,23 @@
 
 export interface ForumPostFlat {
   id: string;
+  // Zorg dat deze velden aanwezig zijn zodat het compatibel is met ForumState.ForumPost
+  thread_id: string;
+  author_id: string;
+
   parent_post_id?: string | null;
-  // Allow both Dutch and English fields
+
+  // Toestaan van zowel Nederlands als Engels
   titel?: string | null;
   title?: string | null;
   inhoud?: string | null;
-  content?: string | null;
+
+  // Store verwacht content als string
+  content: string;
+
   created_at: string;
-  thread_id?: string;
+
+  // Extra velden (zoals author, counts, enz.) mogen blijven bestaan
   [key: string]: any;
 }
 
@@ -30,13 +39,14 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
 
   // First pass: create all post objects
   posts.forEach((p) => {
+    // We forceren replies-array op elk item
     postMap.set(p.id, { ...p, replies: [] });
   });
 
   // Second pass: organize hierarchy
   posts.forEach((p) => {
     const current = postMap.get(p.id)!;
-    
+
     if (p.parent_post_id) {
       const parent = postMap.get(p.parent_post_id);
       if (parent) {
