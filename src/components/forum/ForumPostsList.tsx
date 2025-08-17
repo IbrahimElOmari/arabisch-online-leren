@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -77,8 +76,21 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
       if (error) throw error;
       
       const flat: Post[] = (data as any) || [];
-      // Use the centralized organizePosts function
-      const organized = organizePosts(flat as any);
+      
+      // Add null safety for profiles data
+      const safeFlat = flat.map(post => ({
+        ...post,
+        profiles: post.profiles ? {
+          full_name: post.profiles.full_name || 'Onbekende gebruiker',
+          role: post.profiles.role || 'leerling'
+        } : {
+          full_name: 'Onbekende gebruiker',
+          role: 'leerling'
+        }
+      }));
+      
+      // Use the centralized organizePosts function with safe data
+      const organized = organizePosts(safeFlat as any);
       setPosts(organized as any);
     } catch (error) {
       console.error('Error fetching posts:', error);

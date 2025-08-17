@@ -73,7 +73,7 @@ export const useForumStore = create<ForumState>((set, get) => ({
       
       const threadsWithAuthor = data?.map(thread => ({
         ...thread,
-        author: { full_name: thread.profiles?.full_name || 'Onbekend' }
+        author: { full_name: thread.profiles?.full_name || 'Onbekende gebruiker' }
       })) || [];
 
       set({ threads: threadsWithAuthor, loading: false });
@@ -111,7 +111,7 @@ export const useForumStore = create<ForumState>((set, get) => ({
         .from('forum_posts')
         .select(`
           *,
-          profiles!forum_posts_author_id_fkey(full_name)
+          profiles!forum_posts_author_id_fkey(full_name, role)
         `)
         .eq('thread_id', threadId)
         .eq('is_verwijderd', false)
@@ -123,7 +123,10 @@ export const useForumStore = create<ForumState>((set, get) => ({
         ...post,
         content: post.content ?? post.inhoud,
         title: post.title ?? post.titel,
-        author: { full_name: post.profiles?.full_name || 'Onbekend' }
+        author: { 
+          full_name: post.profiles?.full_name || 'Onbekende gebruiker',
+          role: post.profiles?.role || 'leerling'
+        }
       })) || [];
 
       // Use the enhanced organizePosts function from utils
@@ -209,7 +212,7 @@ export const useForumStore = create<ForumState>((set, get) => ({
 
       if (error) throw error;
       set({ loading: false });
-      return true;
+  return true;
     } catch (error: any) {
       set({ error: error.message, loading: false });
       return false;
