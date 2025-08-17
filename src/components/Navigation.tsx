@@ -161,9 +161,8 @@ const Navigation = () => {
             {user ? (
               <>
                 <NotificationBell />
-                <div className="hidden lg:block">
-                  <UserDropdown />
-                </div>
+                {/* UserDropdown is now always visible, not hidden on smaller screens */}
+                <UserDropdown />
               </>
             ) : (
               <div className="hidden sm:flex items-center space-x-2">

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -135,7 +136,19 @@ const ForumMain = ({ classId }: ForumMainProps) => {
 
       if (error) throw error;
       
-      setThreads(data || []);
+      // Add null safety for thread authors
+      const threadsWithSafeAuthors = (data || []).map(thread => ({
+        ...thread,
+        profiles: thread.profiles ? {
+          full_name: thread.profiles.full_name || 'Onbekende gebruiker',
+          role: thread.profiles.role || 'leerling'
+        } : {
+          full_name: 'Onbekende gebruiker',
+          role: 'leerling'
+        }
+      }));
+      
+      setThreads(threadsWithSafeAuthors);
       setSelectedRoom(roomId);
       setView('threads');
     } catch (error) {
@@ -326,7 +339,7 @@ const ForumMain = ({ classId }: ForumMainProps) => {
                         {thread.title}
                       </CardTitle>
                       <div className="text-sm text-muted-foreground">
-                        Door {thread.profiles?.full_name} • {new Date(thread.created_at).toLocaleDateString('nl-NL')}
+                        Door {thread.profiles?.full_name || 'Onbekende gebruiker'} • {new Date(thread.created_at).toLocaleDateString('nl-NL')}
                       </div>
                     </div>
                   </div>
@@ -358,7 +371,7 @@ const ForumMain = ({ classId }: ForumMainProps) => {
           <div>
             <h2 className="text-xl font-semibold">{currentThread?.title}</h2>
             <p className="text-sm text-muted-foreground">
-              Door {currentThread?.profiles?.full_name}
+              Door {currentThread?.profiles?.full_name || 'Onbekende gebruiker'}
             </p>
           </div>
         </div>

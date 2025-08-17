@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -215,72 +216,97 @@ const ForumStructure: React.FC<ForumStructureProps> = ({ classId }) => {
     }
   };
 
-  const renderPost = (post: any, isReply: boolean = false) => (
-    <div key={post.id} className={`border border-border rounded-lg p-4 ${isReply ? 'ml-6 mt-2' : 'mb-4'}`}>
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-medium">
-            {post.author?.full_name?.charAt(0) || 'U'}
+  const renderPost = (post: any, isReply: boolean = false) => {
+    // Handle deleted posts with placeholder
+    if (post.is_verwijderd) {
+      return (
+        <div key={post.id} className={`border border-border rounded-lg p-4 bg-muted/30 ${isReply ? 'ml-6 mt-2' : 'mb-4'}`}>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+              <span className="text-xs text-muted-foreground">?</span>
+            </div>
+            <div>
+              <p className="font-medium text-sm text-muted-foreground">Verwijderde gebruiker</p>
+              <p className="text-xs text-muted-foreground">
+                {new Date(post.created_at).toLocaleDateString('nl-NL')}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="font-medium text-sm">{post.author?.full_name || 'Onbekend'}</p>
-            <p className="text-xs text-muted-foreground">
-              {new Date(post.created_at).toLocaleDateString('nl-NL')}
-            </p>
+          <p className="text-sm text-muted-foreground italic">Dit bericht is verwijderd</p>
+          
+          {/* Still show replies to deleted posts */}
+          {post.replies && post.replies.map((reply: any) => renderPost(reply, true))}
+        </div>
+      );
+    }
+
+    return (
+      <div key={post.id} className={`border border-border rounded-lg p-4 ${isReply ? 'ml-6 mt-2' : 'mb-4'}`}>
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-medium">
+              {(post.author?.full_name || 'U').charAt(0)}
+            </div>
+            <div>
+              <p className="font-medium text-sm">{post.author?.full_name || 'Onbekende gebruiker'}</p>
+              <p className="text-xs text-muted-foreground">
+                {new Date(post.created_at).toLocaleDateString('nl-NL')}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {(profile?.role === 'admin' || profile?.role === 'leerkracht' || post.author_id === profile?.id) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeletePost(post.id)}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+            {post.author_id !== profile?.id && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleReportPost(post.id)}
+              >
+                <Flag className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {(profile?.role === 'admin' || profile?.role === 'leerkracht' || post.author_id === profile?.id) && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleDeletePost(post.id)}
-              className="text-destructive hover:text-destructive"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          )}
-          {post.author_id !== profile?.id && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleReportPost(post.id)}
-            >
-              <Flag className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-      </div>
-      
-      <div className="mb-3">
-        <p className="text-sm">{post.content}</p>
-      </div>
-      
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => likePost(post.id, true)}
-          className="flex items-center gap-1"
-        >
-          <Heart className="h-4 w-4" />
-          Like
-        </Button>
         
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setReplyToPost(post.id)}
-          className="flex items-center gap-1"
-        >
-          <Reply className="h-4 w-4" />
-          Reageren
-        </Button>
+        <div className="mb-3">
+          <p className="text-sm">{post.content}</p>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => likePost(post.id, true)}
+            className="flex items-center gap-1"
+          >
+            <Heart className="h-4 w-4" />
+            Like
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setReplyToPost(post.id)}
+            className="flex items-center gap-1"
+          >
+            <Reply className="h-4 w-4" />
+            Reageren
+          </Button>
+        </div>
+        
+        {post.replies && post.replies.map((reply: any) => renderPost(reply, true))}
       </div>
-      
-      {post.replies && post.replies.map((reply: any) => renderPost(reply, true))}
-    </div>
-  );
+    );
+  };
 
   if (loading) {
     return (
@@ -465,7 +491,7 @@ const ForumStructure: React.FC<ForumStructureProps> = ({ classId }) => {
                         {thread.title}
                       </CardTitle>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Door {thread.author?.full_name} • {new Date(thread.created_at).toLocaleDateString('nl-NL')}
+                        Door {thread.author?.full_name || 'Onbekende gebruiker'} • {new Date(thread.created_at).toLocaleDateString('nl-NL')}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -513,10 +539,10 @@ const ForumStructure: React.FC<ForumStructureProps> = ({ classId }) => {
           <CardHeader>
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-medium">
-                {selectedThread.author?.full_name?.charAt(0) || 'U'}
+                {(selectedThread.author?.full_name || 'U').charAt(0)}
               </div>
               <div>
-                <p className="font-medium">{selectedThread.author?.full_name || 'Onbekend'}</p>
+                <p className="font-medium">{selectedThread.author?.full_name || 'Onbekende gebruiker'}</p>
                 <p className="text-sm text-muted-foreground">
                   {new Date(selectedThread.created_at).toLocaleDateString('nl-NL')}
                 </p>

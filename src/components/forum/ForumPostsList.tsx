@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -60,6 +61,9 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
     try {
       setLoading(true);
       
+      console.log('ForumPostsList: Fetching posts for thread:', threadId);
+      
+      // Remove the is_verwijderd filter to get all posts including deleted ones
       const { data, error } = await supabase
         .from('forum_posts')
         .select(`
@@ -70,10 +74,11 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
           )
         `)
         .eq('thread_id', threadId)
-        .eq('is_verwijderd', false)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
+      
+      console.log('ForumPostsList: Raw posts data:', data?.length || 0, 'posts');
       
       const flat: Post[] = (data as any) || [];
       
@@ -91,6 +96,8 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
       
       // Use the centralized organizePosts function with safe data
       const organized = organizePosts(safeFlat as any);
+      console.log('ForumPostsList: Organized posts:', organized.length, 'root posts');
+      
       setPosts(organized as any);
     } catch (error) {
       console.error('Error fetching posts:', error);

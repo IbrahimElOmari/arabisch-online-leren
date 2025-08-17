@@ -33,6 +33,8 @@ export interface ForumPostNested extends ForumPostFlat {
 export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
   if (!posts || posts.length === 0) return [];
 
+  console.log('organizePosts: Processing', posts.length, 'posts');
+
   const postMap = new Map<string, ForumPostNested>();
   const roots: ForumPostNested[] = [];
   const orphans: ForumPostNested[] = [];
@@ -61,6 +63,9 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
     }
   });
 
+  console.log('organizePosts: Found', orphans.length, 'orphaned posts');
+  console.log('organizePosts: Created', roots.length, 'root posts');
+
   // Sort replies by creation date (oldest first for chronological order)
   const sortReplies = (post: ForumPostNested) => {
     if (post.replies.length > 0) {
@@ -75,6 +80,8 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
   // Sort root posts by creation date (newest first for main thread view)
   const allRoots = [...roots, ...orphans];
   allRoots.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+  console.log('organizePosts: Returning', allRoots.length, 'total root posts (including orphans)');
 
   return allRoots;
 }

@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import { supabase } from '@/integrations/supabase/client';
 import { organizePosts } from '@/utils/forumUtils';
@@ -107,6 +108,9 @@ export const useForumStore = create<ForumState>((set, get) => ({
   fetchPosts: async (threadId: string) => {
     set({ loading: true, error: null });
     try {
+      console.log('Fetching posts for thread:', threadId);
+      
+      // Remove the is_verwijderd filter to get all posts including deleted ones
       const { data, error } = await supabase
         .from('forum_posts')
         .select(`
@@ -114,10 +118,11 @@ export const useForumStore = create<ForumState>((set, get) => ({
           profiles!forum_posts_author_id_fkey(full_name, role)
         `)
         .eq('thread_id', threadId)
-        .eq('is_verwijderd', false)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
+      
+      console.log('Raw posts data:', data?.length || 0, 'posts');
       
       const postsWithAuthor = data?.map((post: any) => ({
         ...post,
@@ -131,8 +136,11 @@ export const useForumStore = create<ForumState>((set, get) => ({
 
       // Use the enhanced organizePosts function from utils
       const organizedPosts = organizePosts(postsWithAuthor);
+      console.log('Organized posts:', organizedPosts.length, 'root posts');
+      
       set({ posts: organizedPosts, loading: false });
     } catch (error: any) {
+      console.error('Error in fetchPosts:', error);
       set({ error: error.message, loading: false });
     }
   },
@@ -212,7 +220,7 @@ export const useForumStore = create<ForumState>((set, get) => ({
 
       if (error) throw error;
       set({ loading: false });
-  return true;
+      return true;
     } catch (error: any) {
       set({ error: error.message, loading: false });
       return false;
