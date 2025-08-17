@@ -77,6 +77,7 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
       if (error) throw error;
       
       const flat: Post[] = (data as any) || [];
+      // Use the centralized organizePosts function
       const organized = organizePosts(flat as any);
       setPosts(organized as any);
     } catch (error) {

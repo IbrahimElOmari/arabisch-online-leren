@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { supabase } from '@/integrations/supabase/client';
+import { organizePosts } from '@/utils/forumUtils';
 
 interface ForumThread {
   id: string;
@@ -113,6 +114,7 @@ export const useForumStore = create<ForumState>((set, get) => ({
           profiles!forum_posts_author_id_fkey(full_name)
         `)
         .eq('thread_id', threadId)
+        .eq('is_verwijderd', false)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
@@ -120,32 +122,11 @@ export const useForumStore = create<ForumState>((set, get) => ({
       const postsWithAuthor = data?.map((post: any) => ({
         ...post,
         content: post.content ?? post.inhoud,
+        title: post.title ?? post.titel,
         author: { full_name: post.profiles?.full_name || 'Onbekend' }
       })) || [];
 
-      // Organize nested replies
-      const organizePosts = (posts: any[]) => {
-        const postMap = new Map();
-        const rootPosts: ForumPost[] = [];
-
-        posts.forEach(post => {
-          postMap.set(post.id, { ...post, replies: [] });
-        });
-
-        posts.forEach(post => {
-          if (post.parent_post_id) {
-            const parent = postMap.get(post.parent_post_id);
-            if (parent) {
-              parent.replies.push(postMap.get(post.id));
-            }
-          } else {
-            rootPosts.push(postMap.get(post.id));
-          }
-        });
-
-        return rootPosts;
-      };
-
+      // Use the enhanced organizePosts function from utils
       const organizedPosts = organizePosts(postsWithAuthor);
       set({ posts: organizedPosts, loading: false });
     } catch (error: any) {
