@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { SecurityMonitor } from './SecurityMonitor';
-import { SecurityErrorBoundary } from './SecurityErrorBoundary';
+import { SecurityErrorBoundary } from '../error/SecurityErrorBoundary';
 
 interface SecurityProviderProps {
   children: React.ReactNode;
