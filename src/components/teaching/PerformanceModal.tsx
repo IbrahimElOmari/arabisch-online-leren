@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -42,10 +43,13 @@ export function PerformanceModal({ open, onOpenChange, classId, className, level
   const fetchPerformanceData = async () => {
     setLoading(true);
     try {
-      // Get enrolled students
+      console.log('Fetching performance data for class:', classId);
+      
+      // Get enrolled students with better error handling
       const { data: enrollments, error: enrollmentError } = await supabase
         .from('inschrijvingen')
         .select(`
+          student_id,
           profiles:student_id (
             id,
             full_name
@@ -54,7 +58,27 @@ export function PerformanceModal({ open, onOpenChange, classId, className, level
         .eq('class_id', classId)
         .eq('payment_status', 'paid');
 
-      if (enrollmentError) throw enrollmentError;
+      if (enrollmentError) {
+        console.error('Enrollment fetch error:', enrollmentError);
+        throw enrollmentError;
+      }
+
+      console.log('Raw enrollments data:', enrollments);
+
+      // Filter out invalid enrollments and add null checks
+      const validEnrollments = (enrollments || []).filter(enrollment => {
+        const hasValidProfile = enrollment.profiles && 
+                               enrollment.profiles.id && 
+                               enrollment.profiles.full_name;
+        
+        if (!hasValidProfile) {
+          console.warn('Invalid enrollment found:', enrollment);
+        }
+        
+        return hasValidProfile;
+      });
+
+      console.log('Valid enrollments after filtering:', validEnrollments.length);
 
       // Get attendance data
       const { data: attendanceData, error: attendanceError } = await supabase
@@ -68,7 +92,10 @@ export function PerformanceModal({ open, onOpenChange, classId, className, level
         `)
         .eq('lessen.class_id', classId);
 
-      if (attendanceError) throw attendanceError;
+      if (attendanceError) {
+        console.error('Attendance fetch error:', attendanceError);
+        throw attendanceError;
+      }
 
       // Get total lessons for this class
       const { data: lessons, error: lessonsError } = await supabase
@@ -76,7 +103,10 @@ export function PerformanceModal({ open, onOpenChange, classId, className, level
         .select('id')
         .eq('class_id', classId);
 
-      if (lessonsError) throw lessonsError;
+      if (lessonsError) {
+        console.error('Lessons fetch error:', lessonsError);
+        throw lessonsError;
+      }
 
       const totalLessons = lessons?.length || 0;
 
@@ -98,24 +128,34 @@ export function PerformanceModal({ open, onOpenChange, classId, className, level
         .eq('tasks.niveaus.class_id', classId)
         .order('submitted_at', { ascending: false });
 
-      if (submissionsError) throw submissionsError;
+      if (submissionsError) {
+        console.error('Submissions fetch error:', submissionsError);
+        throw submissionsError;
+      }
 
-      // Process data for each student
-      const performanceData: StudentPerformance[] = enrollments?.map(enrollment => {
-        const studentId = enrollment.profiles?.id || '';
+      // Process data for each student with comprehensive null checking
+      const performanceData: StudentPerformance[] = validEnrollments.map(enrollment => {
+        // Double-check profile exists (should be guaranteed by filter above)
+        if (!enrollment.profiles) {
+          console.error('Unexpected null profile in valid enrollments:', enrollment);
+          return null;
+        }
+
+        const studentId = enrollment.profiles.id;
+        const studentName = enrollment.profiles.full_name || 'Onbekende naam';
         
-        // Count attendance
-        const studentAttendance = attendanceData?.filter(
-          att => att.student_id === studentId && att.status === 'aanwezig'
-        ) || [];
+        // Count attendance with null checks
+        const studentAttendance = (attendanceData || []).filter(
+          att => att && att.student_id === studentId && att.status === 'aanwezig'
+        );
         
-        // Get recent tasks (last 3)
-        const studentTasks = submissions?.filter(
-          sub => sub.student_id === studentId
-        ).slice(0, 3) || [];
+        // Get recent tasks (last 3) with null checks
+        const studentTasks = (submissions || []).filter(
+          sub => sub && sub.student_id === studentId
+        ).slice(0, 3);
 
         const recentTasks = studentTasks.map(task => ({
-          id: task.tasks?.title || 'Onbekende taak',
+          id: task.tasks?.title || `task-${Math.random()}`,
           title: task.tasks?.title || 'Onbekende taak',
           grade: task.grade,
           submitted_at: task.submitted_at
@@ -123,13 +163,14 @@ export function PerformanceModal({ open, onOpenChange, classId, className, level
 
         return {
           id: studentId,
-          full_name: enrollment.profiles?.full_name || 'Onbekende naam',
+          full_name: studentName,
           attendanceCount: studentAttendance.length,
           totalLessons,
           recentTasks
         };
-      }) || [];
+      }).filter(Boolean) as StudentPerformance[]; // Remove any null entries
 
+      console.log('Final performance data:', performanceData);
       setStudents(performanceData);
       
     } catch (error) {
@@ -139,6 +180,7 @@ export function PerformanceModal({ open, onOpenChange, classId, className, level
         description: "Kon prestatie gegevens niet laden",
         variant: "destructive"
       });
+      setStudents([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
@@ -194,7 +236,7 @@ export function PerformanceModal({ open, onOpenChange, classId, className, level
                       <div className="ml-4">
                         <p className="text-sm font-medium text-muted-foreground">Gemiddelde Aanwezigheid</p>
                         <p className="text-2xl font-bold">
-                          {Math.round(students.reduce((sum, s) => sum + getAttendancePercentage(s.attendanceCount, s.totalLessons), 0) / students.length || 0)}%
+                          {students.length > 0 ? Math.round(students.reduce((sum, s) => sum + getAttendancePercentage(s.attendanceCount, s.totalLessons), 0) / students.length) : 0}%
                         </p>
                       </div>
                     </div>
