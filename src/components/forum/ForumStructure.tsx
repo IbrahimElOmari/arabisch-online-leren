@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +10,7 @@ import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { useForumStore } from '@/hooks/useForumStore';
 import { useToast } from '@/hooks/use-toast';
+import { useForumRealtime } from '@/hooks/useForumRealtime';
 import { 
   MessageSquare, 
   Plus, 
@@ -82,6 +82,16 @@ const ForumStructure: React.FC<ForumStructureProps> = ({ classId }) => {
       }
     }
   }, [classId, classes, view]);
+
+  // When in thread posts view, subscribe to realtime updates so replies appear immediately
+  const refreshPosts = useCallback(() => {
+    if (selectedThread?.id) {
+      console.log('[ForumStructure] Realtime refresh for thread:', selectedThread.id);
+      fetchPosts(selectedThread.id);
+    }
+  }, [selectedThread?.id, fetchPosts]);
+
+  useForumRealtime(view === 'posts' && selectedThread ? selectedThread.id : null, refreshPosts);
 
   const fetchAccessibleClasses = async () => {
     try {

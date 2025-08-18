@@ -110,7 +110,6 @@ export const useForumStore = create<ForumState>((set, get) => ({
     try {
       console.log('Fetching posts for thread:', threadId);
       
-      // Remove the is_verwijderd filter to get all posts including deleted ones
       const { data, error } = await supabase
         .from('forum_posts')
         .select(`
@@ -126,15 +125,15 @@ export const useForumStore = create<ForumState>((set, get) => ({
       
       const postsWithAuthor = data?.map((post: any) => ({
         ...post,
-        content: post.content ?? post.inhoud,
-        title: post.title ?? post.titel,
+        // Normalize fields to avoid null content/title
+        content: post.content ?? post.inhoud ?? '',
+        title: post.title ?? post.titel ?? null,
         author: { 
           full_name: post.profiles?.full_name || 'Onbekende gebruiker',
           role: post.profiles?.role || 'leerling'
         }
       })) || [];
 
-      // Use the enhanced organizePosts function from utils
       const organizedPosts = organizePosts(postsWithAuthor);
       console.log('Organized posts:', organizedPosts.length, 'root posts');
       
@@ -148,12 +147,14 @@ export const useForumStore = create<ForumState>((set, get) => ({
   createPost: async (threadId: string, content: string, parentPostId?: string) => {
     set({ loading: true, error: null });
     try {
+      // Send both camelCase and snake_case for compatibility with the edge function
       const { error } = await supabase.functions.invoke('manage-forum', {
         body: { 
           action: 'create-post', 
           threadId, 
           content, 
-          parentPostId 
+          parentPostId,
+          parent_post_id: parentPostId
         }
       });
 
@@ -162,6 +163,7 @@ export const useForumStore = create<ForumState>((set, get) => ({
       await get().fetchPosts(threadId);
       return true;
     } catch (error: any) {
+      console.error('Error in createPost:', error);
       set({ error: error.message, loading: false });
       return false;
     }

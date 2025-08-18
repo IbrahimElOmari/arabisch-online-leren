@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -123,10 +124,38 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        // If duplicate submission (unique constraint), fallback to safe upsert
+        const msg = (error as any)?.message || '';
+        const isDuplicate = msg.includes('duplicate key') || msg.includes('23505');
+        if (isDuplicate) {
+          console.warn('[submitTask] Duplicate detected, performing UPSERT instead.');
+          const { data: userData } = await supabase.auth.getUser();
+          const studentId = userData.user?.id;
+          if (!studentId) throw new Error('Not authenticated');
+
+          const { error: upsertError } = await supabase
+            .from('task_submissions')
+            .upsert([
+              {
+                task_id: taskId,
+                student_id: studentId,
+                submission_content: content,
+                submission_file_path: filePath,
+                submitted_at: new Date().toISOString(),
+              }
+            ], { onConflict: 'task_id,student_id' });
+
+          if (upsertError) throw upsertError;
+        } else {
+          throw error;
+        }
+      }
+
       set({ loading: false });
       return true;
     } catch (error: any) {
+      console.error('Error submitting task:', error);
       set({ error: error.message, loading: false });
       return false;
     }

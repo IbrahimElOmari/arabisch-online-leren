@@ -39,15 +39,25 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
   const roots: ForumPostNested[] = [];
   const orphans: ForumPostNested[] = [];
 
-  // First pass: create all post objects
+  // First pass: create all post objects with safe fallbacks
   posts.forEach((p) => {
-    // We forceren replies-array op elk item
-    postMap.set(p.id, { ...p, replies: [] });
+    // Normalize content/title for display safety
+    const safeContent = (p as any).content ?? (p as any).inhoud ?? '';
+    const safeTitle = (p as any).title ?? (p as any).titel ?? null;
+
+    postMap.set(p.id, { ...p, content: safeContent, title: safeTitle, replies: [] });
   });
 
   // Second pass: organize hierarchy
   posts.forEach((p) => {
     const current = postMap.get(p.id)!;
+
+    // Guard against self-parent loops
+    if (p.parent_post_id && p.parent_post_id === p.id) {
+      console.warn(`Self-parent post detected: ${p.id}. Treating as root.`);
+      roots.push(current);
+      return;
+    }
 
     if (p.parent_post_id) {
       const parent = postMap.get(p.parent_post_id);

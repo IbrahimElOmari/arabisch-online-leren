@@ -1,10 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import ForumStructure from '@/components/forum/ForumStructure';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { SolvedSubmissionsList } from '@/components/tasks/SolvedSubmissionsList';
+import PastLessonsManager from '@/components/lessons/PastLessonsManager';
 
 interface EnrolledClass {
   id: string;
@@ -18,7 +22,7 @@ interface EnrolledClass {
 }
 
 const Forum = () => {
-  const { profile, user } = useAuth();
+  const { profile } = useAuth();
   const [enrolledClasses, setEnrolledClasses] = useState<EnrolledClass[]>([]);
   const [selectedClass, setSelectedClass] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -140,10 +144,45 @@ const Forum = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
         <div className="main-content-card mb-6">
-          <h1 className="text-2xl font-bold mb-4">Forum</h1>
-          
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <h1 className="text-2xl font-bold">Forum</h1>
+
+            <div className="flex items-center gap-2">
+              {/* Voorbije lessen modal */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Voorbije lessen</Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl">
+                  <DialogHeader>
+                    <DialogTitle>Voorbije lessen</DialogTitle>
+                  </DialogHeader>
+                  {/* PastLessonsManager verwacht doorgaans een classId; we geven de huidige selectie mee */}
+                  <div className="max-h-[70vh] overflow-auto">
+                    <PastLessonsManager classId={selectedClass} />
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* Mijn verbeteringen modal */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Mijn verbeteringen</Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Verbeterde antwoorden en feedback</DialogTitle>
+                  </DialogHeader>
+                  <div className="max-h-[70vh] overflow-auto">
+                    <SolvedSubmissionsList />
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+
           {enrolledClasses.length > 1 && (
-            <div className="max-w-xs">
+            <div className="max-w-xs mt-4">
               <label className="text-sm font-medium mb-2 block">Selecteer klas:</label>
               <Select value={selectedClass} onValueChange={setSelectedClass}>
                 <SelectTrigger>
