@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import { supabase } from '@/integrations/supabase/client';
 import { organizePosts } from '@/utils/forumUtils';
@@ -165,28 +166,43 @@ export const useForumStore = create<ForumState>((set, get) => ({
           threadId,
           content,
           parentPostId,
-          parent_post_id: parentPostId ?? null, // ensure correct column key as well
+          parent_post_id: parentPostId ?? null,
         },
       });
 
       if (error) {
         console.warn('[useForumStore.createPost] Edge function error, fallback to direct insert:', error);
 
-        // 2) Fallback to direct insert (robust)
+        // 2) Fallback to direct insert (type-safe for forum_posts schema)
         const { data: userData, error: userErr } = await supabase.auth.getUser();
         if (userErr) throw userErr;
         const userId = userData.user?.id;
         if (!userId) throw new Error('Not authenticated');
 
+        // Determine class_id from selectedThread or fetch from thread row
+        let classId = get().selectedThread?.class_id || null;
+        if (!classId) {
+          const { data: threadData, error: threadErr } = await supabase
+            .from('forum_threads')
+            .select('class_id')
+            .eq('id', threadId)
+            .single();
+          if (threadErr) throw threadErr;
+          classId = threadData?.class_id || null;
+        }
+        if (!classId) {
+          throw new Error('Kon class_id niet bepalen voor forum post');
+        }
+
         const { error: insertErr } = await supabase.from('forum_posts').insert([
           {
             thread_id: threadId,
             author_id: userId,
-            content,
+            class_id: classId,
+            inhoud: content, // map "content" -> "inhoud" per DB schema
             parent_post_id: parentPostId ?? null,
           },
         ]);
-
         if (insertErr) throw insertErr;
       }
 
