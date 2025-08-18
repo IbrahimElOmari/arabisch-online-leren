@@ -199,8 +199,10 @@ export const useForumStore = create<ForumState>((set, get) => ({
             thread_id: threadId,
             author_id: userId,
             class_id: classId,
-            inhoud: content, // map "content" -> "inhoud" per DB schema
+            titel: parentPostId ? 'Reactie' : 'Hoofdbericht',
+            inhoud: content,
             parent_post_id: parentPostId ?? null,
+            is_verwijderd: false,
           },
         ]);
         if (insertErr) throw insertErr;
