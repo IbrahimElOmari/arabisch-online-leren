@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { supabase } from '@/integrations/supabase/client';
 import { organizePosts } from '@/utils/forumUtils';
@@ -108,8 +107,8 @@ export const useForumStore = create<ForumState>((set, get) => ({
   fetchPosts: async (threadId: string) => {
     set({ loading: true, error: null });
     try {
-      console.log('Fetching posts for thread:', threadId);
-      
+      console.log('[useForumStore.fetchPosts] thread:', threadId);
+
       const { data, error } = await supabase
         .from('forum_posts')
         .select(`
@@ -120,26 +119,33 @@ export const useForumStore = create<ForumState>((set, get) => ({
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      
-      console.log('Raw posts data:', data?.length || 0, 'posts');
-      
-      const postsWithAuthor = data?.map((post: any) => ({
-        ...post,
-        // Normalize fields to avoid null content/title
-        content: post.content ?? post.inhoud ?? '',
-        title: post.title ?? post.titel ?? null,
-        author: { 
-          full_name: post.profiles?.full_name || 'Onbekende gebruiker',
-          role: post.profiles?.role || 'leerling'
-        }
-      })) || [];
 
-      const organizedPosts = organizePosts(postsWithAuthor);
-      console.log('Organized posts:', organizedPosts.length, 'root posts');
-      
-      set({ posts: organizedPosts, loading: false });
+      console.log('[useForumStore.fetchPosts] Raw posts:', data?.length || 0);
+
+      const postsWithAuthor = (data || []).map((post: any) => {
+        const normalizedParent =
+          post.parent_post_id === undefined || post.parent_post_id === null || post.parent_post_id === ''
+            ? null
+            : String(post.parent_post_id);
+
+        return {
+          ...post,
+          parent_post_id: normalizedParent,
+          content: post.content ?? post.inhoud ?? '',
+          title: post.title ?? post.titel ?? null,
+          author: {
+            full_name: post.profiles?.full_name || 'Onbekende gebruiker',
+            role: post.profiles?.role || 'leerling',
+          },
+        };
+      });
+
+      const organizedPosts = organizePosts(postsWithAuthor as any);
+      console.log('[useForumStore.fetchPosts] Organized root count:', organizedPosts.length);
+
+      set({ posts: organizedPosts as any, loading: false });
     } catch (error: any) {
-      console.error('Error in fetchPosts:', error);
+      console.error('[useForumStore.fetchPosts] Error:', error);
       set({ error: error.message, loading: false });
     }
   },
@@ -147,23 +153,49 @@ export const useForumStore = create<ForumState>((set, get) => ({
   createPost: async (threadId: string, content: string, parentPostId?: string) => {
     set({ loading: true, error: null });
     try {
-      // Send both camelCase and snake_case for compatibility with the edge function
-      const { error } = await supabase.functions.invoke('manage-forum', {
-        body: { 
-          action: 'create-post', 
-          threadId, 
-          content, 
-          parentPostId,
-          parent_post_id: parentPostId
-        }
+      console.log('[useForumStore.createPost] Creating post', {
+        threadId,
+        hasParent: !!parentPostId,
       });
 
-      if (error) throw error;
-      
+      // 1) Try edge function (preferred)
+      const { error } = await supabase.functions.invoke('manage-forum', {
+        body: {
+          action: 'create-post',
+          threadId,
+          content,
+          parentPostId,
+          parent_post_id: parentPostId ?? null, // ensure correct column key as well
+        },
+      });
+
+      if (error) {
+        console.warn('[useForumStore.createPost] Edge function error, fallback to direct insert:', error);
+
+        // 2) Fallback to direct insert (robust)
+        const { data: userData, error: userErr } = await supabase.auth.getUser();
+        if (userErr) throw userErr;
+        const userId = userData.user?.id;
+        if (!userId) throw new Error('Not authenticated');
+
+        const { error: insertErr } = await supabase.from('forum_posts').insert([
+          {
+            thread_id: threadId,
+            author_id: userId,
+            content,
+            parent_post_id: parentPostId ?? null,
+          },
+        ]);
+
+        if (insertErr) throw insertErr;
+      }
+
+      // Always refresh posts immediately (besides realtime)
       await get().fetchPosts(threadId);
+      set({ loading: false });
       return true;
     } catch (error: any) {
-      console.error('Error in createPost:', error);
+      console.error('[useForumStore.createPost] Error:', error);
       set({ error: error.message, loading: false });
       return false;
     }

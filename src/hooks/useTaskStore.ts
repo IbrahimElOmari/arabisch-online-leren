@@ -115,6 +115,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   submitTask: async (taskId: string, content?: string, filePath?: string) => {
     set({ loading: true, error: null });
     try {
+      // First try edge function (may fail on 23505)
       const { error } = await supabase.functions.invoke('manage-task', {
         body: { 
           action: 'submit-task', 
@@ -125,31 +126,41 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       });
 
       if (error) {
-        // If duplicate submission (unique constraint), fallback to safe upsert
         const msg = (error as any)?.message || '';
-        const isDuplicate = msg.includes('duplicate key') || msg.includes('23505');
-        if (isDuplicate) {
-          console.warn('[submitTask] Duplicate detected, performing UPSERT instead.');
-          const { data: userData } = await supabase.auth.getUser();
-          const studentId = userData.user?.id;
-          if (!studentId) throw new Error('Not authenticated');
+        const code = (error as any)?.code || '';
+        const isDuplicate =
+          msg.includes('duplicate key') ||
+          msg.includes('23505') ||
+          msg.toLowerCase().includes('unique constraint') ||
+          code === '23505';
 
-          const { error: upsertError } = await supabase
-            .from('task_submissions')
-            .upsert([
+        if (!isDuplicate) {
+          console.warn('[submitTask] Edge function error (non-dup), attempting safe UPSERT anyway:', error);
+        } else {
+          console.warn('[submitTask] Duplicate detected, performing UPSERT.');
+        }
+
+        // Safe UPSERT path (covers duplicates and transient errors)
+        const { data: userData } = await supabase.auth.getUser();
+        const studentId = userData.user?.id;
+        if (!studentId) throw new Error('Not authenticated');
+
+        const { error: upsertError } = await supabase
+          .from('task_submissions')
+          .upsert(
+            [
               {
                 task_id: taskId,
                 student_id: studentId,
                 submission_content: content,
                 submission_file_path: filePath,
                 submitted_at: new Date().toISOString(),
-              }
-            ], { onConflict: 'task_id,student_id' });
+              },
+            ],
+            { onConflict: 'task_id,student_id' }
+          );
 
-          if (upsertError) throw upsertError;
-        } else {
-          throw error;
-        }
+        if (upsertError) throw upsertError;
       }
 
       set({ loading: false });

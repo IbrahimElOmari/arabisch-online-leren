@@ -28,28 +28,45 @@ export interface ForumPostNested extends ForumPostFlat {
 /**
  * Organizes a flat list of posts into a nested tree based on parent_post_id.
  * Children are attached to their parents; root posts are those without parent_post_id.
- * Enhanced with better orphan handling and sorting.
+ * Enhanced with better orphan handling, sorting, and ID normalization.
  */
 export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
   if (!posts || posts.length === 0) return [];
 
   console.log('organizePosts: Processing', posts.length, 'posts');
 
+  // Normalize ids to strings and ensure safe content/title
+  const normalized = posts.map((p) => {
+    const id = p.id != null ? String(p.id) : '';
+    const parentIdRaw = (p as any).parent_post_id;
+    const parentId =
+      parentIdRaw === undefined || parentIdRaw === null || parentIdRaw === ''
+        ? null
+        : String(parentIdRaw);
+
+    const safeContent = (p as any).content ?? (p as any).inhoud ?? '';
+    const safeTitle = (p as any).title ?? (p as any).titel ?? null;
+
+    return {
+      ...p,
+      id,
+      parent_post_id: parentId,
+      content: safeContent,
+      title: safeTitle,
+    } as ForumPostFlat;
+  });
+
   const postMap = new Map<string, ForumPostNested>();
   const roots: ForumPostNested[] = [];
   const orphans: ForumPostNested[] = [];
 
-  // First pass: create all post objects with safe fallbacks
-  posts.forEach((p) => {
-    // Normalize content/title for display safety
-    const safeContent = (p as any).content ?? (p as any).inhoud ?? '';
-    const safeTitle = (p as any).title ?? (p as any).titel ?? null;
-
-    postMap.set(p.id, { ...p, content: safeContent, title: safeTitle, replies: [] });
+  // First pass: create all post objects
+  normalized.forEach((p) => {
+    postMap.set(p.id, { ...p, replies: [] });
   });
 
   // Second pass: organize hierarchy
-  posts.forEach((p) => {
+  normalized.forEach((p) => {
     const current = postMap.get(p.id)!;
 
     // Guard against self-parent loops
@@ -64,8 +81,10 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
       if (parent) {
         parent.replies.push(current);
       } else {
-        // Orphaned reply - treat as root but mark for potential cleanup
-        console.warn(`Orphaned post found: ${p.id} references non-existent parent ${p.parent_post_id}`);
+        // Orphaned reply - treat as root but mark it
+        console.warn(
+          `Orphaned post found: ${p.id} references non-existent parent ${p.parent_post_id}`
+        );
         orphans.push(current);
       }
     } else {
@@ -79,7 +98,9 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
   // Sort replies by creation date (oldest first for chronological order)
   const sortReplies = (post: ForumPostNested) => {
     if (post.replies.length > 0) {
-      post.replies.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      post.replies.sort(
+        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
       post.replies.forEach(sortReplies);
     }
   };
@@ -95,3 +116,4 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
 
   return allRoots;
 }
+

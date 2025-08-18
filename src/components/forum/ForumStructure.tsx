@@ -195,13 +195,26 @@ const ForumStructure: React.FC<ForumStructureProps> = ({ classId }) => {
       return;
     }
 
+    console.log('[ForumStructure] Submitting post', {
+      threadId: selectedThread?.id,
+      replyingTo: replyToPost ?? null
+    });
+
     const success = await createPost(selectedThread?.id || '', newPostContent, replyToPost || undefined);
-    if (success) {
+    if (success && selectedThread?.id) {
+      // Force a refresh to avoid any realtime race conditions
+      await fetchPosts(selectedThread.id);
       setNewPostContent('');
       setReplyToPost(null);
       toast({
         title: "Succes",
         description: "Bericht geplaatst"
+      });
+    } else if (!success) {
+      toast({
+        title: "Fout",
+        description: "Kon bericht niet plaatsen",
+        variant: "destructive"
       });
     }
   };
