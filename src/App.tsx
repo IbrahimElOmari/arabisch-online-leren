@@ -8,6 +8,8 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/AppSidebar";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { SecurityProvider } from "@/components/security/SecurityProvider";
+import { SecurityMonitor } from "@/components/security/SecurityMonitor";
+import { SecurityErrorBoundary } from "@/components/error/SecurityErrorBoundary";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { AppGate } from "@/components/auth/AppGate";
 import Navigation from "./components/Navigation";
@@ -42,38 +44,40 @@ const App = () => (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <TooltipProvider>
         <BrowserRouter>
-          <SecurityProvider>
+          <SecurityErrorBoundary>
             <AuthProvider>
-              <AppGate>
-                <SidebarProvider>
-                  <div className="min-h-screen flex w-full">
-                    <AppSidebar />
-                    <div className="flex-1 flex flex-col">
-                      <Navigation />
-                      <main className="flex-1">
-                        <Routes>
-                          <Route path="/" element={<Index />} />
-                          <Route path="/auth" element={<Auth />} />
-                          <Route path="/dashboard" element={<Dashboard />} />
-                          <Route path="/calendar" element={<Calendar />} />
-                          <Route path="/forum" element={<Forum />} />
-                          <Route path="/forum-moderation" element={<ForumModeration />} />
-                          <Route path="/security" element={<Security />} />
-                          <Route path="/visie" element={<Visie />} />
-                          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                          <Route path="/terms-of-service" element={<TermsOfService />} />
-                          <Route path="/reset-password" element={<ResetPassword />} />
-                          <Route path="/enroll-confirm" element={<EnrollConfirm />} />
-                          <Route path="/course/:id" element={<CourseDetail />} />
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </main>
+              <SecurityMonitor>
+                <AppGate>
+                  <SidebarProvider>
+                    <div className="min-h-screen flex w-full">
+                      <AppSidebar />
+                      <div className="flex-1 flex flex-col">
+                        <Navigation />
+                        <main className="flex-1">
+                          <Routes>
+                            <Route path="/" element={<Index />} />
+                            <Route path="/auth" element={<Auth />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/calendar" element={<Calendar />} />
+                            <Route path="/forum" element={<Forum />} />
+                            <Route path="/forum-moderation" element={<ForumModeration />} />
+                            <Route path="/security" element={<Security />} />
+                            <Route path="/visie" element={<Visie />} />
+                            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                            <Route path="/terms-of-service" element={<TermsOfService />} />
+                            <Route path="/reset-password" element={<ResetPassword />} />
+                            <Route path="/enroll-confirm" element={<EnrollConfirm />} />
+                            <Route path="/course/:id" element={<CourseDetail />} />
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </main>
+                      </div>
                     </div>
-                  </div>
-                </SidebarProvider>
-              </AppGate>
+                  </SidebarProvider>
+                </AppGate>
+              </SecurityMonitor>
             </AuthProvider>
-          </SecurityProvider>
+          </SecurityErrorBoundary>
         </BrowserRouter>
         <Toaster />
         <Sonner />

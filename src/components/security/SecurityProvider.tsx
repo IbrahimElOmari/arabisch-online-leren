@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { SecurityMonitor } from './SecurityMonitor';
 import { SecurityErrorBoundary } from '../error/SecurityErrorBoundary';
 
 interface SecurityProviderProps {
@@ -10,9 +9,7 @@ interface SecurityProviderProps {
 export const SecurityProvider: React.FC<SecurityProviderProps> = ({ children }) => {
   return (
     <SecurityErrorBoundary>
-      <SecurityMonitor>
-        {children}
-      </SecurityMonitor>
+      {children}
     </SecurityErrorBoundary>
   );
 };
