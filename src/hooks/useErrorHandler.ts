@@ -39,57 +39,6 @@ export const useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     return error.message || 'Er is een onbekende fout opgetreden.';
   };
 
-  const handleError = useCallback((error: Error | string, context?: string) => {
-    const errorId = generateErrorId();
-    const errorMessage = getErrorMessage(error);
-    
-    console.error('🚨 Error handled:', error, 'Context:', context, 'ID:', errorId);
-    
-    setErrorState(prev => ({
-      hasError: true,
-      error,
-      retryCount: prev.retryCount + 1,
-      errorId
-    }));
-
-    if (showToast) {
-      toast({
-        title: "Er ging iets mis",
-        description: errorMessage,
-        variant: "destructive",
-        action: errorState.retryCount < maxRetries ? (
-          <button 
-            onClick={() => retry()}
-            className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
-          >
-            Opnieuw
-          </button>
-        ) : undefined
-      });
-    }
-
-    if (logToSecurity) {
-      securityLogger.logSuspiciousActivity('application_error', {
-        error_message: typeof error === 'string' ? error : error.message,
-        error_stack: typeof error === 'object' ? error.stack : undefined,
-        context,
-        error_id: errorId,
-        retry_count: errorState.retryCount
-      });
-    }
-
-    if (onError) {
-      onError(error, errorId);
-    }
-  }, [onError, showToast, logToSecurity, toast, errorState.retryCount, maxRetries]);
-
-  const clearError = useCallback(() => {
-    setErrorState({
-      hasError: false,
-      retryCount: 0
-    });
-  }, []);
-
   const retry = useCallback(() => {
     if (errorState.retryCount < maxRetries) {
       setErrorState(prev => ({
@@ -107,6 +56,58 @@ export const useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     
     return false;
   }, [errorState.retryCount, maxRetries, toast]);
+
+  const handleError = useCallback((error: Error | string, context?: string) => {
+    const errorId = generateErrorId();
+    const errorMessage = getErrorMessage(error);
+    
+    console.error('🚨 Error handled:', error, 'Context:', context, 'ID:', errorId);
+    
+    setErrorState(prev => ({
+      hasError: true,
+      error,
+      retryCount: prev.retryCount + 1,
+      errorId
+    }));
+
+    if (showToast) {
+      const toastConfig: any = {
+        title: "Er ging iets mis",
+        description: errorMessage,
+        variant: "destructive"
+      };
+
+      if (errorState.retryCount < maxRetries) {
+        toastConfig.action = {
+          altText: "Probeer opnieuw",
+          onClick: () => retry()
+        };
+      }
+
+      toast(toastConfig);
+    }
+
+    if (logToSecurity) {
+      securityLogger.logSuspiciousActivity('application_error', {
+        error_message: typeof error === 'string' ? error : error.message,
+        error_stack: typeof error === 'object' ? error.stack : undefined,
+        context,
+        error_id: errorId,
+        retry_count: errorState.retryCount
+      });
+    }
+
+    if (onError) {
+      onError(error, errorId);
+    }
+  }, [onError, showToast, logToSecurity, toast, errorState.retryCount, maxRetries, retry]);
+
+  const clearError = useCallback(() => {
+    setErrorState({
+      hasError: false,
+      retryCount: 0
+    });
+  }, []);
 
   const canRetry = errorState.retryCount < maxRetries;
 
