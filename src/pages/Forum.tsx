@@ -28,11 +28,30 @@ const Forum = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchUserClasses();
-  }, [profile?.id]);
+    // Wacht tot profile?.id beschikbaar is voordat we fetchUserClasses aanroepen
+    if (profile?.id) {
+      console.debug('🏛️ Forum: Profile available, fetching classes for user:', profile.id);
+      fetchUserClasses();
+    } else if (profile === null) {
+      // Profile is expliciet null (geen gebruiker), stop loading
+      console.debug('🚫 Forum: No profile available, stopping loading');
+      setLoading(false);
+    }
+    // Als profile undefined is, blijven we wachten (loading = true)
+  }, [profile]);
 
   const fetchUserClasses = async () => {
+    // Extra veiligheidscheck
+    if (!profile?.id) {
+      console.debug('⚠️ Forum: fetchUserClasses called without profile.id');
+      setLoading(false);
+      return;
+    }
+
     try {
+      setLoading(true);
+      console.debug('🔄 Forum: Fetching classes for role:', profile.role);
+
       if (profile?.role === 'admin') {
         // Admin can see all classes
         const { data, error } = await supabase
@@ -106,16 +125,20 @@ const Forum = () => {
         }
       }
     } catch (error) {
-      console.error('Error fetching user classes:', error);
+      console.error('❌ Forum: Error fetching user classes:', error);
+      setEnrolledClasses([]);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
+  // Show loading wanneer we wachten op profile of classes
+  if (loading || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-lg">Laden...</div>
+        <div className="text-lg">
+          {!profile ? 'Profiel laden...' : 'Klassen laden...'}
+        </div>
       </div>
     );
   }

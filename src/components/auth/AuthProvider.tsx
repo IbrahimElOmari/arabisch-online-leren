@@ -42,6 +42,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [authReady, setAuthReady] = useState(false);
   const { toast } = useToast();
 
+  const createFallbackProfile = (userId: string, userData?: any): UserProfile => {
+    console.debug('🔄 AuthProvider: Creating fallback profile for user:', userId);
+    return {
+      id: userId,
+      full_name: userData?.user_metadata?.full_name || 'Gebruiker',
+      role: (userData?.user_metadata?.role || 'leerling') as UserRole,
+      parent_email: userData?.user_metadata?.parent_email
+    };
+  };
+
   const fetchProfile = async (userId: string, retryCount = 0): Promise<void> => {
     console.debug('🔍 AuthProvider: Starting fetchProfile for userId:', userId, 'retry:', retryCount);
     
@@ -64,20 +74,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         // Fallback naar user metadata
         const { data: userData } = await supabase.auth.getUser();
-        if (userData.user?.user_metadata) {
+        if (userData.user) {
           console.debug('🔄 AuthProvider: Using fallback profile from metadata');
-          const fallbackProfile = {
-            id: userId,
-            full_name: userData.user.user_metadata.full_name || 'Gebruiker',
-            role: (userData.user.user_metadata.role || 'leerling') as UserRole,
-            parent_email: userData.user.user_metadata.parent_email
-          };
+          const fallbackProfile = createFallbackProfile(userId, userData);
           setProfile(fallbackProfile);
         } else {
-          // Show user-friendly error
+          // Als laatste fallback, maak een basis profiel
+          console.debug('🔄 AuthProvider: Using basic fallback profile');
+          const basicProfile = createFallbackProfile(userId);
+          setProfile(basicProfile);
+          
           toast({
             title: "Profiel laden mislukt",
-            description: "Er ging iets mis bij het laden van je profiel. Probeer de pagina te vernieuwen.",
+            description: "Er ging iets mis bij het laden van je profiel. Een basis profiel wordt gebruikt.",
             variant: "destructive"
           });
         }
@@ -94,9 +103,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.debug('🔄 AuthProvider: Retrying after exception...');
         setTimeout(() => fetchProfile(userId, retryCount + 1), 1000);
       } else {
+        // Als laatste redmiddel, maak een fallback profile
+        const basicProfile = createFallbackProfile(userId);
+        setProfile(basicProfile);
+        
         toast({
           title: "Verbindingsprobleem",
-          description: "Kan geen verbinding maken met de server. Controleer je internetverbinding.",
+          description: "Kan geen verbinding maken met de server. Een basis profiel wordt gebruikt.",
           variant: "destructive"
         });
       }

@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -315,10 +316,10 @@ const StudentDashboard = () => {
                     Ga naar het forum om te discussiëren met je klasgenoten.
                   </p>
                   <Button asChild>
-                    <a href="/forum">
+                    <Link to="/forum">
                       <MessageSquare className="h-4 w-4 mr-2" />
                       Naar Forum
-                    </a>
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -363,4 +364,3 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
-
