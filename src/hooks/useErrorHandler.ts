@@ -30,13 +30,26 @@ export const useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
   const getErrorMessage = (error: Error | string): string => {
     if (typeof error === 'string') return error;
     
-    // Friendly error messages for common errors
-    if (error.message.includes('fetch')) return 'Verbindingsprobleem. Controleer je internetverbinding.';
-    if (error.message.includes('unauthorized')) return 'Je hebt geen toegang tot deze functie.';
-    if (error.message.includes('not found')) return 'De opgevraagde informatie kon niet gevonden worden.';
-    if (error.message.includes('timeout')) return 'De aanvraag duurde te lang. Probeer het opnieuw.';
+    const message = error?.message || 'Onbekende fout';
     
-    return error.message || 'Er is een onbekende fout opgetreden.';
+    // Friendly error messages for common errors
+    if (message.includes('fetch') || message.includes('network')) {
+      return 'Verbindingsprobleem. Controleer je internetverbinding.';
+    }
+    if (message.includes('unauthorized') || message.includes('403')) {
+      return 'Je hebt geen toegang tot deze functie.';
+    }
+    if (message.includes('not found') || message.includes('404')) {
+      return 'De opgevraagde informatie kon niet gevonden worden.';
+    }
+    if (message.includes('timeout')) {
+      return 'De aanvraag duurde te lang. Probeer het opnieuw.';
+    }
+    if (message.includes('useAuth must be used within an AuthProvider')) {
+      return 'Er is een probleem met de authenticatie. De pagina wordt ververst.';
+    }
+    
+    return message || 'Er is een onbekende fout opgetreden.';
   };
 
   const retry = useCallback(() => {
@@ -48,14 +61,16 @@ export const useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
       return true;
     }
     
-    toast({
-      title: "Maximaal aantal pogingen bereikt",
-      description: "Neem contact op met de support als het probleem blijft bestaan.",
-      variant: "destructive"
-    });
+    if (showToast) {
+      toast({
+        title: "Maximaal aantal pogingen bereikt",
+        description: "Neem contact op met de support als het probleem blijft bestaan.",
+        variant: "destructive"
+      });
+    }
     
     return false;
-  }, [errorState.retryCount, maxRetries, toast]);
+  }, [errorState.retryCount, maxRetries, toast, showToast]);
 
   const handleError = useCallback((error: Error | string, context?: string) => {
     const errorId = generateErrorId();
@@ -69,6 +84,13 @@ export const useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
       retryCount: prev.retryCount + 1,
       errorId
     }));
+
+    // Special handling for auth context errors
+    if (typeof error === 'string' && error.includes('useAuth must be used within an AuthProvider')) {
+      console.log('Auth context error detected, reloading page...');
+      setTimeout(() => window.location.reload(), 1000);
+      return;
+    }
 
     if (showToast) {
       const toastConfig: any = {
@@ -88,17 +110,27 @@ export const useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     }
 
     if (logToSecurity) {
-      securityLogger.logSuspiciousActivity('application_error', {
-        error_message: typeof error === 'string' ? error : error.message,
-        error_stack: typeof error === 'object' ? error.stack : undefined,
-        context,
-        error_id: errorId,
-        retry_count: errorState.retryCount
-      });
+      // Safe logging with error handling
+      try {
+        securityLogger.logSuspiciousActivity('application_error', {
+          error_message: typeof error === 'string' ? error : (error?.message || 'Unknown'),
+          error_stack: typeof error === 'object' ? error?.stack : undefined,
+          context: context || 'unknown',
+          error_id: errorId,
+          retry_count: errorState.retryCount,
+          user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown'
+        });
+      } catch (logError) {
+        console.warn('Failed to log error to security logger:', logError);
+      }
     }
 
     if (onError) {
-      onError(error, errorId);
+      try {
+        onError(error, errorId);
+      } catch (callbackError) {
+        console.error('Error in onError callback:', callbackError);
+      }
     }
   }, [onError, showToast, logToSecurity, toast, errorState.retryCount, maxRetries, retry]);
 

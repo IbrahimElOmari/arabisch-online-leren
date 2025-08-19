@@ -17,28 +17,43 @@ export interface SecurityEvent {
 class SecurityLogger {
   private async log(event: SecurityEvent) {
     try {
-      // Get user info if available
-      const { data: { user } } = await supabase.auth.getUser();
+      // Get user info if available - with null safety
+      const { data: authData, error: authError } = await supabase.auth.getUser();
       
+      if (authError) {
+        console.warn('SecurityLogger: Auth check failed, logging anonymously:', authError.message);
+      }
+      
+      const userId = event.user_id || authData?.user?.id;
+      
+      // Only log to database if we have a valid user or it's a system event
+      if (!userId && event.severity !== 'critical') {
+        console.log('SecurityLogger: Skipping non-critical event without user ID:', event.action);
+        return;
+      }
+
       const securityEvent = {
-        user_id: event.user_id || user?.id,
+        user_id: userId || null, // Allow null for system events
         actie: event.action,
         severity: event.severity,
         details: {
           ...event.details,
           timestamp: new Date().toISOString(),
-          user_agent: navigator.userAgent,
+          user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
         },
         created_at: new Date().toISOString()
       };
 
-      // Log to audit table
-      const { error } = await supabase
-        .from('audit_log')
-        .insert([securityEvent]);
+      // Log to audit table only if we have a user or it's critical
+      if (userId || event.severity === 'critical') {
+        const { error } = await supabase
+          .from('audit_log')
+          .insert([securityEvent]);
 
-      if (error) {
-        console.error('Failed to log security event:', error);
+        if (error) {
+          console.error('Failed to log security event to database:', error);
+          // Don't throw, just log locally
+        }
       }
 
       // Console log for development
@@ -52,25 +67,30 @@ class SecurityLogger {
       }
 
     } catch (error) {
-      console.error('Security logging failed:', error);
+      console.error('Security logging failed (non-blocking):', error);
+      // Don't re-throw to prevent breaking the application
     }
   }
 
   private async alertCriticalEvent(event: any) {
-    // In a real application, this would send alerts to administrators
-    console.error('🚨 CRITICAL SECURITY EVENT:', event);
-    
-    // Could integrate with external monitoring services
-    // await this.sendToMonitoringService(event);
+    try {
+      // In a real application, this would send alerts to administrators
+      console.error('🚨 CRITICAL SECURITY EVENT:', event);
+      
+      // Could integrate with external monitoring services
+      // await this.sendToMonitoringService(event);
+    } catch (error) {
+      console.error('Critical event alerting failed:', error);
+    }
   }
 
-  // Public logging methods
+  // Public logging methods with enhanced null safety
   async logAuthAttempt(success: boolean, email?: string, details?: Record<string, any>) {
     await this.log({
       action: success ? 'LOGIN_SUCCESS' : 'LOGIN_FAILED',
       severity: success ? 'info' : 'warning',
       details: {
-        email,
+        email: email || 'unknown',
         success,
         ...details
       }
@@ -78,13 +98,18 @@ class SecurityLogger {
   }
 
   async logPrivilegeChange(targetUserId: string, oldRole: string, newRole: string) {
+    if (!targetUserId) {
+      console.warn('SecurityLogger: Skipping privilege change log - no target user ID');
+      return;
+    }
+    
     await this.log({
       action: 'PRIVILEGE_CHANGE',
       severity: 'critical',
       details: {
         target_user_id: targetUserId,
-        old_role: oldRole,
-        new_role: newRole
+        old_role: oldRole || 'unknown',
+        new_role: newRole || 'unknown'
       }
     });
   }
@@ -102,7 +127,7 @@ class SecurityLogger {
       action: 'SUSPICIOUS_ACTIVITY',
       severity: 'error',
       details: {
-        reason,
+        reason: reason || 'unknown',
         ...details
       }
     });
@@ -113,8 +138,8 @@ class SecurityLogger {
       action: 'DATA_ACCESS',
       severity: 'info',
       details: {
-        resource,
-        operation,
+        resource: resource || 'unknown',
+        operation: operation || 'unknown',
         ...details
       }
     });
