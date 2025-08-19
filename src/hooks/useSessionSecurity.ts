@@ -160,7 +160,7 @@ export const useSessionSecurity = () => {
   const extendSession = useCallback(() => {
     updateActivity();
     
-    securityLogger.logSensitiveAction('session_extended', {
+    securityLogger.logSuspiciousActivity('session_extended', {
       manual_extension: true,
       session_duration: Date.now() - sessionStartRef.current
     });
