@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
-import { TaskQuestionManagementNew } from '@/components/management/TaskQuestionManagementNew';
+import TaskQuestionManagementNew from '@/components/management/TaskQuestionManagementNew';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { TeachingModal } from '@/components/teaching/TeachingModal';
 import { AttendanceModal } from '@/components/teaching/AttendanceModal';
@@ -32,6 +33,11 @@ const TeacherDashboard = () => {
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
+
+  // Local state to control modals
+  const [teachingOpen, setTeachingOpen] = useState(false);
+  const [attendanceOpen, setAttendanceOpen] = useState(false);
+  const [performanceOpen, setPerformanceOpen] = useState(false);
 
   useEffect(() => {
     if (profile?.id) {
@@ -167,7 +173,8 @@ const TeacherDashboard = () => {
                   <CardTitle>Beheer Taken & Vragen</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <TaskQuestionManagementNew classId={selectedClass} />
+                  {/* Component accepteert geen props; verwijderde classId */}
+                  <TaskQuestionManagementNew />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -178,7 +185,15 @@ const TeacherDashboard = () => {
                   <CardTitle>Lesgeven</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <TeachingModal classId={selectedClass} />
+                  <Button
+                    variant="outline"
+                    className="mb-4 flex items-center gap-2"
+                    onClick={() => setTeachingOpen(true)}
+                  >
+                    <Plus className="h-4 w-4" />
+                    Nieuwe les
+                  </Button>
+                  <TeachingModal open={teachingOpen} onOpenChange={setTeachingOpen} />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -189,7 +204,14 @@ const TeacherDashboard = () => {
                   <CardTitle>Aanwezigheid</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <AttendanceModal classId={selectedClass} />
+                  <Button
+                    variant="outline"
+                    className="mb-4"
+                    onClick={() => setAttendanceOpen(true)}
+                  >
+                    Aanwezigheid registreren
+                  </Button>
+                  <AttendanceModal open={attendanceOpen} onOpenChange={setAttendanceOpen} className="" />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -200,7 +222,14 @@ const TeacherDashboard = () => {
                   <CardTitle>Prestaties</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <PerformanceModal classId={selectedClass} />
+                  <Button
+                    variant="outline"
+                    className="mb-4"
+                    onClick={() => setPerformanceOpen(true)}
+                  >
+                    Prestaties bekijken
+                  </Button>
+                  <PerformanceModal open={performanceOpen} onOpenChange={setPerformanceOpen} className="" />
                 </CardContent>
               </Card>
             </TabsContent>

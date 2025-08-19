@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,10 +6,11 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
-import { UserActivationPanel } from '@/components/admin/UserActivationPanel';
+import UserActivationPanel from '@/components/admin/UserActivationPanel';
 import { PendingUsersManagement } from '@/components/admin/PendingUsersManagement';
-import { AdminSeeder } from '@/components/admin/AdminSeeder';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import AdminSeeder from '@/components/admin/AdminSeeder';
+// Removed Dialog imports since we manage modal open state locally
+// import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ClassManagementModal } from '@/components/admin/ClassManagementModal';
 import {
   Users,
@@ -19,7 +21,8 @@ import {
   BarChart3,
   BookOpen,
   UserCheck,
-  Clock
+  Clock,
+  Plus
 } from 'lucide-react';
 
 interface DashboardCardProps {
@@ -29,18 +32,21 @@ interface DashboardCardProps {
   description?: string;
 }
 
-const DashboardCard: React.FC<DashboardCardProps> = ({ title, value, icon, description }) => (
-  <Card>
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium">{title}</CardTitle>
-      {icon}
-    </CardHeader>
-    <CardContent>
-      <div className="text-2xl font-bold">{value}</div>
-      {description && <p className="text-xs text-muted-foreground">{description}</p>}
-    </CardContent>
-  </Card>
-);
+// Avoid React.FC to prevent deep type instantiation issues
+function DashboardCard({ title, value, icon, description }: DashboardCardProps) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        {description && <p className="text-xs text-muted-foreground">{description}</p>}
+      </CardContent>
+    </Card>
+  );
+}
 
 const AdminDashboard = () => {
   const { profile } = useAuth();
@@ -50,6 +56,7 @@ const AdminDashboard = () => {
   const [taskCount, setTaskCount] = useState(0);
   const [lessonCount, setLessonCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [classModalOpen, setClassModalOpen] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -83,7 +90,7 @@ const AdminDashboard = () => {
 
       // Fetch task count
       const { count: tasks, error: tasksError } = await supabase
-        .from('taken')
+        .from('tasks') // fixed table name
         .select('*', { count: 'exact' });
       if (tasksError) throw tasksError;
       setTaskCount(tasks || 0);
@@ -208,26 +215,21 @@ const AdminDashboard = () => {
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <CardTitle>Klassenbeheer</CardTitle>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Nieuwe Klas
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle>Klas aanmaken</DialogTitle>
-                      </DialogHeader>
-                      <ClassManagementModal />
-                    </DialogContent>
-                  </Dialog>
+                  <Button variant="outline" onClick={() => setClassModalOpen(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Nieuwe Klas
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                <ClassManagementModal />
+                {/* Content kan hier toegevoegd worden indien nodig */}
               </CardContent>
             </Card>
+            {/* Render modal component with required props */}
+            <ClassManagementModal
+              isOpen={classModalOpen}
+              onClose={() => setClassModalOpen(false)}
+            />
           </TabsContent>
           <TabsContent value="admin" className="mt-6">
             <Card>
