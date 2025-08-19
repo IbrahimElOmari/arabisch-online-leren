@@ -28,6 +28,7 @@ import EnrollConfirm from "./pages/EnrollConfirm";
 import CourseDetail from "./pages/CourseDetail";
 import NotFound from "./pages/NotFound";
 import "./App.css";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,17 +58,59 @@ const App = () => (
                           <Routes>
                             <Route path="/" element={<Index />} />
                             <Route path="/auth" element={<Auth />} />
-                            <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/calendar" element={<Calendar />} />
-                            <Route path="/forum" element={<Forum />} />
-                            <Route path="/forum-moderation" element={<ForumModeration />} />
-                            <Route path="/security" element={<Security />} />
+                            <Route
+                              path="/dashboard"
+                              element={
+                                <ProtectedRoute>
+                                  <Dashboard />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/calendar"
+                              element={
+                                <ProtectedRoute>
+                                  <Calendar />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/forum"
+                              element={
+                                <ProtectedRoute>
+                                  <Forum />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/forum-moderation"
+                              element={
+                                <ProtectedRoute>
+                                  <ForumModeration />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/security"
+                              element={
+                                <ProtectedRoute>
+                                  <Security />
+                                </ProtectedRoute>
+                              }
+                            />
                             <Route path="/visie" element={<Visie />} />
                             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                             <Route path="/terms-of-service" element={<TermsOfService />} />
                             <Route path="/reset-password" element={<ResetPassword />} />
                             <Route path="/enroll-confirm" element={<EnrollConfirm />} />
-                            <Route path="/course/:id" element={<CourseDetail />} />
+                            <Route
+                              path="/course/:id"
+                              element={
+                                <ProtectedRoute>
+                                  <CourseDetail />
+                                </ProtectedRoute>
+                              }
+                            />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </main>
@@ -87,3 +130,4 @@ const App = () => (
 );
 
 export default App;
+

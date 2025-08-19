@@ -3,11 +3,18 @@ import { useAuth } from '@/components/auth/AuthProvider';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
 import TeacherDashboard from '@/components/dashboard/TeacherDashboard';
 import StudentDashboard from '@/components/dashboard/StudentDashboard';
+import { Navigate } from 'react-router-dom';
 
 const Dashboard = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, authReady } = useAuth();
 
   console.debug('📊 Dashboard: user:', !!user, 'profile:', !!profile, 'role:', profile?.role);
+
+  // Early guard: if auth is ready and no user, redirect to auth (extra safety besides ProtectedRoute)
+  if (authReady && !user) {
+    console.debug('🚫 Dashboard: No user after auth ready, redirecting to /auth');
+    return <Navigate to="/auth" replace />;
+  }
 
   // Show skeleton while profile is loading
   if (!profile) {
@@ -50,3 +57,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

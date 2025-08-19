@@ -9,6 +9,8 @@ import ForumStructure from '@/components/forum/ForumStructure';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { SolvedSubmissionsList } from '@/components/tasks/SolvedSubmissionsList';
 import PastLessonsManager from '@/components/lessons/PastLessonsManager';
+import { FullPageLoader } from '@/components/ui/LoadingSpinner';
+import { Navigate } from 'react-router-dom';
 
 interface EnrolledClass {
   id: string;
@@ -22,10 +24,10 @@ interface EnrolledClass {
 }
 
 const Forum = () => {
-  const { profile } = useAuth();
+  const { profile, user, authReady, loading: authLoading } = useAuth();
   const [enrolledClasses, setEnrolledClasses] = useState<EnrolledClass[]>([]);
   const [selectedClass, setSelectedClass] = useState<string>('');
-  const [loading, setLoading] = useState(true);
+  const [classesLoading, setClassesLoading] = useState(true);
 
   useEffect(() => {
     // Wacht tot profile?.id beschikbaar is voordat we fetchUserClasses aanroepen
@@ -34,22 +36,22 @@ const Forum = () => {
       fetchUserClasses();
     } else if (profile === null) {
       // Profile is expliciet null (geen gebruiker), stop loading
-      console.debug('🚫 Forum: No profile available, stopping loading');
-      setLoading(false);
+      console.debug('🚫 Forum: No profile available, stopping classesLoading');
+      setClassesLoading(false);
     }
-    // Als profile undefined is, blijven we wachten (loading = true)
+    // Als profile undefined is, blijven we wachten (classesLoading = true)
   }, [profile]);
 
   const fetchUserClasses = async () => {
     // Extra veiligheidscheck
     if (!profile?.id) {
       console.debug('⚠️ Forum: fetchUserClasses called without profile.id');
-      setLoading(false);
+      setClassesLoading(false);
       return;
     }
 
     try {
-      setLoading(true);
+      setClassesLoading(true);
       console.debug('🔄 Forum: Fetching classes for role:', profile.role);
 
       if (profile?.role === 'admin') {
@@ -128,19 +130,28 @@ const Forum = () => {
       console.error('❌ Forum: Error fetching user classes:', error);
       setEnrolledClasses([]);
     } finally {
-      setLoading(false);
+      setClassesLoading(false);
     }
   };
 
-  // Show loading wanneer we wachten op profile of classes
-  if (loading || !profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-lg">
-          {!profile ? 'Profiel laden...' : 'Klassen laden...'}
-        </div>
-      </div>
-    );
+  // Auth loading gate
+  if (authLoading && !authReady) {
+    return <FullPageLoader text="Laden..." />;
+  }
+
+  // If auth is ready and there's no user, redirect to auth (in case route isn't wrapped)
+  if (authReady && !user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  // Still waiting for profile to be loaded
+  if (!profile) {
+    return <FullPageLoader text="Profiel laden..." />;
+  }
+
+  // Show loading when fetching classes
+  if (classesLoading) {
+    return <FullPageLoader text="Klassen laden..." />;
   }
 
   if (enrolledClasses.length === 0) {
@@ -232,3 +243,4 @@ const Forum = () => {
 };
 
 export default Forum;
+
