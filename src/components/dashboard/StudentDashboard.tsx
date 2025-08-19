@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +8,6 @@ import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { StudentTasksAndQuestions } from '@/components/student/StudentTasksAndQuestions';
 import { LevelQuestions } from '@/components/tasks/LevelQuestions';
-import Navigation from '@/components/Navigation';
 import { 
   BookOpen, 
   Calendar, 
@@ -164,7 +162,6 @@ const StudentDashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
         <div className="container mx-auto p-6">
           <div className="animate-pulse">
             <div className="h-8 bg-muted rounded mb-6 w-48"></div>
@@ -182,7 +179,6 @@ const StudentDashboard = () => {
   if (enrolledClasses.length === 0) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
         <div className="container mx-auto p-6">
           <Card>
             <CardContent className="text-center py-12">
@@ -203,7 +199,6 @@ const StudentDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
       <div className="container mx-auto p-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">

@@ -42,6 +42,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [authReady, setAuthReady] = useState(false);
   const { toast } = useToast();
 
+  // Failsafe timeout for profile loading
+  const [profileTimeout, setProfileTimeout] = useState<NodeJS.Timeout | null>(null);
+
   const createFallbackProfile = (userId: string, userData?: any): UserProfile => {
     console.debug('🔄 AuthProvider: Creating fallback profile for user:', userId);
     return {
@@ -122,6 +125,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // Failsafe: set fallback profile after 2 seconds if no profile loaded
+  const setProfileFailsafe = async (userId: string) => {
+    if (profileTimeout) {
+      clearTimeout(profileTimeout);
+    }
+    
+    const timeout = setTimeout(async () => {
+      if (!profile) {
+        console.debug('⚠️ AuthProvider: Profile timeout reached, setting fallback profile');
+        try {
+          const { data: userData } = await supabase.auth.getUser();
+          const fallbackProfile = createFallbackProfile(userId, userData?.user);
+          setProfile(fallbackProfile);
+          
+          toast({
+            title: "Profiel geladen via fallback",
+            description: "Je profiel werd geladen met basis informatie.",
+            variant: "default"
+          });
+        } catch (error) {
+          console.error('❌ AuthProvider: Fallback profile creation failed:', error);
+          const basicProfile = createFallbackProfile(userId);
+          setProfile(basicProfile);
+        }
+      }
+    }, 2000);
+    
+    setProfileTimeout(timeout);
+  };
+
   useEffect(() => {
     console.debug('🚀 AuthProvider: Starting initialization');
     
@@ -139,9 +172,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (session?.user) {
           console.debug('👤 AuthProvider: User authenticated, fetching profile');
           await fetchProfile(session.user.id);
+          // Start failsafe timer
+          setProfileFailsafe(session.user.id);
         } else {
           console.debug('🚫 AuthProvider: No user session, clearing profile');
           setProfile(null);
+          if (profileTimeout) {
+            clearTimeout(profileTimeout);
+            setProfileTimeout(null);
+          }
         }
       }
     );
@@ -168,18 +207,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (session?.user) {
         console.debug('👤 AuthProvider: Existing session found, fetching profile');
         await fetchProfile(session.user.id);
+        // Start failsafe timer
+        setProfileFailsafe(session.user.id);
       }
     });
 
     return () => {
       console.debug('🧹 AuthProvider: Cleaning up subscription');
       subscription.unsubscribe();
+      if (profileTimeout) {
+        clearTimeout(profileTimeout);
+      }
     };
   }, []);
 
   const signOut = async () => {
     console.debug('🚪 AuthProvider: Signing out');
     try {
+      if (profileTimeout) {
+        clearTimeout(profileTimeout);
+        setProfileTimeout(null);
+      }
       await supabase.auth.signOut();
       setProfile(null);
     } catch (error) {

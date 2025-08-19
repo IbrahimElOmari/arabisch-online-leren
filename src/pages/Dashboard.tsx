@@ -4,31 +4,43 @@ import AdminDashboard from '@/components/dashboard/AdminDashboard';
 import TeacherDashboard from '@/components/dashboard/TeacherDashboard';
 import StudentDashboard from '@/components/dashboard/StudentDashboard';
 import { Navigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { FullPageLoader } from '@/components/ui/LoadingSpinner';
+import { RefreshCw } from 'lucide-react';
 
 const Dashboard = () => {
-  const { user, profile, authReady } = useAuth();
+  const { user, profile, authReady, refreshProfile } = useAuth();
 
   console.debug('📊 Dashboard: user:', !!user, 'profile:', !!profile, 'role:', profile?.role);
 
-  // Early guard: if auth is ready and no user, redirect to auth (extra safety besides ProtectedRoute)
+  // Early guard: if auth is ready and no user, redirect to auth
   if (authReady && !user) {
     console.debug('🚫 Dashboard: No user after auth ready, redirecting to /auth');
     return <Navigate to="/auth" replace />;
   }
 
-  // Show skeleton while profile is loading
-  if (!profile) {
-    console.debug('⏳ Dashboard: Profile not loaded yet, showing skeleton');
+  // Show loading while profile is being fetched or auth isn't ready
+  if (!authReady) {
+    console.debug('⏳ Dashboard: Auth not ready yet');
+    return <FullPageLoader text="Authenticatie controleren..." />;
+  }
+
+  // If user exists but profile is still null after auth is ready
+  if (authReady && user && !profile) {
+    console.debug('⚠️ Dashboard: User exists but profile not loaded, showing retry option');
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6">
-          <div className="animate-pulse">
-            <div className="h-8 bg-muted rounded mb-6 w-48"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-32 bg-muted rounded"></div>
-              ))}
-            </div>
+          <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+            <FullPageLoader text="Profiel laden..." />
+            <Button 
+              variant="outline" 
+              onClick={refreshProfile}
+              className="mt-4"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Opnieuw proberen
+            </Button>
           </div>
         </div>
       </div>
@@ -57,4 +69,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
