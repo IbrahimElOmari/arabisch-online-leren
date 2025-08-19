@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export type UserRole = 'admin' | 'leerkracht' | 'leerling';
 
@@ -20,6 +21,7 @@ interface AuthContextType {
   loading: boolean;
   authReady: boolean;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -38,9 +40,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [authReady, setAuthReady] = useState(false);
+  const { toast } = useToast();
 
-  const fetchProfile = async (userId: string) => {
-    console.debug('🔍 AuthProvider: Starting fetchProfile for userId:', userId);
+  const fetchProfile = async (userId: string, retryCount = 0): Promise<void> => {
+    console.debug('🔍 AuthProvider: Starting fetchProfile for userId:', userId, 'retry:', retryCount);
+    
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -50,15 +54,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       if (error) {
         console.error('❌ AuthProvider: Profile fetch error:', error);
-        // Fallback to user metadata if available
+        
+        // Retry logic voor transient errors
+        if (retryCount < 2 && (error.code === 'PGRST301' || error.message.includes('network'))) {
+          console.debug('🔄 AuthProvider: Retrying profile fetch in 1s...');
+          setTimeout(() => fetchProfile(userId, retryCount + 1), 1000);
+          return;
+        }
+        
+        // Fallback naar user metadata
         const { data: userData } = await supabase.auth.getUser();
         if (userData.user?.user_metadata) {
           console.debug('🔄 AuthProvider: Using fallback profile from metadata');
-          setProfile({
+          const fallbackProfile = {
             id: userId,
             full_name: userData.user.user_metadata.full_name || 'Gebruiker',
-            role: userData.user.user_metadata.role || 'leerling',
+            role: (userData.user.user_metadata.role || 'leerling') as UserRole,
             parent_email: userData.user.user_metadata.parent_email
+          };
+          setProfile(fallbackProfile);
+        } else {
+          // Show user-friendly error
+          toast({
+            title: "Profiel laden mislukt",
+            description: "Er ging iets mis bij het laden van je profiel. Probeer de pagina te vernieuwen.",
+            variant: "destructive"
           });
         }
         return;
@@ -66,15 +86,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       console.debug('✅ AuthProvider: Profile fetched successfully:', data);
       setProfile(data);
+      
     } catch (error) {
       console.error('❌ AuthProvider: Profile fetch exception:', error);
+      
+      if (retryCount < 2) {
+        console.debug('🔄 AuthProvider: Retrying after exception...');
+        setTimeout(() => fetchProfile(userId, retryCount + 1), 1000);
+      } else {
+        toast({
+          title: "Verbindingsprobleem",
+          description: "Kan geen verbinding maken met de server. Controleer je internetverbinding.",
+          variant: "destructive"
+        });
+      }
+    }
+  };
+
+  const refreshProfile = async () => {
+    if (user) {
+      await fetchProfile(user.id);
     }
   };
 
   useEffect(() => {
     console.debug('🚀 AuthProvider: Starting initialization');
     
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.debug('🔄 AuthProvider: Auth state change event:', event, 'Session:', !!session);
@@ -82,14 +119,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Set loading/authReady immediately (non-blocking)
+        // Set authReady immediately for better UX
         setLoading(false);
         setAuthReady(true);
         
         if (session?.user) {
-          console.debug('👤 AuthProvider: User authenticated, fetching profile in background');
-          // Fetch profile in background without blocking
-          void fetchProfile(session.user.id);
+          console.debug('👤 AuthProvider: User authenticated, fetching profile');
+          await fetchProfile(session.user.id);
         } else {
           console.debug('🚫 AuthProvider: No user session, clearing profile');
           setProfile(null);
@@ -98,19 +134,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
+      if (error) {
+        console.error('❌ AuthProvider: Session check error:', error);
+        toast({
+          title: "Sessie probleem",
+          description: "Er ging iets mis bij het controleren van je sessie.",
+          variant: "destructive"
+        });
+      }
+      
       console.debug('📋 AuthProvider: Initial session check:', !!session);
       
       setSession(session);
       setUser(session?.user ?? null);
       
-      // Set loading/authReady immediately
       setLoading(false);
       setAuthReady(true);
       
       if (session?.user) {
-        console.debug('👤 AuthProvider: Existing session found, fetching profile in background');
-        void fetchProfile(session.user.id);
+        console.debug('👤 AuthProvider: Existing session found, fetching profile');
+        await fetchProfile(session.user.id);
       }
     });
 
@@ -118,11 +162,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.debug('🧹 AuthProvider: Cleaning up subscription');
       subscription.unsubscribe();
     };
-  }, []); // Remove authReady dependency
+  }, []);
 
   const signOut = async () => {
     console.debug('🚪 AuthProvider: Signing out');
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+      setProfile(null);
+    } catch (error) {
+      console.error('❌ AuthProvider: Sign out error:', error);
+      toast({
+        title: "Uitloggen mislukt",
+        description: "Er ging iets mis bij het uitloggen. Probeer het opnieuw.",
+        variant: "destructive"
+      });
+    }
   };
 
   console.debug('🔄 AuthProvider: Render state - loading:', loading, 'authReady:', authReady, 'user:', !!user, 'profile:', !!profile);
@@ -134,7 +188,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       profile,
       loading,
       authReady,
-      signOut
+      signOut,
+      refreshProfile
     }}>
       {children}
     </AuthContext.Provider>

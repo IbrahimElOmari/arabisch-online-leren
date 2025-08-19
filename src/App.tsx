@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/AppSidebar";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { SecurityProvider } from "@/components/security/SecurityProvider";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { AppGate } from "@/components/auth/AppGate";
 import Navigation from "./components/Navigation";
@@ -26,43 +27,53 @@ import CourseDetail from "./pages/CourseDetail";
 import NotFound from "./pages/NotFound";
 import "./App.css";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <TooltipProvider>
         <BrowserRouter>
-          <AuthProvider>
-            <AppGate>
-              <SidebarProvider>
-                <div className="min-h-screen flex w-full">
-                  <AppSidebar />
-                  <div className="flex-1 flex flex-col">
-                    <Navigation />
-                    <main className="flex-1">
-                      <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/auth" element={<Auth />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/calendar" element={<Calendar />} />
-                        <Route path="/forum" element={<Forum />} />
-                        <Route path="/forum-moderation" element={<ForumModeration />} />
-                        <Route path="/security" element={<Security />} />
-                        <Route path="/visie" element={<Visie />} />
-                        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                        <Route path="/terms-of-service" element={<TermsOfService />} />
-                        <Route path="/reset-password" element={<ResetPassword />} />
-                        <Route path="/enroll-confirm" element={<EnrollConfirm />} />
-                        <Route path="/course/:id" element={<CourseDetail />} />
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </main>
+          <SecurityProvider>
+            <AuthProvider>
+              <AppGate>
+                <SidebarProvider>
+                  <div className="min-h-screen flex w-full">
+                    <AppSidebar />
+                    <div className="flex-1 flex flex-col">
+                      <Navigation />
+                      <main className="flex-1">
+                        <Routes>
+                          <Route path="/" element={<Index />} />
+                          <Route path="/auth" element={<Auth />} />
+                          <Route path="/dashboard" element={<Dashboard />} />
+                          <Route path="/calendar" element={<Calendar />} />
+                          <Route path="/forum" element={<Forum />} />
+                          <Route path="/forum-moderation" element={<ForumModeration />} />
+                          <Route path="/security" element={<Security />} />
+                          <Route path="/visie" element={<Visie />} />
+                          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                          <Route path="/terms-of-service" element={<TermsOfService />} />
+                          <Route path="/reset-password" element={<ResetPassword />} />
+                          <Route path="/enroll-confirm" element={<EnrollConfirm />} />
+                          <Route path="/course/:id" element={<CourseDetail />} />
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </main>
+                    </div>
                   </div>
-                </div>
-              </SidebarProvider>
-            </AppGate>
-          </AuthProvider>
+                </SidebarProvider>
+              </AppGate>
+            </AuthProvider>
+          </SecurityProvider>
         </BrowserRouter>
         <Toaster />
         <Sonner />
