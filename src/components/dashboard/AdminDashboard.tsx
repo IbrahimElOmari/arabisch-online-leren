@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -63,39 +64,44 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
 
-      // Fetch user count - simplified query to avoid type issues
-      const usersResponse = await supabase
+      // Fetch user count - type-safe approach
+      const usersQuery = supabase
         .from('profiles')
         .select('id', { count: 'exact', head: true });
+      const usersResponse = await usersQuery;
       if (usersResponse.error) throw usersResponse.error;
       setUserCount(usersResponse.count || 0);
 
       // Fetch pending user count
-      const pendingResponse = await supabase
+      const pendingQuery = supabase
         .from('profiles')
         .select('id', { count: 'exact', head: true })
         .eq('status', 'pending');
+      const pendingResponse = await pendingQuery;
       if (pendingResponse.error) throw pendingResponse.error;
       setPendingUserCount(pendingResponse.count || 0);
 
       // Fetch class count
-      const classesResponse = await supabase
+      const classesQuery = supabase
         .from('klassen')
         .select('id', { count: 'exact', head: true });
+      const classesResponse = await classesQuery;
       if (classesResponse.error) throw classesResponse.error;
       setClassCount(classesResponse.count || 0);
 
       // Fetch task count
-      const tasksResponse = await supabase
+      const tasksQuery = supabase
         .from('tasks')
         .select('id', { count: 'exact', head: true });
+      const tasksResponse = await tasksQuery;
       if (tasksResponse.error) throw tasksResponse.error;
       setTaskCount(tasksResponse.count || 0);
 
       // Fetch lesson count
-      const lessonsResponse = await supabase
+      const lessonsQuery = supabase
         .from('lessen')
         .select('id', { count: 'exact', head: true });
+      const lessonsResponse = await lessonsQuery;
       if (lessonsResponse.error) throw lessonsResponse.error;
       setLessonCount(lessonsResponse.count || 0);
 

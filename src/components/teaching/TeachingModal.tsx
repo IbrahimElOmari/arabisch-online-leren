@@ -12,19 +12,44 @@ import { AttendanceModal } from './AttendanceModal';
 import { PerformanceModal } from './PerformanceModal';
 
 interface TeachingModalProps {
-  selectedClass: string;
-  selectedLevel: string;
-  trigger: React.ReactNode;
-  type: 'youtube' | 'questions' | 'schedule' | 'upload' | 'task' | 'attendance' | 'performance';
+  selectedClass?: string;
+  selectedLevel?: string;
+  trigger?: React.ReactNode;
+  type?: 'youtube' | 'questions' | 'schedule' | 'upload' | 'task' | 'attendance' | 'performance';
   niveauId?: string;
+  // Support both API patterns for backwards compatibility
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export function TeachingModal({ selectedClass, selectedLevel, trigger, type, niveauId }: TeachingModalProps) {
-  const [open, setOpen] = useState(false);
+export function TeachingModal({ 
+  selectedClass, 
+  selectedLevel, 
+  trigger, 
+  type = 'youtube', 
+  niveauId,
+  open: propOpen,
+  onOpenChange: propOnOpenChange,
+  isOpen,
+  onClose
+}: TeachingModalProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [attendanceOpen, setAttendanceOpen] = useState(false);
   const [performanceOpen, setPerformanceOpen] = useState(false);
   const { toast } = useToast();
+
+  // Determine which open/close pattern to use
+  const isControlled = propOpen !== undefined || isOpen !== undefined;
+  const open = isControlled ? (propOpen ?? isOpen ?? false) : internalOpen;
+  const setOpen = isControlled 
+    ? (newOpen: boolean) => {
+        propOnOpenChange?.(newOpen);
+        if (!newOpen) onClose?.();
+      }
+    : setInternalOpen;
 
   // For attendance and performance types, render the special modals
   if (type === 'attendance') {
@@ -36,7 +61,7 @@ export function TeachingModal({ selectedClass, selectedLevel, trigger, type, niv
         <AttendanceModal
           open={attendanceOpen}
           onOpenChange={setAttendanceOpen}
-          classId={selectedClass}
+          classId={selectedClass || ''}
           className="Geselecteerde Klas"
           levelId={niveauId}
         />
@@ -53,7 +78,7 @@ export function TeachingModal({ selectedClass, selectedLevel, trigger, type, niv
         <PerformanceModal
           open={performanceOpen}
           onOpenChange={setPerformanceOpen}
-          classId={selectedClass}
+          classId={selectedClass || ''}
           className="Geselecteerde Klas"
           levelId={niveauId}
         />
@@ -496,7 +521,6 @@ export function TeachingModal({ selectedClass, selectedLevel, trigger, type, niv
           </div>
         );
 
-
       default:
         return (
           <div className="space-y-4">
@@ -510,10 +534,15 @@ export function TeachingModal({ selectedClass, selectedLevel, trigger, type, niv
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      {trigger && (
+        <DialogTrigger asChild>
+          {trigger}
+        </DialogTrigger>
+      )}
+      <DialogContent 
+        className="sm:max-w-[500px]"
+        aria-describedby={undefined}
+      >
         <DialogHeader>
           <DialogTitle>{getModalTitle()}</DialogTitle>
         </DialogHeader>

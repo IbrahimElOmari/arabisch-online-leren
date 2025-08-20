@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -198,7 +199,9 @@ const TeacherDashboard = () => {
                   </Button>
                   <TeachingModal 
                     open={teachingOpen} 
-                    onOpenChange={setTeachingOpen} 
+                    onOpenChange={setTeachingOpen}
+                    selectedClass={selectedClass}
+                    type="youtube"
                   />
                 </CardContent>
               </Card>
