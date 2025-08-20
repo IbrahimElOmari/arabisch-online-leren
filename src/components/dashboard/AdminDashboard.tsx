@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -64,41 +63,41 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
 
-      // Fetch user count
-      const { count: users, error: usersError } = await supabase
+      // Fetch user count - simplified query to avoid type issues
+      const usersResponse = await supabase
         .from('profiles')
-        .select('*', { count: 'exact' });
-      if (usersError) throw usersError;
-      setUserCount(users || 0);
+        .select('id', { count: 'exact', head: true });
+      if (usersResponse.error) throw usersResponse.error;
+      setUserCount(usersResponse.count || 0);
 
       // Fetch pending user count
-      const { count: pendingUsers, error: pendingUsersError } = await supabase
+      const pendingResponse = await supabase
         .from('profiles')
-        .select('*', { count: 'exact' })
+        .select('id', { count: 'exact', head: true })
         .eq('status', 'pending');
-      if (pendingUsersError) throw pendingUsersError;
-      setPendingUserCount(pendingUsers || 0);
+      if (pendingResponse.error) throw pendingResponse.error;
+      setPendingUserCount(pendingResponse.count || 0);
 
       // Fetch class count
-      const { count: classes, error: classesError } = await supabase
+      const classesResponse = await supabase
         .from('klassen')
-        .select('*', { count: 'exact' });
-      if (classesError) throw classesError;
-      setClassCount(classes || 0);
+        .select('id', { count: 'exact', head: true });
+      if (classesResponse.error) throw classesResponse.error;
+      setClassCount(classesResponse.count || 0);
 
       // Fetch task count
-      const { count: tasks, error: tasksError } = await supabase
+      const tasksResponse = await supabase
         .from('tasks')
-        .select('*', { count: 'exact' });
-      if (tasksError) throw tasksError;
-      setTaskCount(tasks || 0);
+        .select('id', { count: 'exact', head: true });
+      if (tasksResponse.error) throw tasksResponse.error;
+      setTaskCount(tasksResponse.count || 0);
 
       // Fetch lesson count
-       const { count: lessons, error: lessonsError } = await supabase
+      const lessonsResponse = await supabase
         .from('lessen')
-        .select('*', { count: 'exact' });
-      if (lessonsError) throw lessonsError;
-      setLessonCount(lessons || 0);
+        .select('id', { count: 'exact', head: true });
+      if (lessonsResponse.error) throw lessonsResponse.error;
+      setLessonCount(lessonsResponse.count || 0);
 
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
