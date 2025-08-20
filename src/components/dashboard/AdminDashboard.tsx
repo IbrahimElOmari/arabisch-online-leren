@@ -9,8 +9,6 @@ import { supabase } from '@/integrations/supabase/client';
 import UserActivationPanel from '@/components/admin/UserActivationPanel';
 import { PendingUsersManagement } from '@/components/admin/PendingUsersManagement';
 import AdminSeeder from '@/components/admin/AdminSeeder';
-// Removed Dialog imports since we manage modal open state locally
-// import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ClassManagementModal } from '@/components/admin/ClassManagementModal';
 import {
   Users,
@@ -32,8 +30,8 @@ interface DashboardCardProps {
   description?: string;
 }
 
-// Avoid React.FC to prevent deep type instantiation issues
-function DashboardCard({ title, value, icon, description }: DashboardCardProps) {
+// Simplified component to avoid deep type instantiation
+const DashboardCard = ({ title, value, icon, description }: DashboardCardProps) => {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -46,15 +44,15 @@ function DashboardCard({ title, value, icon, description }: DashboardCardProps) 
       </CardContent>
     </Card>
   );
-}
+};
 
 const AdminDashboard = () => {
   const { profile } = useAuth();
-  const [userCount, setUserCount] = useState(0);
-  const [pendingUserCount, setPendingUserCount] = useState(0);
-  const [classCount, setClassCount] = useState(0);
-  const [taskCount, setTaskCount] = useState(0);
-  const [lessonCount, setLessonCount] = useState(0);
+  const [userCount, setUserCount] = useState<number>(0);
+  const [pendingUserCount, setPendingUserCount] = useState<number>(0);
+  const [classCount, setClassCount] = useState<number>(0);
+  const [taskCount, setTaskCount] = useState<number>(0);
+  const [lessonCount, setLessonCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [classModalOpen, setClassModalOpen] = useState(false);
 
@@ -90,7 +88,7 @@ const AdminDashboard = () => {
 
       // Fetch task count
       const { count: tasks, error: tasksError } = await supabase
-        .from('tasks') // fixed table name
+        .from('tasks')
         .select('*', { count: 'exact' });
       if (tasksError) throw tasksError;
       setTaskCount(tasks || 0);
@@ -225,7 +223,6 @@ const AdminDashboard = () => {
                 {/* Content kan hier toegevoegd worden indien nodig */}
               </CardContent>
             </Card>
-            {/* Render modal component with required props */}
             <ClassManagementModal
               isOpen={classModalOpen}
               onClose={() => setClassModalOpen(false)}

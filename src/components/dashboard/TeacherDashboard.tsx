@@ -71,6 +71,11 @@ const TeacherDashboard = () => {
     }
   };
 
+  const getSelectedClassName = () => {
+    const selectedClassObj = classes.find(c => c.id === selectedClass);
+    return selectedClassObj?.name || '';
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -173,7 +178,6 @@ const TeacherDashboard = () => {
                   <CardTitle>Beheer Taken & Vragen</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {/* Component accepteert geen props; verwijderde classId */}
                   <TaskQuestionManagementNew />
                 </CardContent>
               </Card>
@@ -193,7 +197,10 @@ const TeacherDashboard = () => {
                     <Plus className="h-4 w-4" />
                     Nieuwe les
                   </Button>
-                  <TeachingModal open={teachingOpen} onOpenChange={setTeachingOpen} />
+                  <TeachingModal 
+                    isOpen={teachingOpen} 
+                    onClose={() => setTeachingOpen(false)} 
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -211,7 +218,12 @@ const TeacherDashboard = () => {
                   >
                     Aanwezigheid registreren
                   </Button>
-                  <AttendanceModal open={attendanceOpen} onOpenChange={setAttendanceOpen} className="" />
+                  <AttendanceModal 
+                    open={attendanceOpen} 
+                    onOpenChange={setAttendanceOpen}
+                    classId={selectedClass}
+                    className={getSelectedClassName()}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -229,7 +241,12 @@ const TeacherDashboard = () => {
                   >
                     Prestaties bekijken
                   </Button>
-                  <PerformanceModal open={performanceOpen} onOpenChange={setPerformanceOpen} className="" />
+                  <PerformanceModal 
+                    open={performanceOpen} 
+                    onOpenChange={setPerformanceOpen}
+                    classId={selectedClass}
+                    className={getSelectedClassName()}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
