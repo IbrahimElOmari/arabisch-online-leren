@@ -33,6 +33,7 @@ const TeacherDashboard = () => {
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Local state to control modals
   const [teachingOpen, setTeachingOpen] = useState(false);
@@ -46,8 +47,16 @@ const TeacherDashboard = () => {
   }, [profile?.id]);
 
   const fetchClasses = async () => {
+    console.debug('🔄 TeacherDashboard: Starting class fetch');
+    const timeoutId = setTimeout(() => {
+      console.warn('⚠️ TeacherDashboard: Fetch timeout after 5 seconds');
+      setLoading(false);
+      setError('Classes loading timed out. Please refresh the page.');
+    }, 5000);
+
     try {
       setLoading(true);
+      setError(null);
       console.debug('Fetching classes for teacher:', profile?.id);
 
       const { data, error } = await supabase
@@ -62,10 +71,15 @@ const TeacherDashboard = () => {
       if (data && data.length > 0) {
         setSelectedClass(data[0].id);
       }
+      
+      clearTimeout(timeoutId);
+      console.debug('✅ TeacherDashboard: Classes fetched successfully');
     } catch (error) {
-      console.error('Error fetching classes:', error);
+      console.error('❌ TeacherDashboard: Error fetching classes:', error);
+      setError('Failed to load classes. Please try refreshing the page.');
       setClasses([]);
       setSelectedClass(null);
+      clearTimeout(timeoutId);
     } finally {
       setLoading(false);
     }
@@ -88,6 +102,23 @@ const TeacherDashboard = () => {
               ))}
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto p-6">
+          <Card>
+            <CardContent className="text-center py-12">
+              <p className="text-destructive mb-4">{error}</p>
+              <Button onClick={fetchClasses}>
+                Opnieuw proberen
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );

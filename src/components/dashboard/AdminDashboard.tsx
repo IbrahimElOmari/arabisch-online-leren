@@ -55,58 +55,112 @@ const AdminDashboard = () => {
   const [lessonCount, setLessonCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [classModalOpen, setClassModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
 
   const fetchDashboardData = async () => {
+    console.debug('🔄 AdminDashboard: Starting data fetch');
+    const timeoutId = setTimeout(() => {
+      console.warn('⚠️ AdminDashboard: Fetch timeout after 5 seconds');
+      setLoading(false);
+      setError('Data loading timed out. Please refresh the page.');
+    }, 5000);
+
     try {
       setLoading(true);
+      setError(null);
 
-      // Fetch user count - type-safe approach
-      const usersQuery = supabase
+      // Fetch total user count - simplified query
+      console.debug('📊 AdminDashboard: Fetching user count');
+      const { count: totalUsers, error: usersError } = await supabase
         .from('profiles')
-        .select('id', { count: 'exact', head: true });
-      const usersResponse = await usersQuery;
-      if (usersResponse.error) throw usersResponse.error;
-      setUserCount(usersResponse.count || 0);
+        .select('*', { count: 'exact', head: true });
 
-      // Fetch pending user count
-      const pendingQuery = supabase
+      if (usersError) {
+        console.error('❌ AdminDashboard: User count error:', usersError);
+        throw usersError;
+      }
+      setUserCount(totalUsers || 0);
+
+      // Fetch pending users using the same logic as PendingUsersManagement
+      console.debug('📊 AdminDashboard: Fetching pending users');
+      const { data: allStudents, error: studentsError } = await supabase
         .from('profiles')
-        .select('id', { count: 'exact', head: true })
-        .eq('status', 'pending');
-      const pendingResponse = await pendingQuery;
-      if (pendingResponse.error) throw pendingResponse.error;
-      setPendingUserCount(pendingResponse.count || 0);
+        .select('id')
+        .eq('role', 'leerling');
+
+      if (studentsError) {
+        console.error('❌ AdminDashboard: Students fetch error:', studentsError);
+        throw studentsError;
+      }
+
+      // Count students without paid enrollments
+      let pendingCount = 0;
+      if (allStudents && allStudents.length > 0) {
+        const studentIds = allStudents.map(s => s.id);
+        
+        const { data: paidEnrollments, error: enrollError } = await supabase
+          .from('inschrijvingen')
+          .select('student_id')
+          .in('student_id', studentIds)
+          .eq('payment_status', 'paid');
+
+        if (enrollError) {
+          console.error('❌ AdminDashboard: Enrollments fetch error:', enrollError);
+          throw enrollError;
+        }
+
+        const paidStudentIds = new Set(paidEnrollments?.map(e => e.student_id) || []);
+        pendingCount = studentIds.filter(id => !paidStudentIds.has(id)).length;
+      }
+      setPendingUserCount(pendingCount);
 
       // Fetch class count
-      const classesQuery = supabase
+      console.debug('📊 AdminDashboard: Fetching class count');
+      const { count: totalClasses, error: classesError } = await supabase
         .from('klassen')
-        .select('id', { count: 'exact', head: true });
-      const classesResponse = await classesQuery;
-      if (classesResponse.error) throw classesResponse.error;
-      setClassCount(classesResponse.count || 0);
+        .select('*', { count: 'exact', head: true });
+
+      if (classesError) {
+        console.error('❌ AdminDashboard: Classes count error:', classesError);
+        throw classesError;
+      }
+      setClassCount(totalClasses || 0);
 
       // Fetch task count
-      const tasksQuery = supabase
+      console.debug('📊 AdminDashboard: Fetching task count');
+      const { count: totalTasks, error: tasksError } = await supabase
         .from('tasks')
-        .select('id', { count: 'exact', head: true });
-      const tasksResponse = await tasksQuery;
-      if (tasksResponse.error) throw tasksResponse.error;
-      setTaskCount(tasksResponse.count || 0);
+        .select('*', { count: 'exact', head: true });
+
+      if (tasksError) {
+        console.error('❌ AdminDashboard: Tasks count error:', tasksError);
+        throw tasksError;
+      }
+      setTaskCount(totalTasks || 0);
 
       // Fetch lesson count
-      const lessonsQuery = supabase
+      console.debug('📊 AdminDashboard: Fetching lesson count');
+      const { count: totalLessons, error: lessonsError } = await supabase
         .from('lessen')
-        .select('id', { count: 'exact', head: true });
-      const lessonsResponse = await lessonsQuery;
-      if (lessonsResponse.error) throw lessonsResponse.error;
-      setLessonCount(lessonsResponse.count || 0);
+        .select('*', { count: 'exact', head: true });
+
+      if (lessonsError) {
+        console.error('❌ AdminDashboard: Lessons count error:', lessonsError);
+        throw lessonsError;
+      }
+      setLessonCount(totalLessons || 0);
+
+      console.debug('✅ AdminDashboard: All data fetched successfully');
+      clearTimeout(timeoutId);
 
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error('❌ AdminDashboard: Error fetching dashboard data:', error);
+      setError('Failed to load dashboard data. Please try refreshing the page.');
+      clearTimeout(timeoutId);
     } finally {
       setLoading(false);
     }
@@ -124,6 +178,23 @@ const AdminDashboard = () => {
               ))}
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto p-6">
+          <Card>
+            <CardContent className="text-center py-12">
+              <p className="text-destructive mb-4">{error}</p>
+              <Button onClick={fetchDashboardData}>
+                Opnieuw proberen
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
