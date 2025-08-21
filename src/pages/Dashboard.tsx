@@ -13,6 +13,7 @@ const Dashboard = () => {
   const { user, profile, authReady, refreshProfile } = useAuth();
   const [showFallback, setShowFallback] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [profileTimeout, setProfileTimeout] = useState(false);
 
   console.debug('📊 Dashboard: user:', !!user, 'profile:', !!profile, 'role:', profile?.role);
 
@@ -22,19 +23,21 @@ const Dashboard = () => {
       const timeoutId = setTimeout(() => {
         console.debug('⏰ Dashboard: Profile timeout reached, showing fallback');
         setShowFallback(true);
-      }, 3000);
+        setProfileTimeout(true);
+      }, 2000);
 
       return () => clearTimeout(timeoutId);
-    } else {
+    } else if (profile) {
       setShowFallback(false);
+      setProfileTimeout(false);
     }
   }, [authReady, user, profile]);
 
-  // Enhanced refresh function with better user feedback
   const handleRefresh = async () => {
     console.debug('🔄 Dashboard: Manual refresh requested');
     setIsRefreshing(true);
-    setShowFallback(false); // Reset fallback state
+    setShowFallback(false);
+    setProfileTimeout(false);
     
     try {
       await refreshProfile();
@@ -51,37 +54,37 @@ const Dashboard = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Show loading while profile is being fetched or auth isn't ready
+  // Show loading while auth isn't ready
   if (!authReady) {
     console.debug('⏳ Dashboard: Auth not ready yet');
     return <FullPageLoader text="Authenticatie controleren..." />;
   }
 
-  // If user exists but profile is still null after auth is ready
-  if (authReady && user && !profile && !showFallback) {
-    console.debug('⚠️ Dashboard: User exists but profile not loaded, showing loading with retry');
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto p-6">
-          <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-            <FullPageLoader text="Profiel laden..." />
-            <Button 
-              variant="outline" 
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="mt-4"
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-              {isRefreshing ? 'Bezig...' : 'Opnieuw proberen'}
-            </Button>
+  // If we have a profile, render the appropriate dashboard
+  if (profile) {
+    console.debug('✅ Dashboard: Rendering dashboard for role:', profile.role);
+    
+    switch (profile.role) {
+      case 'admin':
+        return <AdminDashboard />;
+      case 'leerkracht':
+        return <TeacherDashboard />;
+      case 'leerling':
+        return <StudentDashboard />;
+      default:
+        console.error('❌ Dashboard: Unknown role:', profile.role);
+        return (
+          <div className="min-h-screen flex items-center justify-center bg-background">
+            <div className="text-lg text-destructive">
+              Onbekende gebruikersrol: {profile.role}
+            </div>
           </div>
-        </div>
-      </div>
-    );
+        );
+    }
   }
 
-  // Fallback dashboard if profile loading takes too long
-  if (authReady && user && !profile && showFallback) {
+  // Profile timeout reached - show fallback dashboard
+  if (showFallback && user) {
     console.debug('🔄 Dashboard: Showing fallback dashboard based on user metadata');
     const fallbackRole = user.user_metadata?.role || 'leerling';
     
@@ -105,30 +108,41 @@ const Dashboard = () => {
               {isRefreshing ? 'Profiel herladen...' : 'Profiel herladen'}
             </Button>
           </div>
+          
+          {/* Basic fallback dashboard content */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-card rounded-lg p-6 border">
+              <h3 className="text-lg font-semibold mb-2">Welkom!</h3>
+              <p className="text-muted-foreground">
+                Je dashboard wordt geladen zodra je profiel beschikbaar is.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  console.debug('✅ Dashboard: Rendering dashboard for role:', profile.role);
-
-  switch (profile.role) {
-    case 'admin':
-      return <AdminDashboard />;
-    case 'leerkracht':
-      return <TeacherDashboard />;
-    case 'leerling':
-      return <StudentDashboard />;
-    default:
-      console.error('❌ Dashboard: Unknown role:', profile.role);
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-background">
-          <div className="text-lg text-destructive">
-            Onbekende gebruikersrol: {profile.role}
-          </div>
+  // Still waiting for profile
+  console.debug('⏳ Dashboard: Waiting for profile, showing loading with retry');
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-6">
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+          <FullPageLoader text="Profiel laden..." />
+          <Button 
+            variant="outline" 
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="mt-4"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Bezig...' : 'Opnieuw proberen'}
+          </Button>
         </div>
-      );
-  }
+      </div>
+    </div>
+  );
 };
 
 export default Dashboard;

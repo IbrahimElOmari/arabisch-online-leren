@@ -32,50 +32,47 @@ const Forum = () => {
   const [classesTimeout, setClassesTimeout] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Profile fallback timeout
+  // Profile fallback timeout - more aggressive
   useEffect(() => {
     if (authReady && user && !profile) {
-      console.debug('⏰ Forum: Setting profile fallback timeout (2s)');
+      console.debug('⏰ Forum: Setting profile fallback timeout (1.5s)');
       const timeout = setTimeout(() => {
         console.debug('🔄 Forum: Profile timeout reached, showing fallback');
         setShowProfileFallback(true);
-      }, 2000);
+      }, 1500);
 
       return () => clearTimeout(timeout);
-    } else {
+    } else if (profile) {
       setShowProfileFallback(false);
     }
   }, [authReady, user, profile]);
 
   // Classes loading timeout
   useEffect(() => {
-    if (classesLoading && profile?.id) {
-      console.debug('⏰ Forum: Setting classes timeout (5s)');
+    if (classesLoading && (profile?.id || showProfileFallback)) {
+      console.debug('⏰ Forum: Setting classes timeout (4s)');
       const timeout = setTimeout(() => {
         console.debug('🚨 Forum: Classes loading timeout reached');
         setClassesTimeout(true);
         setClassesLoading(false);
-      }, 5000);
+      }, 4000);
 
       return () => clearTimeout(timeout);
     }
-  }, [classesLoading, profile?.id]);
+  }, [classesLoading, profile?.id, showProfileFallback]);
 
   useEffect(() => {
-    // Wacht tot profile?.id beschikbaar is voordat we fetchUserClasses aanroepen
+    // Fetch classes when we have a profile OR when showing profile fallback
     if (profile?.id) {
       console.debug('🏛️ Forum: Profile available, fetching classes for user:', profile.id);
       fetchUserClasses();
-    } else if (profile === null) {
-      // Profile is expliciet null (geen gebruiker), stop loading
-      console.debug('🚫 Forum: No profile available, stopping classesLoading');
-      setClassesLoading(false);
+    } else if (showProfileFallback && user) {
+      console.debug('🏛️ Forum: Using fallback profile, fetching classes for user:', user.id);
+      fetchUserClassesWithFallback();
     }
-    // Als profile undefined is, blijven we wachten (classesLoading = true)
-  }, [profile]);
+  }, [profile, showProfileFallback, user]);
 
   const fetchUserClasses = async () => {
-    // Extra veiligheidscheck
     if (!profile?.id) {
       console.debug('⚠️ Forum: fetchUserClasses called without profile.id');
       setClassesLoading(false);
@@ -88,7 +85,6 @@ const Forum = () => {
       console.debug('🔄 Forum: Fetching classes for role:', profile.role);
 
       if (profile?.role === 'admin') {
-        // Admin can see all classes
         const { data, error } = await supabase
           .from('klassen')
           .select('id, name, description')
@@ -112,7 +108,6 @@ const Forum = () => {
           setSelectedClass(formattedClasses[0].class_id);
         }
       } else if (profile?.role === 'leerkracht') {
-        // Teacher can see assigned classes
         const { data, error } = await supabase
           .from('klassen')
           .select('id, name, description')
@@ -136,7 +131,6 @@ const Forum = () => {
           setSelectedClass(formattedClasses[0].class_id);
         }
       } else {
-        // Students see enrolled classes
         const { data, error } = await supabase
           .from('inschrijvingen')
           .select(`
@@ -168,6 +162,94 @@ const Forum = () => {
     }
   };
 
+  const fetchUserClassesWithFallback = async () => {
+    if (!user) return;
+    
+    try {
+      setClassesLoading(true);
+      setClassesTimeout(false);
+      console.debug('🔄 Forum: Fetching classes with fallback role');
+      
+      const fallbackRole = user.user_metadata?.role || 'leerling';
+      
+      if (fallbackRole === 'admin') {
+        const { data, error } = await supabase
+          .from('klassen')
+          .select('id, name, description')
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        const formattedClasses = data?.map(klas => ({
+          id: `admin-${klas.id}`,
+          class_id: klas.id,
+          payment_status: 'paid',
+          klassen: {
+            id: klas.id,
+            name: klas.name,
+            description: klas.description || ''
+          }
+        })) || [];
+        
+        setEnrolledClasses(formattedClasses);
+        if (formattedClasses.length > 0) {
+          setSelectedClass(formattedClasses[0].class_id);
+        }
+      } else if (fallbackRole === 'leerkracht') {
+        const { data, error } = await supabase
+          .from('klassen')
+          .select('id, name, description')
+          .eq('teacher_id', user.id);
+        
+        if (error) throw error;
+        
+        const formattedClasses = data?.map(klas => ({
+          id: `teacher-${klas.id}`,
+          class_id: klas.id,
+          payment_status: 'paid',
+          klassen: {
+            id: klas.id,
+            name: klas.name,
+            description: klas.description || ''
+          }
+        })) || [];
+        
+        setEnrolledClasses(formattedClasses);
+        if (formattedClasses.length > 0) {
+          setSelectedClass(formattedClasses[0].class_id);
+        }
+      } else {
+        const { data, error } = await supabase
+          .from('inschrijvingen')
+          .select(`
+            id,
+            class_id,
+            payment_status,
+            klassen:class_id (
+              id,
+              name,
+              description
+            )
+          `)
+          .eq('student_id', user.id)
+          .eq('payment_status', 'paid');
+
+        if (error) throw error;
+        
+        setEnrolledClasses(data || []);
+        if (data && data.length > 0) {
+          setSelectedClass(data[0].class_id);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Forum: Error fetching user classes with fallback:', error);
+      setEnrolledClasses([]);
+      setClassesTimeout(true);
+    } finally {
+      setClassesLoading(false);
+    }
+  };
+
   const handleForceProfile = async () => {
     console.debug('🔄 Forum: Force profile refresh requested');
     setIsRefreshing(true);
@@ -187,19 +269,19 @@ const Forum = () => {
     return <FullPageLoader text="Laden..." />;
   }
 
-  // If auth is ready and there's no user, redirect to auth (in case route isn't wrapped)
+  // If auth is ready and there's no user, redirect to auth
   if (authReady && !user) {
     return <Navigate to="/auth" replace />;
   }
 
-  // Profile loading fallback
+  // Profile loading fallback - show earlier
   if (!profile && showProfileFallback) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6">
           <Card className="main-content-card">
             <CardContent className="text-center py-12">
-              <h2 className="text-xl font-semibold mb-4">Profiel wordt geladen...</h2>
+              <h2 className="text-xl font-semibold mb-4">Forum - Profiel wordt geladen...</h2>
               <p className="text-muted-foreground mb-4">
                 Je profiel informatie wordt geladen om toegang te krijgen tot het forum.
               </p>
@@ -218,8 +300,8 @@ const Forum = () => {
     );
   }
 
-  // Still waiting for profile to be loaded (normal case)
-  if (!profile) {
+  // Still waiting for profile (shorter wait than before)
+  if (!profile && !showProfileFallback) {
     return <FullPageLoader text="Profiel laden..." />;
   }
 
@@ -234,7 +316,13 @@ const Forum = () => {
               <p className="text-muted-foreground mb-4">
                 Er ging iets mis bij het laden van je klassen. Probeer het opnieuw.
               </p>
-              <Button onClick={fetchUserClasses} variant="outline">
+              <Button onClick={() => {
+                if (profile?.id) {
+                  fetchUserClasses();
+                } else {
+                  fetchUserClassesWithFallback();
+                }
+              }} variant="outline">
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Opnieuw proberen
               </Button>
@@ -251,6 +339,7 @@ const Forum = () => {
   }
 
   if (enrolledClasses.length === 0) {
+    const currentRole = profile?.role || user?.user_metadata?.role || 'leerling';
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6">
@@ -258,7 +347,7 @@ const Forum = () => {
             <CardContent className="text-center py-12">
               <h2 className="text-xl font-semibold mb-4">Geen toegang tot forum</h2>
               <p className="text-muted-foreground">
-                {profile?.role === 'leerling' 
+                {currentRole === 'leerling' 
                   ? 'Je bent nog niet ingeschreven voor een klas.' 
                   : 'Er zijn geen klassen beschikbaar.'
                 }
@@ -278,7 +367,6 @@ const Forum = () => {
             <h1 className="text-2xl font-bold">Forum</h1>
 
             <div className="flex items-center gap-2">
-              {/* Voorbije lessen modal */}
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline">Voorbije lessen</Button>
@@ -287,14 +375,12 @@ const Forum = () => {
                   <DialogHeader>
                     <DialogTitle>Voorbije lessen</DialogTitle>
                   </DialogHeader>
-                  {/* PastLessonsManager verwacht doorgaans een classId; we geven de huidige selectie mee */}
                   <div className="max-h-[70vh] overflow-auto">
                     <PastLessonsManager classId={selectedClass} />
                   </div>
                 </DialogContent>
               </Dialog>
 
-              {/* Mijn verbeteringen modal */}
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline">Mijn verbeteringen</Button>

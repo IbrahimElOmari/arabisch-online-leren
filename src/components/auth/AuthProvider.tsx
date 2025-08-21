@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
@@ -41,10 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [authReady, setAuthReady] = useState(false);
   const { toast } = useToast();
 
-  // Failsafe timeout for profile loading
-  const [profileTimeout, setProfileTimeout] = useState<NodeJS.Timeout | null>(null);
-
-  const createFallbackProfile = (userId: string, userData?: any): UserProfile => {
+  const createFallbackProfile = (userId: string, userData?: User): UserProfile => {
     console.debug('🔄 AuthProvider: Creating fallback profile for user:', userId);
     return {
       id: userId,
@@ -54,7 +52,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   };
 
-  const fetchProfile = async (userId: string, retryCount = 0): Promise<void> => {
+  const setProfileFailsafe = (userId: string, userData?: User) => {
+    console.debug('⏰ AuthProvider: Setting profile failsafe for user:', userId);
+    
+    const timeout = setTimeout(() => {
+      setProfile(current => {
+        if (!current) {
+          console.debug('🔄 AuthProvider: Applying failsafe profile');
+          const fallbackProfile = createFallbackProfile(userId, userData);
+          toast({
+            title: "Profiel geladen via fallback",
+            description: "Je profiel werd geladen met basis informatie.",
+            variant: "default"
+          });
+          return fallbackProfile;
+        }
+        return current;
+      });
+    }, 2000);
+
+    return timeout;
+  };
+
+  const fetchProfile = async (userId: string, retryCount = 0): Promise<UserProfile | null> => {
     console.debug('🔍 AuthProvider: Starting fetchProfile for userId:', userId, 'retry:', retryCount);
     
     try {
@@ -67,53 +87,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) {
         console.error('❌ AuthProvider: Profile fetch error:', error);
         
-        // Retry logic voor transient errors
         if (retryCount < 2 && (error.code === 'PGRST301' || error.message.includes('network'))) {
           console.debug('🔄 AuthProvider: Retrying profile fetch in 1s...');
-          setTimeout(() => fetchProfile(userId, retryCount + 1), 1000);
-          return;
-        }
-        
-        // Fallback naar user metadata
-        const { data: userData } = await supabase.auth.getUser();
-        if (userData.user) {
-          console.debug('🔄 AuthProvider: Using fallback profile from metadata');
-          const fallbackProfile = createFallbackProfile(userId, userData);
-          setProfile(fallbackProfile);
-        } else {
-          // Als laatste fallback, maak een basis profiel
-          console.debug('🔄 AuthProvider: Using basic fallback profile');
-          const basicProfile = createFallbackProfile(userId);
-          setProfile(basicProfile);
-          
-          toast({
-            title: "Profiel laden mislukt",
-            description: "Er ging iets mis bij het laden van je profiel. Een basis profiel wordt gebruikt.",
-            variant: "destructive"
+          return new Promise(resolve => {
+            setTimeout(() => resolve(fetchProfile(userId, retryCount + 1)), 1000);
           });
         }
-        return;
+        
+        // Get user data for fallback
+        const { data: userData } = await supabase.auth.getUser();
+        const fallbackProfile = createFallbackProfile(userId, userData.user || undefined);
+        setProfile(fallbackProfile);
+        return fallbackProfile;
       }
       
       console.debug('✅ AuthProvider: Profile fetched successfully:', data);
       setProfile(data);
+      return data;
       
     } catch (error) {
       console.error('❌ AuthProvider: Profile fetch exception:', error);
       
       if (retryCount < 2) {
         console.debug('🔄 AuthProvider: Retrying after exception...');
-        setTimeout(() => fetchProfile(userId, retryCount + 1), 1000);
-      } else {
-        // Als laatste redmiddel, maak een fallback profile
-        const basicProfile = createFallbackProfile(userId);
-        setProfile(basicProfile);
-        
-        toast({
-          title: "Verbindingsprobleem",
-          description: "Kan geen verbinding maken met de server. Een basis profiel wordt gebruikt.",
-          variant: "destructive"
+        return new Promise(resolve => {
+          setTimeout(() => resolve(fetchProfile(userId, retryCount + 1)), 1000);
         });
+      } else {
+        const { data: userData } = await supabase.auth.getUser();
+        const fallbackProfile = createFallbackProfile(userId, userData.user || undefined);
+        setProfile(fallbackProfile);
+        return fallbackProfile;
       }
     }
   };
@@ -121,10 +125,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const refreshProfile = async () => {
     console.debug('🔄 AuthProvider: Manual refresh profile requested');
     if (user) {
-      setProfile(null); // Clear current profile
-      await fetchProfile(user.id);
-      // Also trigger the failsafe to ensure we get a profile
-      setProfileFailsafe(user.id);
+      setProfile(null);
+      
+      // Get fresh user data
+      const { data: userData } = await supabase.auth.getUser();
+      
+      // Start failsafe immediately
+      const timeoutId = setProfileFailsafe(user.id, userData.user || undefined);
+      
+      try {
+        const fetchedProfile = await fetchProfile(user.id);
+        if (fetchedProfile) {
+          clearTimeout(timeoutId);
+        }
+      } catch (error) {
+        console.error('❌ AuthProvider: Refresh profile failed:', error);
+      }
     } else {
       console.debug('⚠️ AuthProvider: No user available for profile refresh');
       toast({
@@ -133,36 +149,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         variant: "destructive"
       });
     }
-  };
-
-  // Failsafe: set fallback profile after 2 seconds if no profile loaded
-  const setProfileFailsafe = async (userId: string) => {
-    if (profileTimeout) {
-      clearTimeout(profileTimeout);
-    }
-    
-    const timeout = setTimeout(async () => {
-      if (!profile) {
-        console.debug('⚠️ AuthProvider: Profile timeout reached, setting fallback profile');
-        try {
-          const { data: userData } = await supabase.auth.getUser();
-          const fallbackProfile = createFallbackProfile(userId, userData?.user);
-          setProfile(fallbackProfile);
-          
-          toast({
-            title: "Profiel geladen via fallback",
-            description: "Je profiel werd geladen met basis informatie.",
-            variant: "default"
-          });
-        } catch (error) {
-          console.error('❌ AuthProvider: Fallback profile creation failed:', error);
-          const basicProfile = createFallbackProfile(userId);
-          setProfile(basicProfile);
-        }
-      }
-    }, 2000);
-    
-    setProfileTimeout(timeout);
   };
 
   useEffect(() => {
@@ -174,70 +160,54 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         setSession(session);
         setUser(session?.user ?? null);
-        
-        // Set authReady immediately for better UX
         setLoading(false);
         setAuthReady(true);
         
         if (session?.user) {
           console.debug('👤 AuthProvider: User authenticated, fetching profile');
-          await fetchProfile(session.user.id);
-          // Start failsafe timer
-          setProfileFailsafe(session.user.id);
+          const timeoutId = setProfileFailsafe(session.user.id, session.user);
+          const fetchedProfile = await fetchProfile(session.user.id);
+          if (fetchedProfile) {
+            clearTimeout(timeoutId);
+          }
         } else {
           console.debug('🚫 AuthProvider: No user session, clearing profile');
           setProfile(null);
-          if (profileTimeout) {
-            clearTimeout(profileTimeout);
-            setProfileTimeout(null);
-          }
         }
       }
     );
 
-    // Check for existing session
     supabase.auth.getSession().then(async ({ data: { session }, error }) => {
       if (error) {
         console.error('❌ AuthProvider: Session check error:', error);
-        toast({
-          title: "Sessie probleem",
-          description: "Er ging iets mis bij het controleren van je sessie.",
-          variant: "destructive"
-        });
       }
       
       console.debug('📋 AuthProvider: Initial session check:', !!session);
       
       setSession(session);
       setUser(session?.user ?? null);
-      
       setLoading(false);
       setAuthReady(true);
       
       if (session?.user) {
         console.debug('👤 AuthProvider: Existing session found, fetching profile');
-        await fetchProfile(session.user.id);
-        // Start failsafe timer
-        setProfileFailsafe(session.user.id);
+        const timeoutId = setProfileFailsafe(session.user.id, session.user);
+        const fetchedProfile = await fetchProfile(session.user.id);
+        if (fetchedProfile) {
+          clearTimeout(timeoutId);
+        }
       }
     });
 
     return () => {
       console.debug('🧹 AuthProvider: Cleaning up subscription');
       subscription.unsubscribe();
-      if (profileTimeout) {
-        clearTimeout(profileTimeout);
-      }
     };
   }, []);
 
   const signOut = async () => {
     console.debug('🚪 AuthProvider: Signing out');
     try {
-      if (profileTimeout) {
-        clearTimeout(profileTimeout);
-        setProfileTimeout(null);
-      }
       await supabase.auth.signOut();
       setProfile(null);
     } catch (error) {
