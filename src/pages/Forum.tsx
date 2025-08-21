@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +10,7 @@ import { SolvedSubmissionsList } from '@/components/tasks/SolvedSubmissionsList'
 import PastLessonsManager from '@/components/lessons/PastLessonsManager';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
 import { Navigate } from 'react-router-dom';
+import { RefreshCw } from 'lucide-react';
 
 interface EnrolledClass {
   id: string;
@@ -24,10 +24,42 @@ interface EnrolledClass {
 }
 
 const Forum = () => {
-  const { profile, user, authReady, loading: authLoading } = useAuth();
+  const { profile, user, authReady, loading: authLoading, refreshProfile } = useAuth();
   const [enrolledClasses, setEnrolledClasses] = useState<EnrolledClass[]>([]);
   const [selectedClass, setSelectedClass] = useState<string>('');
   const [classesLoading, setClassesLoading] = useState(true);
+  const [showProfileFallback, setShowProfileFallback] = useState(false);
+  const [classesTimeout, setClassesTimeout] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Profile fallback timeout
+  useEffect(() => {
+    if (authReady && user && !profile) {
+      console.debug('⏰ Forum: Setting profile fallback timeout (2s)');
+      const timeout = setTimeout(() => {
+        console.debug('🔄 Forum: Profile timeout reached, showing fallback');
+        setShowProfileFallback(true);
+      }, 2000);
+
+      return () => clearTimeout(timeout);
+    } else {
+      setShowProfileFallback(false);
+    }
+  }, [authReady, user, profile]);
+
+  // Classes loading timeout
+  useEffect(() => {
+    if (classesLoading && profile?.id) {
+      console.debug('⏰ Forum: Setting classes timeout (5s)');
+      const timeout = setTimeout(() => {
+        console.debug('🚨 Forum: Classes loading timeout reached');
+        setClassesTimeout(true);
+        setClassesLoading(false);
+      }, 5000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [classesLoading, profile?.id]);
 
   useEffect(() => {
     // Wacht tot profile?.id beschikbaar is voordat we fetchUserClasses aanroepen
@@ -52,6 +84,7 @@ const Forum = () => {
 
     try {
       setClassesLoading(true);
+      setClassesTimeout(false);
       console.debug('🔄 Forum: Fetching classes for role:', profile.role);
 
       if (profile?.role === 'admin') {
@@ -129,8 +162,23 @@ const Forum = () => {
     } catch (error) {
       console.error('❌ Forum: Error fetching user classes:', error);
       setEnrolledClasses([]);
+      setClassesTimeout(true);
     } finally {
       setClassesLoading(false);
+    }
+  };
+
+  const handleForceProfile = async () => {
+    console.debug('🔄 Forum: Force profile refresh requested');
+    setIsRefreshing(true);
+    setShowProfileFallback(false);
+    
+    try {
+      await refreshProfile();
+    } catch (error) {
+      console.error('❌ Forum: Force profile refresh failed:', error);
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -144,9 +192,57 @@ const Forum = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Still waiting for profile to be loaded
+  // Profile loading fallback
+  if (!profile && showProfileFallback) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto p-6">
+          <Card className="main-content-card">
+            <CardContent className="text-center py-12">
+              <h2 className="text-xl font-semibold mb-4">Profiel wordt geladen...</h2>
+              <p className="text-muted-foreground mb-4">
+                Je profiel informatie wordt geladen om toegang te krijgen tot het forum.
+              </p>
+              <Button 
+                onClick={handleForceProfile}
+                disabled={isRefreshing}
+                variant="outline"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                {isRefreshing ? 'Bezig...' : 'Forceer profiel'}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Still waiting for profile to be loaded (normal case)
   if (!profile) {
     return <FullPageLoader text="Profiel laden..." />;
+  }
+
+  // Classes timeout error state
+  if (classesTimeout) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto p-6">
+          <Card className="main-content-card">
+            <CardContent className="text-center py-12">
+              <h2 className="text-xl font-semibold mb-4">Kan klassen niet laden</h2>
+              <p className="text-muted-foreground mb-4">
+                Er ging iets mis bij het laden van je klassen. Probeer het opnieuw.
+              </p>
+              <Button onClick={fetchUserClasses} variant="outline">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Opnieuw proberen
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   // Show loading when fetching classes
@@ -243,4 +339,3 @@ const Forum = () => {
 };
 
 export default Forum;
-

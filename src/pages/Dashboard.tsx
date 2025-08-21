@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 const Dashboard = () => {
   const { user, profile, authReady, refreshProfile } = useAuth();
   const [showFallback, setShowFallback] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   console.debug('📊 Dashboard: user:', !!user, 'profile:', !!profile, 'role:', profile?.role);
 
@@ -28,6 +29,21 @@ const Dashboard = () => {
       setShowFallback(false);
     }
   }, [authReady, user, profile]);
+
+  // Enhanced refresh function with better user feedback
+  const handleRefresh = async () => {
+    console.debug('🔄 Dashboard: Manual refresh requested');
+    setIsRefreshing(true);
+    setShowFallback(false); // Reset fallback state
+    
+    try {
+      await refreshProfile();
+    } catch (error) {
+      console.error('❌ Dashboard: Refresh failed:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   // Early guard: if auth is ready and no user, redirect to auth
   if (authReady && !user) {
@@ -51,11 +67,12 @@ const Dashboard = () => {
             <FullPageLoader text="Profiel laden..." />
             <Button 
               variant="outline" 
-              onClick={refreshProfile}
+              onClick={handleRefresh}
+              disabled={isRefreshing}
               className="mt-4"
             >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Opnieuw proberen
+              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isRefreshing ? 'Bezig...' : 'Opnieuw proberen'}
             </Button>
           </div>
         </div>
@@ -80,11 +97,12 @@ const Dashboard = () => {
             </p>
             <Button 
               variant="outline" 
-              onClick={refreshProfile}
+              onClick={handleRefresh}
+              disabled={isRefreshing}
               className="mt-4"
             >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Profiel herladen
+              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isRefreshing ? 'Profiel herladen...' : 'Profiel herladen'}
             </Button>
           </div>
         </div>

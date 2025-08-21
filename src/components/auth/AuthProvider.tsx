@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
@@ -120,8 +119,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const refreshProfile = async () => {
+    console.debug('🔄 AuthProvider: Manual refresh profile requested');
     if (user) {
+      setProfile(null); // Clear current profile
       await fetchProfile(user.id);
+      // Also trigger the failsafe to ensure we get a profile
+      setProfileFailsafe(user.id);
+    } else {
+      console.debug('⚠️ AuthProvider: No user available for profile refresh');
+      toast({
+        title: "Geen gebruiker",
+        description: "Kan profiel niet herladen - geen gebruiker ingelogd",
+        variant: "destructive"
+      });
     }
   };
 
