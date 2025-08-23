@@ -85,12 +85,21 @@ const Forum = () => {
       setClassesTimeout(false);
       console.debug('🔄 Forum: Fetching classes for role:', profile.role);
 
+      // 4s hard timeout to prevent hanging queries
+      const controller = new AbortController();
+      const timer = setTimeout(() => {
+        console.warn('⚠️ Forum: Aborting classes fetch after 4s');
+        controller.abort();
+      }, 4000);
+
       if (profile?.role === 'admin') {
         const { data, error } = await supabase
           .from('klassen')
           .select('id, name, description')
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false })
+          .abortSignal(controller.signal);
         
+        clearTimeout(timer);
         if (error) throw error;
         
         const formattedClasses = data?.map(klas => ({
@@ -114,8 +123,10 @@ const Forum = () => {
         const { data, error } = await supabase
           .from('klassen')
           .select('id, name, description')
-          .eq('teacher_id', profile.id);
+          .eq('teacher_id', profile.id)
+          .abortSignal(controller.signal);
         
+        clearTimeout(timer);
         if (error) throw error;
         
         const formattedClasses = data?.map(klas => ({
@@ -149,8 +160,10 @@ const Forum = () => {
             )
           `)
           .eq('student_id', profile?.id)
-          .eq('payment_status', 'paid');
+          .eq('payment_status', 'paid')
+          .abortSignal(controller.signal);
 
+        clearTimeout(timer);
         if (error) throw error;
         
         setEnrolledClasses(data || []);
@@ -179,13 +192,22 @@ const Forum = () => {
       console.debug('🔄 Forum: Fetching classes with fallback role');
       
       const fallbackRole = user.user_metadata?.role || 'leerling';
+
+      // 4s hard timeout to prevent hanging queries
+      const controller = new AbortController();
+      const timer = setTimeout(() => {
+        console.warn('⚠️ Forum: Aborting fallback classes fetch after 4s');
+        controller.abort();
+      }, 4000);
       
       if (fallbackRole === 'admin') {
         const { data, error } = await supabase
           .from('klassen')
           .select('id, name, description')
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false })
+          .abortSignal(controller.signal);
         
+        clearTimeout(timer);
         if (error) throw error;
         
         const formattedClasses = data?.map(klas => ({
@@ -209,8 +231,10 @@ const Forum = () => {
         const { data, error } = await supabase
           .from('klassen')
           .select('id, name, description')
-          .eq('teacher_id', user.id);
+          .eq('teacher_id', user.id)
+          .abortSignal(controller.signal);
         
+        clearTimeout(timer);
         if (error) throw error;
         
         const formattedClasses = data?.map(klas => ({
@@ -244,8 +268,10 @@ const Forum = () => {
             )
           `)
           .eq('student_id', user.id)
-          .eq('payment_status', 'paid');
+          .eq('payment_status', 'paid')
+          .abortSignal(controller.signal);
 
+        clearTimeout(timer);
         if (error) throw error;
         
         setEnrolledClasses(data || []);
@@ -323,50 +349,6 @@ const Forum = () => {
   // Show loading when fetching classes
   if (classesLoading) {
     return <FullPageLoader text="Klassen laden..." />;
-  }
-
-  if (enrolledClasses.length === 0) {
-    const currentRole = profile?.role || user?.user_metadata?.role || 'leerling';
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto p-6">
-          {classesTimeout && (
-            <Alert className="mb-4">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Verbindingsprobleem</AlertTitle>
-              <AlertDescription className="flex items-center gap-3">
-                Klassen konden niet tijdig geladen worden. We tonen voorlopig geen klassen.
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    if (profile?.id) {
-                      fetchUserClasses();
-                    } else {
-                      fetchUserClassesWithFallback();
-                    }
-                  }}
-                >
-                  Opnieuw proberen
-                </Button>
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <Card className="main-content-card">
-            <CardContent className="text-center py-12">
-              <h2 className="text-xl font-semibold mb-4">Geen toegang tot forum</h2>
-              <p className="text-muted-foreground">
-                {currentRole === 'leerling' 
-                  ? 'Je bent nog niet ingeschreven voor een klas.' 
-                  : 'Er zijn geen klassen beschikbaar.'
-                }
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
   }
 
   return (
@@ -448,6 +430,29 @@ const Forum = () => {
             </div>
           )}
         </div>
+
+        {enrolledClasses.length === 0 && (
+          <Card className="main-content-card mb-6">
+            <CardContent className="py-6">
+              <h2 className="text-lg font-semibold mb-2">Geen klassen gevonden</h2>
+              <p className="text-muted-foreground mb-4">
+                We konden geen klassen ophalen. Je kunt het opnieuw proberen, of vraag je leerkracht/beheerder om je toegang te geven.
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (profile?.id) {
+                    fetchUserClasses();
+                  } else {
+                    fetchUserClassesWithFallback();
+                  }
+                }}
+              >
+                Opnieuw proberen
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="main-content-card">
           <ForumStructure classId={selectedClass || ''} />
