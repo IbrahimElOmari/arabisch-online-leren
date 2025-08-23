@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/components/auth/AuthProvider';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
 import TeacherDashboard from '@/components/dashboard/TeacherDashboard';
@@ -8,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
 import { RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { BackendStatusBadge } from '@/components/status/BackendStatusBadge';
 
 const Dashboard = () => {
   const { user, profile, authReady, refreshProfile } = useAuth();
@@ -92,12 +92,17 @@ const Dashboard = () => {
       <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6">
           <div className="mb-6">
-            <h1 className="text-3xl font-bold mb-2">
-              Dashboard ({fallbackRole})
-            </h1>
-            <p className="text-muted-foreground">
-              Je profiel wordt nog geladen...
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold mb-2">
+                  Dashboard ({fallbackRole})
+                </h1>
+                <p className="text-muted-foreground">
+                  Je profiel wordt nog geladen...
+                </p>
+              </div>
+              <BackendStatusBadge compact />
+            </div>
             <Button 
               variant="outline" 
               onClick={handleRefresh}
@@ -129,6 +134,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
         <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+          <BackendStatusBadge />
           <FullPageLoader text="Profiel laden..." />
           <Button 
             variant="outline" 

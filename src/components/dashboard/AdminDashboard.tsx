@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,14 +13,15 @@ import {
   Users,
   GraduationCap,
   Settings,
-  Database,
   Shield,
-  BarChart3,
   BookOpen,
   UserCheck,
   Clock,
-  Plus
+  Plus,
+  AlertTriangle
 } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { BackendStatusBadge } from '@/components/status/BackendStatusBadge';
 
 interface DashboardCardProps {
   title: string;
@@ -55,194 +55,191 @@ const AdminDashboard = () => {
   const [lessonCount, setLessonCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [classModalOpen, setClassModalOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<string[]>([]);
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
 
-  const fetchDashboardData = async () => {
-    console.debug('🔄 AdminDashboard: Starting data fetch');
-    const timeoutId = setTimeout(() => {
-      console.warn('⚠️ AdminDashboard: Fetch timeout after 5 seconds');
-      setLoading(false);
-      setError('Data loading timed out. Please refresh the page.');
-    }, 5000);
-
+  const withTimeout = async <T,>(fn: (signal: AbortSignal) => Promise<T>, label: string, ms = 4000): Promise<T | null> => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
     try {
-      setLoading(true);
-      setError(null);
-
-      // Fetch total user count - simplified query
-      console.debug('📊 AdminDashboard: Fetching user count');
-      const { count: totalUsers, error: usersError } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
-
-      if (usersError) {
-        console.error('❌ AdminDashboard: User count error:', usersError);
-        throw usersError;
+      return await fn(controller.signal);
+    } catch (err: any) {
+      if (err?.name === 'AbortError') {
+        setWarnings(prev => [...prev, `${label}: time-out na ${ms / 1000}s`]);
+      } else {
+        setWarnings(prev => [...prev, `${label}: ${err?.message || 'fout'}`]);
       }
-      setUserCount(totalUsers || 0);
-
-      // Fetch pending users using the same logic as PendingUsersManagement
-      console.debug('📊 AdminDashboard: Fetching pending users');
-      const { data: allStudents, error: studentsError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('role', 'leerling');
-
-      if (studentsError) {
-        console.error('❌ AdminDashboard: Students fetch error:', studentsError);
-        throw studentsError;
-      }
-
-      // Count students without paid enrollments
-      let pendingCount = 0;
-      if (allStudents && allStudents.length > 0) {
-        const studentIds = allStudents.map(s => s.id);
-        
-        const { data: paidEnrollments, error: enrollError } = await supabase
-          .from('inschrijvingen')
-          .select('student_id')
-          .in('student_id', studentIds)
-          .eq('payment_status', 'paid');
-
-        if (enrollError) {
-          console.error('❌ AdminDashboard: Enrollments fetch error:', enrollError);
-          throw enrollError;
-        }
-
-        const paidStudentIds = new Set(paidEnrollments?.map(e => e.student_id) || []);
-        pendingCount = studentIds.filter(id => !paidStudentIds.has(id)).length;
-      }
-      setPendingUserCount(pendingCount);
-
-      // Fetch class count
-      console.debug('📊 AdminDashboard: Fetching class count');
-      const { count: totalClasses, error: classesError } = await supabase
-        .from('klassen')
-        .select('*', { count: 'exact', head: true });
-
-      if (classesError) {
-        console.error('❌ AdminDashboard: Classes count error:', classesError);
-        throw classesError;
-      }
-      setClassCount(totalClasses || 0);
-
-      // Fetch task count
-      console.debug('📊 AdminDashboard: Fetching task count');
-      const { count: totalTasks, error: tasksError } = await supabase
-        .from('tasks')
-        .select('*', { count: 'exact', head: true });
-
-      if (tasksError) {
-        console.error('❌ AdminDashboard: Tasks count error:', tasksError);
-        throw tasksError;
-      }
-      setTaskCount(totalTasks || 0);
-
-      // Fetch lesson count
-      console.debug('📊 AdminDashboard: Fetching lesson count');
-      const { count: totalLessons, error: lessonsError } = await supabase
-        .from('lessen')
-        .select('*', { count: 'exact', head: true });
-
-      if (lessonsError) {
-        console.error('❌ AdminDashboard: Lessons count error:', lessonsError);
-        throw lessonsError;
-      }
-      setLessonCount(totalLessons || 0);
-
-      console.debug('✅ AdminDashboard: All data fetched successfully');
-      clearTimeout(timeoutId);
-
-    } catch (error) {
-      console.error('❌ AdminDashboard: Error fetching dashboard data:', error);
-      setError('Failed to load dashboard data. Please try refreshing the page.');
-      clearTimeout(timeoutId);
+      return null;
     } finally {
-      setLoading(false);
+      clearTimeout(timer);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto p-6">
-          <div className="animate-pulse">
-            <div className="h-8 bg-muted rounded mb-6 w-48"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-32 bg-muted rounded"></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const fetchDashboardData = async () => {
+    console.debug('🔄 AdminDashboard: Starting data fetch');
+    setLoading(true);
+    setWarnings([]);
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto p-6">
-          <Card>
-            <CardContent className="text-center py-12">
-              <p className="text-destructive mb-4">{error}</p>
-              <Button onClick={fetchDashboardData}>
-                Opnieuw proberen
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+    // Users count
+    const users = await withTimeout(async (signal) => {
+      const { count, error } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .abortSignal(signal);
+      if (error) throw error;
+      return count ?? 0;
+    }, 'Gebruikers');
+
+    setUserCount(users ?? 0);
+
+    // Pending users
+    const pending = await withTimeout(async (signal) => {
+      const { data: allStudents, error: studentsError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('role', 'leerling')
+        .abortSignal(signal);
+
+      if (studentsError) throw studentsError;
+
+      if (!allStudents || allStudents.length === 0) return 0;
+      const studentIds = allStudents.map(s => s.id);
+
+      const { data: paidEnrollments, error: enrollError } = await supabase
+        .from('inschrijvingen')
+        .select('student_id')
+        .in('student_id', studentIds)
+        .eq('payment_status', 'paid')
+        .abortSignal(signal);
+
+      if (enrollError) throw enrollError;
+
+      const paidStudentIds = new Set(paidEnrollments?.map(e => e.student_id) || []);
+      return studentIds.filter(id => !paidStudentIds.has(id)).length;
+    }, 'Nieuwe aanvragen');
+
+    setPendingUserCount(pending ?? 0);
+
+    // Class count
+    const classes = await withTimeout(async (signal) => {
+      const { count, error } = await supabase
+        .from('klassen')
+        .select('*', { count: 'exact', head: true })
+        .abortSignal(signal);
+      if (error) throw error;
+      return count ?? 0;
+    }, 'Klassen');
+
+    setClassCount(classes ?? 0);
+
+    // Task count
+    const tasks = await withTimeout(async (signal) => {
+      const { count, error } = await supabase
+        .from('tasks')
+        .select('*', { count: 'exact', head: true })
+        .abortSignal(signal);
+      if (error) throw error;
+      return count ?? 0;
+    }, 'Taken');
+
+    setTaskCount(tasks ?? 0);
+
+    // Lesson count
+    const lessons = await withTimeout(async (signal) => {
+      const { count, error } = await supabase
+        .from('lessen')
+        .select('*', { count: 'exact', head: true })
+        .abortSignal(signal);
+      if (error) throw error;
+      return count ?? 0;
+    }, 'Lessen');
+
+    setLessonCount(lessons ?? 0);
+
+    console.debug('✅ AdminDashboard: Data fetch completed (with fail-open)');
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">
-            Admin Dashboard
-          </h1>
-          <p className="text-muted-foreground">
-            Overzicht van de school administratie.
-          </p>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">
+              Admin Dashboard
+            </h1>
+            <p className="text-muted-foreground">
+              Overzicht van de school administratie.
+            </p>
+          </div>
+          <BackendStatusBadge compact />
         </div>
 
+        {warnings.length > 0 && (
+          <Alert className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Verbindingsproblemen</AlertTitle>
+            <AlertDescription>
+              {warnings.join(' • ')}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Metrics grid always visible; show 0 or skeletons while loading */}
         <div className="grid gap-6 mb-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-          <DashboardCard
-            title="Gebruikers"
-            value={userCount}
-            icon={<Users className="h-4 w-4 text-gray-500" />}
-            description="Aantal geregistreerde gebruikers"
-          />
-          <DashboardCard
-            title="Nieuwe aanvragen"
-            value={pendingUserCount}
-            icon={<UserCheck className="h-4 w-4 text-gray-500" />}
-            description="Gebruikers in afwachting van activatie"
-          />
-          <DashboardCard
-            title="Klassen"
-            value={classCount}
-            icon={<GraduationCap className="h-4 w-4 text-gray-500" />}
-            description="Aantal aangemaakte klassen"
-          />
-           <DashboardCard
-            title="Taken"
-            value={taskCount}
-            icon={<BookOpen className="h-4 w-4 text-gray-500" />}
-            description="Aantal beschikbare taken"
-          />
-           <DashboardCard
-            title="Lessen"
-            value={lessonCount}
-            icon={<Clock className="h-4 w-4 text-gray-500" />}
-            description="Aantal geplande lessen"
-          />
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Gebruikers</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{loading ? 0 : userCount}</div>
+              <p className="text-xs text-muted-foreground">Aantal geregistreerde gebruikers</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Nieuwe aanvragen</CardTitle>
+              <UserCheck className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{loading ? 0 : pendingUserCount}</div>
+              <p className="text-xs text-muted-foreground">Gebruikers in afwachting van activatie</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Klassen</CardTitle>
+              <GraduationCap className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{loading ? 0 : classCount}</div>
+              <p className="text-xs text-muted-foreground">Aantal aangemaakte klassen</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Taken</CardTitle>
+              <BookOpen className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{loading ? 0 : taskCount}</div>
+              <p className="text-xs text-muted-foreground">Aantal beschikbare taken</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Lessen</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{loading ? 0 : lessonCount}</div>
+              <p className="text-xs text-muted-foreground">Aantal geplande lessen</p>
+            </CardContent>
+          </Card>
         </div>
 
         <Tabs defaultValue="users" className="w-full">

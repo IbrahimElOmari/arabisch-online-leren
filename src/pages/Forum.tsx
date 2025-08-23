@@ -12,6 +12,7 @@ import { FullPageLoader } from '@/components/ui/LoadingSpinner';
 import { Navigate } from 'react-router-dom';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { BackendStatusBadge } from '@/components/status/BackendStatusBadge';
 
 interface EnrolledClass {
   id: string;
@@ -33,6 +34,10 @@ const Forum = () => {
   const [classesTimeout, setClassesTimeout] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  // Cache keys per user
+  const cacheKey = user ? `forum_classes_${user.id}` : null;
+  const selectedKey = user ? `forum_selected_class_${user.id}` : null;
+
   // Profile fallback timeout - more aggressive
   useEffect(() => {
     if (authReady && user && !profile) {
@@ -47,6 +52,32 @@ const Forum = () => {
       setShowProfileFallback(false);
     }
   }, [authReady, user, profile]);
+
+  // Load cached classes and selected class early (non-blocking UI)
+  useEffect(() => {
+    if (!user || !cacheKey) return;
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      const cachedSelected = localStorage.getItem(selectedKey!);
+      if (cached) {
+        const parsed = JSON.parse(cached) as EnrolledClass[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          console.debug('💾 Forum: Using cached classes');
+          setEnrolledClasses(parsed);
+          if (cachedSelected) {
+            setSelectedClass(cachedSelected);
+          } else {
+            setSelectedClass(parsed[0].class_id);
+          }
+          // Laat classesLoading voorlopig true zodat we fresh data kunnen ophalen,
+          // maar UI zal niet geblokkeerd zijn omdat we hieronder de loader-early-return aanpassen.
+        }
+      }
+    } catch (e) {
+      console.warn('Forum: Failed to read cache', e);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   // Classes loading timeout
   useEffect(() => {
@@ -72,6 +103,17 @@ const Forum = () => {
       fetchUserClassesWithFallback();
     }
   }, [profile, showProfileFallback, user]);
+
+  const persistCache = (classes: EnrolledClass[], sel: string) => {
+    if (!cacheKey || !selectedKey) return;
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify(classes));
+      localStorage.setItem(selectedKey, sel);
+      console.debug('💾 Forum: Cached classes and selection');
+    } catch (e) {
+      console.warn('Forum: Failed to write cache', e);
+    }
+  };
 
   const fetchUserClasses = async () => {
     if (!profile?.id) {
@@ -114,11 +156,9 @@ const Forum = () => {
         })) || [];
         
         setEnrolledClasses(formattedClasses);
-        if (formattedClasses.length > 0) {
-          setSelectedClass(formattedClasses[0].class_id);
-        } else {
-          setSelectedClass('');
-        }
+        const sel = formattedClasses.length > 0 ? formattedClasses[0].class_id : '';
+        setSelectedClass(sel);
+        persistCache(formattedClasses, sel);
       } else if (profile?.role === 'leerkracht') {
         const { data, error } = await supabase
           .from('klassen')
@@ -141,11 +181,9 @@ const Forum = () => {
         })) || [];
         
         setEnrolledClasses(formattedClasses);
-        if (formattedClasses.length > 0) {
-          setSelectedClass(formattedClasses[0].class_id);
-        } else {
-          setSelectedClass('');
-        }
+        const sel = formattedClasses.length > 0 ? formattedClasses[0].class_id : '';
+        setSelectedClass(sel);
+        persistCache(formattedClasses, sel);
       } else {
         const { data, error } = await supabase
           .from('inschrijvingen')
@@ -167,15 +205,13 @@ const Forum = () => {
         if (error) throw error;
         
         setEnrolledClasses(data || []);
-        if (data && data.length > 0) {
-          setSelectedClass(data[0].class_id);
-        } else {
-          setSelectedClass('');
-        }
+        const sel = data && data.length > 0 ? data[0].class_id : '';
+        setSelectedClass(sel);
+        persistCache(data || [], sel);
       }
     } catch (error) {
       console.error('❌ Forum: Error fetching user classes:', error);
-      setEnrolledClasses([]);
+      setEnrolledClasses([]); // keep UI usable
       setClassesTimeout(true);
       setSelectedClass('');
     } finally {
@@ -222,11 +258,9 @@ const Forum = () => {
         })) || [];
         
         setEnrolledClasses(formattedClasses);
-        if (formattedClasses.length > 0) {
-          setSelectedClass(formattedClasses[0].class_id);
-        } else {
-          setSelectedClass('');
-        }
+        const sel = formattedClasses.length > 0 ? formattedClasses[0].class_id : '';
+        setSelectedClass(sel);
+        persistCache(formattedClasses, sel);
       } else if (fallbackRole === 'leerkracht') {
         const { data, error } = await supabase
           .from('klassen')
@@ -249,11 +283,9 @@ const Forum = () => {
         })) || [];
         
         setEnrolledClasses(formattedClasses);
-        if (formattedClasses.length > 0) {
-          setSelectedClass(formattedClasses[0].class_id);
-        } else {
-          setSelectedClass('');
-        }
+        const sel = formattedClasses.length > 0 ? formattedClasses[0].class_id : '';
+        setSelectedClass(sel);
+        persistCache(formattedClasses, sel);
       } else {
         const { data, error } = await supabase
           .from('inschrijvingen')
@@ -275,11 +307,9 @@ const Forum = () => {
         if (error) throw error;
         
         setEnrolledClasses(data || []);
-        if (data && data.length > 0) {
-          setSelectedClass(data[0].class_id);
-        } else {
-          setSelectedClass('');
-        }
+        const sel = data && data.length > 0 ? data[0].class_id : '';
+        setSelectedClass(sel);
+        persistCache(data || [], sel);
       }
     } catch (error) {
       console.error('❌ Forum: Error fetching user classes with fallback:', error);
@@ -320,9 +350,12 @@ const Forum = () => {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Forum - Profiel wordt geladen...</h2>
+            <BackendStatusBadge compact />
+          </div>
           <Card className="main-content-card">
             <CardContent className="text-center py-12">
-              <h2 className="text-xl font-semibold mb-4">Forum - Profiel wordt geladen...</h2>
               <p className="text-muted-foreground mb-4">
                 Je profiel informatie wordt geladen om toegang te krijgen tot het forum.
               </p>
@@ -346,14 +379,29 @@ const Forum = () => {
     return <FullPageLoader text="Profiel laden..." />;
   }
 
-  // Show loading when fetching classes
-  if (classesLoading) {
-    return <FullPageLoader text="Klassen laden..." />;
+  // Show loading when fetching classes - ONLY if we have geen cache
+  if (classesLoading && enrolledClasses.length === 0) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-2xl font-bold">Forum</h1>
+            <BackendStatusBadge compact />
+          </div>
+          <FullPageLoader text="Klassen laden..." />
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">Forum</h1>
+          <BackendStatusBadge compact />
+        </div>
+
         {classesTimeout && (
           <Alert className="mb-4">
             <AlertTriangle className="h-4 w-4" />
@@ -379,8 +427,6 @@ const Forum = () => {
 
         <div className="main-content-card mb-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <h1 className="text-2xl font-bold">Forum</h1>
-
             <div className="flex items-center gap-2">
               <Dialog>
                 <DialogTrigger asChild>
@@ -415,7 +461,10 @@ const Forum = () => {
           {enrolledClasses.length > 1 && (
             <div className="max-w-xs mt-4">
               <label className="text-sm font-medium mb-2 block">Selecteer klas:</label>
-              <Select value={selectedClass} onValueChange={setSelectedClass}>
+              <Select value={selectedClass} onValueChange={(v) => {
+                setSelectedClass(v);
+                persistCache(enrolledClasses, v);
+              }}>
                 <SelectTrigger>
                   <SelectValue placeholder="Kies een klas" />
                 </SelectTrigger>
