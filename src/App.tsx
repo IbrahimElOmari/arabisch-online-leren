@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/AppSidebar";
-import { AuthProvider } from "@/components/auth/AuthProvider";
+import { AuthProviderRefactored } from "@/components/auth/AuthProviderRefactored";
 import { SecurityProvider } from "@/components/security/SecurityProvider";
 import { SecurityMonitor } from "@/components/security/SecurityMonitor";
 import { SecurityErrorBoundary } from "@/components/error/SecurityErrorBoundary";
@@ -33,9 +33,10 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 3,
-      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 2,
+      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 5000),
+      staleTime: 2 * 60 * 1000, // 2 minutes
+      gcTime: 5 * 60 * 1000, // 5 minutes
     },
   },
 });
@@ -46,7 +47,7 @@ const App = () => (
       <TooltipProvider>
         <BrowserRouter>
           <SecurityErrorBoundary>
-            <AuthProvider>
+            <AuthProviderRefactored>
               <SecurityMonitor>
                 <AppGate>
                   <SidebarProvider>
@@ -119,7 +120,7 @@ const App = () => (
                   </SidebarProvider>
                 </AppGate>
               </SecurityMonitor>
-            </AuthProvider>
+            </AuthProviderRefactored>
           </SecurityErrorBoundary>
         </BrowserRouter>
         <Toaster />
@@ -130,4 +131,3 @@ const App = () => (
 );
 
 export default App;
-

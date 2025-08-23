@@ -1,43 +1,25 @@
-import { useAuth } from '@/components/auth/AuthProvider';
+
+import { useAuth } from '@/components/auth/AuthProviderRefactored';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
 import TeacherDashboard from '@/components/dashboard/TeacherDashboard';
 import StudentDashboard from '@/components/dashboard/StudentDashboard';
 import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
-import { RefreshCw } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { RefreshCw, AlertTriangle } from 'lucide-react';
+import { useState } from 'react';
 import { BackendStatusBadge } from '@/components/status/BackendStatusBadge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const Dashboard = () => {
-  const { user, profile, authReady, refreshProfile } = useAuth();
-  const [showFallback, setShowFallback] = useState(false);
+  const { user, profile, authReady, loading, refreshProfile } = useAuth();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [profileTimeout, setProfileTimeout] = useState(false);
 
   console.debug('📊 Dashboard: user:', !!user, 'profile:', !!profile, 'role:', profile?.role);
-
-  // Set a timeout to show fallback dashboard if profile takes too long
-  useEffect(() => {
-    if (authReady && user && !profile) {
-      const timeoutId = setTimeout(() => {
-        console.debug('⏰ Dashboard: Profile timeout reached, showing fallback');
-        setShowFallback(true);
-        setProfileTimeout(true);
-      }, 2000);
-
-      return () => clearTimeout(timeoutId);
-    } else if (profile) {
-      setShowFallback(false);
-      setProfileTimeout(false);
-    }
-  }, [authReady, user, profile]);
 
   const handleRefresh = async () => {
     console.debug('🔄 Dashboard: Manual refresh requested');
     setIsRefreshing(true);
-    setShowFallback(false);
-    setProfileTimeout(false);
     
     try {
       await refreshProfile();
@@ -55,7 +37,7 @@ const Dashboard = () => {
   }
 
   // Show loading while auth isn't ready
-  if (!authReady) {
+  if (!authReady && loading) {
     console.debug('⏳ Dashboard: Auth not ready yet');
     return <FullPageLoader text="Authenticatie controleren..." />;
   }
@@ -83,9 +65,9 @@ const Dashboard = () => {
     }
   }
 
-  // Profile timeout reached - show fallback dashboard
-  if (showFallback && user) {
-    console.debug('🔄 Dashboard: Showing fallback dashboard based on user metadata');
+  // Fallback dashboard when profile is loading
+  if (user) {
+    console.debug('🔄 Dashboard: User available but no profile, showing fallback');
     const fallbackRole = user.user_metadata?.role || 'leerling';
     
     return (
@@ -95,23 +77,31 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold mb-2">
-                  Dashboard ({fallbackRole})
+                  Dashboard
                 </h1>
                 <p className="text-muted-foreground">
-                  Je profiel wordt nog geladen...
+                  Welkom! Je profiel wordt geladen...
                 </p>
               </div>
               <BackendStatusBadge compact />
             </div>
-            <Button 
-              variant="outline" 
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="mt-4"
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-              {isRefreshing ? 'Profiel herladen...' : 'Profiel herladen'}
-            </Button>
+            
+            <Alert className="mt-4">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Profiel wordt geladen</AlertTitle>
+              <AlertDescription className="flex items-center gap-3">
+                Je dashboard werkt met basis functionaliteit terwijl je profiel wordt geladen.
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRefresh}
+                  disabled={isRefreshing}
+                >
+                  <RefreshCw className={`h-4 w-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  {isRefreshing ? 'Bezig...' : 'Forceer profiel'}
+                </Button>
+              </AlertDescription>
+            </Alert>
           </div>
           
           {/* Basic fallback dashboard content */}
@@ -119,7 +109,14 @@ const Dashboard = () => {
             <div className="bg-card rounded-lg p-6 border">
               <h3 className="text-lg font-semibold mb-2">Welkom!</h3>
               <p className="text-muted-foreground">
-                Je dashboard wordt geladen zodra je profiel beschikbaar is.
+                Je dashboard wordt volledig geladen zodra je profiel beschikbaar is.
+                Momenteel werken we met rol: <strong>{fallbackRole}</strong>
+              </p>
+            </div>
+            <div className="bg-card rounded-lg p-6 border">
+              <h3 className="text-lg font-semibold mb-2">Navigatie</h3>
+              <p className="text-muted-foreground">
+                Je kunt al wel naar andere pagina's navigeren via de sidebar.
               </p>
             </div>
           </div>
@@ -128,27 +125,9 @@ const Dashboard = () => {
     );
   }
 
-  // Still waiting for profile
-  console.debug('⏳ Dashboard: Waiting for profile, showing loading with retry');
-  return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6">
-        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-          <BackendStatusBadge />
-          <FullPageLoader text="Profiel laden..." />
-          <Button 
-            variant="outline" 
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="mt-4"
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-            {isRefreshing ? 'Bezig...' : 'Opnieuw proberen'}
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+  // Final fallback - should rarely be reached
+  console.debug('⏳ Dashboard: No user yet, showing loading');
+  return <FullPageLoader text="Laden..." />;
 };
 
 export default Dashboard;
