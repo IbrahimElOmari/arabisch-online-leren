@@ -10,7 +10,8 @@ import { SolvedSubmissionsList } from '@/components/tasks/SolvedSubmissionsList'
 import PastLessonsManager from '@/components/lessons/PastLessonsManager';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
 import { Navigate } from 'react-router-dom';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface EnrolledClass {
   id: string;
@@ -106,6 +107,8 @@ const Forum = () => {
         setEnrolledClasses(formattedClasses);
         if (formattedClasses.length > 0) {
           setSelectedClass(formattedClasses[0].class_id);
+        } else {
+          setSelectedClass('');
         }
       } else if (profile?.role === 'leerkracht') {
         const { data, error } = await supabase
@@ -129,6 +132,8 @@ const Forum = () => {
         setEnrolledClasses(formattedClasses);
         if (formattedClasses.length > 0) {
           setSelectedClass(formattedClasses[0].class_id);
+        } else {
+          setSelectedClass('');
         }
       } else {
         const { data, error } = await supabase
@@ -151,12 +156,15 @@ const Forum = () => {
         setEnrolledClasses(data || []);
         if (data && data.length > 0) {
           setSelectedClass(data[0].class_id);
+        } else {
+          setSelectedClass('');
         }
       }
     } catch (error) {
       console.error('❌ Forum: Error fetching user classes:', error);
       setEnrolledClasses([]);
       setClassesTimeout(true);
+      setSelectedClass('');
     } finally {
       setClassesLoading(false);
     }
@@ -194,6 +202,8 @@ const Forum = () => {
         setEnrolledClasses(formattedClasses);
         if (formattedClasses.length > 0) {
           setSelectedClass(formattedClasses[0].class_id);
+        } else {
+          setSelectedClass('');
         }
       } else if (fallbackRole === 'leerkracht') {
         const { data, error } = await supabase
@@ -217,6 +227,8 @@ const Forum = () => {
         setEnrolledClasses(formattedClasses);
         if (formattedClasses.length > 0) {
           setSelectedClass(formattedClasses[0].class_id);
+        } else {
+          setSelectedClass('');
         }
       } else {
         const { data, error } = await supabase
@@ -239,12 +251,15 @@ const Forum = () => {
         setEnrolledClasses(data || []);
         if (data && data.length > 0) {
           setSelectedClass(data[0].class_id);
+        } else {
+          setSelectedClass('');
         }
       }
     } catch (error) {
       console.error('❌ Forum: Error fetching user classes with fallback:', error);
       setEnrolledClasses([]);
       setClassesTimeout(true);
+      setSelectedClass('');
     } finally {
       setClassesLoading(false);
     }
@@ -305,34 +320,6 @@ const Forum = () => {
     return <FullPageLoader text="Profiel laden..." />;
   }
 
-  // Classes timeout error state
-  if (classesTimeout) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto p-6">
-          <Card className="main-content-card">
-            <CardContent className="text-center py-12">
-              <h2 className="text-xl font-semibold mb-4">Kan klassen niet laden</h2>
-              <p className="text-muted-foreground mb-4">
-                Er ging iets mis bij het laden van je klassen. Probeer het opnieuw.
-              </p>
-              <Button onClick={() => {
-                if (profile?.id) {
-                  fetchUserClasses();
-                } else {
-                  fetchUserClassesWithFallback();
-                }
-              }} variant="outline">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Opnieuw proberen
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
   // Show loading when fetching classes
   if (classesLoading) {
     return <FullPageLoader text="Klassen laden..." />;
@@ -343,6 +330,29 @@ const Forum = () => {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6">
+          {classesTimeout && (
+            <Alert className="mb-4">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Verbindingsprobleem</AlertTitle>
+              <AlertDescription className="flex items-center gap-3">
+                Klassen konden niet tijdig geladen worden. We tonen voorlopig geen klassen.
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    if (profile?.id) {
+                      fetchUserClasses();
+                    } else {
+                      fetchUserClassesWithFallback();
+                    }
+                  }}
+                >
+                  Opnieuw proberen
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+
           <Card className="main-content-card">
             <CardContent className="text-center py-12">
               <h2 className="text-xl font-semibold mb-4">Geen toegang tot forum</h2>
@@ -362,6 +372,29 @@ const Forum = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
+        {classesTimeout && (
+          <Alert className="mb-4">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Verbindingsprobleem</AlertTitle>
+            <AlertDescription className="flex items-center gap-3">
+              Klassen konden niet tijdig geladen worden. De lijst kan onvolledig zijn.
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (profile?.id) {
+                    fetchUserClasses();
+                  } else {
+                    fetchUserClassesWithFallback();
+                  }
+                }}
+              >
+                Opnieuw proberen
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="main-content-card mb-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <h1 className="text-2xl font-bold">Forum</h1>

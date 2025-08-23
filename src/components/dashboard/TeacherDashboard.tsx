@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,8 +18,10 @@ import {
   FileText,
   BarChart3,
   Clock,
-  Plus
+  Plus,
+  AlertTriangle
 } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface Class {
   id: string;
@@ -48,21 +49,26 @@ const TeacherDashboard = () => {
 
   const fetchClasses = async () => {
     console.debug('🔄 TeacherDashboard: Starting class fetch');
-    const timeoutId = setTimeout(() => {
-      console.warn('⚠️ TeacherDashboard: Fetch timeout after 5 seconds');
-      setLoading(false);
-      setError('Classes loading timed out. Please refresh the page.');
-    }, 5000);
+    setLoading(true);
+    setError(null);
 
     try {
-      setLoading(true);
-      setError(null);
       console.debug('Fetching classes for teacher:', profile?.id);
+
+      // Abort after 4s to avoid hanging forever
+      const controller = new AbortController();
+      const timer = setTimeout(() => {
+        console.warn('⚠️ TeacherDashboard: Aborting classes fetch after 4s');
+        controller.abort();
+      }, 4000);
 
       const { data, error } = await supabase
         .from('klassen')
         .select('*')
-        .eq('teacher_id', profile?.id);
+        .eq('teacher_id', profile?.id)
+        .abortSignal(controller.signal);
+
+      clearTimeout(timer);
 
       if (error) throw error;
 
@@ -70,16 +76,17 @@ const TeacherDashboard = () => {
       setClasses(data || []);
       if (data && data.length > 0) {
         setSelectedClass(data[0].id);
+      } else {
+        setSelectedClass(null);
       }
-      
-      clearTimeout(timeoutId);
+
       console.debug('✅ TeacherDashboard: Classes fetched successfully');
-    } catch (error) {
-      console.error('❌ TeacherDashboard: Error fetching classes:', error);
-      setError('Failed to load classes. Please try refreshing the page.');
+    } catch (err: any) {
+      console.error('❌ TeacherDashboard: Error fetching classes:', err);
+      // Non-blocking warning; show empty list so UI stays usable
+      setError('Laden van klassen duurde te lang of mislukte. We tonen voorlopig een lege lijst. Probeer opnieuw.');
       setClasses([]);
       setSelectedClass(null);
-      clearTimeout(timeoutId);
     } finally {
       setLoading(false);
     }
@@ -107,13 +114,31 @@ const TeacherDashboard = () => {
     );
   }
 
-  if (error) {
+  // Removed the full-page error state; we now show a non-blocking alert instead.
+
+  if (classes.length === 0) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6">
+          {error && (
+            <Alert className="mb-4">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Kon klassen niet laden</AlertTitle>
+              <AlertDescription className="flex items-center gap-3">
+                {error}
+                <Button variant="outline" size="sm" onClick={fetchClasses}>
+                  Opnieuw proberen
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
           <Card>
             <CardContent className="text-center py-12">
-              <p className="text-destructive mb-4">{error}</p>
+              <GraduationCap className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <h2 className="text-xl font-semibold mb-4">Geen klassen beschikbaar</h2>
+              <p className="text-muted-foreground mb-4">
+                We konden geen klassen ophalen. Probeer het later opnieuw of klik op "Opnieuw proberen".
+              </p>
               <Button onClick={fetchClasses}>
                 Opnieuw proberen
               </Button>
@@ -124,27 +149,22 @@ const TeacherDashboard = () => {
     );
   }
 
-  if (classes.length === 0) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto p-6">
-          <Card>
-            <CardContent className="text-center py-12">
-              <GraduationCap className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <h2 className="text-xl font-semibold mb-4">Geen klassen toegewezen</h2>
-              <p className="text-muted-foreground mb-4">
-                Er zijn nog geen klassen aan jou toegewezen. Neem contact op met de admin.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
+        {error && (
+          <Alert className="mb-4">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Verbindingsprobleem</AlertTitle>
+            <AlertDescription className="flex items-center gap-3">
+              {error}
+              <Button variant="outline" size="sm" onClick={fetchClasses}>
+                Opnieuw proberen
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">
             Welkom, {profile?.full_name}!
