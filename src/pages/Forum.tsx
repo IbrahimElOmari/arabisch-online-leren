@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAuth } from '@/components/auth/AuthProviderRefactored';
-import { useClasses } from '@/hooks/useClasses';
+import { useAuth } from '@/components/auth/AuthProviderQuery';
+import { useClassesQuery } from '@/hooks/useClassesQuery';
 import ForumStructure from '@/components/forum/ForumStructure';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { SolvedSubmissionsList } from '@/components/tasks/SolvedSubmissionsList';
@@ -16,33 +16,16 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BackendStatusBadge } from '@/components/status/BackendStatusBadge';
 
 const Forum = () => {
-  const { profile, user, authReady, loading: authLoading, refreshProfile } = useAuth();
-  const { 
-    enrolledClasses, 
-    selectedClass, 
-    classesLoading, 
-    classesError,
-    updateSelectedClass,
-    refetchClasses 
-  } = useClasses(profile, user?.id);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { profile, user, authReady, loading: authLoading, refreshProfile, isRefreshing } = useAuth();
+  const { enrolledClasses, isLoading: classesLoading, isError: classesError, refetchClasses, isRefetching } = useClassesQuery(profile, user?.id);
+  const [selectedClass, setSelectedClass] = useState<string>('');
 
-  const handleRefreshProfile = async () => {
-    console.debug('🔄 Forum: Force profile refresh requested');
-    setIsRefreshing(true);
-    try {
-      await refreshProfile();
-    } catch (error) {
-      console.error('❌ Forum: Force profile refresh failed:', error);
-    } finally {
-      setIsRefreshing(false);
+  // Set default selected class when classes load
+  React.useEffect(() => {
+    if (enrolledClasses.length > 0 && !selectedClass) {
+      setSelectedClass(enrolledClasses[0].class_id);
     }
-  };
-
-  const handleRefreshClasses = async () => {
-    console.debug('🔄 Forum: Refresh classes requested');
-    await refetchClasses();
-  };
+  }, [enrolledClasses, selectedClass]);
 
   // Auth loading gate
   if (authLoading && !authReady) {
@@ -52,11 +35,6 @@ const Forum = () => {
   // Redirect if no user
   if (authReady && !user) {
     return <Navigate to="/auth" replace />;
-  }
-
-  // Show minimal loading only if we have no data at all
-  if (!profile && !user && classesLoading && enrolledClasses.length === 0) {
-    return <FullPageLoader text="Forum laden..." />;
   }
 
   return (
@@ -77,7 +55,7 @@ const Forum = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handleRefreshProfile}
+                onClick={refreshProfile}
                 disabled={isRefreshing}
               >
                 <RefreshCw className={`h-4 w-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -93,17 +71,14 @@ const Forum = () => {
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Klassen laden mislukt</AlertTitle>
             <AlertDescription className="flex items-center gap-3">
-              {classesError === 'Timeout' ? 
-                'Klassen konden niet tijdig geladen worden.' : 
-                'Er ging iets mis bij het laden van klassen.'
-              }
+              Er ging iets mis bij het laden van klassen.
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handleRefreshClasses}
-                disabled={classesLoading}
+                onClick={refetchClasses}
+                disabled={isRefetching}
               >
-                <RefreshCw className={`h-4 w-4 mr-1 ${classesLoading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 mr-1 ${isRefetching ? 'animate-spin' : ''}`} />
                 Opnieuw proberen
               </Button>
             </AlertDescription>
@@ -147,7 +122,7 @@ const Forum = () => {
           {enrolledClasses.length > 1 && (
             <div className="max-w-xs mt-4">
               <label className="text-sm font-medium mb-2 block">Selecteer klas:</label>
-              <Select value={selectedClass} onValueChange={updateSelectedClass}>
+              <Select value={selectedClass} onValueChange={setSelectedClass}>
                 <SelectTrigger>
                   <SelectValue placeholder="Kies een klas" />
                 </SelectTrigger>
@@ -176,10 +151,10 @@ const Forum = () => {
               </p>
               <Button
                 variant="outline"
-                onClick={handleRefreshClasses}
-                disabled={classesLoading}
+                onClick={refetchClasses}
+                disabled={isRefetching}
               >
-                <RefreshCw className={`h-4 w-4 mr-2 ${classesLoading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 mr-2 ${isRefetching ? 'animate-spin' : ''}`} />
                 Opnieuw proberen
               </Button>
             </CardContent>

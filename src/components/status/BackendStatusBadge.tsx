@@ -1,58 +1,85 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useBackendHealth } from '@/hooks/useBackendHealth';
+import { RefreshCw, Wifi, WifiOff, AlertTriangle } from 'lucide-react';
+import { useBackendHealthQuery } from '@/hooks/useBackendHealthQuery';
 
 interface BackendStatusBadgeProps {
-  className?: string;
   compact?: boolean;
 }
 
-const labelFor = (status: 'ok' | 'degraded' | 'down') => {
-  switch (status) {
-    case 'ok':
-      return 'Backend: Online';
-    case 'degraded':
-      return 'Backend: Traag';
-    case 'down':
-      return 'Backend: Probleem';
-  }
-};
+export const BackendStatusBadge = ({ compact = false }: BackendStatusBadgeProps) => {
+  const { data: status, isLoading, refetch, isFetching } = useBackendHealthQuery();
 
-const variantFor = (status: 'ok' | 'degraded' | 'down') => {
-  switch (status) {
-    case 'ok':
-      return 'default' as const;
-    case 'degraded':
-      return 'secondary' as const;
-    case 'down':
-      return 'destructive' as const;
-  }
-};
+  const getStatusConfig = () => {
+    if (isLoading || isFetching) {
+      return {
+        variant: 'secondary' as const,
+        icon: RefreshCw,
+        label: 'Controleren...',
+        className: 'animate-pulse'
+      };
+    }
 
-export const BackendStatusBadge = ({ className, compact = false }: BackendStatusBadgeProps) => {
-  const { status, checking, check } = useBackendHealth();
+    switch (status) {
+      case 'ok':
+        return {
+          variant: 'default' as const,
+          icon: Wifi,
+          label: 'Backend Online',
+          className: 'bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-300'
+        };
+      case 'degraded':
+        return {
+          variant: 'secondary' as const,
+          icon: AlertTriangle,
+          label: 'Traag',
+          className: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-300'
+        };
+      case 'down':
+        return {
+          variant: 'destructive' as const,
+          icon: WifiOff,
+          label: 'Offline',
+          className: ''
+        };
+      default:
+        return {
+          variant: 'secondary' as const,
+          icon: AlertTriangle,
+          label: 'Onbekend',
+          className: ''
+        };
+    }
+  };
+
+  const config = getStatusConfig();
+  const Icon = config.icon;
+
+  if (compact) {
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => refetch()}
+        className="h-8 px-2"
+        disabled={isLoading || isFetching}
+      >
+        <Icon className={`h-3 w-3 ${isLoading || isFetching ? 'animate-spin' : ''}`} />
+      </Button>
+    );
+  }
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
-      <Badge variant={variantFor(status)}>
-        {labelFor(status)}
+    <div className="flex items-center gap-2">
+      <Badge
+        variant={config.variant}
+        className={`${config.className} cursor-pointer`}
+        onClick={() => refetch()}
+      >
+        <Icon className={`h-3 w-3 mr-1 ${isLoading || isFetching ? 'animate-spin' : ''}`} />
+        {config.label}
       </Badge>
-      {!compact && (
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={check}
-          disabled={checking}
-          aria-label="Herlaad backend status"
-        >
-          <RefreshCw className={cn('h-4 w-4', checking ? 'animate-spin' : '')} />
-        </Button>
-      )}
     </div>
   );
 };
-
-export default BackendStatusBadge;

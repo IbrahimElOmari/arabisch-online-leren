@@ -1,5 +1,5 @@
 
-import { useAuth } from '@/components/auth/AuthProviderRefactored';
+import { useAuth } from '@/components/auth/AuthProviderQuery';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
 import TeacherDashboard from '@/components/dashboard/TeacherDashboard';
 import StudentDashboard from '@/components/dashboard/StudentDashboard';
@@ -7,28 +7,13 @@ import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
-import { useState } from 'react';
 import { BackendStatusBadge } from '@/components/status/BackendStatusBadge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const Dashboard = () => {
-  const { user, profile, authReady, loading, refreshProfile } = useAuth();
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { user, profile, authReady, loading, refreshProfile, isRefreshing } = useAuth();
 
   console.debug('📊 Dashboard: user:', !!user, 'profile:', !!profile, 'role:', profile?.role);
-
-  const handleRefresh = async () => {
-    console.debug('🔄 Dashboard: Manual refresh requested');
-    setIsRefreshing(true);
-    
-    try {
-      await refreshProfile();
-    } catch (error) {
-      console.error('❌ Dashboard: Refresh failed:', error);
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
 
   // Early guard: if auth is ready and no user, redirect to auth
   if (authReady && !user) {
@@ -76,12 +61,8 @@ const Dashboard = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold mb-2">
-                  Dashboard
-                </h1>
-                <p className="text-muted-foreground">
-                  Welkom! Je profiel wordt geladen...
-                </p>
+                <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+                <p className="text-muted-foreground">Welkom! Je profiel wordt geladen...</p>
               </div>
               <BackendStatusBadge compact />
             </div>
@@ -94,7 +75,7 @@ const Dashboard = () => {
                 <Button 
                   variant="outline"
                   size="sm"
-                  onClick={handleRefresh}
+                  onClick={refreshProfile}
                   disabled={isRefreshing}
                 >
                   <RefreshCw className={`h-4 w-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
