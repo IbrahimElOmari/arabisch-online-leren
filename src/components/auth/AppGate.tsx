@@ -1,5 +1,5 @@
 
-import { useAuth } from './AuthProvider';
+import { useAuth } from './AuthProviderQuery';
 import { useEffect, useState } from 'react';
 
 interface AppGateProps {
@@ -59,3 +59,4 @@ export const AppGate = ({ children }: AppGateProps) => {
   console.debug('✅ AppGate: Rendering app content');
   return <>{children}</>;
 };
+

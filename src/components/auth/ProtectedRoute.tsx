@@ -1,6 +1,6 @@
 
 import { Navigate } from 'react-router-dom';
-import { useAuth } from './AuthProvider';
+import { useAuth } from './AuthProviderQuery';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -58,3 +58,4 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     </div>
   );
 };
+
