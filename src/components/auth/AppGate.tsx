@@ -1,5 +1,5 @@
 
-import { useAuth } from './AuthProviderQuery';
+import { useAuth } from '@/components/auth/AuthProviderQuery'; // CHANGED: use alias import to avoid duplicate module instance
 import { useEffect, useState } from 'react';
 
 interface AppGateProps {
@@ -59,4 +59,3 @@ export const AppGate = ({ children }: AppGateProps) => {
   console.debug('✅ AppGate: Rendering app content');
   return <>{children}</>;
 };
-

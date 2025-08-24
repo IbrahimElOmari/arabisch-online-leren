@@ -1,6 +1,6 @@
 
 import { Navigate } from 'react-router-dom';
-import { useAuth } from './AuthProviderQuery';
+import { useAuth } from '@/components/auth/AuthProviderQuery'; // CHANGED: use alias import to avoid duplicate module instance
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -58,4 +58,3 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     </div>
   );
 };
-

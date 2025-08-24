@@ -4,7 +4,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth as useAuthQuery } from './AuthProviderQuery'; // NEW: unify useAuth with AuthProviderQuery
+import { useAuth as useAuthQuery } from '@/components/auth/AuthProviderQuery'; // CHANGED: use alias to prevent module duplication
 
 export type UserRole = 'admin' | 'leerkracht' | 'leerling';
 
@@ -232,4 +232,3 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
-
