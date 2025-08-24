@@ -4,6 +4,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth as useAuthQuery } from './AuthProviderQuery'; // NEW: unify useAuth with AuthProviderQuery
 
 export type UserRole = 'admin' | 'leerkracht' | 'leerling';
 
@@ -26,13 +27,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+// REPLACED: delegate to AuthProviderQuery's useAuth so legacy imports work seamlessly
+export const useAuth = useAuthQuery;
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -236,3 +232,4 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
+
