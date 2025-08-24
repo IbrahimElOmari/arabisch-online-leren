@@ -2,19 +2,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { queryKeys } from '@/lib/queryKeys';
-import { UserProfile } from './useUserProfileQuery';
+import { UserProfile, EnrolledClass } from '@/types/app';
 
-interface EnrolledClass {
-  id: string;
-  class_id: string;
-  payment_status: string;
-  klassen: {
-    id: string;
-    name: string;
-    description: string;
-  };
-}
-
+/**
+ * Fetches classes for a user based on their role
+ * @param userId - The user ID
+ * @param role - The user role
+ * @returns Promise resolving to EnrolledClass array
+ */
 const fetchUserClasses = async (userId: string, role: string): Promise<EnrolledClass[]> => {
   console.debug('🔄 fetchUserClasses: Fetching classes for role:', role);
 
@@ -104,10 +99,10 @@ export const useClassesQuery = (profile: UserProfile | null, userId?: string) =>
     queryKey: queryKeys.userClasses(effectiveUserId, effectiveRole),
     queryFn: () => fetchUserClasses(effectiveUserId!, effectiveRole),
     enabled: !!effectiveUserId,
-    staleTime: 1000 * 60 * 3, // 3 minutes - classes change less often
+    staleTime: 1000 * 60 * 3, // 3 minutes
     retry: (failureCount, error: any) => {
       if (error?.name === 'AbortError') return false;
-      return failureCount < 1; // 1 retry max
+      return failureCount < 1;
     },
   });
 

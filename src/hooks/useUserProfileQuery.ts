@@ -4,15 +4,7 @@ import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { queryKeys } from '@/lib/queryKeys';
 import { useToast } from '@/hooks/use-toast';
-
-export type UserRole = 'admin' | 'leerkracht' | 'leerling';
-
-export interface UserProfile {
-  id: string;
-  full_name: string;
-  role: UserRole;
-  parent_email?: string;
-}
+import { UserProfile, UserRole } from '@/types/app';
 
 const createFallbackProfile = (userId: string, userData?: User): UserProfile => {
   return {
@@ -23,6 +15,11 @@ const createFallbackProfile = (userId: string, userData?: User): UserProfile => 
   };
 };
 
+/**
+ * Fetches user profile with fallback mechanism
+ * @param userId - The user ID to fetch profile for
+ * @returns Promise resolving to UserProfile
+ */
 const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
   console.debug('🔍 fetchUserProfile: Fetching for user:', userId);
   
@@ -63,10 +60,7 @@ export const useUserProfileQuery = (user: User | null) => {
     queryFn: () => fetchUserProfile(user!.id),
     enabled: !!user?.id,
     staleTime: 1000 * 60 * 5, // 5 minutes
-    retry: (failureCount, error: any) => {
-      // Geen retry voor deze query - we hebben altijd fallback
-      return false;
-    },
+    retry: false, // No retry - we have fallback
   });
 
   const refreshMutation = useMutation({
@@ -97,3 +91,6 @@ export const useUserProfileQuery = (user: User | null) => {
     isRefreshing: refreshMutation.isPending,
   };
 };
+
+// Re-export types for backward compatibility
+export type { UserProfile, UserRole };
