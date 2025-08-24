@@ -6,7 +6,7 @@ import { AuthForm, type AuthFormData } from '@/components/auth/AuthForm';
 import { RoleSelection } from '@/components/auth/RoleSelection';
 import { ForgotPasswordModal } from '@/components/auth/ForgotPasswordModal';
 import { useAuthForm } from '@/hooks/useAuthForm';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { useAuth } from '@/components/auth/AuthProviderQuery';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
