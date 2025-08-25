@@ -13,7 +13,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { organizePosts } from '@/utils/forumUtils';
+import { organizePosts, normalizePost } from '@/utils/forumUtils';
 
 interface Post {
   id: string;
@@ -63,7 +63,7 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
       
       console.log('ForumPostsList: Fetching posts for thread:', threadId);
       
-      // Remove the is_verwijderd filter to get all posts including deleted ones
+      // Get all posts including deleted ones to preserve reply structure
       const { data, error } = await supabase
         .from('forum_posts')
         .select(`
@@ -82,17 +82,20 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
       
       const flat: Post[] = (data as any) || [];
       
-      // Add null safety for profiles data
-      const safeFlat = flat.map(post => ({
-        ...post,
-        profiles: post.profiles ? {
-          full_name: post.profiles.full_name || 'Onbekende gebruiker',
-          role: post.profiles.role || 'leerling'
-        } : {
-          full_name: 'Onbekende gebruiker',
-          role: 'leerling'
-        }
-      }));
+      // Add null safety for profiles data and normalize all posts
+      const safeFlat = flat.map(post => {
+        const normalizedPost = normalizePost(post);
+        return {
+          ...normalizedPost,
+          profiles: post.profiles ? {
+            full_name: post.profiles.full_name || 'Onbekende gebruiker',
+            role: post.profiles.role || 'leerling'
+          } : {
+            full_name: 'Onbekende gebruiker',
+            role: 'leerling'
+          }
+        };
+      });
       
       // Use the centralized organizePosts function with safe data
       const organized = organizePosts(safeFlat as any);
@@ -226,6 +229,7 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
               onDelete={handleDelete}
               onReply={() => fetchPosts()}
               replies={post.replies || []}
+              nestingLevel={0}
             />
           ))}
         </div>

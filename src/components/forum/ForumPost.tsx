@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,21 +24,27 @@ import { nl } from 'date-fns/locale';
 interface ForumPostProps {
   post: {
     id: string;
-    titel: string;
-    inhoud: string;
+    titel?: string;
+    title?: string;
+    inhoud?: string;
+    content?: string;
     author_id: string;
     created_at: string;
-    updated_at: string;
-    likes_count: number;
-    dislikes_count: number;
+    updated_at?: string;
+    likes_count?: number;
+    dislikes_count?: number;
     thread_id?: string;
     parent_post_id?: string;
-    is_verwijderd: boolean;
-    class_id: string;
+    is_verwijderd?: boolean;
+    class_id?: string;
     niveau_id?: string;
     profiles?: {
       full_name: string;
       role: string;
+    };
+    author?: {
+      full_name: string;
+      role?: string;
     };
   };
   onReply?: (postId: string, content: string) => void;
@@ -46,6 +53,7 @@ interface ForumPostProps {
   replies?: any[];
   showReplies?: boolean;
   isReply?: boolean;
+  nestingLevel?: number;
 }
 
 export function ForumPost({ 
@@ -55,7 +63,8 @@ export function ForumPost({
   onLike, 
   replies = [],
   showReplies = true,
-  isReply = false
+  isReply = false,
+  nestingLevel = 0
 }: ForumPostProps) {
   const { user, profile } = useAuth();
   const { toast } = useToast();
@@ -63,11 +72,17 @@ export function ForumPost({
   const [replyContent, setReplyContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Normalize content/labels so component works with both schemas
-  const displayTitle = (post as any).titel ?? (post as any).title ?? '';
-  const displayContent = (post as any).inhoud ?? (post as any).content ?? '';
-  const likeCount = (post as any).likes_count ?? 0;
-  const dislikeCount = (post as any).dislikes_count ?? 0;
+  // Normalize content/labels to work with both schemas (Dutch and English)
+  const displayTitle = post.title ?? post.titel ?? '';
+  const displayContent = post.content ?? post.inhoud ?? '';
+  const likeCount = post.likes_count ?? 0;
+  const dislikeCount = post.dislikes_count ?? 0;
+  const authorName = post.profiles?.full_name ?? post.author?.full_name ?? 'Onbekende gebruiker';
+  const authorRole = post.profiles?.role ?? post.author?.role ?? 'leerling';
+
+  // Calculate visual nesting (max 4 levels to prevent excessive indentation)
+  const maxNestingLevel = Math.min(nestingLevel, 4);
+  const marginLeft = maxNestingLevel > 0 ? `${maxNestingLevel * 2}rem` : '0';
 
   const canDelete = user && (
     post.author_id === user.id || 
@@ -205,34 +220,59 @@ export function ForumPost({
 
   if (post.is_verwijderd) {
     return (
-      <Card className={`${isReply ? 'ml-8 border-l-4 border-l-muted' : ''} opacity-60`}>
-        <CardContent className="pt-4">
-          <p className="text-muted-foreground italic">Dit bericht is verwijderd</p>
-        </CardContent>
-      </Card>
+      <div style={{ marginLeft }}>
+        <Card className={`opacity-60 ${maxNestingLevel > 0 ? 'border-l-4 border-l-muted' : ''}`}>
+          <CardContent className="pt-4">
+            <p className="text-muted-foreground italic">Dit bericht is verwijderd</p>
+            {/* Still show replies for deleted posts */}
+            {showReplies && replies.length > 0 && (
+              <div className="mt-4 space-y-3">
+                {replies.map((reply) => (
+                  <ForumPost
+                    key={reply.id}
+                    post={reply}
+                    onDelete={onDelete}
+                    onLike={onLike}
+                    onReply={onReply}
+                    isReply={true}
+                    showReplies={true}
+                    replies={reply.replies || []}
+                    nestingLevel={nestingLevel + 1}
+                  />
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <Card className={isReply ? 'ml-8 border-l-4 border-l-primary/20' : ''}>
+    <div style={{ marginLeft }}>
+      <Card className={maxNestingLevel > 0 ? 'border-l-4 border-l-primary/20' : ''}>
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <Avatar className="h-8 w-8">
                 <AvatarFallback>
-                  {post.profiles?.full_name?.charAt(0) || 'U'}
+                  {authorName.charAt(0) || 'U'}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <div className="flex items-center gap-2">
                   <h4 className="font-medium text-sm">
-                    {post.profiles?.full_name || 'Onbekende gebruiker'}
+                    {authorName}
                   </h4>
                   <Badge variant="outline" className="text-xs">
-                    {post.profiles?.role === 'admin' ? 'Admin' : 
-                     post.profiles?.role === 'leerkracht' ? 'Leerkracht' : 'Leerling'}
+                    {authorRole === 'admin' ? 'Admin' : 
+                     authorRole === 'leerkracht' ? 'Leerkracht' : 'Leerling'}
                   </Badge>
+                  {nestingLevel > 0 && (
+                    <Badge variant="secondary" className="text-xs">
+                      Reactie
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {formatDistanceToNow(new Date(post.created_at), { 
@@ -360,7 +400,7 @@ export function ForumPost({
       </Card>
       
       {showReplies && replies.length > 0 && (
-        <div className="space-y-3">
+        <div className="mt-3 space-y-3">
           {replies.map((reply) => (
             <ForumPost
               key={reply.id}
@@ -371,6 +411,7 @@ export function ForumPost({
               isReply={true}
               showReplies={true}
               replies={reply.replies || []}
+              nestingLevel={nestingLevel + 1}
             />
           ))}
         </div>

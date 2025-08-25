@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useClassesQuery } from '@/hooks/useClassesQuery';
-import ForumStructure from '@/components/forum/ForumStructure';
+import ForumMain from '@/components/forum/ForumMain';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { SolvedSubmissionsList } from '@/components/tasks/SolvedSubmissionsList';
 import PastLessonsManager from '@/components/lessons/PastLessonsManager';
@@ -161,9 +161,9 @@ const Forum = () => {
           </Card>
         )}
 
-        {/* Forum structure */}
+        {/* Forum main component */}
         <div className="main-content-card">
-          <ForumStructure classId={selectedClass || ''} />
+          <ForumMain classId={selectedClass || ''} />
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 export interface ForumPostFlat {
   id: string;
   // Zorg dat deze velden aanwezig zijn zodat het compatibel is met ForumState.ForumPost
@@ -26,6 +25,34 @@ export interface ForumPostNested extends ForumPostFlat {
 }
 
 /**
+ * Normalizes a post object to ensure consistent field names and safe content access.
+ * Handles both Dutch (inhoud/titel) and English (content/title) schemas.
+ */
+export function normalizePost(post: any): ForumPostFlat {
+  const id = post.id != null ? String(post.id) : '';
+  const parentIdRaw = post.parent_post_id;
+  const parentId =
+    parentIdRaw === undefined || parentIdRaw === null || parentIdRaw === ''
+      ? null
+      : String(parentIdRaw);
+
+  // Prioritize English fields, fallback to Dutch
+  const safeContent = post.content ?? post.inhoud ?? '';
+  const safeTitle = post.title ?? post.titel ?? null;
+
+  return {
+    ...post,
+    id,
+    parent_post_id: parentId,
+    content: safeContent,
+    title: safeTitle,
+    // Keep both for compatibility
+    inhoud: safeContent,
+    titel: safeTitle,
+  } as ForumPostFlat;
+}
+
+/**
  * Organizes a flat list of posts into a nested tree based on parent_post_id.
  * Children are attached to their parents; root posts are those without parent_post_id.
  * Enhanced with better orphan handling, sorting, and ID normalization.
@@ -35,26 +62,8 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
 
   console.log('organizePosts: Processing', posts.length, 'posts');
 
-  // Normalize ids to strings and ensure safe content/title
-  const normalized = posts.map((p) => {
-    const id = p.id != null ? String(p.id) : '';
-    const parentIdRaw = (p as any).parent_post_id;
-    const parentId =
-      parentIdRaw === undefined || parentIdRaw === null || parentIdRaw === ''
-        ? null
-        : String(parentIdRaw);
-
-    const safeContent = (p as any).content ?? (p as any).inhoud ?? '';
-    const safeTitle = (p as any).title ?? (p as any).titel ?? null;
-
-    return {
-      ...p,
-      id,
-      parent_post_id: parentId,
-      content: safeContent,
-      title: safeTitle,
-    } as ForumPostFlat;
-  });
+  // Normalize all posts first
+  const normalized = posts.map(normalizePost);
 
   const postMap = new Map<string, ForumPostNested>();
   const roots: ForumPostNested[] = [];
@@ -116,4 +125,3 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
 
   return allRoots;
 }
-
