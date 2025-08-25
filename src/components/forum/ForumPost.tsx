@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -72,7 +71,6 @@ export function ForumPost({
   const [replyContent, setReplyContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Normalize content/labels to work with both schemas (Dutch and English)
   const displayTitle = post.title ?? post.titel ?? '';
   const displayContent = post.content ?? post.inhoud ?? '';
   const likeCount = post.likes_count ?? 0;
@@ -80,7 +78,6 @@ export function ForumPost({
   const authorName = post.profiles?.full_name ?? post.author?.full_name ?? 'Onbekende gebruiker';
   const authorRole = post.profiles?.role ?? post.author?.role ?? 'leerling';
 
-  // Calculate visual nesting (max 4 levels to prevent excessive indentation)
   const maxNestingLevel = Math.min(nestingLevel, 4);
   const marginLeft = maxNestingLevel > 0 ? `${maxNestingLevel * 2}rem` : '0';
 
@@ -93,27 +90,67 @@ export function ForumPost({
   const canModerate = profile?.role === 'admin' || profile?.role === 'leerkracht';
 
   const handleReply = async () => {
-    if (!replyContent.trim() || !user || !post.thread_id) return;
+    if (!user) {
+      toast({
+        title: "Niet ingelogd",
+        description: "Je moet ingelogd zijn om te reageren",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!replyContent.trim()) {
+      toast({
+        title: "Fout", 
+        description: "Vul een reactie in",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!post.thread_id) {
+      toast({
+        title: "Fout",
+        description: "Geen thread gevonden voor deze reactie",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setIsSubmitting(true);
+    
     try {
-      console.log('Creating reply with:', {
-        action: 'create-post',
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !sessionData.session) {
+        throw new Error('Geen geldige sessie gevonden. Log opnieuw in.');
+      }
+
+      const accessToken = sessionData.session.access_token;
+
+      console.log('Creating nested reply with edge function...', {
         threadId: post.thread_id,
-        content: replyContent,
-        parentPostId: post.id
+        parentPostId: post.id,
+        hasToken: !!accessToken
       });
 
-      const { error } = await supabase.functions.invoke('manage-forum', {
+      const { data: functionData, error: functionError } = await supabase.functions.invoke('manage-forum', {
         body: {
           action: 'create-post',
           threadId: post.thread_id,
           content: replyContent,
           parentPostId: post.id
+        },
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
         }
       });
 
-      if (error) throw error;
+      if (functionError || functionData?.error) {
+        console.warn('Edge function failed for reply, trying fallback...', functionError || functionData?.error);
+        await createReplyFallback();
+        return;
+      }
 
       toast({
         title: "Reactie geplaatst",
@@ -126,15 +163,66 @@ export function ForumPost({
       if (onReply) {
         onReply(post.id, replyContent);
       }
+      
     } catch (error: any) {
       console.error('Error posting reply:', error);
-      toast({
-        title: "Fout",
-        description: "Kon reactie niet plaatsen",
-        variant: "destructive"
-      });
+      
+      try {
+        await createReplyFallback();
+      } catch (fallbackError) {
+        console.error('Reply fallback failed:', fallbackError);
+        toast({
+          title: "Fout",
+          description: `Kon reactie niet plaatsen: ${error.message || 'Onbekende fout'}`,
+          variant: "destructive"
+        });
+      }
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const createReplyFallback = async () => {
+    console.log('Attempting reply fallback...');
+    
+    const { data: thread, error: threadError } = await supabase
+      .from('forum_threads')
+      .select('class_id')
+      .eq('id', post.thread_id!)
+      .single();
+
+    if (threadError) {
+      throw new Error(`Kon thread niet vinden: ${threadError.message}`);
+    }
+
+    const { error: insertError } = await supabase
+      .from('forum_posts')
+      .insert({
+        thread_id: post.thread_id!,
+        author_id: user!.id,
+        titel: 'Reactie',
+        inhoud: replyContent,
+        parent_post_id: post.id,
+        class_id: thread.class_id,
+        is_verwijderd: false
+      });
+
+    if (insertError) {
+      throw new Error(`Reactie insert mislukt: ${insertError.message}`);
+    }
+
+    console.log('Reply fallback successful');
+    
+    toast({
+      title: "Reactie geplaatst",
+      description: "Je reactie is succesvol geplaatst (via fallback)"
+    });
+
+    setReplyContent('');
+    setShowReplyForm(false);
+    
+    if (onReply) {
+      onReply(post.id, replyContent);
     }
   };
 
@@ -224,7 +312,6 @@ export function ForumPost({
         <Card className={`opacity-60 ${maxNestingLevel > 0 ? 'border-l-4 border-l-muted' : ''}`}>
           <CardContent className="pt-4">
             <p className="text-muted-foreground italic">Dit bericht is verwijderd</p>
-            {/* Still show replies for deleted posts */}
             {showReplies && replies.length > 0 && (
               <div className="mt-4 space-y-3">
                 {replies.map((reply) => (

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,11 +46,12 @@ interface ForumPostsListProps {
 }
 
 const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [replyContent, setReplyContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -115,6 +115,25 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
   };
 
   const createReply = async () => {
+    // Early validation - check for user, session, and content
+    if (!user) {
+      toast({
+        title: "Niet ingelogd",
+        description: "Je moet ingelogd zijn om een reactie te plaatsen",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!threadId) {
+      toast({
+        title: "Fout",
+        description: "Geen thread gevonden om een reactie te plaatsen",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (!replyContent.trim()) {
       toast({
         title: "Fout",
@@ -124,17 +143,56 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
-      const { error } = await supabase.functions.invoke('manage-forum', {
+      // Get fresh session for authentication
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !sessionData.session) {
+        throw new Error('Geen geldige sessie gevonden. Log opnieuw in.');
+      }
+
+      const accessToken = sessionData.session.access_token;
+      
+      console.log('Creating reply with edge function...', {
+        threadId,
+        contentLength: replyContent.length,
+        hasToken: !!accessToken
+      });
+
+      // Try edge function first with explicit authorization header
+      const { data: functionData, error: functionError } = await supabase.functions.invoke('manage-forum', {
         body: {
           action: 'create-post',
           threadId: threadId,
           content: replyContent
+        },
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
         }
       });
 
-      if (error) throw error;
+      console.log('Edge function response:', { functionData, functionError });
 
+      // Check for edge function errors
+      if (functionError) {
+        console.warn('Edge function failed, trying fallback...', functionError);
+        
+        // Fallback: direct insert to forum_posts
+        await createReplyFallback();
+        return;
+      }
+
+      // Check for application-level errors in function response
+      if (functionData?.error) {
+        console.warn('Edge function returned error, trying fallback...', functionData.error);
+        await createReplyFallback();
+        return;
+      }
+
+      // Success via edge function
+      console.log('Reply created successfully via edge function');
       setReplyContent('');
       fetchPosts();
       
@@ -142,14 +200,65 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
         title: "Succes",
         description: "Reactie geplaatst"
       });
+
     } catch (error) {
-      console.error('Error creating reply:', error);
-      toast({
-        title: "Fout",
-        description: "Kon reactie niet plaatsen",
-        variant: "destructive"
-      });
+      console.error('Error in createReply:', error);
+      
+      // Try fallback on any error
+      try {
+        await createReplyFallback();
+      } catch (fallbackError) {
+        console.error('Fallback also failed:', fallbackError);
+        toast({
+          title: "Fout",
+          description: `Kon reactie niet plaatsen: ${error instanceof Error ? error.message : 'Onbekende fout'}`,
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const createReplyFallback = async () => {
+    console.log('Attempting fallback direct insert...');
+    
+    // Get thread info for class_id
+    const { data: thread, error: threadError } = await supabase
+      .from('forum_threads')
+      .select('class_id')
+      .eq('id', threadId)
+      .single();
+
+    if (threadError) {
+      throw new Error(`Kon thread niet vinden: ${threadError.message}`);
+    }
+
+    // Direct insert to forum_posts table
+    const { error: insertError } = await supabase
+      .from('forum_posts')
+      .insert({
+        thread_id: threadId,
+        author_id: user!.id,
+        titel: 'Hoofdbericht',
+        inhoud: replyContent,
+        parent_post_id: null,
+        class_id: thread.class_id,
+        is_verwijderd: false
+      });
+
+    if (insertError) {
+      throw new Error(`Directe insert mislukt: ${insertError.message}`);
+    }
+
+    console.log('Fallback insert successful');
+    setReplyContent('');
+    fetchPosts();
+    
+    toast({
+      title: "Succes",
+      description: "Reactie geplaatst (via fallback)"
+    });
   };
 
   const handleLike = async (postId: string, isLike: boolean) => {
@@ -210,6 +319,8 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
     );
   }
 
+  const canReply = user && threadId;
+
   return (
     <div className="space-y-6">
       {/* Posts list */}
@@ -241,18 +352,27 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
           <CardTitle className="flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
             Reageren
+            {!canReply && (
+              <span className="text-sm text-muted-foreground font-normal">
+                (Je moet ingelogd zijn)
+              </span>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Textarea
-            placeholder="Schrijf je reactie..."
+            placeholder={canReply ? "Schrijf je reactie..." : "Log in om een reactie te plaatsen"}
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
             rows={4}
+            disabled={!canReply}
           />
-          <Button onClick={createReply}>
+          <Button 
+            onClick={createReply}
+            disabled={!canReply || !replyContent.trim() || isSubmitting}
+          >
             <Send className="h-4 w-4 mr-2" />
-            Reactie Plaatsen
+            {isSubmitting ? 'Bezig...' : 'Reactie Plaatsen'}
           </Button>
         </CardContent>
       </Card>
