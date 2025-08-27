@@ -1,46 +1,75 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryProvider } from "@/providers/QueryProvider";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProviderQuery } from "@/components/auth/AuthProviderQuery";
-import { AppLayout } from "@/components/layout/AppLayout";
-import Dashboard from "./pages/Dashboard";
-import Forum from "./pages/Forum";
-import Taken from "./pages/Taken";
-import Leerstof from "./pages/Leerstof";
-import Auth from "./pages/Auth";
-import Admin from "./pages/Admin";
-import Visie from "./pages/Visie";
-import Security from "./pages/Security";
-import ForumModeration from "./pages/ForumModeration";
-import React from "react";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ThemeProvider } from '@/components/ui/theme-provider';
+import { Toaster } from '@/components/ui/sonner';
+import { AuthProviderQuery } from '@/components/auth/AuthProviderQuery';
+import { AppGate } from '@/components/auth/AppGate';
+import Index from '@/pages/Index';
+import Auth from '@/pages/Auth';
+import Dashboard from '@/pages/Dashboard';
+import Admin from '@/pages/Admin';
+import Forum from '@/pages/Forum';
+import Taken from '@/pages/Taken';
+import Analytics from '@/pages/Analytics';
+import Security from '@/pages/Security';
+import Leerstof from '@/pages/Leerstof';
+import Visie from '@/pages/Visie';
+import Calendar from '@/pages/Calendar';
+import CourseDetail from '@/pages/CourseDetail';
+import EnrollConfirm from '@/pages/EnrollConfirm';
+import ResetPassword from '@/pages/ResetPassword';
+import ForumModeration from '@/pages/ForumModeration';
+import NotFound from '@/pages/NotFound';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import TermsOfService from '@/pages/TermsOfService';
+import './App.css';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
 function App() {
   return (
-    <QueryProvider>
-      <TooltipProvider>
-        <Toaster />
-        <BrowserRouter>
-          <AuthProviderQuery>
-            <Routes>
-              <Route path="/" element={<AppLayout />}>
-                <Route index element={<Navigate to="/dashboard" replace />} />
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="forum" element={<Forum />} />
-                <Route path="taken" element={<Taken />} />
-                <Route path="leerstof" element={<Leerstof />} />
-                <Route path="auth" element={<Auth />} />
-                <Route path="admin" element={<Admin />} />
-                <Route path="visie" element={<Visie />} />
-                <Route path="security" element={<Security />} />
-                <Route path="forum-moderation" element={<ForumModeration />} />
-              </Route>
-            </Routes>
-          </AuthProviderQuery>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <AuthProviderQuery>
+          <Router>
+            <div className="min-h-screen bg-background">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/dashboard" element={<AppGate><Dashboard /></AppGate>} />
+                <Route path="/admin" element={<AppGate><Admin /></AppGate>} />
+                <Route path="/forum" element={<AppGate><Forum /></AppGate>} />
+                <Route path="/forum/:classId" element={<AppGate><Forum /></AppGate>} />
+                <Route path="/forum-moderation" element={<AppGate><ForumModeration /></AppGate>} />
+                <Route path="/taken" element={<AppGate><Taken /></AppGate>} />
+                <Route path="/analytics" element={<AppGate><Analytics /></AppGate>} />
+                <Route path="/security" element={<AppGate><Security /></AppGate>} />
+                <Route path="/leerstof" element={<AppGate><Leerstof /></AppGate>} />
+                <Route path="/visie" element={<AppGate><Visie /></AppGate>} />
+                <Route path="/calendar" element={<AppGate><Calendar /></AppGate>} />
+                <Route path="/courses/:id" element={<AppGate><CourseDetail /></AppGate>} />
+                <Route path="/enroll/:classId" element={<AppGate><EnrollConfirm /></AppGate>} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+            <Toaster />
+          </Router>
+        </AuthProviderQuery>
+      </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }
 
