@@ -38,7 +38,11 @@ export function useForumRealtime(
             filter: `class_id=eq.${classId}`,
           },
           (payload) => {
-            console.log('[useForumRealtime] Thread change:', payload.eventType, payload.new?.title);
+            const threadTitle = payload.new && typeof payload.new === 'object' && 'title' in payload.new 
+              ? payload.new.title 
+              : 'Unknown thread';
+            
+            console.log('[useForumRealtime] Thread change:', payload.eventType, threadTitle);
             
             if (payload.eventType === 'INSERT' && callbacks.onNewThread) {
               callbacks.onNewThread(payload.new);
@@ -69,7 +73,11 @@ export function useForumRealtime(
             filter: `thread_id=eq.${threadId}`,
           },
           (payload) => {
-            console.log('[useForumRealtime] Post change:', payload.eventType, payload.new?.id);
+            const postId = payload.new && typeof payload.new === 'object' && 'id' in payload.new 
+              ? payload.new.id 
+              : 'Unknown post';
+            
+            console.log('[useForumRealtime] Post change:', payload.eventType, postId);
             
             if (payload.eventType === 'INSERT' && callbacks.onNewPost) {
               callbacks.onNewPost(payload.new);
