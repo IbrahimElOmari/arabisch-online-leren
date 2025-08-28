@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,107 +22,28 @@ const PendingUsersManagement = () => {
 
   useEffect(() => {
     if (profile?.role === 'admin') {
-      fetchPendingUsers();
+      // For now, show empty state since pending_users table doesn't exist in current schema
+      setPendingUsers([]);
     }
   }, [profile]);
 
-  const fetchPendingUsers = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('pending_users')
-        .select('*');
-
-      if (error) {
-        console.error('Error fetching pending users:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to fetch pending users.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      setPendingUsers(data || []);
-    } catch (error) {
-      console.error('Error fetching pending users:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch pending users.',
-        variant: 'destructive',
-      });
+  const generatePassword = () => {
+    const length = 12;
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+    let retVal = "";
+    for (let i = 0, n = charset.length; i < length; ++i) {
+      retVal += charset.charAt(Math.floor(Math.random() * n));
     }
+    return retVal;
   };
 
   const approveUser = async (user: PendingUser) => {
     try {
-      // 1. Create user in Supabase auth
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: user.email,
-        password: generatePassword(), // Implement a password generation function
-        user_metadata: {
-          full_name: user.full_name,
-          role: user.role,
-          parent_email: user.parent_email,
-        },
-      });
-
-      if (authError) {
-        console.error('Error creating user in auth:', authError);
-        toast({
-          title: 'Error',
-          description: 'Failed to create user in authentication system.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      const newUserId = authData.user?.id;
-
-      // 2. Create profile in 'profiles' table
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert([
-          {
-            id: newUserId,
-            full_name: user.full_name,
-            role: user.role,
-            parent_email: user.parent_email,
-          },
-        ]);
-
-      if (profileError) {
-        console.error('Error creating profile:', profileError);
-        // Optionally, delete the user from auth if profile creation fails
-        await supabase.auth.admin.deleteUser(newUserId!);
-        toast({
-          title: 'Error',
-          description: 'Failed to create user profile.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      // 3. Delete from pending_users
-      const { error: deleteError } = await supabase
-        .from('pending_users')
-        .delete()
-        .eq('id', user.id);
-
-      if (deleteError) {
-        console.error('Error deleting pending user:', deleteError);
-        toast({
-          title: 'Error',
-          description: 'Failed to delete pending user.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      // Refresh list
-      fetchPendingUsers();
+      // This functionality requires the pending_users table to be created in Supabase
       toast({
-        title: 'Success',
-        description: `User ${user.full_name} approved and created.`,
+        title: 'Feature Not Available',
+        description: 'Pending users management requires additional database setup.',
+        variant: 'destructive',
       });
     } catch (error) {
       console.error('Error approving user:', error);
@@ -135,25 +57,11 @@ const PendingUsersManagement = () => {
 
   const rejectUser = async (user: PendingUser) => {
     try {
-      const { error } = await supabase
-        .from('pending_users')
-        .delete()
-        .eq('id', user.id);
-
-      if (error) {
-        console.error('Error deleting pending user:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to reject user.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      fetchPendingUsers();
+      // This functionality requires the pending_users table to be created in Supabase
       toast({
-        title: 'Success',
-        description: `User ${user.full_name} rejected.`,
+        title: 'Feature Not Available',
+        description: 'Pending users management requires additional database setup.',
+        variant: 'destructive',
       });
     } catch (error) {
       console.error('Error rejecting user:', error);
@@ -164,16 +72,6 @@ const PendingUsersManagement = () => {
       });
     }
   };
-
-  const generatePassword = () => {
-    const length = 12;
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-    let retVal = "";
-    for (let i = 0, n = charset.length; i < length; ++i) {
-      retVal += charset.charAt(Math.floor(Math.random() * n));
-    }
-    return retVal;
-  }
 
   if (profile?.role !== 'admin') {
     return (
@@ -187,7 +85,14 @@ const PendingUsersManagement = () => {
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Pending User Approvals</h1>
       {pendingUsers.length === 0 ? (
-        <p>No pending users.</p>
+        <Card>
+          <CardContent className="text-center py-8">
+            <p className="text-muted-foreground">No pending users at this time.</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              This feature requires additional database setup to manage user approval workflows.
+            </p>
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {pendingUsers.map((user) => (
