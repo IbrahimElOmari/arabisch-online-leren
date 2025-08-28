@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useAnalyticsTracking } from '@/hooks/useAnalytics';
 
 const AnalyticsTracker = () => {

@@ -1,11 +1,10 @@
-
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, X, Home, Calendar, Eye, MessageSquare, BookOpen, User, Shield } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { useAuth } from "@/components/auth/AuthProvider"
+import { useAuth } from '@/components/auth/AuthProviderQuery'
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false)

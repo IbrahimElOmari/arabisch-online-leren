@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useSessionSecurity } from '@/hooks/useSessionSecurity';
 import { securityLogger } from '@/utils/securityLogger';
 import { Alert, AlertDescription } from '@/components/ui/alert';
