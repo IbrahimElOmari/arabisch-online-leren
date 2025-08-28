@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
 import { ForumPost } from './ForumPost';
 import { 

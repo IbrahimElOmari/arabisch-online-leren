@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,

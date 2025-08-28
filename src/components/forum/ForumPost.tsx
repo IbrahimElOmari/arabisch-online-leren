@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
 import { 
   ThumbsUp, 

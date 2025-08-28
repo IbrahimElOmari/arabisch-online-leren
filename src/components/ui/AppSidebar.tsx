@@ -1,7 +1,6 @@
-
 import { Home, Calendar, MessageSquare, Eye, BookOpen, User, Shield } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { useAuth } from '@/components/auth/AuthProviderQuery';
 import {
   Sidebar,
   SidebarContent,
