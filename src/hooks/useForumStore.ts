@@ -38,16 +38,12 @@ interface ForumState {
   loading: boolean;
   error: string | null;
   
+  // Core actions only
   fetchThreads: (classId: string) => Promise<void>;
-  createThread: (classId: string, title: string, content: string) => Promise<boolean>;
   fetchPosts: (threadId: string) => Promise<void>;
   createPost: (threadId: string, content: string, parentPostId?: string) => Promise<boolean>;
-  deletePost: (postId: string) => Promise<boolean>;
-  reportPost: (postId: string) => Promise<boolean>;
-  likePost: (postId: string, isLike: boolean) => Promise<boolean>;
-  toggleComments: (threadId: string, enabled: boolean) => Promise<boolean>;
-  pinThread: (threadId: string, pinned: boolean) => Promise<boolean>;
   setSelectedThread: (thread: ForumThread | null) => void;
+  clearError: () => void;
 }
 
 export const useForumStore = create<ForumState>((set, get) => ({
@@ -80,28 +76,6 @@ export const useForumStore = create<ForumState>((set, get) => ({
       set({ threads: threadsWithAuthor, loading: false });
     } catch (error: any) {
       set({ error: error.message, loading: false });
-    }
-  },
-
-  createThread: async (classId: string, title: string, content: string) => {
-    set({ loading: true, error: null });
-    try {
-      const { error } = await supabase.functions.invoke('manage-forum', {
-        body: { 
-          action: 'create-thread', 
-          classId, 
-          title, 
-          content 
-        }
-      });
-
-      if (error) throw error;
-      
-      await get().fetchThreads(classId);
-      return true;
-    } catch (error: any) {
-      set({ error: error.message, loading: false });
-      return false;
     }
   },
 
@@ -159,7 +133,6 @@ export const useForumStore = create<ForumState>((set, get) => ({
         hasParent: !!parentPostId,
       });
 
-      // 1) Try edge function (preferred)
       const { error } = await supabase.functions.invoke('manage-forum', {
         body: {
           action: 'create-post',
@@ -173,13 +146,11 @@ export const useForumStore = create<ForumState>((set, get) => ({
       if (error) {
         console.warn('[useForumStore.createPost] Edge function error, fallback to direct insert:', error);
 
-        // 2) Fallback to direct insert (type-safe for forum_posts schema)
         const { data: userData, error: userErr } = await supabase.auth.getUser();
         if (userErr) throw userErr;
         const userId = userData.user?.id;
         if (!userId) throw new Error('Not authenticated');
 
-        // Determine class_id from selectedThread or fetch from thread row
         let classId = get().selectedThread?.class_id || null;
         if (!classId) {
           const { data: threadData, error: threadErr } = await supabase
@@ -208,7 +179,6 @@ export const useForumStore = create<ForumState>((set, get) => ({
         if (insertErr) throw insertErr;
       }
 
-      // Always refresh posts immediately (besides realtime)
       await get().fetchPosts(threadId);
       set({ loading: false });
       return true;
@@ -219,108 +189,9 @@ export const useForumStore = create<ForumState>((set, get) => ({
     }
   },
 
-  deletePost: async (postId: string) => {
-    set({ loading: true, error: null });
-    try {
-      const { error } = await supabase.functions.invoke('manage-forum', {
-        body: { action: 'delete-post', postId }
-      });
-
-      if (error) throw error;
-      
-      const currentThread = get().selectedThread;
-      if (currentThread) {
-        await get().fetchPosts(currentThread.id);
-      }
-      return true;
-    } catch (error: any) {
-      set({ error: error.message, loading: false });
-      return false;
-    }
-  },
-
-  toggleComments: async (threadId: string, enabled: boolean) => {
-    set({ loading: true, error: null });
-    try {
-      const { error } = await supabase.functions.invoke('manage-forum', {
-        body: { 
-          action: 'toggle-comments', 
-          threadId, 
-          commentsEnabled: enabled 
-        }
-      });
-
-      if (error) throw error;
-      set({ loading: false });
-      return true;
-    } catch (error: any) {
-      set({ error: error.message, loading: false });
-      return false;
-    }
-  },
-
-  pinThread: async (threadId: string, pinned: boolean) => {
-    set({ loading: true, error: null });
-    try {
-      const { error } = await supabase.functions.invoke('manage-forum', {
-        body: { 
-          action: 'pin-thread', 
-          threadId, 
-          isPinned: pinned 
-        }
-      });
-
-      if (error) throw error;
-      set({ loading: false });
-      return true;
-    } catch (error: any) {
-      set({ error: error.message, loading: false });
-      return false;
-    }
-  },
-
-  reportPost: async (postId: string) => {
-    try {
-      const { error } = await supabase.functions.invoke('manage-forum', {
-        body: {
-          action: 'report-post',
-          postId
-        }
-      });
-
-      if (error) throw error;
-      return true;
-    } catch (error) {
-      console.error('Error reporting post:', error);
-      set({ error: (error as Error).message });
-      return false;
-    }
-  },
-
-  likePost: async (postId: string, isLike: boolean) => {
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) throw new Error('Not authenticated');
-
-      const { data, error } = await supabase.functions.invoke('manage-forum', {
-        body: {
-          action: 'like-post',
-          postId,
-          userId: userData.user.id,
-          likeData: { isLike }
-        }
-      });
-
-      if (error) throw error;
-      return true;
-    } catch (error) {
-      console.error('Error liking post:', error);
-      set({ error: (error as Error).message });
-      return false;
-    }
-  },
-
   setSelectedThread: (thread: ForumThread | null) => {
     set({ selectedThread: thread });
-  }
+  },
+
+  clearError: () => set({ error: null }),
 }));

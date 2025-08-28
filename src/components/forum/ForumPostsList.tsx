@@ -116,7 +116,6 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
   };
 
   const createReply = async () => {
-    // Early validation - check for user, session, and content
     if (!user) {
       toast({
         title: "Niet ingelogd",
@@ -147,7 +146,6 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
     setIsSubmitting(true);
 
     try {
-      // Get fresh session for authentication
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !sessionData.session) {
@@ -162,7 +160,6 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
         hasToken: !!accessToken
       });
 
-      // Try edge function first with explicit authorization header
       const { data: functionData, error: functionError } = await supabase.functions.invoke('manage-forum', {
         body: {
           action: 'create-post',
@@ -176,23 +173,18 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
 
       console.log('Edge function response:', { functionData, functionError });
 
-      // Check for edge function errors
       if (functionError) {
         console.warn('Edge function failed, trying fallback...', functionError);
-        
-        // Fallback: direct insert to forum_posts
         await createReplyFallback();
         return;
       }
 
-      // Check for application-level errors in function response
       if (functionData?.error) {
         console.warn('Edge function returned error, trying fallback...', functionData.error);
         await createReplyFallback();
         return;
       }
 
-      // Success via edge function
       console.log('Reply created successfully via edge function');
       setReplyContent('');
       fetchPosts();
@@ -205,7 +197,6 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
     } catch (error) {
       console.error('Error in createReply:', error);
       
-      // Try fallback on any error
       try {
         await createReplyFallback();
       } catch (fallbackError) {
@@ -224,7 +215,6 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
   const createReplyFallback = async () => {
     console.log('Attempting fallback direct insert...');
     
-    // Get thread info for class_id
     const { data: thread, error: threadError } = await supabase
       .from('forum_threads')
       .select('class_id')
@@ -235,7 +225,6 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
       throw new Error(`Kon thread niet vinden: ${threadError.message}`);
     }
 
-    // Direct insert to forum_posts table
     const { error: insertError } = await supabase
       .from('forum_posts')
       .insert({
@@ -324,7 +313,6 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Posts list */}
       {posts.length === 0 ? (
         <EmptyState
           icon={MessageCircle}
@@ -347,7 +335,6 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
         </div>
       )}
 
-      {/* Reply form */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">

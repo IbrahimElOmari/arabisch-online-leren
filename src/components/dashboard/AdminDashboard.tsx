@@ -1,15 +1,14 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Users, UserPlus, Settings, BarChart3 } from 'lucide-react';
-import { ClassManagementModal } from '@/components/admin/ClassManagementModal';
-import AdminSeeder from '@/components/admin/AdminSeeder';
-import UserActivationPanel from '@/components/admin/UserActivationPanel';
-import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { Users, UserCheck, UserX, Settings } from 'lucide-react';
+import ClassManagementModal from '@/components/admin/ClassManagementModal';
+import PendingUsersManagement from '@/components/admin/PendingUsersManagement';
+import { useAuth } from '@/components/auth/AuthProviderQuery';
 
 interface UserCounts {
   total: number;
@@ -19,147 +18,131 @@ interface UserCounts {
 }
 
 const AdminDashboard = () => {
-  const [openClassModal, setOpenClassModal] = useState(false);
-  const { signOut } = useAuth();
+  const { profile } = useAuth();
+  const [showClassModal, setShowClassModal] = useState(false);
 
-  const { data: userCounts, isLoading, isError } = useQuery<UserCounts>(
-    ['userCounts'],
-    async () => {
-      const { data, error } = await supabase.functions.invoke('get-user-counts');
+  const { data: userCounts, isLoading } = useQuery({
+    queryKey: ['admin-user-counts'],
+    queryFn: async (): Promise<UserCounts> => {
+      console.log('Fetching user counts...');
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role');
+
       if (error) {
-        console.error('Failed to fetch user counts:', error);
-        throw new Error('Failed to fetch user counts');
+        console.error('Error fetching user counts:', error);
+        throw error;
       }
-      return data;
-    }
-  );
+
+      const counts = {
+        total: data?.length || 0,
+        admin: data?.filter(p => p.role === 'admin').length || 0,
+        leerkracht: data?.filter(p => p.role === 'leerkracht').length || 0,
+        leerling: data?.filter(p => p.role === 'leerling').length || 0,
+      };
+
+      console.log('User counts:', counts);
+      return counts;
+    },
+    enabled: !!profile && profile.role === 'admin'
+  });
+
+  if (profile?.role !== 'admin') {
+    return <div>Geen toegang - alleen voor beheerders</div>;
+  }
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <Button variant="destructive" onClick={() => signOut()}>
-          Uitloggen
+        <Button onClick={() => setShowClassModal(true)}>
+          <Settings className="h-4 w-4 mr-2" />
+          Klassen Beheren
         </Button>
       </div>
 
-      <Tabs defaultvalue="users" className="space-y-4">
+      <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="users">
-            <Users className="h-4 w-4 mr-2" />
-            Gebruikers
-          </TabsTrigger>
-          <TabsTrigger value="classes">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Klassen
-          </TabsTrigger>
-          <TabsTrigger value="settings">
-            <Settings className="h-4 w-4 mr-2" />
-            Instellingen
-          </TabsTrigger>
-          <TabsTrigger value="analytics">
-            <BarChart3 className="h-4 w-4 mr-2" />
-            Analytics
-          </TabsTrigger>
+          <TabsTrigger value="overview">Overzicht</TabsTrigger>
+          <TabsTrigger value="users">Gebruikers</TabsTrigger>
+          <TabsTrigger value="pending">Wachtende Gebruikers</TabsTrigger>
         </TabsList>
-        <TabsContent value="users" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Gebruikersoverzicht
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <p>Loading user counts...</p>
-              ) : isError ? (
-                <p className="text-red-500">Failed to load user counts.</p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Totaal</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{userCounts?.total}</div>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Admins</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{userCounts?.admin}</div>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Leerkrachten</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{userCounts?.leerkracht}</div>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Leerlingen</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{userCounts?.leerling}</div>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-            </CardContent>
-          </Card>
 
-          <UserActivationPanel />
-        </TabsContent>
-        <TabsContent value="classes" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <UserPlus className="h-5 w-5" />
-                Klassenbeheer
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Button onClick={() => setOpenClassModal(true)}>
-                Beheer Klassen
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="settings" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                Database Initialisatie
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <AdminSeeder />
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="analytics" className="space-y-4">
+        <TabsContent value="overview">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Analytics (placeholder)
-                </CardTitle>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Totaal Gebruikers</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <p>Analytics content will go here.</p>
+                <div className="text-2xl font-bold">
+                  {isLoading ? '...' : userCounts?.total || 0}
+                </div>
               </CardContent>
             </Card>
-          </TabsContent>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Beheerders</CardTitle>
+                <UserCheck className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {isLoading ? '...' : userCounts?.admin || 0}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Leerkrachten</CardTitle>
+                <UserCheck className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {isLoading ? '...' : userCounts?.leerkracht || 0}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Leerlingen</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {isLoading ? '...' : userCounts?.leerling || 0}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="users">
+          <Card>
+            <CardHeader>
+              <CardTitle>Gebruikers Beheer</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Gebruikers beheer functionaliteit komt binnenkort...
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="pending">
+          <PendingUsersManagement />
+        </TabsContent>
       </Tabs>
 
-      <ClassManagementModal open={openClassModal} setOpen={setOpenClassModal} />
+      <ClassManagementModal 
+        isOpen={showClassModal}
+        onClose={() => setShowClassModal(false)}
+      />
     </div>
   );
 };
