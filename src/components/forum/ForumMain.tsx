@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
@@ -52,10 +51,26 @@ const ForumMain = ({ classId }: ForumMainProps) => {
   const [newThreadTitle, setNewThreadTitle] = useState('');
   const [newThreadContent, setNewThreadContent] = useState('');
 
-  // Real-time updates for the selected thread
-  useForumRealtime(selectedThread, () => {
-    // Refresh posts when there are changes
-    console.log('Forum realtime update detected');
+  // Enhanced real-time callbacks
+  const handleThreadsChange = useCallback(() => {
+    if (selectedRoom) {
+      console.log('[ForumMain] Real-time threads update detected');
+      fetchThreads(selectedRoom);
+    }
+  }, [selectedRoom]);
+
+  const handleNewThread = useCallback((newThread: any) => {
+    console.log('[ForumMain] New thread detected:', newThread.title);
+    toast({
+      title: "Nieuw onderwerp",
+      description: `"${newThread.title}" is zojuist aangemaakt`,
+    });
+  }, [toast]);
+
+  // Set up enhanced real-time subscriptions
+  useForumRealtime(classId, selectedThread, {
+    onThreadsChange: handleThreadsChange,
+    onNewThread: handleNewThread,
   });
 
   useEffect(() => {
@@ -111,7 +126,6 @@ const ForumMain = ({ classId }: ForumMainProps) => {
     try {
       setLoading(true);
       
-      // Get class_id for the selected level
       const { data: levelData, error: levelError } = await supabase
         .from('niveaus')
         .select('class_id')
@@ -135,7 +149,6 @@ const ForumMain = ({ classId }: ForumMainProps) => {
 
       if (error) throw error;
       
-      // Add null safety for thread authors
       const threadsWithSafeAuthors = (data || []).map(thread => ({
         ...thread,
         profiles: thread.profiles ? {
@@ -186,7 +199,7 @@ const ForumMain = ({ classId }: ForumMainProps) => {
 
       setNewThreadTitle('');
       setNewThreadContent('');
-      fetchThreads(selectedRoom);
+      // Real-time update will handle refresh
       
       toast({
         title: "Succes",
@@ -230,7 +243,6 @@ const ForumMain = ({ classId }: ForumMainProps) => {
     );
   }
 
-  // Show forum rooms
   if (view === 'rooms') {
     return (
       <div className="space-y-6">
@@ -242,7 +254,6 @@ const ForumMain = ({ classId }: ForumMainProps) => {
     );
   }
 
-  // Show threads in selected room
   if (view === 'threads') {
     const currentRoom = rooms.find(r => r.id === selectedRoom);
     
@@ -274,7 +285,6 @@ const ForumMain = ({ classId }: ForumMainProps) => {
     );
   }
 
-  // Show posts in selected thread
   if (view === 'posts') {
     const currentThread = threads.find(t => t.id === selectedThread);
     

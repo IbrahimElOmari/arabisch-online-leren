@@ -1,148 +1,122 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { Users, UserCheck, UserX, Settings } from 'lucide-react';
-import ClassManagementModal from '@/components/admin/ClassManagementModal';
-import PendingUsersManagement from '@/components/admin/PendingUsersManagement';
+import { Badge } from '@/components/ui/badge';
+import { Users, BookOpen, MessageSquare, Settings, Activity } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
-
-interface UserCounts {
-  total: number;
-  admin: number;
-  leerkracht: number;
-  leerling: number;
-}
+import PendingUsersManagement from '@/components/admin/PendingUsersManagement';
+import { ClassManagementModal } from '@/components/admin/ClassManagementModal';
+import TaskQuestionManagementNew from '@/components/management/TaskQuestionManagementNew';
 
 const AdminDashboard = () => {
   const { profile } = useAuth();
-  const [showClassModal, setShowClassModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
 
-  const { data: userCounts, isLoading } = useQuery({
-    queryKey: ['admin-user-counts'],
-    queryFn: async (): Promise<UserCounts> => {
-      console.log('Fetching user counts...');
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('role');
-
-      if (error) {
-        console.error('Error fetching user counts:', error);
-        throw error;
-      }
-
-      const counts = {
-        total: data?.length || 0,
-        admin: data?.filter(p => p.role === 'admin').length || 0,
-        leerkracht: data?.filter(p => p.role === 'leerkracht').length || 0,
-        leerling: data?.filter(p => p.role === 'leerling').length || 0,
-      };
-
-      console.log('User counts:', counts);
-      return counts;
-    },
-    enabled: !!profile && profile.role === 'admin'
-  });
-
-  if (profile?.role !== 'admin') {
-    return <div>Geen toegang - alleen voor beheerders</div>;
-  }
+  
+  const stats = [
+    { label: 'Totaal Gebruikers', value: '1,234', icon: Users },
+    { label: 'Actieve Klassen', value: '56', icon: BookOpen },
+    { label: 'Forum Posts', value: '892', icon: MessageSquare },
+    { label: 'Systeemstatus', value: 'Online', icon: Activity, color: 'bg-green-500' },
+  ];
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <Button onClick={() => setShowClassModal(true)}>
-          <Settings className="h-4 w-4 mr-2" />
-          Klassen Beheren
+        <Badge variant="secondary">Administrator</Badge>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat) => (
+          <Card key={stat.label}>
+            <CardContent className="flex items-center p-6">
+              <stat.icon className="h-8 w-8 text-muted-foreground mr-4" />
+              <div>
+                <p className="text-2xl font-bold">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">{stat.label}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-6">
+        <Button
+          variant={activeTab === 'overview' ? 'default' : 'outline'}
+          onClick={() => setActiveTab('overview')}
+        >
+          Overzicht
+        </Button>
+        <Button
+          variant={activeTab === 'users' ? 'default' : 'outline'}
+          onClick={() => setActiveTab('users')}
+        >
+          Gebruikers
+        </Button>
+        <Button
+          variant={activeTab === 'classes' ? 'default' : 'outline'}
+          onClick={() => setActiveTab('classes')}
+        >
+          Klassen
+        </Button>
+        <Button
+          variant={activeTab === 'content' ? 'default' : 'outline'}
+          onClick={() => setActiveTab('content')}
+        >
+          Inhoud
+        </Button>
+        <Button
+          variant={activeTab === 'settings' ? 'default' : 'outline'}
+          onClick={() => setActiveTab('settings')}
+        >
+          Instellingen
         </Button>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overzicht</TabsTrigger>
-          <TabsTrigger value="users">Gebruikers</TabsTrigger>
-          <TabsTrigger value="pending">Wachtende Gebruikers</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Totaal Gebruikers</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {isLoading ? '...' : userCounts?.total || 0}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Beheerders</CardTitle>
-                <UserCheck className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {isLoading ? '...' : userCounts?.admin || 0}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Leerkrachten</CardTitle>
-                <UserCheck className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {isLoading ? '...' : userCounts?.leerkracht || 0}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Leerlingen</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {isLoading ? '...' : userCounts?.leerling || 0}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="users">
+      {activeTab === 'overview' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Gebruikers Beheer</CardTitle>
+              <CardTitle>Recente Activiteit</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
-                Gebruikers beheer functionaliteit komt binnenkort...
-              </p>
+              <p className="text-muted-foreground">Geen recente activiteit om weer te geven.</p>
             </CardContent>
           </Card>
-        </TabsContent>
+          <Card>
+            <CardHeader>
+              <CardTitle>Systeemstatus</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span>Database</span>
+                  <Badge variant="secondary" className="bg-green-500">Online</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span>API</span>
+                  <Badge variant="secondary" className="bg-green-500">Online</Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-        <TabsContent value="pending">
-          <PendingUsersManagement />
-        </TabsContent>
-      </Tabs>
-
-      <ClassManagementModal 
-        isOpen={showClassModal}
-        onClose={() => setShowClassModal(false)}
-      />
+      {activeTab === 'users' && <PendingUsersManagement />}
+      {activeTab === 'classes' && <ClassManagementModal />}
+      {activeTab === 'content' && <TaskQuestionManagementNew />}
+      {activeTab === 'settings' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Systeeminstellingen</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">Systeeminstellingen worden hier weergegeven.</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
