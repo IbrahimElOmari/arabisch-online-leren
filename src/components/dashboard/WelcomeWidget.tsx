@@ -1,5 +1,6 @@
+
 import { Card, CardContent } from '@/components/ui/card';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { useAuth } from '@/components/auth/AuthProviderQuery';
 
 interface WelcomeWidgetProps {
   recentActivity?: string;

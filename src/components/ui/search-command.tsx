@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { Search, BookOpen, Calendar, MessageSquare, User, Home } from "lucide-react"
 import { useNavigate } from "react-router-dom"
@@ -11,7 +10,7 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/components/auth/AuthProvider"
+import { useAuth } from "@/components/auth/AuthProviderQuery"
 
 const searchItems = [
   {
