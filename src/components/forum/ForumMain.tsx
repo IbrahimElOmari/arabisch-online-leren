@@ -1,23 +1,17 @@
+
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
+import ForumRooms from './ForumRooms';
+import ForumThreads from './ForumThreads';
+import CreateThreadForm from './CreateThreadForm';
 import ForumPostsList from './ForumPostsList';
+import { useForumRealtime } from '@/hooks/useForumRealtime';
 import { 
-  MessageCircle, 
-  Plus,
-  Send,
-  ArrowLeft,
-  Users,
-  Hash
+  ArrowLeft
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 interface ForumRoom {
@@ -57,6 +51,12 @@ const ForumMain = ({ classId }: ForumMainProps) => {
   const [loading, setLoading] = useState(true);
   const [newThreadTitle, setNewThreadTitle] = useState('');
   const [newThreadContent, setNewThreadContent] = useState('');
+
+  // Real-time updates for the selected thread
+  useForumRealtime(selectedThread, () => {
+    // Refresh posts when there are changes
+    console.log('Forum realtime update detected');
+  });
 
   useEffect(() => {
     if (classId) {
@@ -202,7 +202,11 @@ const ForumMain = ({ classId }: ForumMainProps) => {
     }
   };
 
-  const selectThread = (threadId: string) => {
+  const handleRoomSelect = (roomId: string) => {
+    fetchThreads(roomId);
+  };
+
+  const handleThreadSelect = (threadId: string) => {
     setSelectedThread(threadId);
     setView('posts');
   };
@@ -233,38 +237,7 @@ const ForumMain = ({ classId }: ForumMainProps) => {
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Forum Kamers</h2>
         </div>
-
-        {rooms.length === 0 ? (
-          <EmptyState
-            icon={MessageCircle}
-            title="Geen kamers beschikbaar"
-            description="Er zijn nog geen forum kamers voor deze klas."
-          />
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {rooms.map((room) => (
-              <Card key={room.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => fetchThreads(room.id)}>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Hash className="h-5 w-5" />
-                    {room.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foregroundC">
-                      <Users className="h-4 w-4" />
-                      {room.class_name}
-                    </div>
-                    <Badge variant="outline" className="text-xs">
-                      {room.level_name}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+        <ForumRooms rooms={rooms} onRoomSelect={handleRoomSelect} />
       </div>
     );
   }
@@ -288,70 +261,15 @@ const ForumMain = ({ classId }: ForumMainProps) => {
           </div>
         </div>
 
-        {/* Create new thread form */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5" />
-              Nieuw Onderwerp
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Input
-              placeholder="Titel van het onderwerp"
-              value={newThreadTitle}
-              onChange={(e) => setNewThreadTitle(e.target.value)}
-            />
-            <Textarea
-              placeholder="Beschrijf je onderwerp..."
-              value={newThreadContent}
-              onChange={(e) => setNewThreadContent(e.target.value)}
-              rows={4}
-            />
-            <Button onClick={createThread}>
-              <Send className="h-4 w-4 mr-2" />
-              Onderwerp Plaatsen
-            </Button>
-          </CardContent>
-        </Card>
+        <CreateThreadForm
+          title={newThreadTitle}
+          content={newThreadContent}
+          onTitleChange={setNewThreadTitle}
+          onContentChange={setNewThreadContent}
+          onSubmit={createThread}
+        />
 
-        {/* Threads list */}
-        {threads.length === 0 ? (
-          <EmptyState
-            icon={MessageCircle}
-            title="Nog geen onderwerpen"
-            description="Wees de eerste om een onderwerp te plaatsen in deze kamer!"
-          />
-        ) : (
-          <div className="space-y-4">
-            {threads.map((thread) => (
-              <Card key={thread.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => selectThread(thread.id)}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        {thread.is_pinned && (
-                          <Badge variant="secondary" className="text-xs">
-                            Vastgepind
-                          </Badge>
-                        )}
-                        {thread.title}
-                      </CardTitle>
-                      <div className="text-sm text-muted-foreground">
-                        Door {thread.profiles?.full_name || 'Onbekende gebruiker'} • {new Date(thread.created_at).toLocaleDateString('nl-NL')}
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-sm text-muted-foreground line-clamp-2">
-                    {thread.content}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+        <ForumThreads threads={threads} onThreadSelect={handleThreadSelect} />
       </div>
     );
   }
