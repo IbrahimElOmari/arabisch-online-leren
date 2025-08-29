@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,12 +16,11 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { ClassManagementModal } from '@/components/admin/ClassManagementModal';
-import { StudentEnrollmentModal } from '@/components/admin/StudentEnrollmentModal';
+import TaskQuestionManagementNew from '@/components/management/TaskQuestionManagementNew';
 
 const AdminDashboard = () => {
   const { profile } = useAuth();
   const [showClassModal, setShowClassModal] = useState(false);
-  const [showEnrollmentModal, setShowEnrollmentModal] = useState(false);
 
   if (!profile || profile.role !== 'admin') {
     return (
@@ -102,13 +102,56 @@ const AdminDashboard = () => {
         </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs defaultValue="classes" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview">Overzicht</TabsTrigger>
+          <TabsTrigger value="classes">Klasbeheer</TabsTrigger>
+          <TabsTrigger value="tasks">Taken & Vragen</TabsTrigger>
           <TabsTrigger value="users">Gebruikers</TabsTrigger>
-          <TabsTrigger value="classes">Klassen</TabsTrigger>
-          <TabsTrigger value="content">Inhoud</TabsTrigger>
+          <TabsTrigger value="overview">Overzicht</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="classes" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Klasbeheer</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button 
+                onClick={() => setShowClassModal(true)}
+                className="w-full justify-start"
+                variant="outline"
+              >
+                <BookOpen className="mr-2 h-4 w-4" />
+                Nieuwe Klas Aanmaken
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="tasks" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Taken & Vragen Beheer</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Als admin heb je toegang tot alle taken en vragen van alle klassen
+              </p>
+            </CardHeader>
+            <CardContent>
+              <TaskQuestionManagementNew />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="users">
+          <Card>
+            <CardHeader>
+              <CardTitle>Gebruikersbeheer</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">Gebruikersbeheer functionaliteit komt binnenkort...</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
@@ -124,14 +167,6 @@ const AdminDashboard = () => {
                 >
                   <BookOpen className="mr-2 h-4 w-4" />
                   Nieuwe Klas Aanmaken
-                </Button>
-                <Button 
-                  onClick={() => setShowEnrollmentModal(true)}
-                  className="w-full justify-start"
-                  variant="outline"
-                >
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Studenten Inschrijven
                 </Button>
                 <Button className="w-full justify-start" variant="outline">
                   <Settings className="mr-2 h-4 w-4" />
@@ -155,49 +190,11 @@ const AdminDashboard = () => {
             </Card>
           </div>
         </TabsContent>
-
-        <TabsContent value="users">
-          <Card>
-            <CardHeader>
-              <CardTitle>Gebruikersbeheer</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Gebruikersbeheer functionaliteit komt binnenkort...</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="classes">
-          <Card>
-            <CardHeader>
-              <CardTitle>Klasbeheer</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Klasbeheer functionaliteit komt binnenkort...</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="content">
-          <Card>
-            <CardHeader>
-              <CardTitle>Content Beheer</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Content beheer functionaliteit komt binnenkort...</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
 
       <ClassManagementModal 
         isOpen={showClassModal}
         onClose={() => setShowClassModal(false)}
-      />
-      
-      <StudentEnrollmentModal 
-        isOpen={showEnrollmentModal}
-        onClose={() => setShowEnrollmentModal(false)}
       />
     </div>
   );

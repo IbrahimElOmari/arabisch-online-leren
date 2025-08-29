@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
-import { StudentTasksAndQuestions } from '@/components/student/StudentTasksAndQuestions';
+import { EnhancedStudentTasksAndQuestions } from '@/components/student/EnhancedStudentTasksAndQuestions';
 import { LevelQuestions } from '@/components/tasks/LevelQuestions';
 import { 
   BookOpen, 
@@ -20,7 +21,6 @@ import {
   GraduationCap
 } from 'lucide-react';
 
-// Updated: beschrijving en description kunnen null zijn
 type NiveauItem = {
   id: string;
   naam: string;
@@ -52,7 +52,6 @@ const StudentDashboard = () => {
     }
   }, [profile?.id]);
 
-  // Fix: split query - eerst inschrijvingen + klassen, dan niveaus per class_id laden en samenvoegen
   const fetchEnrolledClasses = async () => {
     try {
       setLoading(true);
@@ -97,7 +96,6 @@ const StudentDashboard = () => {
         return;
       }
 
-      // Fetch niveaus per klas
       const { data: niveausData, error: niveausError } = await supabase
         .from('niveaus')
         .select('id, naam, beschrijving, class_id')
@@ -134,7 +132,6 @@ const StudentDashboard = () => {
       console.debug('📚 Merged enrolled classes with levels:', merged);
       setEnrolledClasses(merged);
 
-      // Auto-selecteer eerste klas en eerste niveau
       if (merged.length > 0) {
         setSelectedClass(merged[0].class_id);
         const firstLevelId = merged[0].klassen.niveaus[0]?.id ?? '';
@@ -209,7 +206,6 @@ const StudentDashboard = () => {
           </p>
         </div>
 
-        {/* Class and Level Selection */}
         <div className="grid gap-4 mb-6">
           <Card>
             <CardHeader>
@@ -261,17 +257,12 @@ const StudentDashboard = () => {
           </Card>
         </div>
 
-        {/* Main Content Tabs */}
         {currentClass && currentLevel && (
-          <Tabs defaultValue="tasks" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="tasks" className="flex items-center gap-2">
+          <Tabs defaultValue="content" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="content" className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4" />
-                Taken
-              </TabsTrigger>
-              <TabsTrigger value="questions" className="flex items-center gap-2">
-                <AlertCircle className="h-4 w-4" />
-                Vragen
+                Taken & Vragen
               </TabsTrigger>
               <TabsTrigger value="forum" className="flex items-center gap-2">
                 <MessageSquare className="h-4 w-4" />
@@ -283,22 +274,11 @@ const StudentDashboard = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="tasks" className="mt-6">
-              <StudentTasksAndQuestions 
+            <TabsContent value="content" className="mt-6">
+              <EnhancedStudentTasksAndQuestions 
                 levelId={selectedLevel} 
                 levelName={currentLevel.naam}
               />
-            </TabsContent>
-
-            <TabsContent value="questions" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Vragen voor {currentLevel.naam}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <LevelQuestions levelId={selectedLevel} />
-                </CardContent>
-              </Card>
             </TabsContent>
 
             <TabsContent value="forum" className="mt-6">

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
 import TaskQuestionManagementNew from '@/components/management/TaskQuestionManagementNew';
+import { TeacherGradingPanel } from '@/components/teacher/TeacherGradingPanel';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { TeachingModal } from '@/components/teaching/TeachingModal';
 import { AttendanceModal } from '@/components/teaching/AttendanceModal';
@@ -19,7 +21,8 @@ import {
   BarChart3,
   Clock,
   Plus,
-  AlertTriangle
+  AlertTriangle,
+  CheckSquare
 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
@@ -36,7 +39,6 @@ const TeacherDashboard = () => {
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Local state to control modals
   const [teachingOpen, setTeachingOpen] = useState(false);
   const [attendanceOpen, setAttendanceOpen] = useState(false);
   const [performanceOpen, setPerformanceOpen] = useState(false);
@@ -55,7 +57,6 @@ const TeacherDashboard = () => {
     try {
       console.debug('Fetching classes for teacher:', profile?.id);
 
-      // Abort after 4s to avoid hanging forever
       const controller = new AbortController();
       const timer = setTimeout(() => {
         console.warn('⚠️ TeacherDashboard: Aborting classes fetch after 4s');
@@ -83,7 +84,6 @@ const TeacherDashboard = () => {
       console.debug('✅ TeacherDashboard: Classes fetched successfully');
     } catch (err: any) {
       console.error('❌ TeacherDashboard: Error fetching classes:', err);
-      // Non-blocking warning; show empty list so UI stays usable
       setError('Laden van klassen duurde te lang of mislukte. We tonen voorlopig een lege lijst. Probeer opnieuw.');
       setClasses([]);
       setSelectedClass(null);
@@ -113,8 +113,6 @@ const TeacherDashboard = () => {
       </div>
     );
   }
-
-  // Removed the full-page error state; we now show a non-blocking alert instead.
 
   if (classes.length === 0) {
     return (
@@ -174,7 +172,6 @@ const TeacherDashboard = () => {
           </p>
         </div>
 
-        {/* Class Selection */}
         <div className="grid gap-4 mb-6">
           <Card>
             <CardHeader>
@@ -201,13 +198,16 @@ const TeacherDashboard = () => {
           </Card>
         </div>
 
-        {/* Main Content Tabs */}
         {selectedClass && (
           <Tabs defaultValue="tasks" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="tasks" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
-                Taken & Vragen
+                Maken
+              </TabsTrigger>
+              <TabsTrigger value="grading" className="flex items-center gap-2">
+                <CheckSquare className="h-4 w-4" />
+                Beoordelen
               </TabsTrigger>
               <TabsTrigger value="teaching" className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4" />
@@ -227,9 +227,26 @@ const TeacherDashboard = () => {
               <Card>
                 <CardHeader>
                   <CardTitle>Beheer Taken & Vragen</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Maak nieuwe taken en vragen voor je studenten
+                  </p>
                 </CardHeader>
                 <CardContent>
                   <TaskQuestionManagementNew />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="grading" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Beoordeling & Feedback</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Bekijk en beoordeel inzendingen van je studenten
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <TeacherGradingPanel classId={selectedClass} />
                 </CardContent>
               </Card>
             </TabsContent>
