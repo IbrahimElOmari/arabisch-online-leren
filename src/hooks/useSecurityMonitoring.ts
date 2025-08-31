@@ -7,7 +7,7 @@ import { useRateLimit } from './useRateLimit';
 
 export const useSecurityMonitoring = () => {
   const { user, profile } = useAuth();
-  const { checkRateLimit } = useRateLimit({ action: 'admin_action', identifier: user?.id });
+  const { checkRateLimit } = useRateLimit({ action: 'ADMIN_ACTION', identifier: user?.id });
 
   // Monitor sensitive operations
   const logSensitiveOperation = useCallback(async (action: string, details: any = {}) => {

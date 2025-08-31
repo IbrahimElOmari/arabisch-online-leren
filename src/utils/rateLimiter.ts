@@ -1,3 +1,4 @@
+
 // Client-side rate limiting utility
 
 interface RateLimitConfig {
@@ -83,5 +84,6 @@ export const RATE_LIMITS = {
   SIGNUP: { maxAttempts: 3, windowMs: 60 * 60 * 1000 }, // 3 attempts per hour
   PASSWORD_RESET: { maxAttempts: 3, windowMs: 60 * 60 * 1000 }, // 3 attempts per hour
   FORM_SUBMISSION: { maxAttempts: 10, windowMs: 60 * 1000 }, // 10 attempts per minute
-  API_CALL: { maxAttempts: 100, windowMs: 60 * 1000 } // 100 requests per minute
+  API_CALL: { maxAttempts: 100, windowMs: 60 * 1000 }, // 100 requests per minute
+  ADMIN_ACTION: { maxAttempts: 20, windowMs: 60 * 1000 } // 20 admin actions per minute
 } as const;

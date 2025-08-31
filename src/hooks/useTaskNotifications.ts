@@ -96,19 +96,27 @@ export const useTaskNotifications = () => {
   const handleAnswerCreated = useCallback(async (answer: any) => {
     if (!answer || !answer.vragen) return;
     
-    // Notify teacher about new answer
+    // Since vragen table doesn't have created_by, we'll find the teacher through the niveau/class relationship
     try {
       const { data: question } = await supabase
         .from('vragen')
         .select(`
           vraag_tekst,
-          created_by,
-          profiles!vragen_created_by_fkey(full_name)
+          niveau_id,
+          niveaus!vragen_niveau_id_fkey(
+            naam,
+            class_id,
+            klassen!niveaus_class_id_fkey(
+              name,
+              teacher_id,
+              profiles!klassen_teacher_id_fkey(full_name)
+            )
+          )
         `)
         .eq('id', answer.vraag_id)
         .single();
 
-      if (question && question.created_by) {
+      if (question?.niveaus?.klassen?.teacher_id) {
         const { data: student } = await supabase
           .from('profiles')
           .select('full_name')
@@ -116,8 +124,8 @@ export const useTaskNotifications = () => {
           .single();
 
         await createNotification(
-          question.created_by,
-          `${student?.full_name || 'Een student'} heeft een vraag beantwoord`
+          question.niveaus.klassen.teacher_id,
+          `${student?.full_name || 'Een student'} heeft een vraag beantwoord in ${question.niveaus.naam}`
         );
       }
     } catch (error) {
