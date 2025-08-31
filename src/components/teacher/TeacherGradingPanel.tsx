@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,6 +16,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useTaskStore } from '@/hooks/useTaskStore';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface TaskSubmission {
   id: string;
@@ -61,6 +61,7 @@ interface TeacherGradingPanelProps {
 
 export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelProps) => {
   const { gradeSubmission } = useTaskStore();
+  const { createNotification } = useNotifications();
   const [taskSubmissions, setTaskSubmissions] = useState<TaskSubmission[]>([]);
   const [questionAnswers, setQuestionAnswers] = useState<QuestionAnswer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -154,7 +155,10 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
           correct_antwoord: typeof answer.vragen?.correct_antwoord === 'string' 
             ? answer.vragen.correct_antwoord 
             : JSON.stringify(answer.vragen?.correct_antwoord) || ''
-        }
+        },
+        antwoord: typeof answer.antwoord === 'string' 
+          ? answer.antwoord 
+          : JSON.stringify(answer.antwoord) || ''
       })) || [];
 
       setQuestionAnswers(formattedAnswers);
@@ -166,6 +170,13 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
   const handleGradeTask = async (submissionId: string, grade: number, feedback: string) => {
     const success = await gradeSubmission(submissionId, grade, feedback);
     if (success) {
+      const submission = taskSubmissions.find(s => s.id === submissionId);
+      if (submission) {
+        await createNotification(
+          submission.student_id, 
+          `Je taak "${submission.task?.title}" is beoordeeld met cijfer ${grade}`
+        );
+      }
       await fetchTaskSubmissions();
     }
   };
@@ -182,6 +193,15 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
         .eq('id', answerId);
 
       if (error) throw error;
+      
+      const answer = questionAnswers.find(a => a.id === answerId);
+      if (answer) {
+        await createNotification(
+          answer.student_id,
+          `Je antwoord op een vraag is beoordeeld met ${points} punten`
+        );
+      }
+      
       await fetchQuestionAnswers();
     } catch (error) {
       console.error('Error grading question:', error);
@@ -197,6 +217,17 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
       setSubmitting(true);
       await handleGradeTask(submission.id, parseFloat(grade), feedback);
       setSubmitting(false);
+    };
+
+    const getStatusBadge = () => {
+      if (submission.grade !== null && submission.grade !== undefined) {
+        return (
+          <Badge variant="default">
+            Beoordeeld: {submission.grade}/{submission.task?.grading_scale}
+          </Badge>
+        );
+      }
+      return <Badge variant="outline">Wacht op beoordeling</Badge>;
     };
 
     return (
@@ -216,13 +247,7 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
                 </span>
               </div>
             </div>
-            {submission.grade !== null && submission.grade !== undefined ? (
-              <Badge variant="default">
-                Beoordeeld: {submission.grade}/{submission.task?.grading_scale}
-              </Badge>
-            ) : (
-              <Badge variant="outline">Wacht op beoordeling</Badge>
-            )}
+            {getStatusBadge()}
           </div>
         </CardHeader>
 
@@ -298,6 +323,17 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
       setSubmitting(false);
     };
 
+    const getStatusBadge = () => {
+      if (answer.punten !== null && answer.punten !== undefined) {
+        return (
+          <Badge variant={answer.is_correct ? "default" : "destructive"}>
+            {answer.is_correct ? 'Correct' : 'Incorrect'} - {answer.punten} punten
+          </Badge>
+        );
+      }
+      return <Badge variant="outline">Wacht op beoordeling</Badge>;
+    };
+
     return (
       <Card className="mb-4">
         <CardHeader>
@@ -315,13 +351,7 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
                 </span>
               </div>
             </div>
-            {answer.punten !== null && answer.punten !== undefined ? (
-              <Badge variant={answer.is_correct ? "default" : "destructive"}>
-                {answer.is_correct ? 'Correct' : 'Incorrect'} - {answer.punten} punten
-              </Badge>
-            ) : (
-              <Badge variant="outline">Wacht op beoordeling</Badge>
-            )}
+            {getStatusBadge()}
           </div>
         </CardHeader>
 
@@ -409,6 +439,11 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
     );
   }
 
+  const ungraded = {
+    tasks: taskSubmissions.filter(s => s.grade === null || s.grade === undefined).length,
+    questions: questionAnswers.filter(q => q.punten === null || q.punten === undefined).length
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -418,15 +453,27 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
             variant={gradingMode === 'tasks' ? 'default' : 'outline'}
             onClick={() => setGradingMode('tasks')}
             size="sm"
+            className="relative"
           >
             Taken ({taskSubmissions.length})
+            {ungraded.tasks > 0 && (
+              <Badge variant="destructive" className="ml-2 h-5 w-5 p-0 text-xs">
+                {ungraded.tasks}
+              </Badge>
+            )}
           </Button>
           <Button
             variant={gradingMode === 'questions' ? 'default' : 'outline'}
             onClick={() => setGradingMode('questions')}
             size="sm"
+            className="relative"
           >
             Vragen ({questionAnswers.length})
+            {ungraded.questions > 0 && (
+              <Badge variant="destructive" className="ml-2 h-5 w-5 p-0 text-xs">
+                {ungraded.questions}
+              </Badge>
+            )}
           </Button>
         </div>
       </div>
