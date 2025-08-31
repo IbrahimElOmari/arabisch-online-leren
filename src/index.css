@@ -118,7 +118,8 @@ All colors MUST be HSL.
 
   /* Enhanced mobile sidebar readability */
   [data-sidebar="sidebar"][data-mobile="true"] {
-    @apply bg-sidebar/98 backdrop-blur-md;
+    background-color: hsl(var(--sidebar-background));
+    backdrop-filter: blur(12px);
     box-shadow: 0 8px 32px hsl(var(--sidebar-background) / 0.8);
   }
 }
