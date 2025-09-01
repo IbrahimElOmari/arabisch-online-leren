@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +8,7 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
 import { EnhancedStudentTasksAndQuestions } from '@/components/student/EnhancedStudentTasksAndQuestions';
 import { LevelQuestions } from '@/components/tasks/LevelQuestions';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { 
   BookOpen, 
   Calendar, 
@@ -41,6 +41,14 @@ interface EnrolledClass {
 
 const StudentDashboard = () => {
   const { profile } = useAuth();
+  const { 
+    isRTL, 
+    getFlexDirection, 
+    getTextAlign, 
+    getMarginStart, 
+    getMarginEnd 
+  } = useRTLLayout();
+  
   const [enrolledClasses, setEnrolledClasses] = useState<EnrolledClass[]>([]);
   const [selectedClass, setSelectedClass] = useState<string>('');
   const [selectedLevel, setSelectedLevel] = useState<string>('');
@@ -198,24 +206,26 @@ const StudentDashboard = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">
-            Welkom, {profile?.full_name}!
+          <h1 className={`text-3xl font-bold mb-2 ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
+            {isRTL ? `أهلاً وسهلاً، ${profile?.full_name}!` : `Welkom, ${profile?.full_name}!`}
           </h1>
-          <p className="text-muted-foreground">
-            Hier vind je je lessen, taken en voortgang.
+          <p className={`text-muted-foreground ${getTextAlign()}`}>
+            {isRTL ? 'هنا تجد دروسك ومهامك وتقدمك.' : 'Hier vind je je lessen, taken en voortgang.'}
           </p>
         </div>
 
         <div className="grid gap-4 mb-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className={`flex items-center gap-2 ${getFlexDirection()}`}>
                 <Users className="h-5 w-5" />
-                Mijn Klassen
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'صفوفي' : 'Mijn Klassen'}
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-wrap gap-2 mb-4">
+              <div className={`flex flex-wrap gap-2 mb-4 ${getFlexDirection()}`}>
                 {enrolledClasses.map((enrollment) => (
                   <Button
                     key={enrollment.id}
@@ -228,24 +238,27 @@ const StudentDashboard = () => {
                         setSelectedLevel('');
                       }
                     }}
-                    className="flex items-center gap-2"
+                    className={`flex items-center gap-2 ${getFlexDirection()}`}
                   >
                     <BookOpen className="h-4 w-4" />
-                    {enrollment.klassen.name}
+                    <span className={isRTL ? 'arabic-text' : ''}>{enrollment.klassen.name}</span>
                   </Button>
                 ))}
               </div>
               
               {currentClass && currentClass.klassen.niveaus.length > 0 && (
                 <div>
-                  <h4 className="font-medium mb-2">Niveaus in {currentClass.klassen.name}:</h4>
-                  <div className="flex flex-wrap gap-2">
+                  <h4 className={`font-medium mb-2 ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
+                    {isRTL ? `المستويات في ${currentClass.klassen.name}:` : `Niveaus in ${currentClass.klassen.name}:`}
+                  </h4>
+                  <div className={`flex flex-wrap gap-2 ${getFlexDirection()}`}>
                     {currentClass.klassen.niveaus.map((niveau) => (
                       <Button
                         key={niveau.id}
                         variant={selectedLevel === niveau.id ? "default" : "outline"}
                         size="sm"
                         onClick={() => setSelectedLevel(niveau.id)}
+                        className={isRTL ? 'arabic-text' : ''}
                       >
                         {niveau.naam}
                       </Button>
@@ -258,19 +271,25 @@ const StudentDashboard = () => {
         </div>
 
         {currentClass && currentLevel && (
-          <Tabs defaultValue="content" className="w-full">
+          <Tabs defaultValue="content" className="w-full" dir={isRTL ? 'rtl' : 'ltr'}>
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="content" className="flex items-center gap-2">
+              <TabsTrigger value="content" className={`flex items-center gap-2 ${getFlexDirection()}`}>
                 <CheckCircle className="h-4 w-4" />
-                Taken & Vragen
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'المهام والأسئلة' : 'Taken & Vragen'}
+                </span>
               </TabsTrigger>
-              <TabsTrigger value="forum" className="flex items-center gap-2">
+              <TabsTrigger value="forum" className={`flex items-center gap-2 ${getFlexDirection()}`}>
                 <MessageSquare className="h-4 w-4" />
-                Forum
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'المنتدى' : 'Forum'}
+                </span>
               </TabsTrigger>
-              <TabsTrigger value="progress" className="flex items-center gap-2">
+              <TabsTrigger value="progress" className={`flex items-center gap-2 ${getFlexDirection()}`}>
                 <Trophy className="h-4 w-4" />
-                Voortgang
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'التقدم' : 'Voortgang'}
+                </span>
               </TabsTrigger>
             </TabsList>
 
@@ -284,16 +303,20 @@ const StudentDashboard = () => {
             <TabsContent value="forum" className="mt-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Klasforum</CardTitle>
+                  <CardTitle className={isRTL ? 'arabic-text' : ''}>
+                    {isRTL ? 'منتدى الصف' : 'Klasforum'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground mb-4">
-                    Ga naar het forum om te discussiëren met je klasgenoten.
+                  <p className={`text-muted-foreground mb-4 ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
+                    {isRTL ? 'اذهب إلى المنتدى للمناقشة مع زملائك في الصف.' : 'Ga naar het forum om te discussiëren met je klasgenoten.'}
                   </p>
                   <Button asChild>
-                    <Link to="/forum">
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      Naar Forum
+                    <Link to="/forum" className={`flex items-center gap-2 ${getFlexDirection()}`}>
+                      <MessageSquare className="h-4 w-4" />
+                      <span className={isRTL ? 'arabic-text' : ''}>
+                        {isRTL ? 'إلى المنتدى' : 'Naar Forum'}
+                      </span>
                     </Link>
                   </Button>
                 </CardContent>
@@ -304,28 +327,32 @@ const StudentDashboard = () => {
               <div className="grid gap-6 md:grid-cols-2">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className={`flex items-center gap-2 ${getFlexDirection()}`}>
                       <Trophy className="h-5 w-5" />
-                      Behaalde Resultaten
+                      <span className={isRTL ? 'arabic-text' : ''}>
+                        {isRTL ? 'النتائج المحققة' : 'Behaalde Resultaten'}
+                      </span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground">
-                      Hier zie je binnenkort je behaalde punten en badges.
+                    <p className={`text-muted-foreground ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
+                      {isRTL ? 'هنا ستشاهد قريباً النقاط والشارات التي حصلت عليها.' : 'Hier zie je binnenkort je behaalde punten en badges.'}
                     </p>
                   </CardContent>
                 </Card>
                 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className={`flex items-center gap-2 ${getFlexDirection()}`}>
                       <Clock className="h-5 w-5" />
-                      Recente Activiteit
+                      <span className={isRTL ? 'arabic-text' : ''}>
+                        {isRTL ? 'النشاط الأخير' : 'Recente Activiteit'}
+                      </span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground">
-                      Hier zie je je recente inzendingen en beoordelingen.
+                    <p className={`text-muted-foreground ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
+                      {isRTL ? 'هنا تشاهد تقديماتك الأخيرة والتقييمات.' : 'Hier zie je je recente inzendingen en beoordelingen.'}
                     </p>
                   </CardContent>
                 </Card>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { TeachingModal } from '@/components/teaching/TeachingModal';
 import { AttendanceModal } from '@/components/teaching/AttendanceModal';
 import { PerformanceModal } from '@/components/teaching/PerformanceModal';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 import {
   BookOpen,
   Users,
@@ -34,6 +34,14 @@ interface Class {
 
 const TeacherDashboard = () => {
   const { profile } = useAuth();
+  const { 
+    isRTL, 
+    getFlexDirection, 
+    getTextAlign, 
+    getMarginStart, 
+    getMarginEnd 
+  } = useRTLLayout();
+  
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
@@ -121,11 +129,13 @@ const TeacherDashboard = () => {
           {error && (
             <Alert className="mb-4">
               <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Kon klassen niet laden</AlertTitle>
-              <AlertDescription className="flex items-center gap-3">
-                {error}
+              <AlertTitle className={isRTL ? 'arabic-text' : ''}>
+                {isRTL ? 'لا يمكن تحميل الصفوف' : 'Kon klassen niet laden'}
+              </AlertTitle>
+              <AlertDescription className={`flex items-center gap-3 ${getFlexDirection()}`}>
+                <span className={isRTL ? 'arabic-text' : ''}>{error}</span>
                 <Button variant="outline" size="sm" onClick={fetchClasses}>
-                  Opnieuw proberen
+                  {isRTL ? 'حاول مرة أخرى' : 'Opnieuw proberen'}
                 </Button>
               </AlertDescription>
             </Alert>
@@ -133,12 +143,14 @@ const TeacherDashboard = () => {
           <Card>
             <CardContent className="text-center py-12">
               <GraduationCap className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <h2 className="text-xl font-semibold mb-4">Geen klassen beschikbaar</h2>
-              <p className="text-muted-foreground mb-4">
-                We konden geen klassen ophalen. Probeer het later opnieuw of klik op "Opnieuw proberen".
+              <h2 className={`text-xl font-semibold mb-4 ${isRTL ? 'arabic-text' : ''}`}>
+                {isRTL ? 'لا توجد صفوف متاحة' : 'Geen klassen beschikbaar'}
+              </h2>
+              <p className={`text-muted-foreground mb-4 ${isRTL ? 'arabic-text' : ''}`}>
+                {isRTL ? 'لم نتمكن من تحميل الصفوف. حاول مرة أخرى لاحقاً أو انقر على "حاول مرة أخرى".' : 'We konden geen klassen ophalen. Probeer het later opnieuw of klik op "Opnieuw proberen".'}
               </p>
               <Button onClick={fetchClasses}>
-                Opnieuw proberen
+                {isRTL ? 'حاول مرة أخرى' : 'Opnieuw proberen'}
               </Button>
             </CardContent>
           </Card>
@@ -153,44 +165,48 @@ const TeacherDashboard = () => {
         {error && (
           <Alert className="mb-4">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Verbindingsprobleem</AlertTitle>
-            <AlertDescription className="flex items-center gap-3">
-              {error}
+            <AlertTitle className={isRTL ? 'arabic-text' : ''}>
+              {isRTL ? 'مشكلة في الاتصال' : 'Verbindingsprobleem'}
+            </AlertTitle>
+            <AlertDescription className={`flex items-center gap-3 ${getFlexDirection()}`}>
+              <span className={isRTL ? 'arabic-text' : ''}>{error}</span>
               <Button variant="outline" size="sm" onClick={fetchClasses}>
-                Opnieuw proberen
+                {isRTL ? 'حاول مرة أخرى' : 'Opnieuw proberen'}
               </Button>
             </AlertDescription>
           </Alert>
         )}
 
         <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">
-            Welkom, {profile?.full_name}!
+          <h1 className={`text-3xl font-bold mb-2 ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
+            {isRTL ? `أهلاً وسهلاً، ${profile?.full_name}!` : `Welkom, ${profile?.full_name}!`}
           </h1>
-          <p className="text-muted-foreground">
-            Hier vind je een overzicht van je klassen en lesmateriaal.
+          <p className={`text-muted-foreground ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
+            {isRTL ? 'هنا تجد نظرة عامة على صفوفك ومواد التدريس.' : 'Hier vind je een overzicht van je klassen en lesmateriaal.'}
           </p>
         </div>
 
         <div className="grid gap-4 mb-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className={`flex items-center gap-2 ${getFlexDirection()}`}>
                 <Users className="h-5 w-5" />
-                Mijn Klassen
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'صفوفي' : 'Mijn Klassen'}
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-wrap gap-2 mb-4">
+              <div className={`flex flex-wrap gap-2 mb-4 ${getFlexDirection()}`}>
                 {classes.map((klas) => (
                   <Button
                     key={klas.id}
                     variant={selectedClass === klas.id ? "default" : "outline"}
                     onClick={() => setSelectedClass(klas.id)}
-                    className="flex items-center gap-2"
+                    className={`flex items-center gap-2 ${getFlexDirection()}`}
                   >
                     <BookOpen className="h-4 w-4" />
-                    {klas.name}
+                    <span className={isRTL ? 'arabic-text' : ''}>{klas.name}</span>
                   </Button>
                 ))}
               </div>
@@ -199,36 +215,48 @@ const TeacherDashboard = () => {
         </div>
 
         {selectedClass && (
-          <Tabs defaultValue="tasks" className="w-full">
+          <Tabs defaultValue="tasks" className="w-full" dir={isRTL ? 'rtl' : 'ltr'}>
             <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="tasks" className="flex items-center gap-2">
+              <TabsTrigger value="tasks" className={`flex items-center gap-2 ${getFlexDirection()}`}>
                 <FileText className="h-4 w-4" />
-                Maken
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'إنشاء' : 'Maken'}
+                </span>
               </TabsTrigger>
-              <TabsTrigger value="grading" className="flex items-center gap-2">
+              <TabsTrigger value="grading" className={`flex items-center gap-2 ${getFlexDirection()}`}>
                 <CheckSquare className="h-4 w-4" />
-                Beoordelen
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'تقييم' : 'Beoordelen'}
+                </span>
               </TabsTrigger>
-              <TabsTrigger value="teaching" className="flex items-center gap-2">
+              <TabsTrigger value="teaching" className={`flex items-center gap-2 ${getFlexDirection()}`}>
                 <BookOpen className="h-4 w-4" />
-                Lesgeven
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'تدريس' : 'Lesgeven'}
+                </span>
               </TabsTrigger>
-              <TabsTrigger value="attendance" className="flex items-center gap-2">
+              <TabsTrigger value="attendance" className={`flex items-center gap-2 ${getFlexDirection()}`}>
                 <Calendar className="h-4 w-4" />
-                Aanwezigheid
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'الحضور' : 'Aanwezigheid'}
+                </span>
               </TabsTrigger>
-              <TabsTrigger value="performance" className="flex items-center gap-2">
+              <TabsTrigger value="performance" className={`flex items-center gap-2 ${getFlexDirection()}`}>
                 <BarChart3 className="h-4 w-4" />
-                Prestaties
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'الأداء' : 'Prestaties'}
+                </span>
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="tasks" className="mt-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Beheer Taken & Vragen</CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    Maak nieuwe taken en vragen voor je studenten
+                  <CardTitle className={isRTL ? 'arabic-text' : ''}>
+                    {isRTL ? 'إدارة المهام والأسئلة' : 'Beheer Taken & Vragen'}
+                  </CardTitle>
+                  <p className={`text-sm text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
+                    {isRTL ? 'أنشئ مهام وأسئلة جديدة لطلابك' : 'Maak nieuwe taken en vragen voor je studenten'}
                   </p>
                 </CardHeader>
                 <CardContent>
@@ -240,9 +268,11 @@ const TeacherDashboard = () => {
             <TabsContent value="grading" className="mt-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Beoordeling & Feedback</CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    Bekijk en beoordeel inzendingen van je studenten
+                  <CardTitle className={isRTL ? 'arabic-text' : ''}>
+                    {isRTL ? 'التقييم والملاحظات' : 'Beoordeling & Feedback'}
+                  </CardTitle>
+                  <p className={`text-sm text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
+                    {isRTL ? 'اعرض وقيّم تقديمات طلابك' : 'Bekijk en beoordeel inzendingen van je studenten'}
                   </p>
                 </CardHeader>
                 <CardContent>
@@ -254,16 +284,20 @@ const TeacherDashboard = () => {
             <TabsContent value="teaching" className="mt-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Lesgeven</CardTitle>
+                  <CardTitle className={isRTL ? 'arabic-text' : ''}>
+                    {isRTL ? 'التدريس' : 'Lesgeven'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Button
                     variant="outline"
-                    className="mb-4 flex items-center gap-2"
+                    className={`mb-4 flex items-center gap-2 ${getFlexDirection()}`}
                     onClick={() => setTeachingOpen(true)}
                   >
                     <Plus className="h-4 w-4" />
-                    Nieuwe les
+                    <span className={isRTL ? 'arabic-text' : ''}>
+                      {isRTL ? 'درس جديد' : 'Nieuwe les'}
+                    </span>
                   </Button>
                   <TeachingModal 
                     open={teachingOpen} 
@@ -278,7 +312,9 @@ const TeacherDashboard = () => {
             <TabsContent value="attendance" className="mt-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Aanwezigheid</CardTitle>
+                  <CardTitle className={isRTL ? 'arabic-text' : ''}>
+                    {isRTL ? 'الحضور' : 'Aanwezigheid'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Button
@@ -286,7 +322,9 @@ const TeacherDashboard = () => {
                     className="mb-4"
                     onClick={() => setAttendanceOpen(true)}
                   >
-                    Aanwezigheid registreren
+                    <span className={isRTL ? 'arabic-text' : ''}>
+                      {isRTL ? 'تسجيل الحضور' : 'Aanwezigheid registreren'}
+                    </span>
                   </Button>
                   <AttendanceModal 
                     open={attendanceOpen} 
@@ -301,7 +339,9 @@ const TeacherDashboard = () => {
             <TabsContent value="performance" className="mt-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Prestaties</CardTitle>
+                  <CardTitle className={isRTL ? 'arabic-text' : ''}>
+                    {isRTL ? 'الأداء' : 'Prestaties'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Button
@@ -309,7 +349,9 @@ const TeacherDashboard = () => {
                     className="mb-4"
                     onClick={() => setPerformanceOpen(true)}
                   >
-                    Prestaties bekijken
+                    <span className={isRTL ? 'arabic-text' : ''}>
+                      {isRTL ? 'عرض الأداء' : 'Prestaties bekijken'}
+                    </span>
                   </Button>
                   <PerformanceModal 
                     open={performanceOpen} 

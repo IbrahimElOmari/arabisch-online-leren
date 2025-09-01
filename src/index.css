@@ -137,9 +137,10 @@ All colors MUST be HSL.
     font-family: 'Amiri', 'Times New Roman', serif;
     line-height: 1.8;
     text-align: right;
+    font-size: 1.1em;
   }
 
-  /* RTL-specific utility classes */
+  /* RTL-specific utility classes */    
   .rtl .text-right {
     text-align: right;
   }
@@ -185,6 +186,72 @@ All colors MUST be HSL.
 
   .rtl .space-x-2 > :not([hidden]) ~ :not([hidden]) {
     --tw-space-x-reverse: 1;
+  }
+
+  /* Enhanced RTL Support for Components */
+  .rtl .justify-start {
+    justify-content: flex-end;
+  }
+
+  .rtl .justify-end {
+    justify-content: flex-start;
+  }
+
+  .rtl .items-start {
+    align-items: flex-end;
+  }
+
+  .rtl .items-end {
+    align-items: flex-start;
+  }
+
+  /* Tab RTL Support */
+  .rtl [role="tablist"] {
+    direction: rtl;
+  }
+
+  .rtl [role="tab"] {
+    text-align: right;
+  }
+
+  /* Button and Card RTL improvements */
+  .rtl .card {
+    text-align: right;
+  }
+
+  .rtl .button {
+    text-align: center;
+  }
+
+  /* Grid RTL support */
+  .rtl .grid {
+    direction: rtl;
+  }
+
+  /* Icon transformations for RTL */
+  .rtl .rtl-flip {
+    transform: scaleX(-1);
+  }
+
+  /* Enhanced Arabic typography */
+  .arabic-text h1,
+  .arabic-text h2,
+  .arabic-text h3,
+  .arabic-text h4,
+  .arabic-text h5,
+  .arabic-text h6 {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .arabic-text p {
+    line-height: 2;
+    word-spacing: 0.1em;
+  }
+
+  /* Smooth transitions for RTL switching */
+  * {
+    transition: text-align 0.2s ease, direction 0.2s ease;
   }
 }
 
