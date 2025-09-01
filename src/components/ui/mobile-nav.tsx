@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -5,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, X, Home, Calendar, Eye, MessageSquare, BookOpen, User, Shield } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from '@/components/auth/AuthProviderQuery'
+import { RTLToggle } from '@/components/ui/RTLToggle'
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false)
@@ -31,9 +33,12 @@ export function MobileNav() {
               <BookOpen className="h-6 w-6 text-primary" />
               <span className="font-bold text-lg">Leer Arabisch</span>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
-              <X className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <RTLToggle />
+              <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
 
           <div className="flex-1 py-4">

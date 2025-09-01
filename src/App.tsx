@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
+import { RTLProvider } from '@/contexts/RTLContext';
 import { AuthProviderQuery } from '@/components/auth/AuthProviderQuery';
 import { AppGate } from '@/components/auth/AppGate';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -40,39 +41,41 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <AuthProviderQuery>
-          <Router>
-            <div className="min-h-screen bg-background">
-              <Routes>
-                {/* Routes without layout (auth pages, etc.) */}
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/terms" element={<TermsOfService />} />
-                
-                {/* Routes with layout (main app) */}
-                <Route path="/" element={<AppLayout />}>
-                  <Route index element={<Index />} />
-                  <Route path="dashboard" element={<AppGate><Dashboard /></AppGate>} />
-                  <Route path="admin" element={<AppGate><Admin /></AppGate>} />
-                  <Route path="forum" element={<AppGate><Forum /></AppGate>} />
-                  <Route path="forum/:classId" element={<AppGate><Forum /></AppGate>} />
-                  <Route path="forum-moderation" element={<AppGate><ForumModeration /></AppGate>} />
-                  <Route path="taken" element={<AppGate><Taken /></AppGate>} />
-                  <Route path="analytics" element={<AppGate><Analytics /></AppGate>} />
-                  <Route path="security" element={<AppGate><Security /></AppGate>} />
-                  <Route path="leerstof" element={<AppGate><Leerstof /></AppGate>} />
-                  <Route path="visie" element={<Visie />} />
-                  <Route path="calendar" element={<AppGate><Calendar /></AppGate>} />
-                  <Route path="courses/:id" element={<AppGate><CourseDetail /></AppGate>} />
-                  <Route path="enroll/:classId" element={<AppGate><EnrollConfirm /></AppGate>} />
-                  <Route path="*" element={<NotFound />} />
-                </Route>
-              </Routes>
-            </div>
-            <Toaster />
-          </Router>
-        </AuthProviderQuery>
+        <RTLProvider>
+          <AuthProviderQuery>
+            <Router>
+              <div className="min-h-screen bg-background">
+                <Routes>
+                  {/* Routes without layout (auth pages, etc.) */}
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
+                  
+                  {/* Routes with layout (main app) */}
+                  <Route path="/" element={<AppLayout />}>
+                    <Route index element={<Index />} />
+                    <Route path="dashboard" element={<AppGate><Dashboard /></AppGate>} />
+                    <Route path="admin" element={<AppGate><Admin /></AppGate>} />
+                    <Route path="forum" element={<AppGate><Forum /></AppGate>} />
+                    <Route path="forum/:classId" element={<AppGate><Forum /></AppGate>} />
+                    <Route path="forum-moderation" element={<AppGate><ForumModeration /></AppGate>} />
+                    <Route path="taken" element={<AppGate><Taken /></AppGate>} />
+                    <Route path="analytics" element={<AppGate><Analytics /></AppGate>} />
+                    <Route path="security" element={<AppGate><Security /></AppGate>} />
+                    <Route path="leerstof" element={<AppGate><Leerstof /></AppGate>} />
+                    <Route path="visie" element={<Visie />} />
+                    <Route path="calendar" element={<AppGate><Calendar /></AppGate>} />
+                    <Route path="courses/:id" element={<AppGate><CourseDetail /></AppGate>} />
+                    <Route path="enroll/:classId" element={<AppGate><EnrollConfirm /></AppGate>} />
+                    <Route path="*" element={<NotFound />} />
+                  </Route>
+                </Routes>
+              </div>
+              <Toaster />
+            </Router>
+          </AuthProviderQuery>
+        </RTLProvider>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

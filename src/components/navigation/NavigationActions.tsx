@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { NotificationBell } from '@/components/ui/NotificationBell';
 import { SearchCommand } from '@/components/ui/search-command';
 import { UserDropdown } from '@/components/ui/UserDropdown';
+import { RTLToggle } from '@/components/ui/RTLToggle';
 import { LogIn } from 'lucide-react';
 
 interface NavigationActionsProps {
@@ -17,6 +18,7 @@ export const NavigationActions = React.memo(({ user }: NavigationActionsProps) =
   return (
     <div className="flex items-center space-x-4">
       <SearchCommand />
+      <RTLToggle />
       
       {user ? (
         <>
