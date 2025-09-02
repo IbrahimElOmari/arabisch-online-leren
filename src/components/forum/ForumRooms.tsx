@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Hash, Users } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { MessageCircle } from 'lucide-react';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 
 interface ForumRoom {
   id: string;
@@ -20,6 +21,7 @@ interface ForumRoomsProps {
 }
 
 const ForumRooms: React.FC<ForumRoomsProps> = ({ rooms, onRoomSelect }) => {
+  const { getFlexDirection, getTextAlign } = useRTLLayout();
   if (rooms.length === 0) {
     return (
       <EmptyState
@@ -39,14 +41,14 @@ const ForumRooms: React.FC<ForumRoomsProps> = ({ rooms, onRoomSelect }) => {
           onClick={() => onRoomSelect(room.id)}
         >
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className={`flex items-center gap-2 text-lg ${getFlexDirection()}`}>
               <Hash className="h-5 w-5" />
               {room.name}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className={`flex items-center gap-2 text-sm text-muted-foreground ${getFlexDirection()}`}>
                 <Users className="h-4 w-4" />
                 {room.class_name}
               </div>

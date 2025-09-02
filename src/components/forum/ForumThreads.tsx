@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { MessageCircle } from 'lucide-react';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 
 interface ForumThread {
   id: string;
@@ -25,6 +26,7 @@ interface ForumThreadsProps {
 }
 
 const ForumThreads: React.FC<ForumThreadsProps> = ({ threads, onThreadSelect }) => {
+  const { getFlexDirection, getTextAlign } = useRTLLayout();
   if (threads.length === 0) {
     return (
       <EmptyState
@@ -44,9 +46,9 @@ const ForumThreads: React.FC<ForumThreadsProps> = ({ threads, onThreadSelect }) 
           onClick={() => onThreadSelect(thread.id)}
         >
           <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
+            <div className={`flex items-start justify-between ${getFlexDirection()}`}>
               <div className="space-y-1">
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className={`text-lg flex items-center gap-2 ${getFlexDirection()}`}>
                   {thread.is_pinned && (
                     <Badge variant="secondary" className="text-xs">
                       Vastgepind
@@ -54,7 +56,7 @@ const ForumThreads: React.FC<ForumThreadsProps> = ({ threads, onThreadSelect }) 
                   )}
                   {thread.title}
                 </CardTitle>
-                <div className="text-sm text-muted-foreground">
+                <div className={`text-sm text-muted-foreground ${getTextAlign()}`}>
                   Door {thread.profiles?.full_name || 'Onbekende gebruiker'} • {new Date(thread.created_at).toLocaleDateString('nl-NL')}
                 </div>
               </div>

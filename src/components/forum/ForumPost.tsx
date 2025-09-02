@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { 
   ThumbsUp, 
   ThumbsDown, 
@@ -67,6 +68,7 @@ export function ForumPost({
 }: ForumPostProps) {
   const { user, profile } = useAuth();
   const { toast } = useToast();
+  const { getFlexDirection, getTextAlign, getMarginStart, getMarginEnd } = useRTLLayout();
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -339,16 +341,16 @@ export function ForumPost({
     <div style={{ marginLeft }}>
       <Card className={maxNestingLevel > 0 ? 'border-l-4 border-l-primary/20' : ''}>
         <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
+          <div className={`flex items-start justify-between ${getFlexDirection()}`}>
+            <div className={`flex items-center gap-3 ${getFlexDirection()}`}>
               <Avatar className="h-8 w-8">
                 <AvatarFallback>
                   {authorName.charAt(0) || 'U'}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <div className="flex items-center gap-2">
-                  <h4 className="font-medium text-sm">
+                <div className={`flex items-center gap-2 ${getFlexDirection()}`}>
+                  <h4 className={`font-medium text-sm ${getTextAlign()}`}>
                     {authorName}
                   </h4>
                   <Badge variant="outline" className="text-xs">
@@ -370,7 +372,7 @@ export function ForumPost({
               </div>
             </div>
             
-            <div className="flex items-center gap-1">
+            <div className={`flex items-center gap-1 ${getFlexDirection()}`}>
               {canModerate && (
                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                   <Pin className="h-4 w-4" />
@@ -409,8 +411,8 @@ export function ForumPost({
             <p className="whitespace-pre-wrap">{displayContent}</p>
           </div>
           
-          <div className="flex items-center justify-between pt-2 border-t">
-            <div className="flex items-center gap-4">
+          <div className={`flex items-center justify-between pt-2 border-t ${getFlexDirection()}`}>
+            <div className={`flex items-center gap-4 ${getFlexDirection()}`}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -460,7 +462,7 @@ export function ForumPost({
                 onChange={(e) => setReplyContent(e.target.value)}
                 className="min-h-[80px]"
               />
-              <div className="flex justify-end gap-2">
+              <div className={`flex justify-end gap-2 ${getFlexDirection()}`}>
                 <Button
                   variant="outline"
                   size="sm"

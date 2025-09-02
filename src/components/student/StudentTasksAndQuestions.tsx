@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -73,6 +74,7 @@ interface StudentTasksAndQuestionsProps {
 
 export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAndQuestionsProps) => {
   const { profile } = useAuth();
+  const { getFlexDirection, getTextAlign, getMarginStart, getMarginEnd } = useRTLLayout();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [taskSubmissions, setTaskSubmissions] = useState<TaskSubmission[]>([]);
@@ -296,7 +298,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className={`flex items-center gap-2 ${getFlexDirection()}`}>
             <FileText className="h-5 w-5" />
             Taken voor {levelName}
           </CardTitle>
@@ -328,7 +330,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
 
                 {task.required_submission_type === 'file' && (
                   <>
-                    <div className="flex items-center space-x-4">
+                    <div className={`flex items-center space-x-4 ${getFlexDirection()}`}>
                       <Input type="file" id="file" onChange={handleFileChange} />
                       {selectedFile && (
                         <Label htmlFor="file">{selectedFile.name}</Label>
@@ -348,7 +350,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className={`flex items-center gap-2 ${getFlexDirection()}`}>
             <Radio className="h-5 w-5" />
             Vragen voor {levelName}
           </CardTitle>

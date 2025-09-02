@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useTaskStore } from '@/hooks/useTaskStore';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { Upload, FileText, Star, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface TaskSystemProps {
@@ -32,6 +33,7 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
   } = useTaskStore();
   
   const { toast } = useToast();
+  const { getFlexDirection, getTextAlign, getMarginStart, getMarginEnd } = useRTLLayout();
   
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
@@ -205,8 +207,8 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Taken - {levelName}</h2>
+      <div className={`flex justify-between items-center ${getFlexDirection()}`}>
+        <h2 className={`text-2xl font-bold ${getTextAlign()}`}>Taken - {levelName}</h2>
         {isTeacherOrAdmin && (
           <Button 
             onClick={() => setShowCreateForm(!showCreateForm)}
@@ -248,7 +250,7 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className={`grid grid-cols-2 gap-4 ${getFlexDirection()}`}>
                 <div>
                   <Label>Inlevertype</Label>
                   <Select 
@@ -283,7 +285,7 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className={`flex gap-2 ${getFlexDirection()}`}>
                 <Button type="submit" disabled={loading}>
                   Taak Aanmaken
                 </Button>
@@ -316,9 +318,9 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
             return (
               <Card key={task.id} className="animate-fade-in">
                 <CardHeader>
-                  <div className="flex justify-between items-start">
+                  <div className={`flex justify-between items-start ${getFlexDirection()}`}>
                     <div>
-                      <CardTitle className="flex items-center gap-2">
+                      <CardTitle className={`flex items-center gap-2 ${getFlexDirection()}`}>
                         {task.required_submission_type === 'file' ? (
                           <Upload className="h-5 w-5" />
                         ) : (
@@ -326,11 +328,11 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
                         )}
                         {task.title}
                       </CardTitle>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className={`text-sm text-muted-foreground mt-1 ${getTextAlign()}`}>
                         Door {task.author?.full_name} • {new Date(task.created_at).toLocaleDateString('nl-NL')}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className={`flex items-center gap-2 ${getFlexDirection()}`}>
                       <Badge variant="outline">
                         {task.required_submission_type === 'file' ? 'Bestand' : 'Tekst'}
                       </Badge>

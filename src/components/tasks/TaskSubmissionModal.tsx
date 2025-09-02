@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useTaskStore } from '@/hooks/useTaskStore';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { 
   Upload, 
   FileText, 
@@ -55,6 +56,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const { submitTask, getSignedUploadUrl } = useTaskStore();
+  const { getFlexDirection, getTextAlign, getMarginStart, getMarginEnd } = useRTLLayout();
 
   useEffect(() => {
     if (open) {
@@ -295,7 +297,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className={`flex items-center gap-2 ${getFlexDirection()}`}>
             {getSubmissionIcon()}
             {task.title}
           </DialogTitle>
@@ -306,8 +308,8 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
           <Card>
             <CardContent className="pt-6">
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Status:</span>
+                <div className={`flex items-center justify-between ${getFlexDirection()}`}>
+                  <span className={`text-sm font-medium ${getTextAlign()}`}>Status:</span>
                   {getSubmissionStatus()}
                 </div>
                 
@@ -316,7 +318,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
                   <p className="text-sm text-muted-foreground mt-1">{task.description}</p>
                 </div>
                 
-                <div className="flex items-center gap-4 text-sm">
+                <div className={`flex items-center gap-4 text-sm ${getFlexDirection()}`}>
                   <span><strong>Type:</strong> {task.required_submission_type}</span>
                   <span><strong>Punten:</strong> {task.grading_scale}</span>
                 </div>
@@ -403,7 +405,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
             <form onSubmit={handleSubmit} className="space-y-4">
               {renderSubmissionType()}
               
-              <div className="flex gap-2">
+              <div className={`flex gap-2 ${getFlexDirection()}`}>
                 <Button type="submit" disabled={loading}>
                   {loading ? 'Verzenden...' : (submission ? 'Bijwerken' : 'Inleveren')}
                 </Button>

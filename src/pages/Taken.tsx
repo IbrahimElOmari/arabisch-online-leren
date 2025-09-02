@@ -2,9 +2,11 @@
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Navigate } from 'react-router-dom';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 
 const Taken = () => {
   const { user, authReady, loading: authLoading } = useAuth();
+  const { getTextAlign } = useRTLLayout();
 
   // Auth loading gate
   if (authLoading && !authReady) {
@@ -19,9 +21,9 @@ const Taken = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-6">Taken</h1>
+        <h1 className={`text-2xl font-bold mb-6 ${getTextAlign()}`}>Taken</h1>
         <div className="main-content-card">
-          <p className="text-muted-foreground">
+          <p className={`text-muted-foreground ${getTextAlign()}`}>
             De taken pagina wordt binnenkort beschikbaar gesteld.
           </p>
         </div>
