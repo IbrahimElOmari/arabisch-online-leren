@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { RTLProvider } from '@/contexts/RTLContext';
+import { TranslationProvider } from '@/contexts/TranslationContext';
 import { AuthProviderQuery } from '@/components/auth/AuthProviderQuery';
 import { AppGate } from '@/components/auth/AppGate';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -42,7 +43,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <RTLProvider>
-          <AuthProviderQuery>
+          <TranslationProvider>
+            <AuthProviderQuery>
             <Router>
               <div className="min-h-screen bg-background">
                 <Routes>
@@ -74,7 +76,8 @@ function App() {
               </div>
               <Toaster />
             </Router>
-          </AuthProviderQuery>
+            </AuthProviderQuery>
+          </TranslationProvider>
         </RTLProvider>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />

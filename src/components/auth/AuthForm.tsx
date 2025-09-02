@@ -8,6 +8,7 @@ import { sanitizeInput, validatePassword, validateEmail } from '@/utils/validati
 import { useRateLimit } from '@/hooks/useRateLimit';
 import { useState } from 'react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 export interface AuthFormData {
   emailOrName: string;
@@ -47,7 +48,8 @@ export const AuthForm = ({
   
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [emailError, setEmailError] = useState<string>('');
-  const { getFlexDirection, getTextAlign, getMarginEnd, getPaddingEnd } = useRTLLayout();
+  const { getFlexDirection, getTextAlign, getMarginEnd, getPaddingEnd, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
 
   const handlePasswordChange = (password: string) => {
     setFormData({ ...formData, password });
@@ -100,8 +102,11 @@ export const AuthForm = ({
       {isBlocked && retryAfter && (
         <div className={`${getFlexDirection()} items-center gap-2 p-3 text-destructive bg-destructive/10 border border-destructive/20 rounded-md`}>
           <AlertTriangle className="h-4 w-4" />
-          <span className={`text-sm ${getTextAlign('left')}`}>
-            Te veel pogingen. Probeer over {Math.ceil((retryAfter - Date.now()) / 60000)} minuten opnieuw.
+          <span className={`text-sm ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>
+            {isRTL 
+              ? `محاولات كثيرة جداً. جرب بعد ${Math.ceil((retryAfter - Date.now()) / 60000)} دقائق.`
+              : `Te veel pogingen. Probeer over ${Math.ceil((retryAfter - Date.now()) / 60000)} minuten opnieuw.`
+            }
           </span>
         </div>
       )}
@@ -110,7 +115,9 @@ export const AuthForm = ({
         {isSignUp && (
           <>
             <div className="space-y-2">
-              <Label htmlFor="fullName">Volledige naam</Label>
+              <Label htmlFor="fullName" className={isRTL ? 'arabic-text' : ''}>
+                {isRTL ? 'الاسم الكامل' : 'Volledige naam'}
+              </Label>
               <Input
                 id="fullName"
                 type="text"
@@ -123,20 +130,28 @@ export const AuthForm = ({
                   const sanitized = e.target.value.replace(/[<>\"'&]/g, '');
                   setFormData({...formData, fullName: sanitized});
                 }}
-                placeholder="Voer je volledige naam in"
+                placeholder={isRTL ? 'أدخل اسمك الكامل' : 'Voer je volledige naam in'}
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="role">Rol</Label>
+              <Label htmlFor="role" className={isRTL ? 'arabic-text' : ''}>
+                {isRTL ? 'الدور' : 'Rol'}
+              </Label>
               <Select value={formData.role} onValueChange={(value: any) => setFormData({...formData, role: value})}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="leerling">Leerling</SelectItem>
-                  <SelectItem value="leerkracht">Leerkracht</SelectItem>
-                  <SelectItem value="admin">Administrator</SelectItem>
+                  <SelectItem value="leerling" className={isRTL ? 'arabic-text' : ''}>
+                    {isRTL ? 'طالب' : 'Leerling'}
+                  </SelectItem>
+                  <SelectItem value="leerkracht" className={isRTL ? 'arabic-text' : ''}>
+                    {isRTL ? 'معلم' : 'Leerkracht'}
+                  </SelectItem>
+                  <SelectItem value="admin" className={isRTL ? 'arabic-text' : ''}>
+                    {isRTL ? 'مدير' : 'Administrator'}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -147,14 +162,16 @@ export const AuthForm = ({
                 checked={formData.isUnder16}
                 onCheckedChange={(checked) => setFormData({...formData, isUnder16: checked as boolean})}
               />
-              <Label htmlFor="under16" className={`text-sm ${getTextAlign('left')}`}>
-                Ik ben jonger dan 16 jaar
+              <Label htmlFor="under16" className={`text-sm ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>
+                {isRTL ? 'أنا أصغر من 16 سنة' : 'Ik ben jonger dan 16 jaar'}
               </Label>
             </div>
 
             {formData.isUnder16 && (
               <div className="space-y-2">
-                <Label htmlFor="parentEmail">E-mail ouder/verzorger</Label>
+                <Label htmlFor="parentEmail" className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'بريد إلكتروني للوالد/الوصي' : 'E-mail ouder/verzorger'}
+                </Label>
                 <Input
                   id="parentEmail"
                   type="email"
@@ -170,8 +187,11 @@ export const AuthForm = ({
         )}
         
         <div className="space-y-2">
-          <Label htmlFor="emailOrName">
-            {isSignUp ? 'E-mail' : 'E-mail of naam'}
+          <Label htmlFor="emailOrName" className={isRTL ? 'arabic-text' : ''}>
+            {isSignUp 
+              ? (isRTL ? 'البريد الإلكتروني' : 'E-mail')
+              : (isRTL ? 'البريد الإلكتروني أو الاسم' : 'E-mail of naam')
+            }
           </Label>
           <Input
             id="emailOrName"
@@ -196,7 +216,9 @@ export const AuthForm = ({
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="password">Wachtwoord</Label>
+          <Label htmlFor="password" className={isRTL ? 'arabic-text' : ''}>
+            {isRTL ? 'كلمة المرور' : 'Wachtwoord'}
+          </Label>
           <div className="relative">
               <Input
                 id="password"
@@ -206,7 +228,10 @@ export const AuthForm = ({
                 value={formData.password}
                 onChange={(e) => handlePasswordChange(e.target.value)}
                 className={`pr-10 ${passwordErrors.length > 0 ? "border-destructive" : ""}`}
-                placeholder={isSignUp ? "Minimaal 12 karakters" : "Minimaal 8 karakters"}
+                placeholder={isSignUp 
+                  ? (isRTL ? 'حد أدنى 12 حرفاً' : 'Minimaal 12 karakters')
+                  : (isRTL ? 'حد أدنى 8 أحرف' : 'Minimaal 8 karakters')
+                }
               />
             <Button
               type="button"
@@ -236,7 +261,14 @@ export const AuthForm = ({
           className="w-full" 
           disabled={isLoading || isBlocked || (isSignUp && (passwordErrors.length > 0 || !!emailError))}
         >
-          {isLoading ? 'Bezig...' : (isSignUp ? 'Registreren' : 'Inloggen')}
+          <span className={isRTL ? 'arabic-text' : ''}>
+            {isLoading 
+              ? (isRTL ? 'جاري التحميل...' : 'Bezig...')
+              : isSignUp 
+                ? (isRTL ? 'التسجيل' : 'Registreren')
+                : (isRTL ? 'تسجيل الدخول' : 'Inloggen')
+            }
+          </span>
         </Button>
       </form>
       
@@ -245,20 +277,20 @@ export const AuthForm = ({
           <Button
             variant="link"
             onClick={onForgotPassword}
-            className={`text-sm text-muted-foreground ${getTextAlign('center')}`}
+            className={`text-sm text-muted-foreground ${getTextAlign('center')} ${isRTL ? 'arabic-text' : ''}`}
           >
-            Wachtwoord vergeten?
+            {isRTL ? 'نسيت كلمة المرور؟' : 'Wachtwoord vergeten?'}
           </Button>
         )}
         
         <Button
           variant="link"
           onClick={onToggleMode}
-          className={`text-sm ${getTextAlign('center')}`}
+          className={`text-sm ${getTextAlign('center')} ${isRTL ? 'arabic-text' : ''}`}
         >
           {isSignUp 
-            ? 'Heb je al een account? Log in'
-            : 'Nog geen account? Registreer nu'
+            ? (isRTL ? 'هل لديك حساب بالفعل؟ سجل الدخول' : 'Heb je al een account? Log in')
+            : (isRTL ? 'لا يوجد حساب؟ سجل الآن' : 'Nog geen account? Registreer nu')
           }
         </Button>
       </div>

@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 export interface RoleOption {
   role: string;
@@ -22,16 +24,21 @@ export const RoleSelection = ({
   onContinue, 
   onBack 
 }: RoleSelectionProps) => {
+  const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label>Beschikbare rollen</Label>
+        <Label className={isRTL ? 'arabic-text' : ''}>
+          {isRTL ? 'الأدوار المتاحة' : 'Beschikbare rollen'}
+        </Label>
         <Select onValueChange={(value) => {
           const role = availableRoles.find(r => `${r.role}-${r.fullName}` === value);
           onRoleChange(role || null);
         }}>
           <SelectTrigger>
-            <SelectValue placeholder="Selecteer een rol" />
+            <SelectValue placeholder={isRTL ? 'اختر دوراً' : 'Selecteer een rol'} />
           </SelectTrigger>
           <SelectContent>
             {availableRoles.map((roleItem, index) => (
@@ -48,7 +55,9 @@ export const RoleSelection = ({
         className="w-full" 
         disabled={!selectedRole}
       >
-        Doorgaan
+        <span className={isRTL ? 'arabic-text' : ''}>
+          {isRTL ? 'متابعة' : 'Doorgaan'}
+        </span>
       </Button>
       
       <Button 
@@ -56,7 +65,9 @@ export const RoleSelection = ({
         onClick={onBack} 
         className="w-full"
       >
-        Terug
+        <span className={isRTL ? 'arabic-text' : ''}>
+          {isRTL ? 'رجوع' : 'Terug'}
+        </span>
       </Button>
     </div>
   );

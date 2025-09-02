@@ -23,13 +23,15 @@ import {
 import { ProfileModal } from './ProfileModal';
 import { ForgotPasswordModal } from '@/components/auth/ForgotPasswordModal';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 export const UserDropdown = () => {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const { getFlexDirection, getTextAlign } = useRTLLayout();
+  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
 
   if (!user || !profile) return null;
 
@@ -82,7 +84,9 @@ export const UserDropdown = () => {
             className={`${getFlexDirection()} items-center gap-2 cursor-pointer`}
           >
             <User className="h-4 w-4" />
-            Profiel bekijken
+            <span className={isRTL ? 'arabic-text' : ''}>
+              {isRTL ? 'عرض الملف الشخصي' : 'Profiel bekijken'}
+            </span>
           </DropdownMenuItem>
           
           <DropdownMenuItem 
@@ -90,7 +94,9 @@ export const UserDropdown = () => {
             className={`${getFlexDirection()} items-center gap-2 cursor-pointer`}
           >
             <KeyRound className="h-4 w-4" />
-            Wachtwoord wijzigen
+            <span className={isRTL ? 'arabic-text' : ''}>
+              {isRTL ? 'تغيير كلمة المرور' : 'Wachtwoord wijzigen'}
+            </span>
           </DropdownMenuItem>
           
           <DropdownMenuItem 
@@ -98,7 +104,7 @@ export const UserDropdown = () => {
             className={`${getFlexDirection()} items-center gap-2 cursor-pointer`}
           >
             <UserCog className="h-4 w-4" />
-            Dashboard
+            <span className={isRTL ? 'arabic-text' : ''}>{t('nav.dashboard')}</span>
           </DropdownMenuItem>
           
           <DropdownMenuSeparator />
@@ -108,7 +114,9 @@ export const UserDropdown = () => {
             className={`${getFlexDirection()} items-center gap-2 cursor-pointer text-destructive hover:text-destructive`}
           >
             <LogOut className="h-4 w-4" />
-            Afmelden
+            <span className={isRTL ? 'arabic-text' : ''}>
+              {isRTL ? 'تسجيل الخروج' : 'Afmelden'}
+            </span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

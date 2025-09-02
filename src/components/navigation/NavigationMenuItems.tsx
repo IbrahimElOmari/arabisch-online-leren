@@ -2,6 +2,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, BookOpen, Calendar, MessageSquare, Shield } from 'lucide-react';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -20,6 +22,8 @@ interface NavigationMenuItemsProps {
 
 export const NavigationMenuItems = React.memo(({ user, profile }: NavigationMenuItemsProps) => {
   const navigate = useNavigate();
+  const { getFlexDirection, getIconSpacing, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -36,16 +40,16 @@ export const NavigationMenuItems = React.memo(({ user, profile }: NavigationMenu
               )}
               onClick={() => handleNavigation('/')}
             >
-              <Home className="mr-2 h-4 w-4" />
-              Home
+              <Home className={`h-4 w-4 ${getIconSpacing()}`} />
+              <span className={isRTL ? 'arabic-text' : ''}>{t('nav.home')}</span>
             </NavigationMenuLink>
           </NavigationMenuItem>
 
           {user && (
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="flex items-center gap-2">
+              <NavigationMenuTrigger className={`${getFlexDirection()} items-center gap-2`}>
                 <BookOpen className="h-4 w-4" />
-                Leerplatform
+                <span className={isRTL ? 'arabic-text' : ''}>{t('nav.platform')}</span>
               </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="grid gap-3 p-6 w-[400px] bg-popover">
@@ -55,11 +59,11 @@ export const NavigationMenuItems = React.memo(({ user, profile }: NavigationMenu
                         className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md hover:bg-accent transition-colors text-left"
                         onClick={() => handleNavigation('/dashboard')}
                       >
-                        <div className="mb-2 mt-4 text-lg font-medium">
-                          Dashboard
+                        <div className={`mb-2 mt-4 text-lg font-medium ${isRTL ? 'arabic-text' : ''}`}>
+                          {t('nav.dashboard')}
                         </div>
-                        <p className="text-sm leading-tight text-muted-foreground">
-                          Toegang tot je persoonlijke leeromgeving en voortgang.
+                        <p className={`text-sm leading-tight text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
+                          {isRTL ? 'الوصول إلى بيئة التعلم الشخصية والتقدم.' : 'Toegang tot je persoonlijke leeromgeving en voortgang.'}
                         </p>
                       </button>
                     </NavigationMenuLink>
@@ -71,9 +75,9 @@ export const NavigationMenuItems = React.memo(({ user, profile }: NavigationMenu
                         onClick={() => handleNavigation('/calendar')}
                       >
                         <Calendar className="h-4 w-4 mb-1" />
-                        <div className="text-sm font-medium leading-none">Kalender</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Bekijk geplande lessen en activiteiten.
+                        <div className={`text-sm font-medium leading-none ${isRTL ? 'arabic-text' : ''}`}>{t('nav.calendar')}</div>
+                        <p className={`line-clamp-2 text-sm leading-snug text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
+                          {isRTL ? 'اعرض الدروس والأنشطة المجدولة.' : 'Bekijk geplande lessen en activiteiten.'}
                         </p>
                       </button>
                     </NavigationMenuLink>
@@ -83,9 +87,9 @@ export const NavigationMenuItems = React.memo(({ user, profile }: NavigationMenu
                         onClick={() => handleNavigation('/forum')}
                       >
                         <MessageSquare className="h-4 w-4 mb-1" />
-                        <div className="text-sm font-medium leading-none">Forum</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Deel ervaringen met andere leerlingen.
+                        <div className={`text-sm font-medium leading-none ${isRTL ? 'arabic-text' : ''}`}>{t('nav.forum')}</div>
+                        <p className={`line-clamp-2 text-sm leading-snug text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
+                          {isRTL ? 'شارك التجارب مع الطلاب الآخرين.' : 'Deel ervaringen met andere leerlingen.'}
                         </p>
                       </button>
                     </NavigationMenuLink>
@@ -97,9 +101,9 @@ export const NavigationMenuItems = React.memo(({ user, profile }: NavigationMenu
 
           {user && profile && ['admin', 'leerkracht'].includes(profile.role) && (
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="flex items-center gap-2">
+              <NavigationMenuTrigger className={`${getFlexDirection()} items-center gap-2`}>
                 <Shield className="h-4 w-4" />
-                Beheer
+                <span className={isRTL ? 'arabic-text' : ''}>{t('nav.management')}</span>
               </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="grid gap-3 p-6 w-[350px] bg-popover">
@@ -109,9 +113,9 @@ export const NavigationMenuItems = React.memo(({ user, profile }: NavigationMenu
                       onClick={() => handleNavigation('/forum-moderation')}
                     >
                       <MessageSquare className="h-4 w-4 mb-1" />
-                      <div className="text-sm font-medium leading-none">Forum Moderatie</div>
-                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                        Beheer forum posts en berichten.
+                      <div className={`text-sm font-medium leading-none ${isRTL ? 'arabic-text' : ''}`}>{t('nav.forum_moderation')}</div>
+                      <p className={`line-clamp-2 text-sm leading-snug text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
+                        {isRTL ? 'إدارة منشورات ورسائل المنتدى.' : 'Beheer forum posts en berichten.'}
                       </p>
                     </button>
                   </NavigationMenuLink>
@@ -121,9 +125,9 @@ export const NavigationMenuItems = React.memo(({ user, profile }: NavigationMenu
                       onClick={() => handleNavigation('/security')}
                     >
                       <Shield className="h-4 w-4 mb-1" />
-                      <div className="text-sm font-medium leading-none">Beveiliging</div>
-                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                        Beveiligingsinstellingen en monitoring.
+                      <div className={`text-sm font-medium leading-none ${isRTL ? 'arabic-text' : ''}`}>{t('nav.security')}</div>
+                      <p className={`line-clamp-2 text-sm leading-snug text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
+                        {isRTL ? 'إعدادات الأمان والمراقبة.' : 'Beveiligingsinstellingen en monitoring.'}
                       </p>
                     </button>
                   </NavigationMenuLink>
