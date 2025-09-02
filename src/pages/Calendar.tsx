@@ -13,6 +13,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { toast } from '@/hooks/use-toast';
 import { format, parseISO, isWithinInterval } from 'date-fns';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface CalendarEvent {
   id: string;
@@ -43,6 +45,8 @@ const CalendarPage = () => {
     class_id: ''
   });
   const { user } = useAuth();
+  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchEvents();
@@ -182,68 +186,72 @@ const fetchClasses = async () => {
   const canAddEvents = userRole === 'admin' || userRole === 'leerkracht' || userRole === 'teacher';
 
   return (
-    <div className="container mx-auto p-6 bg-background min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Schoolkalender 2024-2025</h1>
+    <div className="container mx-auto p-6 bg-background min-h-screen" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className={`${getFlexDirection()} justify-between items-center mb-6`}>
+        <h1 className={`text-3xl font-bold ${getTextAlign('left')} ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('calendar.title')}</h1>
         {canAddEvents && (
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Evenement toevoegen
+                <Plus className={`w-4 h-4 ${getIconSpacing('2')}`} />
+                <span className={isRTL ? 'arabic-text' : ''}>{t('calendar.addEvent')}</span>
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Nieuw evenement toevoegen</DialogTitle>
+                <DialogTitle className={isRTL ? 'arabic-text' : ''}>{t('calendar.addNewEvent')}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="title">Titel *</Label>
+                  <Label htmlFor="title" className={isRTL ? 'arabic-text' : ''}>{t('calendar.title')} *</Label>
                   <Input
                     id="title"
                     value={newEvent.title}
                     onChange={(e) => setNewEvent({...newEvent, title: e.target.value})}
+                    dir={isRTL ? 'rtl' : 'ltr'}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="description">Beschrijving</Label>
+                  <Label htmlFor="description" className={isRTL ? 'arabic-text' : ''}>{t('calendar.description')}</Label>
                   <Textarea
                     id="description"
                     value={newEvent.description}
                     onChange={(e) => setNewEvent({...newEvent, description: e.target.value})}
+                    dir={isRTL ? 'rtl' : 'ltr'}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="start_date">Startdatum *</Label>
+                  <Label htmlFor="start_date" className={isRTL ? 'arabic-text' : ''}>{t('calendar.startDate')} *</Label>
                   <Input
                     id="start_date"
                     type="date"
                     value={newEvent.start_date}
                     onChange={(e) => setNewEvent({...newEvent, start_date: e.target.value})}
+                    dir="ltr"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="end_date">Einddatum *</Label>
+                  <Label htmlFor="end_date" className={isRTL ? 'arabic-text' : ''}>{t('calendar.endDate')} *</Label>
                   <Input
                     id="end_date"
                     type="date"
                     value={newEvent.end_date}
                     onChange={(e) => setNewEvent({...newEvent, end_date: e.target.value})}
+                    dir="ltr"
                   />
                 </div>
                 {classes.length > 0 && (
                   <div>
-                    <Label htmlFor="class">Klas (optioneel)</Label>
+                    <Label htmlFor="class" className={isRTL ? 'arabic-text' : ''}>{t('calendar.classOptional')}</Label>
                     <Select 
                       value={newEvent.class_id} 
                       onValueChange={(value) => setNewEvent({...newEvent, class_id: value})}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecteer een klas" />
+                        <SelectValue placeholder={t('calendar.selectClass')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Alle klassen</SelectItem>
+                        <SelectItem value="">{t('calendar.allClasses')}</SelectItem>
                         {classes.map((klas) => (
                           <SelectItem key={klas.id} value={klas.id}>
                             {klas.name}
@@ -254,7 +262,7 @@ const fetchClasses = async () => {
                   </div>
                 )}
                 <Button onClick={handleAddEvent} className="w-full">
-                  Toevoegen
+                  <span className={isRTL ? 'arabic-text' : ''}>{t('calendar.add')}</span>
                 </Button>
               </div>
             </DialogContent>
@@ -265,9 +273,9 @@ const fetchClasses = async () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className={`${getFlexDirection()} items-center gap-2 ${isRTL ? 'arabic-text' : ''}`}>
               <CalendarIcon className="w-5 h-5" />
-              Kalender
+              {t('calendar.calendar')}
             </CardTitle>
           </CardHeader>
           <CardContent>

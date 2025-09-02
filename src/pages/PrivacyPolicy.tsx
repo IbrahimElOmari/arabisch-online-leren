@@ -2,34 +2,37 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const PrivacyPolicy = () => {
   const navigate = useNavigate();
+  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-background p-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <Button
             variant="outline"
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2"
+            className={`${getFlexDirection()} items-center gap-2`}
           >
             <ArrowLeft className="h-4 w-4" />
-            Terug
+            <span className={isRTL ? 'arabic-text' : ''}>{t('navigation.back')}</span>
           </Button>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Privacybeleid</CardTitle>
+            <CardTitle className={`text-2xl ${getTextAlign('left')} ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('privacy.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <section>
-              <h3 className="text-lg font-semibold mb-3">1. Inleiding</h3>
-              <p className="text-sm text-muted-foreground">
-                Welkom bij Arabisch Online. Wij respecteren uw privacy en zijn toegewijd aan het beschermen van uw persoonlijke gegevens. 
-                Dit privacybeleid legt uit hoe wij uw gegevens verzamelen, gebruiken en beschermen.
+              <h3 className={`text-lg font-semibold mb-3 ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>{t('privacy.introduction.title')}</h3>
+              <p className={`text-sm text-muted-foreground ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>
+                {t('privacy.introduction.content')}
               </p>
             </section>
 

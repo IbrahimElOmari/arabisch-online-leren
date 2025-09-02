@@ -7,9 +7,13 @@ import { SecurityDashboard } from '@/components/security/SecurityDashboard';
 import { GDPRCompliance } from '@/components/security/GDPRCompliance';
 import { ContentModerationPanel } from '@/components/security/ContentModerationPanel';
 import { Shield, FileText, MessageSquare, Users } from 'lucide-react';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const Security = () => {
   const { user, profile, loading } = useAuth();
+  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
 
   if (loading) {
     return (
@@ -29,15 +33,15 @@ const Security = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
       <header className="bg-card border-b border-border p-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <h1 className={`text-2xl font-bold text-foreground ${getFlexDirection()} items-center gap-2 ${isRTL ? 'arabic-text font-amiri' : ''}`}>
             <Shield className="h-6 w-6" />
-            Beveiliging & Compliance
+            {t('security.title')}
           </h1>
-          <p className="text-muted-foreground">
-            Beheer beveiliging, privacy en content moderatie
+          <p className={`text-muted-foreground ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>
+            {t('security.description')}
           </p>
         </div>
       </header>
@@ -45,21 +49,21 @@ const Security = () => {
       <main className="max-w-7xl mx-auto p-6">
         <Tabs defaultValue="security" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="security" className="flex items-center gap-2">
+            <TabsTrigger value="security" className={`${getFlexDirection()} items-center gap-2`}>
               <Shield className="h-4 w-4" />
-              Security Dashboard
+              <span className={isRTL ? 'arabic-text' : ''}>{t('security.dashboard')}</span>
             </TabsTrigger>
-            <TabsTrigger value="moderation" className="flex items-center gap-2">
+            <TabsTrigger value="moderation" className={`${getFlexDirection()} items-center gap-2`}>
               <MessageSquare className="h-4 w-4" />
-              Content Moderatie
+              <span className={isRTL ? 'arabic-text' : ''}>{t('security.moderation')}</span>
             </TabsTrigger>
-            <TabsTrigger value="gdpr" className="flex items-center gap-2">
+            <TabsTrigger value="gdpr" className={`${getFlexDirection()} items-center gap-2`}>
               <FileText className="h-4 w-4" />
-              GDPR Compliance
+              <span className={isRTL ? 'arabic-text' : ''}>{t('security.gdpr')}</span>
             </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2">
+            <TabsTrigger value="users" className={`${getFlexDirection()} items-center gap-2`}>
               <Users className="h-4 w-4" />
-              Gebruikersbeheer
+              <span className={isRTL ? 'arabic-text' : ''}>{t('security.userManagement')}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -76,8 +80,8 @@ const Security = () => {
           </TabsContent>
 
           <TabsContent value="users" className="mt-6">
-            <div className="text-center py-8 text-muted-foreground">
-              Gebruikersbeheer functionaliteiten worden binnenkort toegevoegd
+            <div className={`${getTextAlign('center')} py-8 text-muted-foreground`}>
+              <span className={isRTL ? 'arabic-text' : ''}>{t('security.userManagementComingSoon')}</span>
             </div>
           </TabsContent>
         </Tabs>

@@ -14,11 +14,15 @@ import { Navigate } from 'react-router-dom';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BackendStatusBadge } from '@/components/status/BackendStatusBadge';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const Forum = () => {
   const { profile, user, authReady, loading: authLoading, refreshProfile, isRefreshing } = useAuth();
   const { enrolledClasses, isLoading: classesLoading, isError: classesError, refetchClasses, isRefetching } = useClassesQuery(profile, user?.id);
   const [selectedClass, setSelectedClass] = useState<string>('');
+  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
 
   // Set default selected class when classes load
   React.useEffect(() => {
@@ -38,10 +42,10 @@ const Forum = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="container mx-auto p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Forum</h1>
+        <div className={`${getFlexDirection()} items-center justify-between mb-6`}>
+          <h1 className={`text-2xl font-bold ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('forum.title')}</h1>
           <BackendStatusBadge compact />
         </div>
 
@@ -49,17 +53,17 @@ const Forum = () => {
         {!profile && user && (
           <Alert className="mb-4">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Profiel wordt geladen</AlertTitle>
-            <AlertDescription className="flex items-center gap-3">
-              Je profiel informatie wordt nog geladen. Het forum werkt mogelijk met basis functionaliteit.
+            <AlertTitle className={isRTL ? 'arabic-text' : ''}>{t('profile.loading')}</AlertTitle>
+            <AlertDescription className={`${getFlexDirection()} items-center gap-3`}>
+              <span className={isRTL ? 'arabic-text' : ''}>{t('profile.loadingDescription')}</span>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={refreshProfile}
                 disabled={isRefreshing}
               >
-                <RefreshCw className={`h-4 w-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
-                {isRefreshing ? 'Bezig...' : 'Forceer profiel'}
+                <RefreshCw className={`h-4 w-4 ${getIconSpacing('1')} ${isRefreshing ? 'animate-spin' : ''}`} />
+                <span className={isRTL ? 'arabic-text' : ''}>{isRefreshing ? t('common.loading') : t('profile.forceRefresh')}</span>
               </Button>
             </AlertDescription>
           </Alert>
@@ -86,15 +90,17 @@ const Forum = () => {
         )}
 
         <div className="main-content-card mb-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center gap-2">
+          <div className={`${getFlexDirection('col')} md:${getFlexDirection()} md:items-center md:justify-between gap-4`}>
+            <div className={`${getFlexDirection()} items-center gap-2`}>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline">Voorbije lessen</Button>
+                  <Button variant="outline">
+                    <span className={isRTL ? 'arabic-text' : ''}>{t('lessons.pastLessons')}</span>
+                  </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-3xl">
                   <DialogHeader>
-                    <DialogTitle>Voorbije lessen</DialogTitle>
+                    <DialogTitle className={isRTL ? 'arabic-text' : ''}>{t('lessons.pastLessons')}</DialogTitle>
                   </DialogHeader>
                   <div className="max-h-[70vh] overflow-auto">
                     <PastLessonsManager classId={selectedClass} />
@@ -104,11 +110,13 @@ const Forum = () => {
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline">Mijn verbeteringen</Button>
+                  <Button variant="outline">
+                    <span className={isRTL ? 'arabic-text' : ''}>{t('submissions.myImprovements')}</span>
+                  </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
                   <DialogHeader>
-                    <DialogTitle>Verbeterde antwoorden en feedback</DialogTitle>
+                    <DialogTitle className={isRTL ? 'arabic-text' : ''}>{t('submissions.improvedAnswers')}</DialogTitle>
                   </DialogHeader>
                   <div className="max-h-[70vh] overflow-auto">
                     <SolvedSubmissionsList />
@@ -121,10 +129,10 @@ const Forum = () => {
           {/* Class selector */}
           {enrolledClasses.length > 1 && (
             <div className="max-w-xs mt-4">
-              <label className="text-sm font-medium mb-2 block">Selecteer klas:</label>
+              <label className={`text-sm font-medium mb-2 block ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>{t('classes.selectClass')}:</label>
               <Select value={selectedClass} onValueChange={setSelectedClass}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Kies een klas" />
+                  <SelectValue placeholder={t('classes.chooseClass')} />
                 </SelectTrigger>
                 <SelectContent>
                   {enrolledClasses.map((enrollment) => (

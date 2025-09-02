@@ -2,9 +2,13 @@
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Navigate } from 'react-router-dom';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const Leerstof = () => {
   const { user, authReady, loading: authLoading } = useAuth();
+  const { getTextAlign, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
 
   // Auth loading gate
   if (authLoading && !authReady) {
@@ -17,12 +21,12 @@ const Leerstof = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="container mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-6">Leerstof</h1>
+        <h1 className={`text-2xl font-bold mb-6 ${getTextAlign('left')} ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('leerstof.title')}</h1>
         <div className="main-content-card">
-          <p className="text-muted-foreground">
-            De leerstof pagina wordt binnenkort beschikbaar gesteld.
+          <p className={`text-muted-foreground ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>
+            {t('leerstof.comingSoon')}
           </p>
         </div>
       </div>

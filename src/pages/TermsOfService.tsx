@@ -2,27 +2,31 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const TermsOfService = () => {
   const navigate = useNavigate();
+  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-background p-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <Button
             variant="outline"
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2"
+            className={`${getFlexDirection()} items-center gap-2`}
           >
             <ArrowLeft className="h-4 w-4" />
-            Terug
+            <span className={isRTL ? 'arabic-text' : ''}>{t('navigation.back')}</span>
           </Button>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Algemene Voorwaarden</CardTitle>
+            <CardTitle className={`text-2xl ${getTextAlign('left')} ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('terms.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <section>
