@@ -7,11 +7,13 @@ import { Menu, X, Home, Calendar, Eye, MessageSquare, BookOpen, User, Shield } f
 import { useNavigate } from "react-router-dom"
 import { useAuth } from '@/components/auth/AuthProviderQuery'
 import { RTLToggle } from '@/components/ui/RTLToggle'
+import { useRTLLayout } from '@/hooks/useRTLLayout'
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false)
   const navigate = useNavigate()
   const { user, profile } = useAuth()
+  const { getFlexDirection, getTextAlign, getMarginEnd } = useRTLLayout()
 
   const handleNavigation = (path: string) => {
     navigate(path)
@@ -28,12 +30,12 @@ export function MobileNav() {
       </SheetTrigger>
       <SheetContent side="left" className="w-80 p-0">
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-4 border-b">
-            <div className="flex items-center gap-2">
+          <div className={`${getFlexDirection()} items-center justify-between p-4 border-b`}>
+            <div className={`${getFlexDirection()} items-center gap-2`}>
               <BookOpen className="h-6 w-6 text-primary" />
               <span className="font-bold text-lg">Leer Arabisch</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className={`${getFlexDirection()} items-center gap-2`}>
               <RTLToggle />
               <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
                 <X className="h-4 w-4" />
@@ -45,10 +47,10 @@ export function MobileNav() {
             <nav className="space-y-2 px-4">
               <Button
                 variant="ghost"
-                className="w-full justify-start"
+                className={`w-full ${getFlexDirection()} ${getTextAlign('left')}`}
                 onClick={() => handleNavigation('/')}
               >
-                <Home className="mr-3 h-4 w-4" />
+                <Home className={`${getMarginEnd('3')} h-4 w-4`} />
                 Home
               </Button>
 
@@ -56,48 +58,48 @@ export function MobileNav() {
                 <>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start"
+                    className={`w-full ${getFlexDirection()} ${getTextAlign('left')}`}
                     onClick={() => handleNavigation('/dashboard')}
                   >
-                    <User className="mr-3 h-4 w-4" />
+                    <User className={`${getMarginEnd('3')} h-4 w-4`} />
                     Dashboard
                   </Button>
 
                   <Button
                     variant="ghost"
-                    className="w-full justify-start"
+                    className={`w-full ${getFlexDirection()} ${getTextAlign('left')}`}
                     onClick={() => handleNavigation('/calendar')}
                   >
-                    <Calendar className="mr-3 h-4 w-4" />
+                    <Calendar className={`${getMarginEnd('3')} h-4 w-4`} />
                     Kalender
                   </Button>
 
                   <Button
                     variant="ghost"
-                    className="w-full justify-start"
+                    className={`w-full ${getFlexDirection()} ${getTextAlign('left')}`}
                     onClick={() => handleNavigation('/forum')}
                   >
-                    <MessageSquare className="mr-3 h-4 w-4" />
+                    <MessageSquare className={`${getMarginEnd('3')} h-4 w-4`} />
                     Forum
                   </Button>
 
                   {profile && ['admin', 'leerkracht'].includes(profile.role) && (
                     <div className="pt-2 border-t">
-                      <p className="text-xs font-medium text-muted-foreground mb-2 px-3">Beheer</p>
+                      <p className={`text-xs font-medium text-muted-foreground mb-2 px-3 ${getTextAlign('left')}`}>Beheer</p>
                       <Button
                         variant="ghost"
-                        className="w-full justify-start"
+                        className={`w-full ${getFlexDirection()} ${getTextAlign('left')}`}
                         onClick={() => handleNavigation('/forum-moderation')}
                       >
-                        <MessageSquare className="mr-3 h-4 w-4" />
+                        <MessageSquare className={`${getMarginEnd('3')} h-4 w-4`} />
                         Forum Moderatie
                       </Button>
                       <Button
                         variant="ghost"
-                        className="w-full justify-start"
+                        className={`w-full ${getFlexDirection()} ${getTextAlign('left')}`}
                         onClick={() => handleNavigation('/security')}
                       >
-                        <Shield className="mr-3 h-4 w-4" />
+                        <Shield className={`${getMarginEnd('3')} h-4 w-4`} />
                         Beveiliging
                       </Button>
                     </div>
@@ -107,10 +109,10 @@ export function MobileNav() {
 
               <Button
                 variant="ghost"
-                className="w-full justify-start"
+                className={`w-full ${getFlexDirection()} ${getTextAlign('left')}`}
                 onClick={() => handleNavigation('/visie')}
               >
-                <Eye className="mr-3 h-4 w-4" />
+                <Eye className={`${getMarginEnd('3')} h-4 w-4`} />
                 Visie
               </Button>
             </nav>
@@ -118,7 +120,7 @@ export function MobileNav() {
 
           {user && profile && (
             <div className="border-t p-4">
-              <div className="text-sm">
+              <div className={`text-sm ${getTextAlign('left')}`}>
                 <p className="font-medium">{profile.full_name}</p>
                 <p className="text-muted-foreground capitalize">{profile.role}</p>
               </div>

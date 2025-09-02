@@ -15,6 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { User, Edit, Save, X } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -30,6 +31,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
     full_name: '',
     phone_number: '',
   });
+  const { getFlexDirection, getTextAlign, getMarginEnd } = useRTLLayout();
 
   useEffect(() => {
     if (profile) {
@@ -85,11 +87,11 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className={`${getFlexDirection()} items-center gap-2 ${getTextAlign('left')}`}>
             <User className="h-5 w-5" />
             Mijn Profiel
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className={getTextAlign('left')}>
             Bekijk en bewerk je profielinformatie
           </DialogDescription>
         </DialogHeader>
@@ -106,7 +108,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
                   placeholder="Voer je volledige naam in"
                 />
               ) : (
-                <div className="p-2 bg-muted rounded-md">
+                <div className={`p-2 bg-muted rounded-md ${getTextAlign('left')}`}>
                   {profile.full_name || 'Niet ingesteld'}
                 </div>
               )}
@@ -114,10 +116,10 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
 
             <div className="space-y-2">
               <Label htmlFor="email">E-mailadres</Label>
-              <div className="p-2 bg-muted rounded-md text-muted-foreground">
+              <div className={`p-2 bg-muted rounded-md text-muted-foreground ${getTextAlign('left')}`}>
                 {user.email}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className={`text-xs text-muted-foreground ${getTextAlign('left')}`}>
                 E-mailadres kan niet worden gewijzigd
               </p>
             </div>
@@ -141,7 +143,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
                   placeholder="Voer je telefoonnummer in"
                 />
               ) : (
-                <div className="p-2 bg-muted rounded-md">
+                <div className={`p-2 bg-muted rounded-md ${getTextAlign('left')}`}>
                   {(profile as Tables<'profiles'>).phone_number || 'Niet ingesteld'}
                 </div>
               )}
@@ -150,37 +152,40 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
             {(profile as Tables<'profiles'>).parent_email && (
               <div className="space-y-2">
                 <Label htmlFor="parent_email">Ouder e-mailadres</Label>
-                <div className="p-2 bg-muted rounded-md text-muted-foreground">
+                <div className={`p-2 bg-muted rounded-md text-muted-foreground ${getTextAlign('left')}`}>
                   {(profile as Tables<'profiles'>).parent_email}
                 </div>
               </div>
             )}
           </div>
 
-          <div className="flex justify-end gap-2">
+          <div className={`${getFlexDirection('row')} justify-end gap-2`}>
             {isEditing ? (
               <>
                 <Button
                   variant="outline"
                   onClick={handleCancel}
                   disabled={isLoading}
+                  className={getFlexDirection()}
                 >
-                  <X className="h-4 w-4 mr-2" />
+                  <X className={`h-4 w-4 ${getMarginEnd('2')}`} />
                   Annuleren
                 </Button>
                 <Button
                   onClick={handleSave}
                   disabled={isLoading}
+                  className={getFlexDirection()}
                 >
-                  <Save className="h-4 w-4 mr-2" />
+                  <Save className={`h-4 w-4 ${getMarginEnd('2')}`} />
                   {isLoading ? 'Bezig...' : 'Opslaan'}
                 </Button>
               </>
             ) : (
               <Button
                 onClick={() => setIsEditing(true)}
+                className={getFlexDirection()}
               >
-                <Edit className="h-4 w-4 mr-2" />
+                <Edit className={`h-4 w-4 ${getMarginEnd('2')}`} />
                 Bewerken
               </Button>
             )}

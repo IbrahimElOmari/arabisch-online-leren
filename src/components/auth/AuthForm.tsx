@@ -7,6 +7,7 @@ import { Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { sanitizeInput, validatePassword, validateEmail } from '@/utils/validation';
 import { useRateLimit } from '@/hooks/useRateLimit';
 import { useState } from 'react';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 
 export interface AuthFormData {
   emailOrName: string;
@@ -46,6 +47,7 @@ export const AuthForm = ({
   
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [emailError, setEmailError] = useState<string>('');
+  const { getFlexDirection, getTextAlign, getMarginEnd, getPaddingEnd } = useRTLLayout();
 
   const handlePasswordChange = (password: string) => {
     setFormData({ ...formData, password });
@@ -96,9 +98,9 @@ export const AuthForm = ({
   return (
     <>
       {isBlocked && retryAfter && (
-        <div className="flex items-center gap-2 p-3 text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
+        <div className={`${getFlexDirection()} items-center gap-2 p-3 text-destructive bg-destructive/10 border border-destructive/20 rounded-md`}>
           <AlertTriangle className="h-4 w-4" />
-          <span className="text-sm">
+          <span className={`text-sm ${getTextAlign('left')}`}>
             Te veel pogingen. Probeer over {Math.ceil((retryAfter - Date.now()) / 60000)} minuten opnieuw.
           </span>
         </div>
@@ -139,13 +141,13 @@ export const AuthForm = ({
               </Select>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className={`${getFlexDirection()} items-center gap-2`}>
               <Checkbox
                 id="under16"
                 checked={formData.isUnder16}
                 onCheckedChange={(checked) => setFormData({...formData, isUnder16: checked as boolean})}
               />
-              <Label htmlFor="under16" className="text-sm">
+              <Label htmlFor="under16" className={`text-sm ${getTextAlign('left')}`}>
                 Ik ben jonger dan 16 jaar
               </Label>
             </div>
@@ -210,7 +212,7 @@ export const AuthForm = ({
               type="button"
               variant="ghost"
               size="sm"
-              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+              className={`absolute ${getPaddingEnd('0')} top-0 h-full px-3 py-2 hover:bg-transparent`}
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? (
@@ -223,7 +225,7 @@ export const AuthForm = ({
           {passwordErrors.length > 0 && (
             <div className="space-y-1">
               {passwordErrors.map((error, index) => (
-                <p key={index} className="text-sm text-destructive">{error}</p>
+                <p key={index} className={`text-sm text-destructive ${getTextAlign('left')}`}>{error}</p>
               ))}
             </div>
           )}
@@ -243,7 +245,7 @@ export const AuthForm = ({
           <Button
             variant="link"
             onClick={onForgotPassword}
-            className="text-sm text-muted-foreground"
+            className={`text-sm text-muted-foreground ${getTextAlign('center')}`}
           >
             Wachtwoord vergeten?
           </Button>
@@ -252,7 +254,7 @@ export const AuthForm = ({
         <Button
           variant="link"
           onClick={onToggleMode}
-          className="text-sm"
+          className={`text-sm ${getTextAlign('center')}`}
         >
           {isSignUp 
             ? 'Heb je al een account? Log in'

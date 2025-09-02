@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 
 interface ForumRoom {
   id: string;
@@ -50,6 +51,7 @@ const ForumMain = ({ classId }: ForumMainProps) => {
   const [loading, setLoading] = useState(true);
   const [newThreadTitle, setNewThreadTitle] = useState('');
   const [newThreadContent, setNewThreadContent] = useState('');
+  const { getFlexDirection, getTextAlign, getMarginEnd } = useRTLLayout();
 
   // Enhanced real-time callbacks
   const handleThreadsChange = useCallback(() => {
@@ -246,8 +248,8 @@ const ForumMain = ({ classId }: ForumMainProps) => {
   if (view === 'rooms') {
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Forum Kamers</h2>
+        <div className={`${getFlexDirection()} items-center justify-between`}>
+          <h2 className={`text-xl font-semibold ${getTextAlign('left')}`}>Forum Kamers</h2>
         </div>
         <ForumRooms rooms={rooms} onRoomSelect={handleRoomSelect} />
       </div>
@@ -259,13 +261,13 @@ const ForumMain = ({ classId }: ForumMainProps) => {
     
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" onClick={goBackToRooms}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
+        <div className={`${getFlexDirection()} items-center justify-between`}>
+          <div className={`${getFlexDirection()} items-center gap-4`}>
+            <Button variant="outline" onClick={goBackToRooms} className={getFlexDirection()}>
+              <ArrowLeft className={`h-4 w-4 ${getMarginEnd('2')}`} />
               Terug naar Kamers
             </Button>
-            <div>
+            <div className={getTextAlign('left')}>
               <h2 className="text-xl font-semibold">{currentRoom?.name}</h2>
               <p className="text-sm text-muted-foreground">{currentRoom?.class_name}</p>
             </div>
@@ -290,12 +292,12 @@ const ForumMain = ({ classId }: ForumMainProps) => {
     
     return (
       <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={goBackToThreads}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
+        <div className={`${getFlexDirection()} items-center gap-4`}>
+          <Button variant="outline" onClick={goBackToThreads} className={getFlexDirection()}>
+            <ArrowLeft className={`h-4 w-4 ${getMarginEnd('2')}`} />
             Terug naar Onderwerpen
           </Button>
-          <div>
+          <div className={getTextAlign('left')}>
             <h2 className="text-xl font-semibold">{currentThread?.title}</h2>
             <p className="text-sm text-muted-foreground">
               Door {currentThread?.profiles?.full_name || 'Onbekende gebruiker'}

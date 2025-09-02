@@ -22,12 +22,14 @@ import {
 } from 'lucide-react';
 import { ProfileModal } from './ProfileModal';
 import { ForgotPasswordModal } from '@/components/auth/ForgotPasswordModal';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 
 export const UserDropdown = () => {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const { getFlexDirection, getTextAlign } = useRTLLayout();
 
   if (!user || !profile) return null;
 
@@ -49,13 +51,13 @@ export const UserDropdown = () => {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="flex items-center gap-2 h-auto p-2">
+          <Button variant="ghost" className={`${getFlexDirection()} items-center gap-2 h-auto p-2`}>
             <Avatar className="h-8 w-8">
               <AvatarFallback className="text-xs">
                 {getInitials(profile.full_name)}
               </AvatarFallback>
             </Avatar>
-            <div className="hidden sm:flex flex-col items-start">
+            <div className={`hidden sm:flex flex-col ${getTextAlign('left')}`}>
               <span className="text-sm font-medium">{profile.full_name}</span>
               <span className="text-xs text-muted-foreground capitalize">
                 {profile.role}
@@ -67,7 +69,7 @@ export const UserDropdown = () => {
         
         <DropdownMenuContent className="w-56 bg-popover border shadow-md" align="end">
           <DropdownMenuLabel>
-            <div className="flex flex-col space-y-1">
+            <div className={`flex flex-col space-y-1 ${getTextAlign('left')}`}>
               <p className="text-sm font-medium">{profile.full_name}</p>
               <p className="text-xs text-muted-foreground">{user.email}</p>
             </div>
@@ -77,7 +79,7 @@ export const UserDropdown = () => {
           
           <DropdownMenuItem 
             onClick={() => setShowProfileModal(true)}
-            className="flex items-center gap-2 cursor-pointer"
+            className={`${getFlexDirection()} items-center gap-2 cursor-pointer`}
           >
             <User className="h-4 w-4" />
             Profiel bekijken
@@ -85,7 +87,7 @@ export const UserDropdown = () => {
           
           <DropdownMenuItem 
             onClick={() => setShowPasswordModal(true)}
-            className="flex items-center gap-2 cursor-pointer"
+            className={`${getFlexDirection()} items-center gap-2 cursor-pointer`}
           >
             <KeyRound className="h-4 w-4" />
             Wachtwoord wijzigen
@@ -93,7 +95,7 @@ export const UserDropdown = () => {
           
           <DropdownMenuItem 
             onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2 cursor-pointer"
+            className={`${getFlexDirection()} items-center gap-2 cursor-pointer`}
           >
             <UserCog className="h-4 w-4" />
             Dashboard
@@ -103,7 +105,7 @@ export const UserDropdown = () => {
           
           <DropdownMenuItem 
             onClick={handleSignOut}
-            className="flex items-center gap-2 cursor-pointer text-destructive hover:text-destructive"
+            className={`${getFlexDirection()} items-center gap-2 cursor-pointer text-destructive hover:text-destructive`}
           >
             <LogOut className="h-4 w-4" />
             Afmelden
