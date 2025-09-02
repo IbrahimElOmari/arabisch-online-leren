@@ -1,6 +1,8 @@
 import { Home, Calendar, MessageSquare, Eye, BookOpen, User, Shield } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +22,8 @@ export function AppSidebar() {
   const location = useLocation();
   const { user, profile } = useAuth();
   const { state } = useSidebar();
+  const { getFlexDirection, getTextAlign, getIconSpacing } = useRTLLayout();
+  const { t } = useTranslation();
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -28,19 +32,19 @@ export function AppSidebar() {
   const isActive = (path: string) => location.pathname === path;
 
   const mainItems = [
-    { title: 'Home', url: '/', icon: Home },
-    { title: 'Kalender', url: '/calendar', icon: Calendar },
-    { title: 'Visie', url: '/visie', icon: Eye },
+    { title: t('nav.home'), url: '/', icon: Home },
+    { title: t('nav.calendar'), url: '/calendar', icon: Calendar },
+    { title: t('nav.vision'), url: '/visie', icon: Eye },
   ];
 
   const userItems = user ? [
-    { title: 'Dashboard', url: '/dashboard', icon: User },
-    { title: 'Forum', url: '/forum', icon: MessageSquare },
+    { title: t('nav.dashboard'), url: '/dashboard', icon: User },
+    { title: t('nav.forum'), url: '/forum', icon: MessageSquare },
   ] : [];
 
   const adminItems = user && profile && ['admin', 'leerkracht'].includes(profile.role) ? [
-    { title: 'Forum Moderatie', url: '/forum-moderation', icon: MessageSquare },
-    { title: 'Beveiliging', url: '/security', icon: Shield },
+    { title: t('nav.forum_moderation'), url: '/forum-moderation', icon: MessageSquare },
+    { title: t('nav.security'), url: '/security', icon: Shield },
   ] : [];
 
   return (
@@ -49,10 +53,10 @@ export function AppSidebar() {
         {/* Logo */}
         <SidebarGroup>
           <SidebarGroupContent>
-            <div className="flex items-center gap-2 px-2 py-4">
+            <div className={`${getFlexDirection()} items-center gap-2 px-2 py-4`}>
               <BookOpen className="h-6 w-6 text-primary" />
               {state !== 'collapsed' && (
-                <span className="font-bold text-lg">Leer Arabisch</span>
+                <span className={`font-bold text-lg ${getTextAlign()}`}>Leer Arabisch</span>
               )}
             </div>
           </SidebarGroupContent>
@@ -60,7 +64,7 @@ export function AppSidebar() {
 
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>Navigatie</SidebarGroupLabel>
+          <SidebarGroupLabel className={getTextAlign()}>{t('nav.navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => (
@@ -69,9 +73,10 @@ export function AppSidebar() {
                     onClick={() => handleNavigation(item.url)}
                     isActive={isActive(item.url)}
                     tooltip={state === 'collapsed' ? item.title : undefined}
+                    className={getFlexDirection()}
                   >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.title}</span>
+                    <item.icon className={`h-4 w-4 ${getIconSpacing()}`} />
+                    <span className={getTextAlign()}>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -82,7 +87,7 @@ export function AppSidebar() {
         {/* User Navigation */}
         {userItems.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>Leerplatform</SidebarGroupLabel>
+            <SidebarGroupLabel className={getTextAlign()}>{t('nav.platform')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {userItems.map((item) => (
@@ -91,9 +96,10 @@ export function AppSidebar() {
                       onClick={() => handleNavigation(item.url)}
                       isActive={isActive(item.url)}
                       tooltip={state === 'collapsed' ? item.title : undefined}
+                      className={getFlexDirection()}
                     >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
+                      <item.icon className={`h-4 w-4 ${getIconSpacing()}`} />
+                      <span className={getTextAlign()}>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -105,7 +111,7 @@ export function AppSidebar() {
         {/* Admin Navigation */}
         {adminItems.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>Beheer</SidebarGroupLabel>
+            <SidebarGroupLabel className={getTextAlign()}>{t('nav.management')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {adminItems.map((item) => (
@@ -114,9 +120,10 @@ export function AppSidebar() {
                       onClick={() => handleNavigation(item.url)}
                       isActive={isActive(item.url)}
                       tooltip={state === 'collapsed' ? item.title : undefined}
+                      className={getFlexDirection()}
                     >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
+                      <item.icon className={`h-4 w-4 ${getIconSpacing()}`} />
+                      <span className={getTextAlign()}>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -135,9 +142,12 @@ export function AppSidebar() {
         ) : (
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={() => handleNavigation('/auth')}>
-                <User className="h-4 w-4" />
-                <span>Inloggen</span>
+              <SidebarMenuButton 
+                onClick={() => handleNavigation('/auth')}
+                className={getFlexDirection()}
+              >
+                <User className={`h-4 w-4 ${getIconSpacing()}`} />
+                <span className={getTextAlign()}>{t('nav.login')}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

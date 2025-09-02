@@ -10,6 +10,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Video, FileQuestion, Calendar, Upload, Plus, UserCheck, ClipboardList } from 'lucide-react';
 import { AttendanceModal } from './AttendanceModal';
 import { PerformanceModal } from './PerformanceModal';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface TeachingModalProps {
   selectedClass?: string;
@@ -40,6 +42,8 @@ export function TeachingModal({
   const [attendanceOpen, setAttendanceOpen] = useState(false);
   const [performanceOpen, setPerformanceOpen] = useState(false);
   const { toast } = useToast();
+  const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
 
   // Determine which open/close pattern to use
   const isControlled = propOpen !== undefined || isOpen !== undefined;
@@ -215,7 +219,7 @@ export function TeachingModal({
       }
 
       toast({
-        title: 'Succes!',
+        title: t('common.success'),
         description: getSuccessMessage(type)
       });
 
@@ -235,7 +239,7 @@ export function TeachingModal({
 
     } catch (error: any) {
       toast({
-        title: 'Fout',
+        title: t('common.error'),
         description: error.message || 'Er is een fout opgetreden',
         variant: 'destructive'
       });
@@ -272,32 +276,35 @@ export function TeachingModal({
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="title">Video Titel</Label>
+              <Label htmlFor="title" className={getTextAlign()}>{t('form.title')}</Label>
               <Input
                 id="title"
                 value={formData.title}
                 onChange={(e) => handleInputChange('title', e.target.value)}
                 placeholder="Bijv: Introductie tot Arabische letters"
+                className={getTextAlign()}
                 required
               />
             </div>
             <div>
-              <Label htmlFor="url">YouTube URL</Label>
+              <Label htmlFor="url" className={getTextAlign()}>YouTube URL</Label>
               <Input
                 id="url"
                 value={formData.url}
                 onChange={(e) => handleInputChange('url', e.target.value)}
                 placeholder="https://youtube.com/watch?v=..."
+                className={getTextAlign()}
                 required
               />
             </div>
             <div>
-              <Label htmlFor="description">Beschrijving</Label>
+              <Label htmlFor="description" className={getTextAlign()}>{t('form.description')}</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 placeholder="Korte beschrijving van de video..."
+                className={getTextAlign()}
               />
             </div>
           </div>

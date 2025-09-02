@@ -9,53 +9,58 @@ import {
   FileText,
   PlayCircle 
 } from 'lucide-react';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface QuickActionsProps {
   onAction: (action: string) => void;
 }
 
 export const QuickActions = ({ onAction }: QuickActionsProps) => {
+  const { getTextAlign, getFlexDirection, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
+
   const actions = [
     {
       id: 'continue-learning',
-      title: 'Verder Leren',
-      description: 'Ga verder waar je gebleven was',
+      title: t('actions.continue_learning'),
+      description: t('actions.continue_learning_desc'),
       icon: PlayCircle,
       color: 'bg-blue-500 hover:bg-blue-600',
       primary: true
     },
     {
       id: 'watch-video',
-      title: 'Video Bekijken',
-      description: 'Bekijk de laatste les',
+      title: t('actions.watch_video'),
+      description: t('actions.watch_video_desc'),
       icon: Video,
       color: 'bg-green-500 hover:bg-green-600'
     },
     {
       id: 'forum',
-      title: 'Forum',
-      description: 'Stel een vraag',
+      title: t('actions.forum'),
+      description: t('actions.forum_desc'),
       icon: MessageSquare,
       color: 'bg-purple-500 hover:bg-purple-600'
     },
     {
       id: 'schedule',
-      title: 'Planning',
-      description: 'Bekijk je planning',
+      title: t('actions.schedule'),
+      description: t('actions.schedule_desc'),
       icon: Calendar,
       color: 'bg-orange-500 hover:bg-orange-600'
     },
     {
       id: 'assignments',
-      title: 'Opdrachten',
-      description: 'Bekijk openstaande taken',
+      title: t('actions.assignments'),
+      description: t('actions.assignments_desc'),
       icon: FileText,
       color: 'bg-red-500 hover:bg-red-600'
     },
     {
       id: 'library',
-      title: 'Bibliotheek',
-      description: 'Bekijk alle materialen',
+      title: t('actions.library'),
+      description: t('actions.library_desc'),
       icon: BookOpen,
       color: 'bg-indigo-500 hover:bg-indigo-600'
     }
@@ -64,15 +69,17 @@ export const QuickActions = ({ onAction }: QuickActionsProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Snelle Acties</CardTitle>
+        <CardTitle className={`${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
+          {t('actions.quick_actions')}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className={`grid grid-cols-2 md:grid-cols-3 gap-3 ${isRTL ? 'rtl-grid' : ''}`}>
           {actions.map(({ id, title, description, icon: Icon, color, primary }) => (
             <Button
               key={id}
               variant={primary ? "default" : "outline"}
-              className={`h-auto p-4 flex flex-col items-center gap-2 text-center ${
+              className={`h-auto p-4 ${getFlexDirection('col')} items-center gap-2 ${getTextAlign('center')} ${
                 primary ? '' : 'hover:bg-muted'
               }`}
               onClick={() => onAction(id)}
@@ -80,11 +87,11 @@ export const QuickActions = ({ onAction }: QuickActionsProps) => {
               <div className={`p-2 rounded-lg ${primary ? 'bg-white/20' : 'bg-muted'}`}>
                 <Icon className={`h-5 w-5 ${primary ? 'text-white' : 'text-muted-foreground'}`} />
               </div>
-              <div>
-                <p className={`font-medium text-sm ${primary ? 'text-white' : 'text-foreground'}`}>
+              <div className={getTextAlign('center')}>
+                <p className={`font-medium text-sm ${primary ? 'text-white' : 'text-foreground'} ${isRTL ? 'arabic-text' : ''}`}>
                   {title}
                 </p>
-                <p className={`text-xs ${primary ? 'text-white/80' : 'text-muted-foreground'}`}>
+                <p className={`text-xs ${primary ? 'text-white/80' : 'text-muted-foreground'} ${isRTL ? 'arabic-text' : ''}`}>
                   {description}
                 </p>
               </div>

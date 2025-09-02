@@ -9,6 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Plus, UserPlus, Users, MessageSquare } from 'lucide-react';
 import { ClassManagementModal } from './ClassManagementModal';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface AdminModalProps {
   trigger: React.ReactNode;
@@ -36,6 +38,8 @@ interface ClassData {
 
 export function AdminModal({ trigger, type }: AdminModalProps) {
   const [open, setOpen] = useState(false);
+  const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
   
   // Handle class management modal separately
   if (type === 'manage_classes') {
@@ -94,7 +98,7 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
       }
     } catch (error: any) {
       toast({
-        title: 'Fout',
+        title: t('common.error'),
         description: error.message || 'Er is een fout opgetreden',
         variant: 'destructive'
       });
@@ -147,7 +151,7 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
       if (error) throw error;
 
       toast({
-        title: 'Succes!',
+        title: t('common.success'),
         description: getSuccessMessage(type)
       });
 
@@ -327,23 +331,23 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{getModalTitle()}</DialogTitle>
+          <DialogTitle className={`${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>{getModalTitle()}</DialogTitle>
         </DialogHeader>
         {type !== 'forum_moderation' ? (
           <form onSubmit={handleSubmit}>
             {renderFormContent()}
-            <div className="flex justify-end space-x-2 pt-4">
+            <div className={`${getFlexDirection()} justify-end space-x-2 pt-4`}>
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                Annuleren
+                {t('form.cancel')}
               </Button>
               <Button type="submit" disabled={loading}>
-                {loading ? 'Bezig...' : 'Opslaan'}
+                {loading ? t('form.loading') : t('form.save')}
               </Button>
             </div>
           </form>
         ) : (
-          <div className="flex justify-end pt-4">
-            <Button onClick={() => setOpen(false)}>Sluiten</Button>
+          <div className={`${getFlexDirection()} justify-end pt-4`}>
+            <Button onClick={() => setOpen(false)}>{t('form.close')}</Button>
           </div>
         )}
       </DialogContent>

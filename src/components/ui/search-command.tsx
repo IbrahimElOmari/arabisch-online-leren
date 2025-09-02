@@ -1,6 +1,8 @@
 import * as React from "react"
 import { Search, BookOpen, Calendar, MessageSquare, User, Home } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { useRTLLayout } from "@/hooks/useRTLLayout"
+import { useTranslation } from "@/contexts/TranslationContext"
 import {
   CommandDialog,
   CommandEmpty,
@@ -12,38 +14,38 @@ import {
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/components/auth/AuthProviderQuery"
 
-const searchItems = [
+const getSearchItems = (t: (key: string) => string) => [
   {
-    title: "Home",
+    title: t('nav.home'),
     path: "/",
     icon: Home,
-    group: "Pagina's"
+    group: t('common.pages')
   },
   {
-    title: "Dashboard",
+    title: t('nav.dashboard'),
     path: "/dashboard",
     icon: User,
-    group: "Pagina's",
+    group: t('common.pages'),
     requiresAuth: true
   },
   {
-    title: "Kalender",
+    title: t('nav.calendar'),
     path: "/calendar",
     icon: Calendar,
-    group: "Pagina's"
+    group: t('common.pages')
   },
   {
-    title: "Forum",
+    title: t('nav.forum'),
     path: "/forum",
     icon: MessageSquare,
-    group: "Pagina's",
+    group: t('common.pages'),
     requiresAuth: true
   },
   {
-    title: "Visie",
+    title: t('nav.vision'),
     path: "/visie",
     icon: BookOpen,
-    group: "Pagina's"
+    group: t('common.pages')
   }
 ]
 
@@ -51,6 +53,9 @@ export function SearchCommand() {
   const [open, setOpen] = React.useState(false)
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { getFlexDirection, getIconSpacing, getRightPosition, isRTL } = useRTLLayout()
+  const { t } = useTranslation()
+  const searchItems = getSearchItems(t)
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -76,20 +81,23 @@ export function SearchCommand() {
     <>
       <Button
         variant="outline"
-        className="relative h-9 w-9 p-0 md:h-10 md:w-60 md:justify-start md:px-3 md:py-2"
+        className={`relative h-9 w-9 p-0 md:h-10 md:w-60 md:justify-start md:px-3 md:py-2 ${getFlexDirection()}`}
         onClick={() => setOpen(true)}
       >
-        <Search className="h-4 w-4 md:mr-2" />
-        <span className="hidden md:inline-flex">Zoeken...</span>
-        <kbd className="pointer-events-none absolute right-1.5 top-2 hidden h-6 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 md:flex">
+        <Search className={`h-4 w-4 ${getIconSpacing()}`} />
+        <span className={`hidden md:inline-flex ${isRTL ? 'arabic-text' : ''}`}>{t('nav.search')}</span>
+        <kbd className={`pointer-events-none absolute ${getRightPosition('1.5')} top-2 hidden h-6 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 md:flex`}>
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
       
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Zoek naar pagina's, functies..." />
+        <CommandInput 
+          placeholder={t('nav.search_placeholder')} 
+          className={isRTL ? 'arabic-text' : ''}
+        />
         <CommandList>
-          <CommandEmpty>Geen resultaten gevonden.</CommandEmpty>
+          <CommandEmpty className={isRTL ? 'arabic-text' : ''}>{t('common.no_results')}</CommandEmpty>
           {Object.entries(
             filteredItems.reduce((acc, item) => {
               if (!acc[item.group]) acc[item.group] = []
@@ -103,9 +111,10 @@ export function SearchCommand() {
                   key={item.path}
                   value={item.title}
                   onSelect={() => handleSelect(item.path)}
+                  className={getFlexDirection()}
                 >
-                  <item.icon className="mr-2 h-4 w-4" />
-                  <span>{item.title}</span>
+                  <item.icon className={`h-4 w-4 ${getIconSpacing()}`} />
+                  <span className={isRTL ? 'arabic-text' : ''}>{item.title}</span>
                 </CommandItem>
               ))}
             </CommandGroup>
