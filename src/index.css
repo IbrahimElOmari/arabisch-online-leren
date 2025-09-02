@@ -569,4 +569,86 @@ All colors MUST be HSL.
     left: auto;
     right: 1rem;
   }
+
+  /* RTL Background Pattern Positioning */
+  .rtl-bg-pattern {
+    transform: scaleX(1);
+  }
+
+  [dir="rtl"] .rtl-bg-pattern {
+    transform: scaleX(-1);
+  }
+
+  /* RTL Form Error Positioning */
+  .rtl-form-error {
+    text-align: left;
+  }
+
+  [dir="rtl"] .rtl-form-error {
+    text-align: right;
+  }
+
+  /* RTL Navigation Breadcrumbs */
+  .rtl-breadcrumb::after {
+    content: "/";
+    margin: 0 0.5rem;
+  }
+
+  [dir="rtl"] .rtl-breadcrumb::after {
+    content: "\\";
+  }
+
+  /* RTL CSS Grid Fixes */
+  .rtl-grid-flow {
+    grid-auto-flow: row;
+  }
+
+  [dir="rtl"] .rtl-grid-flow {
+    grid-auto-flow: row dense;
+  }
+
+  /* RTL Flexbox Direction Utilities */
+  .rtl-flex-start {
+    justify-content: flex-start;
+  }
+
+  [dir="rtl"] .rtl-flex-start {
+    justify-content: flex-end;
+  }
+
+  .rtl-flex-end {
+    justify-content: flex-end;
+  }
+
+  [dir="rtl"] .rtl-flex-end {
+    justify-content: flex-start;
+  }
+
+  /* RTL Modal & Dialog Positioning */
+  .rtl [role="dialog"] {
+    text-align: left;
+  }
+
+  [dir="rtl"] [role="dialog"] {
+    text-align: right;
+  }
+
+  /* RTL Table Alignment */
+  .rtl table {
+    direction: ltr;
+  }
+
+  [dir="rtl"] table {
+    direction: rtl;
+  }
+
+  [dir="rtl"] th:first-child,
+  [dir="rtl"] td:first-child {
+    text-align: right;
+  }
+
+  [dir="rtl"] th:last-child,
+  [dir="rtl"] td:last-child {
+    text-align: left;
+  }
 }

@@ -5,9 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CourseCatalog } from '@/components/ui/course-catalog';
 import { useNavigate } from 'react-router-dom';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useAccessibilityRTL } from '@/hooks/useAccessibilityRTL';
+import { useRTLAnimations } from '@/hooks/useRTLAnimations';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const Index = () => {
   const navigate = useNavigate();
+  const { getTextAlign, getFlexDirection, getIconSpacing, isRTL } = useRTLLayout();
+  const { getAriaLabel, getNavigationAttributes } = useAccessibilityRTL();
+  const { getSlideInAnimation, getStaggerDelay } = useRTLAnimations();
+  const { t } = useTranslation();
 
   const features = [
     {
@@ -66,37 +74,36 @@ const Index = () => {
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10">
         <div className="absolute inset-0 bg-[url('/arabic-pattern-bg.png')] opacity-5"></div>
         <div className="relative max-w-7xl mx-auto px-4 py-20 lg:py-32">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
+          <div className={`grid lg:grid-cols-2 gap-12 items-center ${getFlexDirection('row')}`}>
+            <div className="space-y-8" style={getStaggerDelay(0)}>
               <div className="space-y-6">
-                <Badge variant="outline" className="w-fit px-4 py-2 text-sm font-medium">
-                  <Star className="mr-2 h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  #1 Platform voor Arabisch Leren
+                <Badge variant="outline" className={`w-fit px-4 py-2 text-sm font-medium ${getSlideInAnimation('left')}`}>
+                  <Star className={`h-4 w-4 fill-yellow-400 text-yellow-400 ${getIconSpacing('2')}`} />
+                  {t('hero.topPlatform') || '#1 Platform voor Arabisch Leren'}
                 </Badge>
                 
-                <h1 className="text-5xl lg:text-7xl font-bold tracking-tight">
+                <h1 className={`text-5xl lg:text-7xl font-bold tracking-tight ${getTextAlign()}`}>
                   <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                    أهلاً وسهلاً
+                    {isRTL ? 'أهلاً وسهلاً' : 'أهلاً وسهلاً'}
                   </span>
                   <br />
-                  <span className="text-foreground">Leer Arabisch</span>
+                  <span className="text-foreground">{t('hero.learnArabic') || 'Leer Arabisch'}</span>
                 </h1>
                 
-                <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
-                  Ontdek de schoonheid van de Arabische taal met onze innovatieve, 
-                  interactieve lesmethoden. Van beginner tot gevorderd - wij begeleiden 
-                  je reis naar vloeiend Arabisch.
+                <p className={`text-xl text-muted-foreground leading-relaxed max-w-lg ${getTextAlign()}`}>
+                  {t('hero.description') || 'Ontdek de schoonheid van de Arabische taal met onze innovatieve, interactieve lesmethoden. Van beginner tot gevorderd - wij begeleiden je reis naar vloeiend Arabisch.'}
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className={`flex flex-col sm:flex-row gap-4 ${getFlexDirection('row')}`}>
                 <Button 
                   size="lg" 
                   className="text-lg px-8 py-6 group"
                   onClick={() => navigate('/auth')}
+                  aria-label={getAriaLabel('startJourney', 'Begin je Arabische leerreis')}
                 >
-                  Begin Je Reis
-                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  {t('hero.startJourney') || 'Begin Je Reis'}
+                  <ArrowRight className={`h-5 w-5 group-hover:translate-x-1 transition-transform ${getIconSpacing('2')}`} />
                 </Button>
                 
                 <Button 
@@ -282,7 +289,7 @@ const Index = () => {
             Begin vandaag nog met je gratis proefles!
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className={`${getFlexDirection('row')} justify-between items-start`}>
             <Button 
               size="lg" 
               variant="secondary"

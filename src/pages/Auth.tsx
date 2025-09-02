@@ -7,6 +7,9 @@ import { RoleSelection } from '@/components/auth/RoleSelection';
 import { ForgotPasswordModal } from '@/components/auth/ForgotPasswordModal';
 import { useAuthForm } from '@/hooks/useAuthForm';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useAccessibilityRTL } from '@/hooks/useAccessibilityRTL';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -34,6 +37,9 @@ const Auth = () => {
 
   const { user, authReady } = useAuth();
   const navigate = useNavigate();
+  const { getTextAlign, getFlexDirection } = useRTLLayout();
+  const { getFormAttributes, getDialogAttributes } = useAccessibilityRTL();
+  const { t } = useTranslation();
 
   // Auto-redirect: als je al ingelogd bent, ga direct naar dashboard
   useEffect(() => {
@@ -55,24 +61,24 @@ const Auth = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
       <div 
-        className="absolute inset-0 opacity-10"
+        className="absolute inset-0 opacity-10 rtl-bg-pattern"
         style={{
           backgroundImage: "url('/src/assets/arabic-pattern-bg.png')",
           backgroundRepeat: 'repeat',
           backgroundSize: '200px 200px'
         }}
       />
-      <Card className="w-full max-w-md relative z-10 bg-card/95 backdrop-blur-sm shadow-xl">
-        <CardHeader className="text-center">
+      <Card className="w-full max-w-md relative z-10 bg-card/95 backdrop-blur-sm shadow-xl" {...getDialogAttributes('auth-form')}>
+        <CardHeader className={`${getTextAlign('center')}`}>
           <CardTitle className="text-2xl font-bold text-primary">
-            {showRoleSelection ? 'Kies je rol' : (isSignUp ? 'Registreren' : 'Inloggen')}
+            {showRoleSelection ? t('auth.chooseRole') || 'Kies je rol' : (isSignUp ? t('auth.register') || 'Registreren' : t('auth.login') || 'Inloggen')}
           </CardTitle>
           <CardDescription>
             {showRoleSelection 
-              ? 'Selecteer de rol waarmee je wilt inloggen'
+              ? t('auth.selectRole') || 'Selecteer de rol waarmee je wilt inloggen'
               : (isSignUp 
-                ? 'Maak een account aan om te beginnen met leren'
-                : 'Log in op je account'
+                ? t('auth.createAccount') || 'Maak een account aan om te beginnen met leren'
+                : t('auth.loginAccount') || 'Log in op je account'
               )
             }
           </CardDescription>

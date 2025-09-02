@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
-import { RTLProvider } from '@/contexts/RTLContext';
+import { EnhancedRTLProvider } from '@/components/rtl/RTLProvider';
 import { TranslationProvider } from '@/contexts/TranslationContext';
 import { AuthProviderQuery } from '@/components/auth/AuthProviderQuery';
 import { AppGate } from '@/components/auth/AppGate';
@@ -42,7 +42,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <RTLProvider>
+        <EnhancedRTLProvider>
           <TranslationProvider>
             <AuthProviderQuery>
             <Router>
@@ -78,7 +78,7 @@ function App() {
             </Router>
             </AuthProviderQuery>
           </TranslationProvider>
-        </RTLProvider>
+        </EnhancedRTLProvider>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

@@ -6,6 +6,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { CheckCircle, CreditCard, Users, Clock, BookOpen } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useAccessibilityRTL } from '@/hooks/useAccessibilityRTL';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface ClassDetails {
   id: string;
@@ -21,6 +24,9 @@ const EnrollmentConfirm = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [classDetails, setClassDetails] = useState<ClassDetails | null>(null);
+  const { getTextAlign, getFlexDirection, getIconSpacing } = useRTLLayout();
+  const { getNavigationAttributes, getDialogAttributes } = useAccessibilityRTL();
+  const { t } = useTranslation();
 
   // Fetch class details on component mount
   useState(() => {
@@ -88,87 +94,86 @@ const EnrollmentConfirm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-background p-6" {...getNavigationAttributes()}>
       <div className="max-w-4xl mx-auto">
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="text-2xl flex items-center gap-2">
+            <CardTitle className={`text-2xl flex items-center gap-2 ${getTextAlign()}`}>
               <BookOpen className="h-6 w-6 text-primary" />
-              Inschrijving Bevestigen
+              {t('enrollment.confirmTitle') || 'Inschrijving Bevestigen'}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-6">
               {/* Class Details */}
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold">{classDetails.name}</h3>
-                <p className="text-muted-foreground">{classDetails.description}</p>
+                <h3 className={`text-xl font-semibold ${getTextAlign()}`}>{classDetails.name}</h3>
+                <p className={`text-muted-foreground ${getTextAlign()}`}>{classDetails.description}</p>
                 
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-2 ${getFlexDirection('row')}`}>
                     <Users className="h-4 w-4 text-primary" />
-                    <span className="text-sm">4 Niveaus beschikbaar</span>
+                    <span className="text-sm">{t('enrollment.levelsAvailable') || '4 Niveaus beschikbaar'}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-2 ${getFlexDirection('row')}`}>
                     <Clock className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Flexibele planning</span>
+                    <span className="text-sm">{t('enrollment.flexibleSchedule') || 'Flexibele planning'}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-2 ${getFlexDirection('row')}`}>
                     <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Toegang tot alle lesmaterialen</span>
+                    <span className="text-sm">{t('enrollment.accessMaterials') || 'Toegang tot alle lesmaterialen'}</span>
                   </div>
                 </div>
               </div>
 
               {/* Mock Payment Section */}
               <div className="bg-muted/50 p-4 rounded-lg">
-                <h4 className="font-medium mb-3 flex items-center gap-2">
+                <h4 className={`font-medium mb-3 flex items-center gap-2 ${getTextAlign()}`}>
                   <CreditCard className="h-4 w-4" />
-                  Betaling (Demo Mode)
+                  {t('enrollment.paymentDemo') || 'Betaling (Demo Mode)'}
                 </h4>
-                <div className="space-y-2 text-sm text-muted-foreground mb-4">
-                  <p>• Dit is een demo-omgeving</p>
-                  <p>• Geen echte betaling vereist</p>
-                  <p>• Inschrijving wordt automatisch geactiveerd</p>
-                  <p>• Toegang tot alle niveaus direct beschikbaar</p>
+                <div className={`space-y-2 text-sm text-muted-foreground mb-4 ${getTextAlign()}`}>
+                  <p>• {t('enrollment.demoEnvironment') || 'Dit is een demo-omgeving'}</p>
+                  <p>• {t('enrollment.noPayment') || 'Geen echte betaling vereist'}</p>
+                  <p>• {t('enrollment.autoActivated') || 'Inschrijving wordt automatisch geactiveerd'}</p>
+                  <p>• {t('enrollment.directAccess') || 'Toegang tot alle niveaus direct beschikbaar'}</p>
                 </div>
                 
                 <div className="bg-background p-3 rounded border-2 border-dashed border-primary/20">
-                  <div className="text-center">
+                  <div className={getTextAlign('center')}>
                     <div className="text-lg font-semibold text-primary">€0,00</div>
-                    <div className="text-xs text-muted-foreground">Demo Prijs</div>
+                    <div className="text-xs text-muted-foreground">{t('enrollment.demoPrice') || 'Demo Prijs'}</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 flex gap-3">
+            <div className={`mt-6 flex gap-3 ${getFlexDirection('row')}`}>
               <Button
                 variant="outline"
                 onClick={() => navigate('/dashboard')}
                 disabled={loading}
               >
-                Annuleren
+                {t('common.cancel') || 'Annuleren'}
               </Button>
               
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button disabled={loading} className="flex-1">
-                    {loading ? 'Bezig met inschrijven...' : 'Bevestig Inschrijving'}
+                    {loading ? (t('enrollment.enrolling') || 'Bezig met inschrijven...') : (t('enrollment.confirmEnrollment') || 'Bevestig Inschrijving')}
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent {...getDialogAttributes('enrollment-confirm')}>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Inschrijving Bevestigen</AlertDialogTitle>
+                    <AlertDialogTitle>{t('enrollment.confirmTitle') || 'Inschrijving Bevestigen'}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Je staat op het punt om je in te schrijven voor "{classDetails.name}". 
-                      Dit geeft je toegang tot alle 4 niveaus van deze klas.
+                      {t('enrollment.confirmMessage') || `Je staat op het punt om je in te schrijven voor "${classDetails.name}". Dit geeft je toegang tot alle 4 niveaus van deze klas.`}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Annuleren</AlertDialogCancel>
+                    <AlertDialogCancel>{t('common.cancel') || 'Annuleren'}</AlertDialogCancel>
                     <AlertDialogAction onClick={handleEnrollment}>
-                      Bevestigen
+                      {t('common.confirm') || 'Bevestigen'}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

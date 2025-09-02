@@ -8,6 +8,9 @@ import { Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { validatePassword } from '@/utils/validation';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useAccessibilityRTL } from '@/hooks/useAccessibilityRTL';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -22,6 +25,9 @@ const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { getTextAlign, getFlexDirection } = useRTLLayout();
+  const { getFormAttributes, getDialogAttributes } = useAccessibilityRTL();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -159,18 +165,18 @@ const ResetPassword = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
         <div 
-          className="absolute inset-0 opacity-10"
+          className="absolute inset-0 opacity-10 rtl-bg-pattern"
           style={{
             backgroundImage: "url('/src/assets/arabic-pattern-bg.png')",
             backgroundRepeat: 'repeat',
             backgroundSize: '200px 200px'
           }}
         />
-        <Card className="w-full max-w-md relative z-10 bg-card/95 backdrop-blur-sm shadow-xl">
+        <Card className="w-full max-w-md relative z-10 bg-card/95 backdrop-blur-sm shadow-xl" {...getDialogAttributes('reset-password')}>
           <CardContent className="flex items-center justify-center p-6">
-            <div className="text-center">
+            <div className={`${getTextAlign('center')}`}>
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Reset-link valideren...</p>
+              <p className="text-muted-foreground">{t('resetPassword.validating') || 'Reset-link valideren...'}</p>
             </div>
           </CardContent>
         </Card>

@@ -61,7 +61,7 @@ export const useAccessibilityRTL = () => {
   // Dialog accessibility
   const getDialogAttributes = (title: string) => ({
     role: 'dialog',
-    'aria-modal': 'true',
+    'aria-modal': true,
     'aria-labelledby': `dialog-title-${title}`,
     dir: isRTL ? 'rtl' : 'ltr'
   });
