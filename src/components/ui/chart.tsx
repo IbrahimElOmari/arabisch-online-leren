@@ -1,7 +1,7 @@
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
-
 import { cn } from "@/lib/utils"
+import { useRTLLayout } from "@/hooks/useRTLLayout"
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const
@@ -43,6 +43,7 @@ const ChartContainer = React.forwardRef<
 >(({ id, className, children, config, ...props }, ref) => {
   const uniqueId = React.useId()
   const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`
+  const { isRTL } = useRTLLayout()
 
   return (
     <ChartContext.Provider value={{ config }}>
@@ -51,8 +52,10 @@ const ChartContainer = React.forwardRef<
         ref={ref}
         className={cn(
           "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
+          isRTL && "[&_.recharts-cartesian-axis-tick_text]:text-anchor-end [&_.recharts-legend]:flex-row-reverse",
           className
         )}
+        dir={isRTL ? 'rtl' : 'ltr'}
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
@@ -130,6 +133,7 @@ const ChartTooltipContent = React.forwardRef<
     ref
   ) => {
     const { config } = useChart()
+    const { getTextAlign, isRTL } = useRTLLayout()
 
     const tooltipLabel = React.useMemo(() => {
       if (hideLabel || !payload?.length) {
@@ -146,7 +150,12 @@ const ChartTooltipContent = React.forwardRef<
 
       if (labelFormatter) {
         return (
-          <div className={cn("font-medium", labelClassName)}>
+          <div className={cn(
+            "font-medium", 
+            getTextAlign('left'),
+            isRTL && "arabic-text",
+            labelClassName
+          )}>
             {labelFormatter(value, payload)}
           </div>
         )
@@ -156,7 +165,12 @@ const ChartTooltipContent = React.forwardRef<
         return null
       }
 
-      return <div className={cn("font-medium", labelClassName)}>{value}</div>
+      return <div className={cn(
+        "font-medium", 
+        getTextAlign('left'),
+        isRTL && "arabic-text",
+        labelClassName
+      )}>{value}</div>
     }, [
       label,
       labelFormatter,
@@ -165,6 +179,8 @@ const ChartTooltipContent = React.forwardRef<
       labelClassName,
       config,
       labelKey,
+      getTextAlign,
+      isRTL
     ])
 
     if (!active || !payload?.length) {
@@ -177,9 +193,11 @@ const ChartTooltipContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
+          "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl rtl-tooltip",
+          getTextAlign('left'),
           className
         )}
+        dir={isRTL ? 'rtl' : 'ltr'}
       >
         {!nestLabel ? tooltipLabel : null}
         <div className="grid gap-1.5">

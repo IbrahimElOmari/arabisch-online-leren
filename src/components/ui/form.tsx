@@ -12,6 +12,8 @@ import {
 
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
+import { useRTLLayout } from "@/hooks/useRTLLayout"
+import { useTranslation } from "@/contexts/TranslationContext"
 
 const Form = FormProvider
 
@@ -75,10 +77,16 @@ const FormItem = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
   const id = React.useId()
+  const { getTextAlign, isRTL } = useRTLLayout()
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn("space-y-2", className)} {...props} />
+      <div 
+        ref={ref} 
+        className={cn("space-y-2", className)} 
+        dir={isRTL ? 'rtl' : 'ltr'}
+        {...props} 
+      />
     </FormItemContext.Provider>
   )
 })
@@ -89,11 +97,17 @@ const FormLabel = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 >(({ className, ...props }, ref) => {
   const { error, formItemId } = useFormField()
+  const { getTextAlign, isRTL } = useRTLLayout()
 
   return (
     <Label
       ref={ref}
-      className={cn(error && "text-destructive", className)}
+      className={cn(
+        error && "text-destructive", 
+        getTextAlign('left'),
+        isRTL && "arabic-text",
+        className
+      )}
       htmlFor={formItemId}
       {...props}
     />
@@ -128,12 +142,18 @@ const FormDescription = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => {
   const { formDescriptionId } = useFormField()
+  const { getTextAlign, isRTL } = useRTLLayout()
 
   return (
     <p
       ref={ref}
       id={formDescriptionId}
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn(
+        "text-sm text-muted-foreground", 
+        getTextAlign('left'),
+        isRTL && "arabic-text",
+        className
+      )}
       {...props}
     />
   )
@@ -145,6 +165,7 @@ const FormMessage = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId } = useFormField()
+  const { getTextAlign, isRTL } = useRTLLayout()
   const body = error ? String(error?.message) : children
 
   if (!body) {
@@ -155,7 +176,14 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn("text-sm font-medium text-destructive", className)}
+      className={cn(
+        "text-sm font-medium text-destructive animate-rtl-slide-in", 
+        getTextAlign('left'),
+        isRTL && "arabic-text",
+        className
+      )}
+      role="alert"
+      aria-live="polite"
       {...props}
     >
       {body}
