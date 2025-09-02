@@ -233,27 +233,148 @@ All colors MUST be HSL.
     transform: scaleX(-1);
   }
 
-  /* Enhanced Arabic typography */
-  .arabic-text h1,
-  .arabic-text h2,
-  .arabic-text h3,
-  .arabic-text h4,
-  .arabic-text h5,
-  .arabic-text h6 {
-    font-weight: 700;
+  /* Enhanced Arabic Typography System */
+  .font-amiri {
+    font-family: 'Amiri', 'Times New Roman', serif;
+  }
+  
+  .font-noto-arabic {
+    font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
+  }
+  
+  .font-inter {
+    font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  }
+
+  /* Arabic Text Styles */
+  .arabic-text {
+    font-family: 'Noto Sans Arabic', 'Amiri', 'Times New Roman', serif;
+    line-height: 1.8;
+    text-align: right;
+    font-size: 1.05em;
     letter-spacing: 0.02em;
   }
 
-  .arabic-text p {
-    line-height: 2;
-    word-spacing: 0.1em;
+  .arabic-display {
+    font-family: 'Amiri', 'Times New Roman', serif;
+    line-height: 1.6;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  .arabic-body {
+    font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+
+  /* Arabic Typography Scales */
+  .arabic-text h1, .arabic-display.text-4xl { font-size: 2.5rem; line-height: 1.4; }
+  .arabic-text h2, .arabic-display.text-3xl { font-size: 2rem; line-height: 1.5; }
+  .arabic-text h3, .arabic-display.text-2xl { font-size: 1.75rem; line-height: 1.5; }
+  .arabic-text h4, .arabic-display.text-xl { font-size: 1.5rem; line-height: 1.6; }
+  .arabic-text h5, .arabic-display.text-lg { font-size: 1.25rem; line-height: 1.6; }
+  .arabic-text h6, .arabic-display.text-base { font-size: 1.1rem; line-height: 1.7; }
+
+  /* Arabic Number Formatting */
+  .arabic-numerals {
+    font-feature-settings: 'tnum' 1;
+    direction: ltr;
+    unicode-bidi: embed;
+  }
+
+  /* Text Overflow RTL */
+  .rtl .truncate {
+    direction: rtl;
+    text-overflow: ellipsis;
+  }
+
+  .rtl .text-ellipsis {
+    text-align: right;
+    direction: rtl;
+  }
+
+  /* RTL Animation Classes */
+  .rtl-slide-enter {
+    animation: rtl-slide-in 0.3s ease-out;
+  }
+
+  .rtl-slide-exit {
+    animation: rtl-slide-out 0.3s ease-out;
+  }
+
+  .rtl-fade-enter {
+    animation: fade-in-rtl 0.3s ease-out;
+  }
+
+  .rtl-scale-enter {
+    animation: scale-in-rtl 0.2s ease-out;
+  }
+
+  /* Enhanced RTL Animations */
+  @keyframes rtl-slide-in {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes rtl-slide-out {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-in-rtl {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scale-in-rtl {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateX(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateX(0);
+    }
   }
 
   /* Smooth transitions for RTL switching */
   * {
-    transition: text-align 0.2s ease, direction 0.2s ease;
+    transition: text-align 0.2s ease, direction 0.2s ease, transform 0.2s ease;
+  }
+
+  /* RTL Dropdown & Popover Positioning */
+  .rtl [data-side="left"] {
+    --radix-popper-anchor-width: var(--radix-popper-available-width);
+    --radix-popper-transform-origin: right center;
+  }
+
+  .rtl [data-side="right"] {
+    --radix-popper-anchor-width: var(--radix-popper-available-width);
+    --radix-popper-transform-origin: left center;
+  }
+
+  /* RTL Toast Positioning */
+  .rtl [data-toast-viewport] {
+    left: auto;
+    right: 1rem;
   }
 }
-
-/* Import Arabic font */
-@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap');

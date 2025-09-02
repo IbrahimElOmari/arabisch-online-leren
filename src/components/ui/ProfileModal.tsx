@@ -16,6 +16,8 @@ import { useToast } from '@/hooks/use-toast';
 import { User, Edit, Save, X } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
+import { useRTLAnimations } from '@/hooks/useRTLAnimations';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -31,7 +33,9 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
     full_name: '',
     phone_number: '',
   });
-  const { getFlexDirection, getTextAlign, getMarginEnd } = useRTLLayout();
+  const { getFlexDirection, getTextAlign, getMarginEnd, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
+  const { getModalSlideClasses } = useRTLAnimations();
 
   useEffect(() => {
     if (profile) {
@@ -58,16 +62,16 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
       if (error) throw error;
 
       toast({
-        title: 'Succes',
-        description: 'Profiel succesvol bijgewerkt',
+        title: t('common.success'),
+        description: t('user.profile_updated', 'Profiel succesvol bijgewerkt'),
       });
 
       setIsEditing(false);
     } catch (error: any) {
       console.error('Error updating profile:', error);
       toast({
-        title: 'Fout',
-        description: 'Er is een fout opgetreden bij het bijwerken van je profiel',
+        title: t('common.error'),
+        description: t('error.profile_update_failed', 'Er is een fout opgetreden bij het bijwerken van je profiel'),
         variant: 'destructive',
       });
     } finally {
@@ -85,47 +89,55 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className={`sm:max-w-md ${getModalSlideClasses()}`} dir={isRTL ? 'rtl' : 'ltr'}>
         <DialogHeader>
-          <DialogTitle className={`${getFlexDirection()} items-center gap-2 ${getTextAlign('left')}`}>
+          <DialogTitle className={`${getFlexDirection()} items-center gap-2 ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>
             <User className="h-5 w-5" />
-            Mijn Profiel
+            {t('user.profile', 'Mijn Profiel')}
           </DialogTitle>
-          <DialogDescription className={getTextAlign('left')}>
-            Bekijk en bewerk je profielinformatie
+          <DialogDescription className={`${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>
+            {t('user.profile_description', 'Bekijk en bewerk je profielinformatie')}
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-6">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="full_name">Volledige naam</Label>
+              <Label htmlFor="full_name" className={isRTL ? 'arabic-text' : ''}>
+                {t('user.full_name', 'Volledige naam')}
+              </Label>
               {isEditing ? (
                 <Input
                   id="full_name"
                   value={formData.full_name}
                   onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                  placeholder="Voer je volledige naam in"
+                  placeholder={t('user.full_name_placeholder', 'Voer je volledige naam in')}
+                  className={isRTL ? 'text-right arabic-text' : ''}
+                  dir={isRTL ? 'rtl' : 'ltr'}
                 />
               ) : (
-                <div className={`p-2 bg-muted rounded-md ${getTextAlign('left')}`}>
-                  {profile.full_name || 'Niet ingesteld'}
+                <div className={`p-2 bg-muted rounded-md ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>
+                  {profile.full_name || t('common.not_set', 'Niet ingesteld')}
                 </div>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">E-mailadres</Label>
+              <Label htmlFor="email" className={isRTL ? 'arabic-text' : ''}>
+                {t('user.email', 'E-mailadres')}
+              </Label>
               <div className={`p-2 bg-muted rounded-md text-muted-foreground ${getTextAlign('left')}`}>
                 {user.email}
               </div>
-              <p className={`text-xs text-muted-foreground ${getTextAlign('left')}`}>
-                E-mailadres kan niet worden gewijzigd
+              <p className={`text-xs text-muted-foreground ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>
+                {t('user.email_readonly', 'E-mailadres kan niet worden gewijzigd')}
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="role">Rol</Label>
+              <Label htmlFor="role" className={isRTL ? 'arabic-text' : ''}>
+                {t('user.role', 'Rol')}
+              </Label>
               <div className="p-2">
                 <Badge variant="secondary" className="capitalize">
                   {profile.role}
@@ -134,24 +146,30 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone_number">Telefoonnummer</Label>
+              <Label htmlFor="phone_number" className={isRTL ? 'arabic-text' : ''}>
+                {t('user.phone_number', 'Telefoonnummer')}
+              </Label>
               {isEditing ? (
                 <Input
                   id="phone_number"
                   value={formData.phone_number}
                   onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
-                  placeholder="Voer je telefoonnummer in"
+                  placeholder={t('user.phone_placeholder', 'Voer je telefoonnummer in')}
+                  className={isRTL ? 'text-right arabic-numerals' : ''}
+                  dir="ltr"
                 />
               ) : (
-                <div className={`p-2 bg-muted rounded-md ${getTextAlign('left')}`}>
-                  {(profile as Tables<'profiles'>).phone_number || 'Niet ingesteld'}
+                <div className={`p-2 bg-muted rounded-md ${getTextAlign('left')} arabic-numerals`}>
+                  {(profile as Tables<'profiles'>).phone_number || t('common.not_set', 'Niet ingesteld')}
                 </div>
               )}
             </div>
 
             {(profile as Tables<'profiles'>).parent_email && (
               <div className="space-y-2">
-                <Label htmlFor="parent_email">Ouder e-mailadres</Label>
+                <Label htmlFor="parent_email" className={isRTL ? 'arabic-text' : ''}>
+                  {t('user.parent_email', 'Ouder e-mailadres')}
+                </Label>
                 <div className={`p-2 bg-muted rounded-md text-muted-foreground ${getTextAlign('left')}`}>
                   {(profile as Tables<'profiles'>).parent_email}
                 </div>
@@ -169,7 +187,9 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
                   className={getFlexDirection()}
                 >
                   <X className={`h-4 w-4 ${getMarginEnd('2')}`} />
-                  Annuleren
+                  <span className={isRTL ? 'arabic-text' : ''}>
+                    {t('form.cancel')}
+                  </span>
                 </Button>
                 <Button
                   onClick={handleSave}
@@ -177,7 +197,9 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
                   className={getFlexDirection()}
                 >
                   <Save className={`h-4 w-4 ${getMarginEnd('2')}`} />
-                  {isLoading ? 'Bezig...' : 'Opslaan'}
+                  <span className={isRTL ? 'arabic-text' : ''}>
+                    {isLoading ? t('status.saving') : t('form.save')}
+                  </span>
                 </Button>
               </>
             ) : (
@@ -186,7 +208,9 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
                 className={getFlexDirection()}
               >
                 <Edit className={`h-4 w-4 ${getMarginEnd('2')}`} />
-                Bewerken
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {t('form.edit')}
+                </span>
               </Button>
             )}
           </div>
