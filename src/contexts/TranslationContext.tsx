@@ -156,7 +156,20 @@ const translations = {
     'time.hours_ago': '{count} uur geleden',
     'time.days_ago': '{count} dagen geleden',
     
+    // Dashboard specific
+    'dashboard.profile_loading': 'Welkom! Je profiel wordt geladen...',
+    'dashboard.profile_loading_title': 'Profiel wordt geladen',
+    'dashboard.profile_loading_desc': 'Je dashboard werkt met basis functionaliteit terwijl je profiel wordt geladen.',
+    'dashboard.force_profile': 'Forceer profiel',
+    'dashboard.full_loading_desc': 'Je dashboard wordt volledig geladen zodra je profiel beschikbaar is.',
+    'dashboard.current_role': 'Momenteel werken we met rol',
+    'dashboard.navigation_desc': 'Je kunt al wel naar andere pagina\'s navigeren via de sidebar.',
+    
+    // Errors specific
+    'error.unknown_role': 'Onbekende gebruikersrol',
+    
     // Common
+    'common.retry': 'Opnieuw proberen',
     'common.pages': 'Pagina\'s',
     'common.no_results': 'Geen resultaten gevonden.',
     'common.success': 'Succes!',
@@ -309,7 +322,20 @@ const translations = {
     'time.hours_ago': 'منذ {count} ساعات',
     'time.days_ago': 'منذ {count} أيام',
     
+    // Dashboard specific
+    'dashboard.profile_loading': 'أهلاً وسهلاً! يتم تحميل ملفك الشخصي...',
+    'dashboard.profile_loading_title': 'يتم تحميل الملف الشخصي',
+    'dashboard.profile_loading_desc': 'لوحة التحكم تعمل بالوظائف الأساسية أثناء تحميل ملفك الشخصي.',
+    'dashboard.force_profile': 'فرض تحميل الملف الشخصي',
+    'dashboard.full_loading_desc': 'سيتم تحميل لوحة التحكم بالكامل بمجرد توفر ملفك الشخصي.',
+    'dashboard.current_role': 'نعمل حالياً بالدور',
+    'dashboard.navigation_desc': 'يمكنك التنقل إلى صفحات أخرى عبر الشريط الجانبي.',
+    
+    // Errors specific
+    'error.unknown_role': 'دور مستخدم غير معروف',
+    
     // Common
+    'common.retry': 'إعادة المحاولة',
     'common.pages': 'الصفحات',
     'common.no_results': 'لم يتم العثور على نتائج.',
     'common.success': 'نجح!',
