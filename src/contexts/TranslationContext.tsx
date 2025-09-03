@@ -34,6 +34,9 @@ const translations = {
     'nav.register': 'Registreren',
     'nav.search': 'Zoeken...',
     'nav.search_placeholder': 'Zoek naar pagina\'s, functies...',
+    'nav.switch_to_dutch': 'Schakel naar Nederlands',
+    'nav.switch_to_arabic': 'Schakel naar Arabisch',
+    'nav.switching_language': 'Taal wordt gewisseld...',
     
     // Welcome & Dashboard
     'welcome.title': 'Welkom terug',
@@ -126,6 +129,8 @@ const translations = {
     'status.pending': 'In Behandeling',
     'status.approved': 'Goedgekeurd',
     'status.rejected': 'Afgewezen',
+    'status.switching_language': 'Taal wordt gewisseld...',
+    'status.please_wait': 'Een moment geduld...',
     
     // Badges
     'badges.level': 'Niveau',
@@ -200,6 +205,9 @@ const translations = {
     'nav.register': 'التسجيل',
     'nav.search': 'البحث...',
     'nav.search_placeholder': 'ابحث عن الصفحات والوظائف...',
+    'nav.switch_to_dutch': 'التبديل إلى الهولندية',
+    'nav.switch_to_arabic': 'التبديل إلى العربية',  
+    'nav.switching_language': 'جارٍ تغيير اللغة...',
     
     // Welcome & Dashboard
     'welcome.title': 'أهلاً وسهلاً بعودتك',
@@ -292,6 +300,8 @@ const translations = {
     'status.pending': 'قيد الانتظار',
     'status.approved': 'تمت الموافقة',
     'status.rejected': 'مرفوض',
+    'status.switching_language': 'جارٍ تغيير اللغة...',
+    'status.please_wait': 'يرجى الانتظار...',
     
     // Badges
     'badges.level': 'المستوى',

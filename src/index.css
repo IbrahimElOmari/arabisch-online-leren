@@ -651,4 +651,82 @@ All colors MUST be HSL.
   [dir="rtl"] td:last-child {
     text-align: left;
   }
+
+  /* Enhanced RTL Mode specific styles */
+  .rtl-mode {
+    font-feature-settings: "liga" off;
+  }
+
+  .ltr-mode {
+    font-feature-settings: "liga" on;
+  }
+
+  /* RTL Container transitions */
+  .rtl-container {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .rtl-container.rtl {
+    direction: rtl;
+  }
+
+  .rtl-container.ltr {
+    direction: ltr;
+  }
+
+  /* Enhanced RTL form field transitions */
+  .rtl input, .rtl textarea, .rtl select {
+    text-align: right;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .ltr input, .ltr textarea, .ltr select {
+    text-align: left;
+    transition: all 0.2s ease-in-out;
+  }
+
+  /* RTL Animation utilities */
+  @keyframes rtl-slide-in-right {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes rtl-slide-in-left {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .rtl-slide-in {
+    animation: rtl-slide-in-right 0.3s ease-out;
+  }
+
+  .ltr-slide-in {
+    animation: rtl-slide-in-left 0.3s ease-out;
+  }
+
+  /* Arabic numeral specific styles */
+  .arabic-numerals {
+    font-variant-numeric: normal;
+    font-feature-settings: "tnum" off;
+  }
+
+  /* Enhanced Arabic text rendering with performance optimization */
+  .arabic-text {
+    font-feature-settings: "liga" on, "calt" on, "kern" on;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
