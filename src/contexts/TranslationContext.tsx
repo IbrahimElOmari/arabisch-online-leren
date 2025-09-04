@@ -4,6 +4,7 @@ import { useRTL } from './RTLContext';
 interface TranslationContextType {
   t: (key: string, fallback?: string) => string;
   language: 'nl' | 'ar';
+  setLanguage: (language: 'nl' | 'ar') => void;
 }
 
 const TranslationContext = createContext<TranslationContextType | undefined>(undefined);
@@ -173,21 +174,48 @@ const translations = {
     // Errors specific
     'error.unknown_role': 'Onbekende gebruikersrol',
     
+    // Task related
+    'task.completed': 'Completed',
+    'task.pending': 'Pending',
+    'task.inProgress': 'In Progress',
+    'task.overdue': 'Overdue',
+    'task.noTasks': 'No tasks available',
+    'task.loadingTasks': 'Loading tasks...',
+    'task.errorLoadingTasks': 'Failed to load tasks',
+    'task.createNew': 'Create New Task',
+    'task.editTask': 'Edit Task',
+    'task.deleteTask': 'Delete Task',
+    'task.taskDetails': 'Task Details',
+    'task.dueDate': 'Due Date',
+    'task.priority': 'Priority',
+    'task.status': 'Status',
+    'task.assignedTo': 'Assigned To',
+
+    // RTL Testing and Performance
+    'rtl.testSuite': 'RTL Test Suite',
+    'rtl.testing': 'Testing...',
+    'rtl.runTests': 'Run RTL Tests',
+    'rtl.performanceMonitor': 'Performance Monitor',
+    'rtl.crossBrowser': 'Cross-Browser Testing',
+    'rtl.accessibility': 'Accessibility Audit',
+    'rtl.mobileTest': 'Mobile RTL Testing',
+
     // Common
-    'common.retry': 'Opnieuw proberen',
-    'common.pages': 'Pagina\'s',
-    'common.no_results': 'Geen resultaten gevonden.',
-    'common.success': 'Succes!',
-    'common.error': 'Fout',
-    'common.warning': 'Waarschuwing',
-    'common.info': 'Informatie',
-    'common.confirm_action': 'Weet je het zeker?',
-    'common.yes': 'Ja',
-    'common.no': 'Nee',
-    'common.maybe': 'Misschien',
-    'common.all': 'Alles',
-    'common.none': 'Geen',
-    'common.other': 'Overig',
+    'common.retry': 'Retry',
+    'common.pages': 'Pages',
+    'common.no_results': 'No results found.',
+    'common.success': 'Success!',
+    'common.error': 'Error',
+    'common.warning': 'Warning',
+    'common.info': 'Information',
+    'common.confirm_action': 'Are you sure?',
+    'common.yes': 'Yes',
+    'common.no': 'No',
+    'common.maybe': 'Maybe',
+    'common.all': 'All',
+    'common.none': 'None',
+    'common.other': 'Other',
+    'common.progress': 'Progress',
   },
   ar: {
     // Navigation
@@ -344,6 +372,32 @@ const translations = {
     // Errors specific
     'error.unknown_role': 'دور مستخدم غير معروف',
     
+    // Task related
+    'task.completed': 'مكتمل',
+    'task.pending': 'في الانتظار',
+    'task.inProgress': 'قيد التنفيذ',
+    'task.overdue': 'متأخر',
+    'task.noTasks': 'لا توجد مهام متاحة',
+    'task.loadingTasks': 'جاري تحميل المهام...',
+    'task.errorLoadingTasks': 'فشل في تحميل المهام',
+    'task.createNew': 'إنشاء مهمة جديدة',
+    'task.editTask': 'تعديل المهمة',
+    'task.deleteTask': 'حذف المهمة',
+    'task.taskDetails': 'تفاصيل المهمة',
+    'task.dueDate': 'تاريخ الاستحقاق',
+    'task.priority': 'الأولوية',
+    'task.status': 'الحالة',
+    'task.assignedTo': 'مُعيَّن إلى',
+
+    // RTL Testing and Performance
+    'rtl.testSuite': 'مجموعة اختبارات RTL',
+    'rtl.testing': 'جاري الاختبار...',
+    'rtl.runTests': 'تشغيل اختبارات RTL',
+    'rtl.performanceMonitor': 'مراقب الأداء',
+    'rtl.crossBrowser': 'اختبار متعدد المتصفحات',
+    'rtl.accessibility': 'تدقيق إمكانية الوصول',
+    'rtl.mobileTest': 'اختبار RTL للجوال',
+
     // Common
     'common.retry': 'إعادة المحاولة',
     'common.pages': 'الصفحات',
@@ -359,6 +413,7 @@ const translations = {
     'common.all': 'الكل',
     'common.none': 'لا شيء',
     'common.other': 'أخرى',
+    'common.progress': 'التقدم',
   }
 };
 
@@ -367,8 +422,12 @@ interface TranslationProviderProps {
 }
 
 export const TranslationProvider: React.FC<TranslationProviderProps> = ({ children }) => {
-  const { isRTL } = useRTL();
+  const { isRTL, setRTL } = useRTL();
   const language = isRTL ? 'ar' : 'nl';
+  
+  const setLanguage = (newLanguage: 'nl' | 'ar') => {
+    setRTL(newLanguage === 'ar');
+  };
   
   const t = (key: string, fallback?: string): string => {
     const translation = translations[language]?.[key as keyof typeof translations.nl];
@@ -376,7 +435,7 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({ childr
   };
 
   return (
-    <TranslationContext.Provider value={{ t, language }}>
+    <TranslationContext.Provider value={{ t, language, setLanguage }}>
       {children}
     </TranslationContext.Provider>
   );
