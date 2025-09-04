@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { ForumPost } from './ForumPost';
 import { 
   Send,
@@ -49,6 +50,7 @@ interface ForumPostsListProps {
 const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [replyContent, setReplyContent] = useState('');
@@ -103,114 +105,114 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
       console.log('ForumPostsList: Organized posts:', organized.length, 'root posts');
       
       setPosts(organized as any);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      toast({
-        title: "Fout",
-        description: "Kon berichten niet laden",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const createReply = async () => {
-    if (!user) {
-      toast({
-        title: "Niet ingelogd",
-        description: "Je moet ingelogd zijn om een reactie te plaatsen",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!threadId) {
-      toast({
-        title: "Fout",
-        description: "Geen thread gevonden om een reactie te plaatsen",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!replyContent.trim()) {
-      toast({
-        title: "Fout",
-        description: "Vul een bericht in",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !sessionData.session) {
-        throw new Error('Geen geldige sessie gevonden. Log opnieuw in.');
-      }
-
-      const accessToken = sessionData.session.access_token;
-      
-      console.log('Creating reply with edge function...', {
-        threadId,
-        contentLength: replyContent.length,
-        hasToken: !!accessToken
-      });
-
-      const { data: functionData, error: functionError } = await supabase.functions.invoke('manage-forum', {
-        body: {
-          action: 'create-post',
-          threadId: threadId,
-          content: replyContent
-        },
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        }
-      });
-
-      console.log('Edge function response:', { functionData, functionError });
-
-      if (functionError) {
-        console.warn('Edge function failed, trying fallback...', functionError);
-        await createReplyFallback();
-        return;
-      }
-
-      if (functionData?.error) {
-        console.warn('Edge function returned error, trying fallback...', functionData.error);
-        await createReplyFallback();
-        return;
-      }
-
-      console.log('Reply created successfully via edge function');
-      setReplyContent('');
-      fetchPosts();
-      
-      toast({
-        title: "Succes",
-        description: "Reactie geplaatst"
-      });
-
-    } catch (error) {
-      console.error('Error in createReply:', error);
-      
-      try {
-        await createReplyFallback();
-      } catch (fallbackError) {
-        console.error('Fallback also failed:', fallbackError);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
         toast({
-          title: "Fout",
-          description: `Kon reactie niet plaatsen: ${error instanceof Error ? error.message : 'Onbekende fout'}`,
+          title: t('common.error'),
+          description: "Kon berichten niet laden",
           variant: "destructive"
         });
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    };
+
+    const createReply = async () => {
+      if (!user) {
+        toast({
+          title: t('error.unauthorized'),
+          description: "Je moet ingelogd zijn om een reactie te plaatsen",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (!threadId) {
+        toast({
+          title: t('common.error'),
+          description: "Geen thread gevonden om een reactie te plaatsen",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (!replyContent.trim()) {
+        toast({
+          title: t('common.error'),
+          description: t('error.required_field'),
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setIsSubmitting(true);
+
+      try {
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError || !sessionData.session) {
+          throw new Error('Geen geldige sessie gevonden. Log opnieuw in.');
+        }
+
+        const accessToken = sessionData.session.access_token;
+        
+        console.log('Creating reply with edge function...', {
+          threadId,
+          contentLength: replyContent.length,
+          hasToken: !!accessToken
+        });
+
+        const { data: functionData, error: functionError } = await supabase.functions.invoke('manage-forum', {
+          body: {
+            action: 'create-post',
+            threadId: threadId,
+            content: replyContent
+          },
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          }
+        });
+
+        console.log('Edge function response:', { functionData, functionError });
+
+        if (functionError) {
+          console.warn('Edge function failed, trying fallback...', functionError);
+          await createReplyFallback();
+          return;
+        }
+
+        if (functionData?.error) {
+          console.warn('Edge function returned error, trying fallback...', functionData.error);
+          await createReplyFallback();
+          return;
+        }
+
+        console.log('Reply created successfully via edge function');
+        setReplyContent('');
+        fetchPosts();
+        
+        toast({
+          title: t('common.success'),
+          description: "Reactie geplaatst"
+        });
+
+      } catch (error) {
+        console.error('Error in createReply:', error);
+        
+        try {
+          await createReplyFallback();
+        } catch (fallbackError) {
+          console.error('Fallback also failed:', fallbackError);
+          toast({
+            title: t('common.error'),
+            description: `Kon reactie niet plaatsen: ${error instanceof Error ? error.message : 'Onbekende fout'}`,
+            variant: "destructive"
+          });
+        }
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
 
   const createReplyFallback = async () => {
     console.log('Attempting fallback direct insert...');
@@ -241,65 +243,65 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
       throw new Error(`Directe insert mislukt: ${insertError.message}`);
     }
 
-    console.log('Fallback insert successful');
-    setReplyContent('');
-    fetchPosts();
-    
-    toast({
-      title: "Succes",
-      description: "Reactie geplaatst (via fallback)"
-    });
-  };
+      console.log('Fallback insert successful');
+      setReplyContent('');
+      fetchPosts();
+      
+      toast({
+        title: t('common.success'),
+        description: "Reactie geplaatst (via fallback)"
+      });
+    };
 
-  const handleLike = async (postId: string, isLike: boolean) => {
-    try {
-      const { error } = await supabase
-        .from('forum_likes')
-        .upsert({
-          post_id: postId,
-          user_id: profile?.id,
-          is_like: isLike
+    const handleLike = async (postId: string, isLike: boolean) => {
+      try {
+        const { error } = await supabase
+          .from('forum_likes')
+          .upsert({
+            post_id: postId,
+            user_id: profile?.id,
+            is_like: isLike
+          });
+
+        if (error) throw error;
+        
+        fetchPosts();
+      } catch (error) {
+        console.error('Error liking post:', error);
+        toast({
+          title: t('common.error'),
+          description: "Kon waardering niet opslaan",
+          variant: "destructive"
+        });
+      }
+    };
+
+    const handleDelete = async (postId: string) => {
+      try {
+        const { error } = await supabase.functions.invoke('manage-forum', {
+          body: {
+            action: 'delete-post',
+            postId: postId
+          }
         });
 
-      if (error) throw error;
-      
-      fetchPosts();
-    } catch (error) {
-      console.error('Error liking post:', error);
-      toast({
-        title: "Fout",
-        description: "Kon waardering niet opslaan",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleDelete = async (postId: string) => {
-    try {
-      const { error } = await supabase.functions.invoke('manage-forum', {
-        body: {
-          action: 'delete-post',
-          postId: postId
-        }
-      });
-
-      if (error) throw error;
-      
-      fetchPosts();
-      
-      toast({
-        title: "Succes",
-        description: "Bericht verwijderd"
-      });
-    } catch (error) {
-      console.error('Error deleting post:', error);
-      toast({
-        title: "Fout",
-        description: "Kon bericht niet verwijderen",
-        variant: "destructive"
-      });
-    }
-  };
+        if (error) throw error;
+        
+        fetchPosts();
+        
+        toast({
+          title: t('common.success'),
+          description: "Bericht verwijderd"
+        });
+      } catch (error) {
+        console.error('Error deleting post:', error);
+        toast({
+          title: t('common.error'),
+          description: "Kon bericht niet verwijderen",
+          variant: "destructive"
+        });
+      }
+    };
 
   if (loading) {
     return (
@@ -314,11 +316,11 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
   return (
     <div className="space-y-6">
       {posts.length === 0 ? (
-        <EmptyState
-          icon={MessageCircle}
-          title="Nog geen berichten"
-          description="Wees de eerste om een bericht te plaatsen!"
-        />
+          <EmptyState
+            icon={MessageCircle}
+            title={t('forum.noMessages')}
+            description={t('forum.beFirst')}
+          />
       ) : (
         <div className="space-y-4">
           {posts.map((post: any) => (
@@ -339,17 +341,17 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
-            Reageren
+            {t('forum.reply')}
             {!canReply && (
               <span className="text-sm text-muted-foreground font-normal">
-                (Je moet ingelogd zijn)
+                {t('forum.mustLogin')}
               </span>
             )}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Textarea
-            placeholder={canReply ? "Schrijf je reactie..." : "Log in om een reactie te plaatsen"}
+            placeholder={canReply ? t('forum.writePlaceholder') : t('forum.loginPlaceholder')}
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
             rows={4}
@@ -360,7 +362,7 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
             disabled={!canReply || !replyContent.trim() || isSubmitting}
           >
             <Send className="h-4 w-4 mr-2" />
-            {isSubmitting ? 'Bezig...' : 'Reactie Plaatsen'}
+            {isSubmitting ? t('forum.posting') : t('forum.postReply')}
           </Button>
         </CardContent>
       </Card>

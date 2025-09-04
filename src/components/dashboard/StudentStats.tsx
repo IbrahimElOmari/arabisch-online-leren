@@ -1,8 +1,9 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Trophy, Target, Clock, Star } from 'lucide-react';
+import { useTranslation } from '@/contexts/TranslationContext';
+import { useArabicNumerals } from '@/hooks/useArabicNumerals';
 
 interface StudentStatsProps {
   completedLessons: number;
@@ -19,6 +20,8 @@ export const StudentStats = ({
   studyTime, 
   currentStreak 
 }: StudentStatsProps) => {
+  const { t } = useTranslation();
+  const { formatNumber, formatPercentage } = useArabicNumerals();
   const progressPercentage = (completedLessons / totalLessons) * 100;
 
   return (
@@ -30,15 +33,15 @@ export const StudentStats = ({
               <Target className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Voortgang</p>
+              <p className="text-sm text-muted-foreground">{t('stats.progress')}</p>
               <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-                {completedLessons}/{totalLessons}
+                {formatNumber(completedLessons)}/{formatNumber(totalLessons)}
               </p>
             </div>
           </div>
           <Progress value={progressPercentage} className="mt-3" />
           <p className="text-xs text-muted-foreground mt-1">
-            {Math.round(progressPercentage)}% voltooid
+            {formatPercentage(progressPercentage)} {t('stats.completed')}
           </p>
         </CardContent>
       </Card>
@@ -50,9 +53,9 @@ export const StudentStats = ({
               <Star className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Gemiddelde Score</p>
+              <p className="text-sm text-muted-foreground">{t('stats.averageScore')}</p>
               <p className="text-2xl font-bold text-green-700 dark:text-green-300">
-                {averageScore}%
+                {formatPercentage(averageScore)}
               </p>
             </div>
           </div>
@@ -78,14 +81,14 @@ export const StudentStats = ({
               <Clock className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Studietijd</p>
+              <p className="text-sm text-muted-foreground">{t('stats.studyTime')}</p>
               <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
-                {studyTime}h
+                {formatNumber(studyTime)}h
               </p>
             </div>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Deze week
+            {t('stats.thisWeek')}
           </p>
         </CardContent>
       </Card>
@@ -97,14 +100,14 @@ export const StudentStats = ({
               <Trophy className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Streak</p>
+              <p className="text-sm text-muted-foreground">{t('stats.streak')}</p>
               <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
-                {currentStreak}
+                {formatNumber(currentStreak)}
               </p>
             </div>
           </div>
           <Badge variant="secondary" className="mt-2 bg-orange-100 text-orange-700">
-            🔥 Op een rij!
+            {t('stats.onStreak')}
           </Badge>
         </CardContent>
       </Card>

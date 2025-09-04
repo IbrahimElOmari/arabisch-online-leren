@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { 
   ThumbsUp, 
   ThumbsDown, 
@@ -19,7 +20,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
-import { nl } from 'date-fns/locale';
+import { nl, ar } from 'date-fns/locale';
 
 interface ForumPostProps {
   post: {
@@ -69,6 +70,7 @@ export function ForumPost({
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const { getFlexDirection, getTextAlign, getMarginStart, getMarginEnd } = useRTLLayout();
+  const { t, language } = useTranslation();
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -94,8 +96,8 @@ export function ForumPost({
   const handleReply = async () => {
     if (!user) {
       toast({
-        title: "Niet ingelogd",
-        description: "Je moet ingelogd zijn om te reageren",
+        title: t('error.unauthorized'),
+        description: t('forum.mustLogin').replace('(', '').replace(')', ''),
         variant: "destructive"
       });
       return;
@@ -103,8 +105,8 @@ export function ForumPost({
 
     if (!replyContent.trim()) {
       toast({
-        title: "Fout", 
-        description: "Vul een reactie in",
+        title: t('common.error'), 
+        description: t('error.required_field'),
         variant: "destructive"
       });
       return;
@@ -112,7 +114,7 @@ export function ForumPost({
 
     if (!post.thread_id) {
       toast({
-        title: "Fout",
+        title: t('common.error'),
         description: "Geen thread gevonden voor deze reactie",
         variant: "destructive"
       });
@@ -155,7 +157,7 @@ export function ForumPost({
       }
 
       toast({
-        title: "Reactie geplaatst",
+        title: t('common.success'),
         description: "Je reactie is succesvol geplaatst"
       });
 
@@ -358,15 +360,15 @@ export function ForumPost({
                      authorRole === 'leerkracht' ? 'Leerkracht' : 'Leerling'}
                   </Badge>
                   {nestingLevel > 0 && (
-                    <Badge variant="secondary" className="text-xs">
-                      Reactie
-                    </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {t('forum.reply')}
+                  </Badge>
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {formatDistanceToNow(new Date(post.created_at), { 
                     addSuffix: true, 
-                    locale: nl 
+                    locale: language === 'ar' ? ar : nl 
                   })}
                 </p>
               </div>
@@ -436,7 +438,7 @@ export function ForumPost({
               {replies.length > 0 && (
                 <span className="flex items-center gap-2 text-sm text-muted-foreground">
                   <MessageCircle className="h-4 w-4" />
-                  {replies.length} reactie{replies.length !== 1 ? 's' : ''}
+                  {replies.length} {replies.length === 1 ? t('forum.replyCount') : t('forum.replyCount') + t('forum.repliesCount')}
                 </span>
               )}
             </div>
@@ -449,7 +451,7 @@ export function ForumPost({
                 className="flex items-center gap-2"
               >
                 <Reply className="h-4 w-4" />
-                Reageren
+                {t('forum.reply')}
               </Button>
             )}
           </div>
@@ -457,7 +459,7 @@ export function ForumPost({
           {showReplyForm && (
             <div className="space-y-3 pt-4 border-t">
               <Textarea
-                placeholder="Schrijf je reactie..."
+                placeholder={t('forum.writeReply')}
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
                 className="min-h-[80px]"
@@ -471,7 +473,7 @@ export function ForumPost({
                     setReplyContent('');
                   }}
                 >
-                  Annuleren
+                  {t('forum.cancel')}
                 </Button>
                 <Button
                   size="sm"
@@ -480,7 +482,7 @@ export function ForumPost({
                   className="flex items-center gap-2"
                 >
                   <Send className="h-4 w-4" />
-                  {isSubmitting ? 'Bezig...' : 'Versturen'}
+                  {isSubmitting ? t('forum.posting') : t('forum.send')}
                 </Button>
               </div>
             </div>

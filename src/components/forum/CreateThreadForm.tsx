@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Plus, Send } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface CreateThreadFormProps {
   title: string;
@@ -23,24 +24,25 @@ const CreateThreadForm: React.FC<CreateThreadFormProps> = ({
   onSubmit
 }) => {
   const { getFlexDirection, getTextAlign, getMarginEnd } = useRTLLayout();
+  const { t } = useTranslation();
   
   return (
     <Card>
       <CardHeader>
         <CardTitle className={`${getFlexDirection()} items-center gap-2 ${getTextAlign('left')}`}>
           <Plus className="h-5 w-5" />
-          Nieuw Onderwerp
+          {t('forum.newTopic')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <Input
-          placeholder="Titel van het onderwerp"
+          placeholder={t('forum.topicTitle')}
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
           className={getTextAlign('left')}
         />
         <Textarea
-          placeholder="Beschrijf je onderwerp..."
+          placeholder={t('forum.topicDescription')}
           value={content}
           onChange={(e) => onContentChange(e.target.value)}
           rows={4}
@@ -48,7 +50,7 @@ const CreateThreadForm: React.FC<CreateThreadFormProps> = ({
         />
         <Button onClick={onSubmit} className={getFlexDirection()}>
           <Send className={`h-4 w-4 ${getMarginEnd('2')}`} />
-          Onderwerp Plaatsen
+          {t('forum.postTopic')}
         </Button>
       </CardContent>
     </Card>

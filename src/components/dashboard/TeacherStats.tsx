@@ -1,8 +1,9 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Users, BookOpen, CheckCircle, Clock } from 'lucide-react';
+import { useTranslation } from '@/contexts/TranslationContext';
+import { useArabicNumerals } from '@/hooks/useArabicNumerals';
 
 interface TeacherStatsProps {
   totalStudents: number;
@@ -19,6 +20,8 @@ export const TeacherStats = ({
   totalLessons, 
   averageEngagement 
 }: TeacherStatsProps) => {
+  const { t } = useTranslation();
+  const { formatNumber, formatPercentage } = useArabicNumerals();
   const progressPercentage = (completedLessons / totalLessons) * 100;
 
   return (
@@ -30,14 +33,14 @@ export const TeacherStats = ({
               <Users className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Studenten</p>
+              <p className="text-sm text-muted-foreground">{t('stats.students')}</p>
               <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-                {totalStudents}
+                {formatNumber(totalStudents)}
               </p>
             </div>
           </div>
           <Badge variant="secondary" className="mt-2 bg-blue-100 text-blue-700">
-            Actief
+            {t('stats.active')}
           </Badge>
         </CardContent>
       </Card>
@@ -49,14 +52,14 @@ export const TeacherStats = ({
               <BookOpen className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Actieve Klassen</p>
+              <p className="text-sm text-muted-foreground">{t('stats.activeClasses')}</p>
               <p className="text-2xl font-bold text-green-700 dark:text-green-300">
-                {activeClasses}
+                {formatNumber(activeClasses)}
               </p>
             </div>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Dit semester
+            {t('stats.thisSemester')}
           </p>
         </CardContent>
       </Card>
@@ -68,9 +71,9 @@ export const TeacherStats = ({
               <CheckCircle className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Les Voortgang</p>
+              <p className="text-sm text-muted-foreground">{t('stats.lessonProgress')}</p>
               <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
-                {completedLessons}/{totalLessons}
+                {formatNumber(completedLessons)}/{formatNumber(totalLessons)}
               </p>
             </div>
           </div>
@@ -85,14 +88,14 @@ export const TeacherStats = ({
               <Clock className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Betrokkenheid</p>
+              <p className="text-sm text-muted-foreground">{t('stats.engagement')}</p>
               <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
-                {averageEngagement}%
+                {formatPercentage(averageEngagement)}
               </p>
             </div>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Gemiddeld
+            {t('stats.average')}
           </p>
         </CardContent>
       </Card>
