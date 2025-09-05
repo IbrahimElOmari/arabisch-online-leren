@@ -100,7 +100,9 @@ export const testRTLCompatibility = () => {
     gridAutoFlow: CSS.supports('grid-auto-flow', 'row-reverse'),
   };
 
-  console.log('RTL Browser Compatibility:', tests);
+  if (process.env.NODE_ENV === 'development') {
+    console.log('RTL Browser Compatibility:', tests);
+  }
   return tests;
 };
 

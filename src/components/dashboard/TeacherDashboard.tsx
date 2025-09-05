@@ -67,7 +67,9 @@ const TeacherDashboard = () => {
 
       const controller = new AbortController();
       const timer = setTimeout(() => {
-        console.warn('⚠️ TeacherDashboard: Aborting classes fetch after 4s');
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('⚠️ TeacherDashboard: Aborting classes fetch after 4s');
+        }
         controller.abort();
       }, 4000);
 
@@ -91,7 +93,9 @@ const TeacherDashboard = () => {
 
       console.debug('✅ TeacherDashboard: Classes fetched successfully');
     } catch (err: any) {
-      console.error('❌ TeacherDashboard: Error fetching classes:', err);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('❌ TeacherDashboard: Error fetching classes:', err);
+      }
       setError('Laden van klassen duurde te lang of mislukte. We tonen voorlopig een lege lijst. Probeer opnieuw.');
       setClasses([]);
       setSelectedClass(null);

@@ -48,7 +48,7 @@ export const useLazyRTLComponents = () => {
       const module = await import(`../components/rtl/${componentName}.tsx`);
       return module.default;
     } catch (error) {
-      console.warn(`RTL component ${componentName} not found`);
+        console.warn(`RTL component ${componentName} not found`);
       return null;
     }
   };
@@ -89,16 +89,16 @@ export const optimizeRTLImages = () => {
   images.forEach(img => observer.observe(img));
 };
 
-// Performance monitoring for RTL
-export const monitorRTLPerformance = () => {
+// Performance monitoring for RTL - now only works inside React components
+export const createRTLPerformanceMonitor = (isRTL: boolean) => {
   if (typeof window === 'undefined') return;
-
-  const { isRTL } = useRTL();
   
   const observer = new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {
       if (entry.name.includes('rtl') || entry.name.includes('arabic')) {
-        console.log(`RTL Performance: ${entry.name} took ${entry.duration}ms`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`RTL Performance: ${entry.name} took ${entry.duration}ms`);
+        }
       }
     }
   });
@@ -112,6 +112,9 @@ export const monitorRTLPerformance = () => {
     return () => {
       performance.mark('rtl-end');
       performance.measure('rtl-total', 'rtl-start', 'rtl-end');
+      observer.disconnect();
     };
   }
+  
+  return () => observer.disconnect();
 };

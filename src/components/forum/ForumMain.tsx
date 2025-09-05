@@ -56,13 +56,17 @@ const ForumMain = ({ classId }: ForumMainProps) => {
   // Enhanced real-time callbacks
   const handleThreadsChange = useCallback(() => {
     if (selectedRoom) {
-      console.log('[ForumMain] Real-time threads update detected');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[ForumMain] Real-time threads update detected');
+      }
       fetchThreads(selectedRoom);
     }
   }, [selectedRoom]);
 
   const handleNewThread = useCallback((newThread: any) => {
-    console.log('[ForumMain] New thread detected:', newThread.title);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[ForumMain] New thread detected:', newThread.title);
+    }
     toast({
       title: "Nieuw onderwerp",
       description: `"${newThread.title}" is zojuist aangemaakt`,

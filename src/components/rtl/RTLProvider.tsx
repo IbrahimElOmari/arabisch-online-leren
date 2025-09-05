@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { RTLProvider } from '@/contexts/RTLContext';
-import { preloadArabicFonts, injectCriticalRTLCSS, monitorRTLPerformance } from '@/utils/performanceRTL';
+import { RTLProvider, useRTL } from '@/contexts/RTLContext';
+import { preloadArabicFonts, injectCriticalRTLCSS, createRTLPerformanceMonitor } from '@/utils/performanceRTL';
 import { initializeCrossBrowserRTL } from '@/utils/crossBrowserRTL';
 
 interface EnhancedRTLProviderProps {
@@ -8,6 +8,22 @@ interface EnhancedRTLProviderProps {
   enablePerformanceMonitoring?: boolean;
   enableCrossBrowserSupport?: boolean;
 }
+
+const RTLPerformanceWrapper: React.FC<{ 
+  children: React.ReactNode; 
+  enablePerformanceMonitoring: boolean;
+}> = ({ children, enablePerformanceMonitoring }) => {
+  const { isRTL } = useRTL();
+  
+  useEffect(() => {
+    if (enablePerformanceMonitoring && process.env.NODE_ENV === 'development') {
+      const cleanup = createRTLPerformanceMonitor(isRTL);
+      return cleanup;
+    }
+  }, [isRTL, enablePerformanceMonitoring]);
+
+  return <>{children}</>;
+};
 
 export const EnhancedRTLProvider: React.FC<EnhancedRTLProviderProps> = ({ 
   children, 
@@ -23,17 +39,13 @@ export const EnhancedRTLProvider: React.FC<EnhancedRTLProviderProps> = ({
     if (enableCrossBrowserSupport) {
       initializeCrossBrowserRTL();
     }
-
-    // Start performance monitoring in development
-    if (enablePerformanceMonitoring && process.env.NODE_ENV === 'development') {
-      const cleanup = monitorRTLPerformance();
-      return cleanup;
-    }
-  }, [enablePerformanceMonitoring, enableCrossBrowserSupport]);
+  }, [enableCrossBrowserSupport]);
 
   return (
     <RTLProvider>
-      {children}
+      <RTLPerformanceWrapper enablePerformanceMonitoring={enablePerformanceMonitoring}>
+        {children}
+      </RTLPerformanceWrapper>
     </RTLProvider>
   );
 };
