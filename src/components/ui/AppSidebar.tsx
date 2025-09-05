@@ -1,4 +1,4 @@
-import { Home, Calendar, MessageSquare, Eye, BookOpen, User, Shield } from 'lucide-react';
+import { Home, Calendar, MessageSquare, Eye, BookOpen, User, Shield, Folder } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
@@ -45,6 +45,7 @@ export function AppSidebar() {
   const adminItems = user && profile && ['admin', 'leerkracht'].includes(profile.role) ? [
     { title: t('nav.forum_moderation'), url: '/forum-moderation', icon: MessageSquare },
     { title: t('nav.security'), url: '/security', icon: Shield },
+    { title: 'Les Organisatie', url: '/lesson-organization', icon: Folder },
   ] : [];
 
   return (

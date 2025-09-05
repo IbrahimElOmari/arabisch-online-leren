@@ -24,6 +24,7 @@ import CourseDetail from '@/pages/CourseDetail';
 import EnrollConfirm from '@/pages/EnrollConfirm';
 import ResetPassword from '@/pages/ResetPassword';
 import ForumModeration from '@/pages/ForumModeration';
+import LessonOrganizationPage from '@/pages/LessonOrganization';
 import NotFound from '@/pages/NotFound';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import TermsOfService from '@/pages/TermsOfService';
@@ -59,6 +60,7 @@ function App() {
                     <Route index element={<Index />} />
                     <Route path="dashboard" element={<AppGate><Dashboard /></AppGate>} />
                     <Route path="admin" element={<AppGate><Admin /></AppGate>} />
+                    <Route path="lesson-organization" element={<AppGate><LessonOrganizationPage /></AppGate>} />
                     <Route path="forum" element={<AppGate><Forum /></AppGate>} />
                     <Route path="forum/:classId" element={<AppGate><Forum /></AppGate>} />
                     <Route path="forum-moderation" element={<AppGate><ForumModeration /></AppGate>} />

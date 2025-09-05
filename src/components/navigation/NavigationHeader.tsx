@@ -5,6 +5,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { BookOpen } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { PWAInstallButton } from '@/components/pwa/PWAInstallButton';
 
 export const NavigationHeader = React.memo(() => {
   const navigate = useNavigate();
@@ -23,6 +24,9 @@ export const NavigationHeader = React.memo(() => {
           {isRTL ? 'تعلم العربية' : 'Leer Arabisch'}
         </span>
       </button>
+      <div className="ml-auto">
+        <PWAInstallButton />
+      </div>
     </div>
   );
 });
