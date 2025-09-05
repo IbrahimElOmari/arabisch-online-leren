@@ -2,7 +2,7 @@
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
 import TeacherDashboard from '@/components/dashboard/TeacherDashboard';
-import StudentDashboard from '@/components/dashboard/StudentDashboard';
+import EnhancedStudentDashboard from '@/components/student/EnhancedStudentDashboard';
 import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
@@ -41,7 +41,7 @@ const Dashboard = () => {
       case 'leerkracht':
         return <TeacherDashboard />;
       case 'leerling':
-        return <StudentDashboard />;
+        return <EnhancedStudentDashboard />;
       default:
         console.error('❌ Dashboard: Unknown role:', profile.role);
         return (
