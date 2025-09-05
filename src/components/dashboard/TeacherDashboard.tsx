@@ -7,6 +7,9 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
 import TaskQuestionManagementNew from '@/components/management/TaskQuestionManagementNew';
 import { TeacherGradingPanel } from '@/components/teacher/TeacherGradingPanel';
+import { BulkGradingModal } from '@/components/teacher/BulkGradingModal';
+import { GradingAnalytics } from '@/components/teacher/GradingAnalytics';
+import { AutoGradingSystem } from '@/components/teacher/AutoGradingSystem';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { TeachingModal } from '@/components/teaching/TeachingModal';
 import { AttendanceModal } from '@/components/teaching/AttendanceModal';
@@ -50,6 +53,8 @@ const TeacherDashboard = () => {
   const [teachingOpen, setTeachingOpen] = useState(false);
   const [attendanceOpen, setAttendanceOpen] = useState(false);
   const [performanceOpen, setPerformanceOpen] = useState(false);
+  const [bulkGradingOpen, setBulkGradingOpen] = useState(false);
+  const [gradingMode, setGradingMode] = useState<'individual' | 'bulk' | 'auto' | 'analytics'>('individual');
 
   useEffect(() => {
     if (profile?.id) {
@@ -280,7 +285,76 @@ const TeacherDashboard = () => {
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <TeacherGradingPanel classId={selectedClass} />
+                  <div className="space-y-4">
+                    {/* Grading Mode Selector */}
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        variant={gradingMode === 'individual' ? 'default' : 'outline'}
+                        onClick={() => setGradingMode('individual')}
+                        size="sm"
+                      >
+                        <span className={isRTL ? 'arabic-text' : ''}>
+                          {isRTL ? 'فردي' : 'Individueel'}
+                        </span>
+                      </Button>
+                      <Button
+                        variant={gradingMode === 'bulk' ? 'default' : 'outline'}
+                        onClick={() => setGradingMode('bulk')}
+                        size="sm"
+                      >
+                        <span className={isRTL ? 'arabic-text' : ''}>
+                          {isRTL ? 'مجمع' : 'Bulksgewijs'}
+                        </span>
+                      </Button>
+                      <Button
+                        variant={gradingMode === 'auto' ? 'default' : 'outline'}
+                        onClick={() => setGradingMode('auto')}
+                        size="sm"
+                      >
+                        <span className={isRTL ? 'arabic-text' : ''}>
+                          {isRTL ? 'تلقائي' : 'Automatisch'}
+                        </span>
+                      </Button>
+                      <Button
+                        variant={gradingMode === 'analytics' ? 'default' : 'outline'}
+                        onClick={() => setGradingMode('analytics')}
+                        size="sm"
+                      >
+                        <span className={isRTL ? 'arabic-text' : ''}>
+                          {isRTL ? 'إحصائيات' : 'Analytics'}
+                        </span>
+                      </Button>
+                    </div>
+
+                    {/* Render based on selected mode */}
+                    {gradingMode === 'individual' && (
+                      <TeacherGradingPanel classId={selectedClass} />
+                    )}
+                    
+                    {gradingMode === 'bulk' && (
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <p className={`text-sm text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
+                            {isRTL ? 'قيّم عدة تسليمات بنفس الدرجة والتعليقات.' : 'Beoordeel meerdere inzendingen tegelijk met hetzelfde cijfer en feedback.'}
+                          </p>
+                          <Button onClick={() => setBulkGradingOpen(true)}>
+                            <span className={isRTL ? 'arabic-text' : ''}>
+                              {isRTL ? 'فتح التقييم المجمع' : 'Open Bulk Beoordeling'}
+                            </span>
+                          </Button>
+                        </div>
+                        <TeacherGradingPanel classId={selectedClass} />
+                      </div>
+                    )}
+                    
+                    {gradingMode === 'auto' && (
+                      <AutoGradingSystem classId={selectedClass} />
+                    )}
+                    
+                    {gradingMode === 'analytics' && (
+                      <GradingAnalytics classId={selectedClass} />
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -369,6 +443,11 @@ const TeacherDashboard = () => {
           </Tabs>
         )}
       </div>
+      <BulkGradingModal
+        isOpen={bulkGradingOpen}
+        onClose={() => setBulkGradingOpen(false)}
+        classId={selectedClass || ''}
+      />
     </div>
   );
 };
