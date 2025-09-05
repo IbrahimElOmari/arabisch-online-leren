@@ -364,6 +364,36 @@ export type Database = {
         }
         Relationships: []
       }
+      direct_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          read: boolean
+          receiver_id: string
+          sender_id: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          read?: boolean
+          receiver_id: string
+          sender_id: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          read?: boolean
+          receiver_id?: string
+          sender_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       forum_likes: {
         Row: {
           created_at: string
@@ -1258,9 +1288,45 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: Json
       }
+      get_conversation_messages: {
+        Args: { user1_id: string; user2_id: string }
+        Returns: {
+          content: string
+          created_at: string
+          id: string
+          read: boolean
+          receiver_id: string
+          sender_id: string
+          updated_at: string
+        }[]
+      }
+      get_direct_messages: {
+        Args: { user_id: string }
+        Returns: {
+          content: string
+          created_at: string
+          id: string
+          read: boolean
+          receiver_id: string
+          sender_id: string
+          updated_at: string
+        }[]
+      }
       get_user_role: {
         Args: { user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      mark_messages_read: {
+        Args: { receiver_id: string; sender_id: string }
+        Returns: undefined
+      }
+      send_direct_message: {
+        Args: {
+          message_content: string
+          receiver_id: string
+          sender_id: string
+        }
+        Returns: string
       }
     }
     Enums: {
