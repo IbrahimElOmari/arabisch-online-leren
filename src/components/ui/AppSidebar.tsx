@@ -1,4 +1,4 @@
-import { Home, Calendar, MessageSquare, Eye, BookOpen, User, Shield, Folder, HardDrive, Bot, Mic, PenTool } from 'lucide-react';
+import { Home, Calendar, MessageSquare, Eye, BookOpen, User, Shield, Folder, HardDrive } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
@@ -42,11 +42,6 @@ export function AppSidebar() {
     { title: t('nav.forum'), url: '/forum', icon: MessageSquare },
   ] : [];
 
-  const aiItems = user ? [
-    { title: 'المدرس الذكي - AI Tutor', url: '/ai-tutor', icon: Bot },
-    { title: 'مساعد النطق - Voice Assistant', url: '/voice-assistant', icon: Mic },
-    { title: 'اللوحة التعاونية - Whiteboard', url: '/whiteboard', icon: PenTool },
-  ] : [];
 
   const adminItems = user && profile && ['admin', 'leerkracht'].includes(profile.role) ? [
     { title: t('nav.forum_moderation'), url: '/forum-moderation', icon: MessageSquare },
@@ -116,29 +111,6 @@ export function AppSidebar() {
           </SidebarGroup>
         )}
 
-        {/* AI Tools Navigation */}
-        {aiItems.length > 0 && (
-          <SidebarGroup>
-            <SidebarGroupLabel className={getTextAlign()}>أدوات الذكاء الاصطناعي - AI Tools</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {aiItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      onClick={() => handleNavigation(item.url)}
-                      isActive={isActive(item.url)}
-                      tooltip={state === 'collapsed' ? item.title : undefined}
-                      className={getFlexDirection()}
-                    >
-                      <item.icon className={`h-4 w-4 ${getIconSpacing()}`} />
-                      <span className={getTextAlign()} style={{ fontSize: '0.85rem' }}>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
 
         {/* Admin Navigation */}
         {adminItems.length > 0 && (

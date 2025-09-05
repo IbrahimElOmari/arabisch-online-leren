@@ -26,9 +26,6 @@ import ResetPassword from '@/pages/ResetPassword';
 import ForumModeration from '@/pages/ForumModeration';
 import LessonOrganizationPage from '@/pages/LessonOrganization';
 import OfflineContentPage from '@/pages/OfflineContent';
-import AITutor from '@/pages/AITutor';
-import VoiceAssistant from '@/pages/VoiceAssistant';
-import Whiteboard from '@/pages/Whiteboard';
 import NotFound from '@/pages/NotFound';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import TermsOfService from '@/pages/TermsOfService';
@@ -77,9 +74,6 @@ function App() {
                     <Route path="calendar" element={<AppGate><Calendar /></AppGate>} />
                     <Route path="courses/:id" element={<AppGate><CourseDetail /></AppGate>} />
                     <Route path="enroll/:classId" element={<AppGate><EnrollConfirm /></AppGate>} />
-                    <Route path="ai-tutor" element={<AppGate><AITutor /></AppGate>} />
-                    <Route path="voice-assistant" element={<AppGate><VoiceAssistant /></AppGate>} />
-                    <Route path="whiteboard" element={<AppGate><Whiteboard /></AppGate>} />
                     <Route path="*" element={<NotFound />} />
                   </Route>
                 </Routes>
