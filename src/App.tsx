@@ -1,5 +1,5 @@
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from '@/components/ui/theme-provider';
@@ -74,6 +74,12 @@ function App() {
                     <Route path="calendar" element={<AppGate><Calendar /></AppGate>} />
                     <Route path="courses/:id" element={<AppGate><CourseDetail /></AppGate>} />
                     <Route path="enroll/:classId" element={<AppGate><EnrollConfirm /></AppGate>} />
+                    
+                    {/* Redirects for removed AI routes */}
+                    <Route path="ai-tutor" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="voice-assistant" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="whiteboard" element={<Navigate to="/dashboard" replace />} />
+                    
                     <Route path="*" element={<NotFound />} />
                   </Route>
                 </Routes>
