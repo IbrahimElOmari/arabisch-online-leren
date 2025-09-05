@@ -1,4 +1,4 @@
-import { Home, Calendar, MessageSquare, Eye, BookOpen, User, Shield, Folder } from 'lucide-react';
+import { Home, Calendar, MessageSquare, Eye, BookOpen, User, Shield, Folder, HardDrive } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
@@ -46,6 +46,7 @@ export function AppSidebar() {
     { title: t('nav.forum_moderation'), url: '/forum-moderation', icon: MessageSquare },
     { title: t('nav.security'), url: '/security', icon: Shield },
     { title: 'Les Organisatie', url: '/lesson-organization', icon: Folder },
+    { title: 'Offline Content', url: '/offline-content', icon: HardDrive },
   ] : [];
 
   return (
