@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 interface RTLContextType {
   isRTL: boolean;
@@ -28,6 +28,40 @@ const RTL_STORAGE_KEY = 'leer-arabisch-rtl-preference';
 export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
   const [isRTL, setIsRTLState] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [rtlStylesLoaded, setRtlStylesLoaded] = useState(false);
+
+  // Load RTL styles dynamically when RTL is enabled
+  const loadRTLStyles = useCallback(async () => {
+    if (rtlStylesLoaded) return;
+    
+    try {
+      // Check if styles are already loaded
+      const existingStylesheet = document.getElementById('rtl-styles');
+      if (existingStylesheet) {
+        setRtlStylesLoaded(true);
+        return;
+      }
+
+      // Lazy load RTL styles
+      const rtlStylesheet = document.createElement('link');
+      rtlStylesheet.rel = 'stylesheet';
+      rtlStylesheet.href = '/src/styles/rtl.css';
+      rtlStylesheet.id = 'rtl-styles';
+      rtlStylesheet.onload = () => setRtlStylesLoaded(true);
+      document.head.appendChild(rtlStylesheet);
+    } catch (error) {
+      console.warn('Failed to load RTL styles:', error);
+    }
+  }, [rtlStylesLoaded]);
+
+  // Remove RTL styles when not needed
+  const unloadRTLStyles = useCallback(() => {
+    const rtlStylesheet = document.getElementById('rtl-styles');
+    if (rtlStylesheet) {
+      rtlStylesheet.remove();
+      setRtlStylesLoaded(false);
+    }
+  }, []);
 
   // Load RTL preference from localStorage on mount
   useEffect(() => {
@@ -35,9 +69,14 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
     if (savedPreference !== null) {
       const preferenceValue = savedPreference === 'true';
       setIsRTLState(preferenceValue);
+      
+      // Load RTL styles if RTL is enabled
+      if (preferenceValue) {
+        loadRTLStyles();
+      }
     }
     setIsLoading(false);
-  }, []);
+  }, [loadRTLStyles]);
 
   // Persist RTL preference to localStorage
   useEffect(() => {
@@ -50,8 +89,17 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
     setIsLoading(true);
     
     // Add small delay for smooth transition
-    setTimeout(() => {
-      setIsRTLState(prev => !prev);
+    setTimeout(async () => {
+      const newRTLState = !isRTL;
+      setIsRTLState(newRTLState);
+      
+      // Load or unload RTL styles based on state
+      if (newRTLState) {
+        await loadRTLStyles();
+      } else {
+        unloadRTLStyles();
+      }
+      
       setIsLoading(false);
     }, 150);
   };
@@ -59,8 +107,16 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
   const setRTL = (newIsRTL: boolean) => {
     if (newIsRTL !== isRTL) {
       setIsLoading(true);
-      setTimeout(() => {
+      setTimeout(async () => {
         setIsRTLState(newIsRTL);
+        
+        // Load or unload RTL styles based on state
+        if (newIsRTL) {
+          await loadRTLStyles();
+        } else {
+          unloadRTLStyles();
+        }
+        
         setIsLoading(false);
       }, 150);
     }

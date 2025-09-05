@@ -9,6 +9,32 @@ const config: Config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
+  // Optimize CSS output
+  safelist: [
+    // Always include critical classes for initial render
+    'bg-background',
+    'text-foreground',
+    'border-border',
+    'main-content-card',
+    'floating-content',
+    // Essential layout classes
+    'flex',
+    'grid',
+    'items-center',
+    'justify-center',
+    // RTL classes that might be dynamically added
+    'rtl',
+    'ltr',
+    'arabic-text',
+    'arabic-display',
+    'arabic-body',
+    // Critical typography
+    'text-sm',
+    'text-base',
+    'text-lg',
+    'font-medium',
+    'font-semibold',
+  ],
   prefix: "",
   theme: {
     container: {

@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
-          // Split RTL-specific code into separate chunks
+          // Split RTL-specific code when needed
           'rtl-core': ['./src/contexts/RTLContext', './src/hooks/useRTLLayout', './src/utils/arabicUtils'],
           'rtl-components': ['./src/components/rtl/RTLDashboard', './src/components/rtl/RTLTestRunner'],
           'rtl-performance': ['./src/utils/rtlBundleOptimization', './src/utils/performanceRTL'],
@@ -33,6 +33,17 @@ export default defineConfig(({ mode }) => ({
           'supabase': ['@supabase/supabase-js'],
         }
       }
-    }
+    },
+    // CSS Code splitting
+    cssCodeSplit: true,
+    // Optimize CSS
+    cssMinify: true,
   },
+  css: {
+    // Enable CSS modules for better tree-shaking
+    modules: {
+      localsConvention: 'camelCase'
+    },
+    devSourcemap: mode === 'development'
+  }
 }));
