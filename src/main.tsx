@@ -4,12 +4,16 @@ import App from "./App.tsx";
 import "./index.css";
 import { initializeRTLOptimizations } from "./utils/rtlBundleOptimization";
 import { initializeCriticalCSS } from "./utils/criticalCSS";
+import { initializeCrossBrowserRTL } from "./utils/crossBrowserRTL";
 
 // Initialize optimizations
 if (import.meta.env.PROD) {
   initializeRTLOptimizations();
 }
 initializeCriticalCSS();
+
+// Initialize cross-browser RTL fixes
+initializeCrossBrowserRTL();
 
 // Register service worker for PWA
 if ('serviceWorker' in navigator && import.meta.env.PROD) {

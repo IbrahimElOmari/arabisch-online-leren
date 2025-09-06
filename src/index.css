@@ -130,17 +130,59 @@ All colors MUST be HSL.
 
   /* Mobile RTL optimizations */
   @media (max-width: 767px) {
+    /* Mobile sidebar positioning */
+    [dir="rtl"] [data-sidebar="sidebar"] {
+      right: 0 !important;
+      left: auto !important;
+    }
+    
+    [dir="ltr"] [data-sidebar="sidebar"] {
+      left: 0 !important;
+      right: auto !important;
+    }
+    
+    /* Mobile bottom navigation */
     [dir="rtl"] .mobile-bottom-nav {
       direction: rtl;
     }
     
-    [dir="rtl"] [data-sidebar="sidebar"] {
-      right: 0;
-      left: auto;
-    }
-    
+    /* Sidebar trigger icon */
     [dir="rtl"] .sidebar-trigger {
       transform: scaleX(-1);
     }
+    
+    /* Force full width on mobile for main content */
+    [dir="rtl"] .main-content,
+    [dir="ltr"] .main-content {
+      width: 100% !important;
+      flex: 1 !important;
+    }
+    
+    /* Mobile sheet positioning */
+    [dir="rtl"] [data-vaul-drawer] {
+      left: auto !important;
+      right: 0 !important;
+    }
+  }
+
+  /* RTL Icon spacing fixes */
+  [dir="rtl"] .sidebar-menu-button .lucide {
+    margin-left: 0.75rem;
+    margin-right: 0;
+  }
+
+  [dir="ltr"] .sidebar-menu-button .lucide {
+    margin-right: 0.75rem;
+    margin-left: 0;
+  }
+  
+  /* RTL safe flex classes */
+  .rtl-safe-flex-row {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  [dir="rtl"] .rtl-safe-flex-row {
+    flex-direction: row-reverse;
   }
 }

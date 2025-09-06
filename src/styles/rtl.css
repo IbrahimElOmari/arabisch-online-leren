@@ -56,30 +56,34 @@
     border-right: unset;
   }
 
-  /* Flexbox RTL adjustments */
-  .rtl .flex-row {
-    flex-direction: row-reverse;
-  }
-
+  /* Safe RTL spacing adjustments - no global flex overrides */
   .rtl .space-x-2 > :not([hidden]) ~ :not([hidden]) {
     --tw-space-x-reverse: 1;
   }
 
-  /* Enhanced RTL Support for Components */
-  .rtl .justify-start {
-    justify-content: flex-end;
+  /* RTL-specific utility classes for safe usage */
+  .rtl-flex-row {
+    flex-direction: row;
   }
 
-  .rtl .justify-end {
+  [dir="rtl"] .rtl-flex-row {
+    flex-direction: row-reverse;
+  }
+
+  .rtl-justify-start {
     justify-content: flex-start;
   }
 
-  .rtl .items-start {
-    align-items: flex-end;
+  [dir="rtl"] .rtl-justify-start {
+    justify-content: flex-end;
   }
 
-  .rtl .items-end {
-    align-items: flex-start;
+  .rtl-justify-end {
+    justify-content: flex-end;
+  }
+
+  [dir="rtl"] .rtl-justify-end {
+    justify-content: flex-start;
   }
 
   /* RTL Text Alignment */

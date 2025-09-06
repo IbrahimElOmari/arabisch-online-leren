@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { cn } from '@/lib/utils';
 import {
   Sidebar,
   SidebarContent,
@@ -54,6 +55,7 @@ export function AppSidebar() {
     <Sidebar 
       collapsible="icon"
       side={isRTL ? "right" : "left"}
+      className={cn("w-full md:w-auto", isRTL ? "order-2" : "order-1")}
     >
       <SidebarContent>
         {/* Logo */}

@@ -216,6 +216,7 @@ const translations = {
     'common.none': 'None',
     'common.other': 'Other',
     'common.progress': 'Progress',
+    'common.current': 'Current page',
 
     // Statistics
     'stats.progress': 'Voortgang',
@@ -443,6 +444,7 @@ const translations = {
 
     // Common
     'common.retry': 'إعادة المحاولة',
+    'common.current': 'الصفحة الحالية',
     'common.pages': 'الصفحات',
     'common.no_results': 'لم يتم العثور على نتائج.',
     'common.success': 'نجح!',
