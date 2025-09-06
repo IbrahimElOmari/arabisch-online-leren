@@ -2,9 +2,11 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, CheckSquare, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 
 export const MobileBottomNav = () => {
   const location = useLocation();
+  const { isRTL, getFlexDirection } = useRTLLayout();
   const items = [
     { to: '/', label: 'Home', icon: Home },
     { to: '/taken', label: 'Taken', icon: CheckSquare },
@@ -12,7 +14,10 @@ export const MobileBottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 border-t bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 md:hidden">
+    <nav 
+      className="fixed bottom-0 inset-x-0 z-40 border-t bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 md:hidden"
+      dir={isRTL ? 'rtl' : 'ltr'}
+    >
       <ul className="grid grid-cols-3">
         {items.map(({ to, label, icon: Icon }) => {
           const active = location.pathname === to;

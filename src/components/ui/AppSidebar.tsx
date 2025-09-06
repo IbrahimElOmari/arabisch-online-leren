@@ -22,7 +22,7 @@ export function AppSidebar() {
   const location = useLocation();
   const { user, profile } = useAuth();
   const { state } = useSidebar();
-  const { getFlexDirection, getTextAlign, getIconSpacing } = useRTLLayout();
+  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
   const { t } = useTranslation();
 
   const handleNavigation = (path: string) => {
@@ -51,7 +51,10 @@ export function AppSidebar() {
   ] : [];
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar 
+      collapsible="icon"
+      side={isRTL ? "right" : "left"}
+    >
       <SidebarContent>
         {/* Logo */}
         <SidebarGroup>

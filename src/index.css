@@ -127,4 +127,20 @@ All colors MUST be HSL.
   * {
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   }
+
+  /* Mobile RTL optimizations */
+  @media (max-width: 767px) {
+    [dir="rtl"] .mobile-bottom-nav {
+      direction: rtl;
+    }
+    
+    [dir="rtl"] [data-sidebar="sidebar"] {
+      right: 0;
+      left: auto;
+    }
+    
+    [dir="rtl"] .sidebar-trigger {
+      transform: scaleX(-1);
+    }
+  }
 }

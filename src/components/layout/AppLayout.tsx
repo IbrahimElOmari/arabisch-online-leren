@@ -17,10 +17,12 @@ export const AppLayout = () => {
 
   return (
     <SidebarProvider>
-      <div className={`min-h-screen flex w-full ${getFlexDirection()}`} {...getNavigationAttributes()}>
-        <AppSidebar />
+      <div className="min-h-screen flex w-full flex-row" {...getNavigationAttributes()}>
+        <div className={`basis-0 shrink-0 md:basis-auto ${isRTL ? 'order-2' : 'order-1'}`}>
+          <AppSidebar />
+        </div>
         
-        <div className="flex-1 flex flex-col">
+        <div className={`flex-1 flex flex-col ${isRTL ? 'order-1' : 'order-2'}`}>
           <Navigation />
           <EnhancedNotificationSystem />
           
