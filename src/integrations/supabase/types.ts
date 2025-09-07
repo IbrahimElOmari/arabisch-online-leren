@@ -956,6 +956,45 @@ export type Database = {
         }
         Relationships: []
       }
+      student_niveau_progress: {
+        Row: {
+          completed_at: string | null
+          completed_questions: number
+          completed_tasks: number
+          created_at: string
+          id: string
+          is_completed: boolean
+          niveau_id: string
+          student_id: string
+          total_points: number
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_questions?: number
+          completed_tasks?: number
+          created_at?: string
+          id?: string
+          is_completed?: boolean
+          niveau_id: string
+          student_id: string
+          total_points?: number
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          completed_questions?: number
+          completed_tasks?: number
+          created_at?: string
+          id?: string
+          is_completed?: boolean
+          niveau_id?: string
+          student_id?: string
+          total_points?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       task_submissions: {
         Row: {
           feedback: string | null
