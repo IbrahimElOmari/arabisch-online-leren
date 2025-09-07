@@ -154,6 +154,21 @@
     font-family: 'Inter', 'Helvetica Neue', sans-serif;
   }
 
+  /* RTL Content Compression Fixes */
+  .rtl main {
+    min-width: 0;
+    overflow-x: auto;
+  }
+
+  .rtl .flex-1 {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+
+  .rtl .sidebar-content {
+    flex-shrink: 0;
+  }
+
   /* Arabic Text Styles */
   .arabic-text {
     font-family: 'Noto Sans Arabic', 'Amiri', 'Times New Roman', serif;

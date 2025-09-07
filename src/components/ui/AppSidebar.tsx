@@ -55,7 +55,7 @@ export function AppSidebar() {
     <Sidebar 
       collapsible="icon"
       side={isRTL ? "right" : "left"}
-      className={cn("w-full md:w-auto", isRTL ? "order-2" : "order-1")}
+      className="hidden md:flex"
     >
       <SidebarContent>
         {/* Logo */}
