@@ -8,6 +8,8 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
 import { EnhancedStudentTasksAndQuestions } from '@/components/student/EnhancedStudentTasksAndQuestions';
 import { LevelQuestions } from '@/components/tasks/LevelQuestions';
+import { DashboardSkeleton } from '@/components/ui/enhanced-loading-system';
+import { TouchButton } from '@/components/touch/TouchOptimizedComponents';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { 
   BookOpen, 
@@ -167,20 +169,7 @@ const StudentDashboard = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto p-6">
-          <div className="animate-pulse">
-            <div className="h-8 bg-muted rounded mb-6 w-48"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-32 bg-muted rounded"></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (enrolledClasses.length === 0) {
@@ -229,9 +218,10 @@ const StudentDashboard = () => {
             <CardContent>
               <div className={`flex flex-wrap gap-2 mb-4 ${getFlexDirection()}`}>
                 {enrolledClasses.map((enrollment) => (
-                  <Button
+                  <TouchButton
                     key={enrollment.id}
                     variant={selectedClass === enrollment.class_id ? "default" : "outline"}
+                    size="touch"
                     onClick={() => {
                       setSelectedClass(enrollment.class_id);
                       if (enrollment.klassen.niveaus.length > 0) {
@@ -244,7 +234,7 @@ const StudentDashboard = () => {
                   >
                     <BookOpen className="h-4 w-4" />
                     <span className={isRTL ? 'arabic-text' : ''}>{enrollment.klassen.name}</span>
-                  </Button>
+                  </TouchButton>
                 ))}
               </div>
               
@@ -253,9 +243,9 @@ const StudentDashboard = () => {
                   <h4 className={`font-medium mb-2 ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
                     {isRTL ? `المستويات في ${currentClass.klassen.name}:` : `Niveaus in ${currentClass.klassen.name}:`}
                   </h4>
-                  <div className={`flex flex-wrap gap-2 ${getFlexDirection()}`}>
+                   <div className={`flex flex-wrap gap-2 ${getFlexDirection()}`}>
                     {currentClass.klassen.niveaus.map((niveau) => (
-                      <Button
+                      <TouchButton
                         key={niveau.id}
                         variant={selectedLevel === niveau.id ? "default" : "outline"}
                         size="sm"
@@ -263,7 +253,7 @@ const StudentDashboard = () => {
                         className={isRTL ? 'arabic-text' : ''}
                       >
                         {niveau.naam}
-                      </Button>
+                      </TouchButton>
                     ))}
                   </div>
                 </div>
@@ -313,14 +303,14 @@ const StudentDashboard = () => {
                   <p className={`text-muted-foreground mb-4 ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
                     {isRTL ? 'اذهب إلى المنتدى للمناقشة مع زملائك في الصف.' : 'Ga naar het forum om te discussiëren met je klasgenoten.'}
                   </p>
-                  <Button asChild>
-                    <Link to="/forum" className={`flex items-center gap-2 ${getFlexDirection()}`}>
+                  <Link to="/forum" className={`flex items-center gap-2 ${getFlexDirection()}`}>
+                    <TouchButton size="touch">
                       <MessageSquare className="h-4 w-4" />
                       <span className={isRTL ? 'arabic-text' : ''}>
                         {isRTL ? 'إلى المنتدى' : 'Naar Forum'}
                       </span>
-                    </Link>
-                  </Button>
+                    </TouchButton>
+                  </Link>
                 </CardContent>
               </Card>
             </TabsContent>

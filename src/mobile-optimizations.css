@@ -1,0 +1,284 @@
+/* Mobile Touch Optimizations and RTL-specific styles */
+
+/* Touch target optimizations */
+@media (max-width: 767px) {
+  /* Minimum touch target sizes */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Safe area handling for modern mobile devices */
+  .safe-area-pb-4 {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .safe-area-pt-4 {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  /* Enhanced mobile bottom navigation */
+  .mobile-bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Touch feedback animations */
+  .active\:scale-95:active {
+    transform: scale(0.95);
+  }
+
+  .active\:scale-98:active {
+    transform: scale(0.98);
+  }
+
+  /* Improved mobile sidebar */
+  [data-vaul-drawer] {
+    touch-action: none;
+  }
+
+  /* Mobile keyboard adjustments */
+  .keyboard-adjust {
+    transition: transform 0.3s ease;
+  }
+
+  /* When virtual keyboard is open */
+  @supports (height: 100dvh) {
+    .full-height-mobile {
+      height: 100dvh;
+    }
+  }
+
+  /* RTL mobile optimizations */
+  [dir="rtl"] {
+    /* RTL touch gestures */
+    .swipe-indicator {
+      transform: scaleX(-1);
+    }
+
+    /* RTL mobile animations */
+    .mobile-slide-in {
+      animation: rtl-mobile-slide-in 0.3s ease-out;
+    }
+
+    .mobile-slide-out {
+      animation: rtl-mobile-slide-out 0.3s ease-out;
+    }
+
+    /* RTL bottom navigation */
+    .mobile-bottom-nav {
+      flex-direction: row-reverse;
+    }
+
+    .mobile-bottom-nav .nav-item {
+      transform: none;
+    }
+
+    /* RTL drawer positioning */
+    .mobile-drawer {
+      right: 0;
+      left: auto;
+    }
+
+    /* RTL touch feedback */
+    .touch-feedback {
+      transform-origin: right center;
+    }
+  }
+
+  [dir="ltr"] {
+    .touch-feedback {
+      transform-origin: left center;
+    }
+
+    .mobile-drawer {
+      left: 0;
+      right: auto;
+    }
+  }
+
+  /* Enhanced focus styles for mobile */
+  .mobile-focus\:ring-2:focus {
+    outline: none;
+    ring-width: 2px;
+    ring-color: hsl(var(--primary) / 0.5);
+    ring-offset-width: 2px;
+    ring-offset-color: hsl(var(--background));
+  }
+
+  /* Improved scrolling on mobile */
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Loading states optimizations */
+  .mobile-skeleton {
+    animation-duration: 1.2s;
+    animation-timing-function: ease-in-out;
+  }
+
+  /* Pull-to-refresh styles */
+  .pull-to-refresh {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pull-indicator {
+    transition: all 0.2s ease;
+    will-change: transform, opacity;
+  }
+
+  /* Enhanced card interactions */
+  .mobile-card {
+    transition: all 0.2s ease;
+    will-change: transform, box-shadow;
+  }
+
+  .mobile-card:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Better input handling */
+  .mobile-input:focus {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
+  }
+
+  /* Haptic feedback simulation */
+  .haptic-light {
+    animation: haptic-pulse 0.1s ease;
+  }
+
+  .haptic-medium {
+    animation: haptic-pulse 0.15s ease;
+  }
+
+  .haptic-heavy {
+    animation: haptic-pulse 0.2s ease;
+  }
+
+  /* Mobile toast positioning */
+  .mobile-toast {
+    bottom: calc(80px + env(safe-area-inset-bottom));
+    margin: 0 1rem;
+    left: 1rem;
+    right: 1rem;
+    width: auto;
+  }
+
+  /* Enhanced loading animations for mobile */
+  .mobile-fade-in {
+    animation: mobile-fade-in 0.4s ease-out;
+  }
+
+  .mobile-slide-up {
+    animation: mobile-slide-up 0.3s ease-out;
+  }
+
+  .mobile-bounce-in {
+    animation: mobile-bounce-in 0.6s ease-out;
+  }
+}
+
+/* Mobile-specific keyframes */
+@keyframes rtl-mobile-slide-in {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes rtl-mobile-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes haptic-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes mobile-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobile-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobile-bounce-in {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .mobile-card {
+    border-width: 2px;
+  }
+  
+  .mobile-button {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-card,
+  .mobile-button,
+  .mobile-input,
+  .pull-indicator {
+    transition: none;
+    animation: none;
+  }
+  
+  .mobile-fade-in,
+  .mobile-slide-up,
+  .mobile-bounce-in {
+    animation: none;
+  }
+}

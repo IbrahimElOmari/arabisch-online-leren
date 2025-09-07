@@ -5,7 +5,7 @@ import TeacherDashboard from '@/components/dashboard/TeacherDashboard';
 import EnhancedStudentDashboard from '@/components/student/EnhancedStudentDashboard';
 import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { FullPageLoader } from '@/components/ui/LoadingSpinner';
+import { FullPageEnhancedLoader } from '@/components/ui/enhanced-loading-system';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
 import { BackendStatusBadge } from '@/components/status/BackendStatusBadge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -28,7 +28,18 @@ const Dashboard = () => {
   // Show loading while auth isn't ready
   if (!authReady && loading) {
     console.debug('⏳ Dashboard: Auth not ready yet');
-    return <FullPageLoader text={t('status.loading')} />;
+    return (
+      <FullPageEnhancedLoader 
+        text={t('status.loading')} 
+        showProgress={true}
+        progress={50}
+        steps={[
+          { label: t('auth.checking'), completed: true },
+          { label: t('auth.loading_profile'), completed: false },
+          { label: t('dashboard.preparing'), completed: false }
+        ]}
+      />
+    );
   }
 
   // If we have a profile, render the appropriate dashboard
@@ -123,7 +134,7 @@ const Dashboard = () => {
 
   // Final fallback - should rarely be reached
   console.debug('⏳ Dashboard: No user yet, showing loading');
-  return <FullPageLoader text={t('status.loading')} />;
+  return <FullPageEnhancedLoader text={t('status.loading')} />;
 };
 
 export default Dashboard;

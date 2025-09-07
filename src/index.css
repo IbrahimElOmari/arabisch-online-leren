@@ -176,7 +176,7 @@ All colors MUST be HSL.
     margin-left: 0;
   }
   
-  /* RTL safe flex classes */
+/* RTL safe flex classes */
   .rtl-safe-flex-row {
     display: flex;
     flex-direction: row;
@@ -186,3 +186,6 @@ All colors MUST be HSL.
     flex-direction: row-reverse;
   }
 }
+
+/* Import mobile optimizations */
+@import './mobile-optimizations.css';

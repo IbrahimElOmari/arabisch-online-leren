@@ -7,7 +7,7 @@ import Navigation from '@/components/Navigation';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useAccessibilityRTL } from '@/hooks/useAccessibilityRTL';
 import EnhancedNotificationSystem from '@/components/notifications/EnhancedNotificationSystem';
-import { MobileBottomNav } from '@/components/mobile/MobileOptimizedComponents';
+import { EnhancedMobileBottomNav } from '@/components/mobile/EnhancedMobileNavigation';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export const AppLayout = () => {
@@ -28,7 +28,7 @@ export const AppLayout = () => {
             <Outlet />
           </main>
 
-          {isMobile && <MobileBottomNav />}
+          {isMobile && <EnhancedMobileBottomNav />}
         </div>
       </div>
     </SidebarProvider>

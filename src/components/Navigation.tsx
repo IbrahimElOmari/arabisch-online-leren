@@ -4,6 +4,7 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { NavigationHeader } from '@/components/navigation/NavigationHeader';
 import { NavigationMenuItems } from '@/components/navigation/NavigationMenuItems';
 import { NavigationActions } from '@/components/navigation/NavigationActions';
+import { EnhancedMobileSidebar } from '@/components/mobile/EnhancedMobileNavigation';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 
 /**
@@ -18,7 +19,10 @@ const Navigation = React.memo(() => {
     <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 shadow-sm" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="max-w-7xl mx-auto px-4">
         <div className={`${getFlexDirection()} items-center justify-between h-16`}>
-          <NavigationHeader />
+          <div className="flex items-center gap-3">
+            <EnhancedMobileSidebar />
+            <NavigationHeader />
+          </div>
           <NavigationMenuItems user={user} profile={profile} />
           <NavigationActions user={user} />
         </div>
