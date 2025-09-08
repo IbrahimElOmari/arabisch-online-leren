@@ -10,6 +10,10 @@ export interface UserProfile {
   full_name: string;
   role: UserRole;
   parent_email?: string;
+  email?: string;
+  phone_number?: string;
+  age?: number;
+  theme_preference?: 'auto' | 'playful' | 'clean' | 'professional';
 }
 
 export interface EnrolledClass {

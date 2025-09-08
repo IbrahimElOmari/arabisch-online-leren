@@ -889,6 +889,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age: number | null
           created_at: string
           email: string | null
           full_name: string
@@ -896,9 +897,11 @@ export type Database = {
           parent_email: string | null
           phone_number: string | null
           role: Database["public"]["Enums"]["app_role"]
+          theme_preference: string | null
           updated_at: string
         }
         Insert: {
+          age?: number | null
           created_at?: string
           email?: string | null
           full_name: string
@@ -906,9 +909,11 @@ export type Database = {
           parent_email?: string | null
           phone_number?: string | null
           role?: Database["public"]["Enums"]["app_role"]
+          theme_preference?: string | null
           updated_at?: string
         }
         Update: {
+          age?: number | null
           created_at?: string
           email?: string | null
           full_name?: string
@@ -916,6 +921,7 @@ export type Database = {
           parent_email?: string | null
           phone_number?: string | null
           role?: Database["public"]["Enums"]["app_role"]
+          theme_preference?: string | null
           updated_at?: string
         }
         Relationships: []

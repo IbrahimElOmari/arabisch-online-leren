@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { EnhancedRTLProvider } from '@/components/rtl/RTLProvider';
 import { TranslationProvider } from '@/contexts/TranslationContext';
+import { AgeThemeProvider } from '@/contexts/AgeThemeContext';
 import { AuthProviderQuery } from '@/components/auth/AuthProviderQuery';
 import { AppGate } from '@/components/auth/AppGate';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -47,6 +48,7 @@ function App() {
         <EnhancedRTLProvider>
           <TranslationProvider>
             <AuthProviderQuery>
+              <AgeThemeProvider>
             <Router>
               <div className="min-h-screen bg-background">
                 <Routes>
@@ -86,6 +88,7 @@ function App() {
               </div>
               <Toaster />
             </Router>
+              </AgeThemeProvider>
             </AuthProviderQuery>
           </TranslationProvider>
         </EnhancedRTLProvider>

@@ -13,8 +13,10 @@ import { DashboardSkeleton } from '@/components/ui/enhanced-loading-system';
 import { EnhancedStudentTasksAndQuestions } from '@/components/student/EnhancedStudentTasksAndQuestions';
 import { useStudentProgress } from '@/hooks/useStudentProgress';
 import { LevelProgressCard } from '@/components/progress/LevelProgressCard';
+import { ThemeAwareProgressCard } from '@/components/progress/ThemeAwareProgressCard';
 import { ContinueLearningCard } from '@/components/progress/ContinueLearningCard';
 import { RecentAchievements } from '@/components/progress/RecentAchievements';
+import { useAgeTheme } from '@/contexts/AgeThemeContext';
 
 type NiveauItem = {
   id: string;
@@ -39,6 +41,7 @@ const StudentDashboard = () => {
   const { user, profile } = useAuth();
   const { t } = useTranslation();
   const { getTextAlign } = useRTLLayout();
+  const { themeAge } = useAgeTheme();
   const [enrolledClasses, setEnrolledClasses] = useState<EnrolledClass[]>([]);
   const [selectedClass, setSelectedClass] = useState<EnrolledClass | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<NiveauItem | null>(null);
@@ -329,7 +332,7 @@ const StudentDashboard = () => {
                     const isCurrentLevel = currentLevelProgress?.niveau_id === niveau.id;
                     
                     return (
-                      <LevelProgressCard
+                      <ThemeAwareProgressCard
                         key={niveau.id}
                         progress={levelProgress || {
                           id: '',
