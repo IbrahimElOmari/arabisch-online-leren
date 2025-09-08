@@ -41,6 +41,7 @@ export function AppSidebar() {
   const userItems = user ? [
     { title: t('nav.dashboard'), url: '/dashboard', icon: User },
     { title: t('nav.forum'), url: '/forum', icon: MessageSquare },
+    { title: 'Profiel', url: '/profile', icon: User },
   ] : [];
 
 

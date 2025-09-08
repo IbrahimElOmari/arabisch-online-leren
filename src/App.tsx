@@ -27,6 +27,7 @@ import ResetPassword from '@/pages/ResetPassword';
 import ForumModeration from '@/pages/ForumModeration';
 import LessonOrganizationPage from '@/pages/LessonOrganization';
 import OfflineContentPage from '@/pages/OfflineContent';
+import Profile from '@/pages/Profile';
 import NotFound from '@/pages/NotFound';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import TermsOfService from '@/pages/TermsOfService';
@@ -74,6 +75,7 @@ function App() {
                     <Route path="leerstof" element={<AppGate><Leerstof /></AppGate>} />
                     <Route path="visie" element={<Visie />} />
                     <Route path="calendar" element={<AppGate><Calendar /></AppGate>} />
+                    <Route path="profile" element={<AppGate><Profile /></AppGate>} />
                     <Route path="courses/:id" element={<AppGate><CourseDetail /></AppGate>} />
                     <Route path="enroll/:classId" element={<AppGate><EnrollConfirm /></AppGate>} />
                     
