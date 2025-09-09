@@ -10,6 +10,7 @@ import { AgeThemeProvider } from '@/contexts/AgeThemeContext';
 import { AuthProviderQuery } from '@/components/auth/AuthProviderQuery';
 import { AppGate } from '@/components/auth/AppGate';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { MobileOptimizedNavigation } from '@/components/mobile/MobileOptimizedNavigation';
 import Index from '@/pages/Index';
 import Auth from '@/pages/Auth';
 import Dashboard from '@/pages/Dashboard';
@@ -52,6 +53,7 @@ function App() {
               <AgeThemeProvider>
             <Router>
               <div className="min-h-screen bg-background">
+                <MobileOptimizedNavigation />
                 <Routes>
                   {/* Routes without layout (auth pages, etc.) */}
                   <Route path="/auth" element={<Auth />} />

@@ -1,150 +1,165 @@
-
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Medal, Award, TrendingUp, Users, Calendar } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Trophy, Medal, Award, TrendingUp, Calendar, Users } from 'lucide-react';
+import { useAgeTheme } from '@/contexts/AgeThemeContext';
+import { cn } from '@/lib/utils';
 
-interface LeaderboardUser {
+interface LeaderboardEntry {
   id: string;
   name: string;
   avatar?: string;
   points: number;
-  rank: number;
-  streak: number;
-  coursesCompleted: number;
   level: number;
+  badges: number;
+  streak: number;
+  rank: number;
+  change: 'up' | 'down' | 'same';
 }
 
-interface LeaderboardProps {
-  users: LeaderboardUser[];
+interface LeaderboardSystemProps {
+  classId?: string;
   currentUserId: string;
-  timeframe: 'week' | 'month' | 'all';
 }
 
-export const LeaderboardSystem = ({ users, currentUserId, timeframe }: LeaderboardProps) => {
+export const LeaderboardSystem: React.FC<LeaderboardSystemProps> = ({ 
+  classId, 
+  currentUserId 
+}) => {
+  const { themeAge } = useAgeTheme();
+  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'all'>('week');
+
+  // Mock data - replace with real data from Supabase
+  const generateMockLeaderboard = (period: string): LeaderboardEntry[] => {
+    const baseEntries = [
+      { id: '1', name: 'Sarah Ahmed', points: 2500, level: 3, badges: 8, streak: 7 },
+      { id: '2', name: 'Mohammed Ali', points: 2200, level: 3, badges: 6, streak: 5 },
+      { id: '3', name: 'Fatima Hassan', points: 1800, level: 2, badges: 5, streak: 12 },
+      { id: currentUserId, name: 'You', points: 1500, level: 2, badges: 4, streak: 3 },
+      { id: '4', name: 'Omar Ibrahim', points: 1200, level: 2, badges: 3, streak: 2 },
+      { id: '5', name: 'Aisha Rahman', points: 900, level: 1, badges: 2, streak: 1 },
+    ];
+
+    return baseEntries
+      .map((entry, index) => ({
+        ...entry,
+        rank: index + 1,
+        change: Math.random() > 0.5 ? 'up' : index === 0 ? 'same' : 'down' as 'up' | 'down' | 'same'
+      }))
+      .sort((a, b) => b.points - a.points);
+  };
+
+  const leaderboard = generateMockLeaderboard(selectedPeriod);
+  const currentUser = leaderboard.find(entry => entry.id === currentUserId);
+  const topThree = leaderboard.slice(0, 3);
+
   const getRankIcon = (rank: number) => {
     switch (rank) {
-      case 1:
-        return <Trophy className="h-5 w-5 text-yellow-500" />;
-      case 2:
-        return <Medal className="h-5 w-5 text-gray-400" />;
-      case 3:
-        return <Award className="h-5 w-5 text-amber-600" />;
+      case 1: return <Trophy className="h-5 w-5 text-yellow-500" />;
+      case 2: return <Medal className="h-5 w-5 text-gray-400" />;
+      case 3: return <Award className="h-5 w-5 text-amber-600" />;
+      default: return <span className="text-sm font-bold text-muted-foreground">#{rank}</span>;
+    }
+  };
+
+  const getChangeIcon = (change: string) => {
+    switch (change) {
+      case 'up': return <TrendingUp className="h-4 w-4 text-success" />;
+      case 'down': return <TrendingUp className="h-4 w-4 text-destructive rotate-180" />;
+      default: return <div className="h-4 w-4" />;
+    }
+  };
+
+  const getThemeClasses = () => {
+    switch (themeAge) {
+      case 'playful':
+        return 'space-y-6';
+      case 'professional':
+        return 'space-y-4';
       default:
-        return <span className="font-bold text-muted-foreground">#{rank}</span>;
+        return 'space-y-6';
     }
   };
-
-  const getRankBadge = (rank: number) => {
-    if (rank <= 3) {
-      const colors = {
-        1: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-        2: 'bg-gray-100 text-gray-800 border-gray-200',
-        3: 'bg-amber-100 text-amber-800 border-amber-200'
-      };
-      return colors[rank as keyof typeof colors];
-    }
-    return 'bg-muted text-muted-foreground';
-  };
-
-  const currentUser = users.find(u => u.id === currentUserId);
-  const topUsers = users.slice(0, 10);
 
   return (
-    <div className="space-y-6">
-      {/* Current User Stats */}
-      {currentUser && currentUser.rank > 3 && (
-        <Card className="border-primary/20 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              Jouw Positie
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-8 h-8">
-                  {getRankIcon(currentUser.rank)}
-                </div>
-                <Avatar>
-                  <AvatarImage src={currentUser.avatar} />
-                  <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium">{currentUser.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    Niveau {currentUser.level}
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="font-bold text-lg">{currentUser.points.toLocaleString()} XP</p>
-                <Badge className={getRankBadge(currentUser.rank)}>
-                  #{currentUser.rank}
-                </Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Leaderboard Tabs */}
-      <Tabs defaultValue="overall" className="w-full">
+    <div className={cn("p-6", getThemeClasses())}>
+      <Tabs value={selectedPeriod} onValueChange={(value) => setSelectedPeriod(value as any)}>
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overall">
-            <Trophy className="h-4 w-4 mr-2" />
-            Algemeen
-          </TabsTrigger>
-          <TabsTrigger value="streak">
-            <Calendar className="h-4 w-4 mr-2" />
-            Streak
-          </TabsTrigger>
-          <TabsTrigger value="courses">
-            <Award className="h-4 w-4 mr-2" />
-            Cursussen
-          </TabsTrigger>
+          <TabsTrigger value="week">Deze Week</TabsTrigger>
+          <TabsTrigger value="month">Deze Maand</TabsTrigger>
+          <TabsTrigger value="all">All Time</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overall">
-          <Card>
+        <TabsContent value={selectedPeriod} className="mt-6">
+          {/* Current User Position */}
+          {currentUser && (
+            <Card className="border-primary/20 bg-primary/5 mb-6">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      {getRankIcon(currentUser.rank)}
+                    </div>
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src="" />
+                      <AvatarFallback>JIJ</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className="font-semibold">Jouw Positie</div>
+                      <div className="text-sm text-muted-foreground">
+                        {currentUser.points} punten • Level {currentUser.level}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {getChangeIcon(currentUser.change)}
+                    <Badge variant="secondary">#{currentUser.rank}</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Top 3 Podium */}
+          <Card className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Top Leerlingen - {timeframe === 'week' ? 'Deze Week' : timeframe === 'month' ? 'Deze Maand' : 'Alle Tijd'}
+                <Trophy className="h-5 w-5 text-primary" />
+                Top 3 van de klas
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {topUsers.map((user, index) => (
+              <div className="grid gap-4 md:grid-cols-3">
+                {topThree.map((entry) => (
                   <div
-                    key={user.id}
-                    className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
-                      user.id === currentUserId 
-                        ? 'bg-primary/10 border-primary/30' 
-                        : 'hover:bg-muted/50'
-                    }`}
+                    key={entry.id}
+                    className={cn(
+                      "text-center p-4 rounded-lg border",
+                      entry.rank === 1 && "border-yellow-200 bg-yellow-50",
+                      entry.rank === 2 && "border-gray-200 bg-gray-50",
+                      entry.rank === 3 && "border-amber-200 bg-amber-50",
+                      themeAge === 'playful' && "hover:scale-105 transition-transform"
+                    )}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-8 h-8">
-                        {getRankIcon(user.rank)}
-                      </div>
-                      <Avatar>
-                        <AvatarImage src={user.avatar} />
-                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium">{user.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Niveau {user.level} • {user.coursesCompleted} cursussen voltooid
-                        </p>
-                      </div>
+                    <div className="flex justify-center mb-2">
+                      {getRankIcon(entry.rank)}
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold">{user.points.toLocaleString()} XP</p>
-                      <Badge className={getRankBadge(user.rank)} variant="outline">
-                        #{user.rank}
+                    <Avatar className="h-12 w-12 mx-auto mb-2">
+                      <AvatarImage src={entry.avatar} />
+                      <AvatarFallback>{entry.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <h3 className="font-semibold text-sm">{entry.name}</h3>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {entry.points} punten
+                    </div>
+                    <div className="flex justify-center gap-1 mt-2">
+                      <Badge variant="outline" className="text-xs">
+                        L{entry.level}
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {entry.badges}🏆
                       </Badge>
                     </div>
                   </div>
@@ -152,69 +167,58 @@ export const LeaderboardSystem = ({ users, currentUserId, timeframe }: Leaderboa
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
 
-        <TabsContent value="streak">
+          {/* Full Leaderboard */}
           <Card>
             <CardHeader>
-              <CardTitle>Longest Streaks</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" />
+                Volledige Ranglijst
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {users
-                  .sort((a, b) => b.streak - a.streak)
-                  .slice(0, 10)
-                  .map((user, index) => (
-                    <div
-                      key={`streak-${user.id}`}
-                      className="flex items-center justify-between p-3 rounded-lg border"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="font-bold text-muted-foreground">#{index + 1}</span>
-                        <Avatar className="w-8 h-8">
-                          <AvatarImage src={user.avatar} />
-                          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <span className="font-medium">{user.name}</span>
+              <div className="space-y-2">
+                {leaderboard.map((entry) => (
+                  <div
+                    key={entry.id}
+                    className={cn(
+                      "flex items-center justify-between p-3 rounded-lg border",
+                      entry.id === currentUserId && "border-primary/20 bg-primary/5",
+                      "hover:bg-muted/50 transition-colors"
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 flex justify-center">
+                        {getRankIcon(entry.rank)}
                       </div>
-                      <Badge variant="secondary">
-                        🔥 {user.streak} dagen
-                      </Badge>
-                    </div>
-                  ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="courses">
-          <Card>
-            <CardHeader>
-              <CardTitle>Meeste Cursussen Voltooid</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {users
-                  .sort((a, b) => b.coursesCompleted - a.coursesCompleted)
-                  .slice(0, 10)
-                  .map((user, index) => (
-                    <div
-                      key={`courses-${user.id}`}
-                      className="flex items-center justify-between p-3 rounded-lg border"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="font-bold text-muted-foreground">#{index + 1}</span>
-                        <Avatar className="w-8 h-8">
-                          <AvatarImage src={user.avatar} />
-                          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <span className="font-medium">{user.name}</span>
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={entry.avatar} />
+                        <AvatarFallback className="text-xs">
+                          {entry.name.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium text-sm">{entry.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          Level {entry.level} • {entry.streak} dag streak
+                        </div>
                       </div>
-                      <Badge variant="secondary">
-                        📚 {user.coursesCompleted} cursussen
-                      </Badge>
                     </div>
-                  ))}
+                    
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <div className="font-semibold text-sm">{entry.points}</div>
+                        <div className="text-xs text-muted-foreground">punten</div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {getChangeIcon(entry.change)}
+                        <Badge variant="outline" className="text-xs">
+                          {entry.badges}🏆
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
