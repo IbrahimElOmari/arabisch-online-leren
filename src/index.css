@@ -174,38 +174,98 @@ All colors MUST be HSL.
 
   /* Mobile RTL optimizations */
   @media (max-width: 767px) {
-    /* Mobile sidebar positioning */
+    /* Mobile sidebar positioning - CRITICAL FIXES */
     [dir="rtl"] [data-sidebar="sidebar"] {
       right: 0 !important;
       left: auto !important;
+      transform-origin: right center;
     }
     
     [dir="ltr"] [data-sidebar="sidebar"] {
       left: 0 !important;
       right: auto !important;
+      transform-origin: left center;
+    }
+
+    /* Sheet/Drawer positioning for RTL */
+    [dir="rtl"] [data-vaul-drawer] {
+      right: 0 !important;
+      left: auto !important;
+    }
+
+    [dir="ltr"] [data-vaul-drawer] {
+      left: 0 !important;
+      right: auto !important;
+    }
+
+    /* Mobile sheet content positioning */
+    [dir="rtl"] [data-radix-dialog-content],
+    [dir="rtl"] [data-radix-drawer-content] {
+      transform-origin: right center;
+    }
+
+    [dir="ltr"] [data-radix-dialog-content],
+    [dir="ltr"] [data-radix-drawer-content] {
+      transform-origin: left center;
     }
     
-    /* Mobile bottom navigation */
+    /* Mobile bottom navigation RTL */
     [dir="rtl"] .mobile-bottom-nav {
       direction: rtl;
+      flex-direction: row-reverse;
+    }
+
+    [dir="ltr"] .mobile-bottom-nav {
+      direction: ltr;
+      flex-direction: row;
     }
     
-    /* Sidebar trigger icon */
+    /* Sidebar trigger icon flip for RTL */
     [dir="rtl"] .sidebar-trigger {
       transform: scaleX(-1);
     }
+
+    [dir="ltr"] .sidebar-trigger {
+      transform: scaleX(1);
+    }
     
-    /* Force full width on mobile for main content */
+    /* Force proper width calculations for mobile RTL */
     [dir="rtl"] .main-content,
     [dir="ltr"] .main-content {
       width: 100% !important;
-      flex: 1 !important;
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
     }
-    
-    /* Mobile sheet positioning */
-    [dir="rtl"] [data-vaul-drawer] {
+
+    /* Mobile navigation icon spacing */
+    [dir="rtl"] .mobile-nav-item .lucide {
+      margin-left: 0.5rem;
+      margin-right: 0;
+    }
+
+    [dir="ltr"] .mobile-nav-item .lucide {
+      margin-right: 0.5rem;
+      margin-left: 0;
+    }
+
+    /* Badge positioning for mobile RTL */
+    [dir="rtl"] .mobile-badge {
+      left: -8px !important;
+      right: auto !important;
+    }
+
+    [dir="ltr"] .mobile-badge {
+      right: -8px !important;
       left: auto !important;
-      right: 0 !important;
+    }
+
+    /* Touch feedback direction */
+    [dir="rtl"] .touch-feedback {
+      transform-origin: right center;
+    }
+
+    [dir="ltr"] .touch-feedback {
+      transform-origin: left center;
     }
   }
 

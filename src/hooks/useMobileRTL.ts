@@ -1,5 +1,6 @@
 import { useRTL } from '@/contexts/RTLContext';
 import { useEffect, useState } from 'react';
+import { initializeCrossBrowserRTL } from '@/utils/crossBrowserRTL';
 
 export const useMobileRTL = () => {
   const { isRTL } = useRTL();
@@ -14,8 +15,14 @@ export const useMobileRTL = () => {
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
+    
+    // Initialize cross-browser RTL support for mobile
+    if (isMobile) {
+      initializeCrossBrowserRTL();
+    }
+    
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [isMobile]);
 
   // Mobile-specific RTL utilities
   const getMobileSwipeDirection = () => isRTL ? 'swipe-rtl' : 'swipe-ltr';

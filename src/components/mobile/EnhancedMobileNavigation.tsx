@@ -28,37 +28,37 @@ export const EnhancedMobileBottomNav = () => {
       icon: Home, 
       label: t('nav.home', 'Home'), 
       path: '/', 
-      color: 'text-blue-500',
-      activeColor: 'bg-blue-50 text-blue-600 dark:bg-blue-950'
+      color: 'text-primary',
+      activeColor: 'bg-primary/10 text-primary'
     },
     { 
       icon: BookOpen, 
       label: t('nav.taken', 'Taken'), 
       path: '/taken', 
-      color: 'text-green-500',
-      activeColor: 'bg-green-50 text-green-600 dark:bg-green-950'
+      color: 'text-muted-foreground',
+      activeColor: 'bg-accent text-accent-foreground'
     },
     { 
       icon: MessageSquare, 
       label: t('nav.forum', 'Forum'), 
       path: '/forum', 
-      color: 'text-purple-500',
-      activeColor: 'bg-purple-50 text-purple-600 dark:bg-purple-950',
+      color: 'text-muted-foreground',
+      activeColor: 'bg-accent text-accent-foreground',
       badge: 3 // Example notification count
     },
     { 
       icon: Calendar, 
       label: t('nav.calendar', 'Calendar'), 
       path: '/calendar', 
-      color: 'text-orange-500',
-      activeColor: 'bg-orange-50 text-orange-600 dark:bg-orange-950'
+      color: 'text-muted-foreground',
+      activeColor: 'bg-accent text-accent-foreground'
     },
     { 
       icon: User, 
       label: t('nav.dashboard', 'Dashboard'), 
       path: '/dashboard', 
-      color: 'text-indigo-500',
-      activeColor: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950'
+      color: 'text-muted-foreground',
+      activeColor: 'bg-accent text-accent-foreground'
     }
   ];
 
@@ -66,8 +66,9 @@ export const EnhancedMobileBottomNav = () => {
     <nav 
       className={cn(
         "fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm border-t border-border",
-        "safe-area-pb-4", // Respect safe areas on mobile devices
-        getTouchClasses()
+        "safe-area-pb-4 mobile-bottom-nav", // Respect safe areas and mobile nav class
+        getTouchClasses(),
+        isRTL && "mobile-nav-rtl"
       )}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
@@ -96,13 +97,13 @@ export const EnhancedMobileBottomNav = () => {
                   isActive && "scale-110"
                 )} />
                 
-                {item.badge && (
+                 {item.badge && (
                   <Badge 
                     variant="destructive" 
                     className={cn(
-                      "absolute -top-2 -right-2 h-4 w-4 p-0 text-xs flex items-center justify-center",
-                      "animate-pulse",
-                      isRTL && "-left-2 right-auto"
+                      "absolute -top-2 h-4 w-4 p-0 text-xs flex items-center justify-center",
+                      "animate-pulse mobile-badge",
+                      isRTL ? "-left-2 right-auto" : "-right-2 left-auto"
                     )}
                   >
                     {item.badge}

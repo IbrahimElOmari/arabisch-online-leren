@@ -66,24 +66,92 @@
       animation: rtl-mobile-slide-out 0.3s ease-out;
     }
 
-    /* RTL bottom navigation */
+    /* RTL bottom navigation positioning and layout */
     .mobile-bottom-nav {
       flex-direction: row-reverse;
+      right: 0;
+      left: 0;
     }
 
     .mobile-bottom-nav .nav-item {
       transform: none;
     }
 
-    /* RTL drawer positioning */
-    .mobile-drawer {
+    /* RTL Sheet/Drawer positioning - CRITICAL FIX */
+    [data-vaul-drawer][data-vaul-drawer-direction="left"] {
+      right: 0 !important;
+      left: auto !important;
+      transform-origin: right center;
+    }
+
+    [data-vaul-drawer][data-vaul-drawer-direction="right"] {
+      left: 0 !important;
+      right: auto !important;
+      transform-origin: left center;
+    }
+
+    /* RTL sidebar positioning */
+    .mobile-drawer,
+    [data-sidebar="sidebar"] {
+      right: 0 !important;
+      left: auto !important;
+    }
+
+    /* RTL Sheet content positioning */
+    [data-radix-popper-content-wrapper] {
       right: 0;
       left: auto;
+    }
+
+    /* RTL badge positioning */
+    .mobile-badge {
+      left: -8px;
+      right: auto;
     }
 
     /* RTL touch feedback */
     .touch-feedback {
       transform-origin: right center;
+    }
+
+    /* RTL icon flipping for navigation */
+    .rtl-flip {
+      transform: scaleX(-1);
+    }
+
+    /* RTL text alignment in mobile */
+    .mobile-text {
+      text-align: right;
+      direction: rtl;
+    }
+
+    /* RTL flex containers */
+    .mobile-flex-rtl {
+      flex-direction: row-reverse;
+    }
+
+    /* RTL positioning utilities */
+    .mobile-nav-rtl {
+      direction: rtl;
+    }
+
+    .mobile-modal-rtl {
+      transform-origin: right center;
+    }
+
+    .mobile-dropdown-rtl {
+      right: 0;
+      left: auto;
+    }
+
+    .touch-rtl {
+      direction: rtl;
+    }
+
+    /* RTL swipe directions */
+    .swipe-rtl {
+      touch-action: pan-x;
+      direction: rtl;
     }
   }
 
@@ -206,6 +274,29 @@
   }
 }
 
+/* LTR mobile slide animations */
+@keyframes ltr-mobile-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes ltr-mobile-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
 @keyframes haptic-pulse {
   0% {
     transform: scale(1);
@@ -253,6 +344,47 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* Additional RTL utility classes */
+.rtl-layout {
+  direction: rtl;
+}
+
+.ltr-layout {
+  direction: ltr;
+}
+
+.mobile-nav-rtl {
+  direction: rtl;
+  flex-direction: row-reverse;
+}
+
+.mobile-nav-ltr {
+  direction: ltr;
+  flex-direction: row;
+}
+
+.rtl-flip {
+  transform: scaleX(-1);
+}
+
+.swipe-rtl {
+  touch-action: pan-x;
+  direction: rtl;
+}
+
+.swipe-ltr {
+  touch-action: pan-x;
+  direction: ltr;
+}
+
+.touch-rtl {
+  direction: rtl;
+}
+
+.touch-ltr {
+  direction: ltr;
 }
 
 /* High contrast mode support */
