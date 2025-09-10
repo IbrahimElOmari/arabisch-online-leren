@@ -15,6 +15,8 @@ import { TeachingModal } from '@/components/teaching/TeachingModal';
 import { AttendanceModal } from '@/components/teaching/AttendanceModal';
 import { PerformanceModal } from '@/components/teaching/PerformanceModal';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { TeacherAnalytics } from '@/components/teacher/TeacherAnalytics';
+import { RealtimeChat } from '@/components/communication/RealtimeChat';
 import {
   BookOpen,
   Users,
@@ -25,7 +27,8 @@ import {
   Clock,
   Plus,
   AlertTriangle,
-  CheckSquare
+  CheckSquare,
+  MessageSquare
 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
@@ -225,7 +228,7 @@ const TeacherDashboard = () => {
 
         {selectedClass && (
           <Tabs defaultValue="tasks" className="w-full" dir={isRTL ? 'rtl' : 'ltr'}>
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-7">
               <TabsTrigger value="tasks" className={`flex items-center gap-2 ${getFlexDirection()}`}>
                 <FileText className="h-4 w-4" />
                 <span className={isRTL ? 'arabic-text' : ''}>
@@ -254,6 +257,18 @@ const TeacherDashboard = () => {
                 <BarChart3 className="h-4 w-4" />
                 <span className={isRTL ? 'arabic-text' : ''}>
                   {isRTL ? 'الأداء' : 'Prestaties'}
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className={`flex items-center gap-2 ${getFlexDirection()}`}>
+                <BarChart3 className="h-4 w-4" />
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'التحليلات' : 'Analytics'}
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value="chat" className={`flex items-center gap-2 ${getFlexDirection()}`}>
+                <MessageSquare className="h-4 w-4" />
+                <span className={isRTL ? 'arabic-text' : ''}>
+                  {isRTL ? 'الدردشة' : 'Chat'}
                 </span>
               </TabsTrigger>
             </TabsList>
@@ -437,10 +452,24 @@ const TeacherDashboard = () => {
                     classId={selectedClass}
                     className={getSelectedClassName()}
                   />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                 </CardContent>
+               </Card>
+             </TabsContent>
+
+             <TabsContent value="analytics" className="mt-6">
+               <TeacherAnalytics 
+                 classId={selectedClass || ''}
+                 teacherId={profile?.id || ''}
+               />
+             </TabsContent>
+
+             <TabsContent value="chat" className="mt-6">
+               <RealtimeChat 
+                 roomId={`teacher-${selectedClass}`}
+                 roomType="class"
+               />
+             </TabsContent>
+           </Tabs>
         )}
       </div>
       <BulkGradingModal

@@ -16,6 +16,9 @@ import { LevelProgressCard } from '@/components/progress/LevelProgressCard';
 import { ThemeAwareProgressCard } from '@/components/progress/ThemeAwareProgressCard';
 import { ContinueLearningCard } from '@/components/progress/ContinueLearningCard';
 import { RecentAchievements } from '@/components/progress/RecentAchievements';
+import { BadgeSystem } from '@/components/gamification/BadgeSystem';
+import { LeaderboardSystem } from '@/components/gamification/LeaderboardSystem';
+import { RealtimeChat } from '@/components/communication/RealtimeChat';
 import { useAgeTheme } from '@/contexts/AgeThemeContext';
 
 type NiveauItem = {
@@ -298,7 +301,7 @@ const StudentDashboard = () => {
         {/* Main Content Tabs */}
         {selectedClass && selectedLevel && (
           <Tabs defaultValue="tasks" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="tasks" className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4" />
                 Taken & Vragen
@@ -306,6 +309,14 @@ const StudentDashboard = () => {
               <TabsTrigger value="progress" className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4" />
                 Level Voortgang
+              </TabsTrigger>
+              <TabsTrigger value="badges" className="flex items-center gap-2">
+                <Trophy className="h-4 w-4" />
+                Badges & Rankings
+              </TabsTrigger>
+              <TabsTrigger value="chat" className="flex items-center gap-2">
+                <MessageCircle className="h-4 w-4" />
+                Chat
               </TabsTrigger>
               <TabsTrigger value="forum" className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4" />
@@ -357,6 +368,30 @@ const StudentDashboard = () => {
                   <RecentAchievements progressData={progressData} />
                 </div>
               </div>
+            </TabsContent>
+
+            <TabsContent value="badges" className="mt-6">
+              <div className="grid gap-6 lg:grid-cols-2">
+                <div>
+                  <BadgeSystem 
+                    userId={user?.id || ''} 
+                    studentProgress={progressData}
+                  />
+                </div>
+                <div>
+                  <LeaderboardSystem 
+                    classId={selectedClass?.class_id}
+                    currentUserId={user?.id || ''}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="chat" className="mt-6">
+              <RealtimeChat 
+                roomId={`class-${selectedClass?.class_id}`}
+                roomType="class"
+              />
             </TabsContent>
 
             <TabsContent value="forum" className="mt-6">
