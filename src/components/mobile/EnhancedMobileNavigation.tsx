@@ -189,10 +189,7 @@ export const EnhancedMobileSidebar = () => {
       
       <SheetContent 
         side={isRTL ? "right" : "left"}
-        className={cn(
-          "w-80 max-w-[85vw] p-0",
-          getMobileModalClasses()
-        )}
+        className="w-[85vw] max-w-sm p-0 mobile-sheet"
       >
         <div className="flex flex-col h-full">
           {/* Header */}

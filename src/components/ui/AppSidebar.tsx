@@ -1,8 +1,8 @@
 import { Home, Calendar, MessageSquare, Eye, BookOpen, User, Shield, Folder, HardDrive } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
-import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import {
   Sidebar,
@@ -23,8 +23,13 @@ export function AppSidebar() {
   const location = useLocation();
   const { user, profile } = useAuth();
   const { state } = useSidebar();
-  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
+
+  // Don't render sidebar on mobile at all
+  if (isMobile) {
+    return null;
+  }
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -55,17 +60,16 @@ export function AppSidebar() {
   return (
     <Sidebar 
       collapsible="icon"
-      side={isRTL ? "right" : "left"}
-      className="hidden md:flex"
+      className="flex"
     >
       <SidebarContent>
         {/* Logo */}
         <SidebarGroup>
           <SidebarGroupContent>
-            <div className={`${getFlexDirection()} items-center gap-2 px-2 py-4`}>
+            <div className="flex items-center gap-2 px-2 py-4">
               <BookOpen className="h-6 w-6 text-primary" />
               {state !== 'collapsed' && (
-                <span className={`font-bold text-lg ${getTextAlign()}`}>Leer Arabisch</span>
+                <span className="font-bold text-lg">Leer Arabisch</span>
               )}
             </div>
           </SidebarGroupContent>
@@ -73,7 +77,7 @@ export function AppSidebar() {
 
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className={getTextAlign()}>{t('nav.navigation')}</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('nav.navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => (
@@ -82,10 +86,9 @@ export function AppSidebar() {
                     onClick={() => handleNavigation(item.url)}
                     isActive={isActive(item.url)}
                     tooltip={state === 'collapsed' ? item.title : undefined}
-                    className={getFlexDirection()}
                   >
-                    <item.icon className={`h-4 w-4 ${getIconSpacing()}`} />
-                    <span className={getTextAlign()}>{item.title}</span>
+                    <item.icon className="h-4 w-4 me-2" />
+                    <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -96,7 +99,7 @@ export function AppSidebar() {
         {/* User Navigation */}
         {userItems.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel className={getTextAlign()}>{t('nav.platform')}</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('nav.platform')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {userItems.map((item) => (
@@ -105,10 +108,9 @@ export function AppSidebar() {
                       onClick={() => handleNavigation(item.url)}
                       isActive={isActive(item.url)}
                       tooltip={state === 'collapsed' ? item.title : undefined}
-                      className={getFlexDirection()}
                     >
-                      <item.icon className={`h-4 w-4 ${getIconSpacing()}`} />
-                      <span className={getTextAlign()}>{item.title}</span>
+                      <item.icon className="h-4 w-4 me-2" />
+                      <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -121,7 +123,7 @@ export function AppSidebar() {
         {/* Admin Navigation */}
         {adminItems.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel className={getTextAlign()}>{t('nav.management')}</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('nav.management')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {adminItems.map((item) => (
@@ -130,10 +132,9 @@ export function AppSidebar() {
                       onClick={() => handleNavigation(item.url)}
                       isActive={isActive(item.url)}
                       tooltip={state === 'collapsed' ? item.title : undefined}
-                      className={getFlexDirection()}
                     >
-                      <item.icon className={`h-4 w-4 ${getIconSpacing()}`} />
-                      <span className={getTextAlign()}>{item.title}</span>
+                      <item.icon className="h-4 w-4 me-2" />
+                      <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -154,10 +155,9 @@ export function AppSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton 
                 onClick={() => handleNavigation('/auth')}
-                className={getFlexDirection()}
               >
-                <User className={`h-4 w-4 ${getIconSpacing()}`} />
-                <span className={getTextAlign()}>{t('nav.login')}</span>
+                <User className="h-4 w-4 me-2" />
+                <span>{t('nav.login')}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

@@ -18,12 +18,12 @@ export const AppLayout = () => {
   return (
     <SidebarProvider>
       <div 
-        className="min-h-screen flex w-full rtl-safe-flex-row" 
+        className="min-h-screen flex w-full" 
         {...getNavigationAttributes()}
       >
         <AppSidebar />
         
-        <div className={`flex-1 min-w-0 flex flex-col main-content ${isRTL ? 'rtl-layout' : 'ltr-layout'}`}>
+        <div className={`flex-1 min-w-0 flex flex-col main-content ${isMobile ? 'w-full' : ''}`}>
           <Navigation />
           <EnhancedNotificationSystem />
           

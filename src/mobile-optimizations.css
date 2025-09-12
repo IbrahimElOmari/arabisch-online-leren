@@ -17,6 +17,12 @@
     padding-top: max(1rem, env(safe-area-inset-top));
   }
 
+  /* Mobile sheet optimization */
+  .mobile-sheet {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
   /* Enhanced mobile bottom navigation */
   .mobile-bottom-nav {
     padding-bottom: env(safe-area-inset-bottom);
