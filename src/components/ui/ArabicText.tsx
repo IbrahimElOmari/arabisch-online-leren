@@ -51,7 +51,7 @@ export const ArabicText: React.FC<ArabicTextProps> = ({
             variant="ghost"
             size="sm"
             onClick={playAudio}
-            className="ml-2 inline-flex items-center gap-1 text-primary hover:text-primary/80"
+            className="ms-2 inline-flex items-center gap-1 text-primary hover:text-primary/80"
           >
             <Volume2 className="h-4 w-4" />
           </Button>

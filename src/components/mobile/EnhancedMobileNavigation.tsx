@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, BookOpen, MessageSquare, Calendar, User, Menu, X, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
@@ -70,7 +70,7 @@ export const EnhancedMobileBottomNav = () => {
         getTouchClasses(),
         isRTL && "mobile-nav-rtl"
       )}
-      dir={isRTL ? 'rtl' : 'ltr'}
+      
     >
       <div className="flex items-center justify-around px-2 py-2">
         {navItems.map((item, index) => {

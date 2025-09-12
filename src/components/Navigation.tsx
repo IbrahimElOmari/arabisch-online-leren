@@ -5,7 +5,7 @@ import { NavigationHeader } from '@/components/navigation/NavigationHeader';
 import { NavigationMenuItems } from '@/components/navigation/NavigationMenuItems';
 import { NavigationActions } from '@/components/navigation/NavigationActions';
 import { EnhancedMobileSidebar } from '@/components/mobile/EnhancedMobileNavigation';
-import { useRTLLayout } from '@/hooks/useRTLLayout';
+
 
 /**
  * Main navigation component that provides site-wide navigation functionality
@@ -13,12 +13,11 @@ import { useRTLLayout } from '@/hooks/useRTLLayout';
  */
 const Navigation = React.memo(() => {
   const { user, profile } = useAuth();
-  const { getFlexDirection, isRTL } = useRTLLayout();
 
   return (
-    <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 shadow-sm" dir={isRTL ? 'rtl' : 'ltr'}>
+    <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4">
-        <div className={`${getFlexDirection()} items-center justify-between h-16`}>
+        <div className="rtl-safe-flex-row items-center justify-between h-16">
           <div className="flex items-center gap-3">
             <EnhancedMobileSidebar />
             <NavigationHeader />

@@ -11,16 +11,15 @@ import { EnhancedMobileBottomNav } from '@/components/mobile/EnhancedMobileNavig
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export const AppLayout = () => {
-  const { getFlexDirection, isRTL } = useRTLLayout();
+  const { isRTL } = useRTLLayout();
   const { getNavigationAttributes } = useAccessibilityRTL();
   const isMobile = useIsMobile();
 
   return (
     <SidebarProvider>
       <div 
-        className={`min-h-screen flex w-full ${getFlexDirection()}`} 
+        className="min-h-screen flex w-full rtl-safe-flex-row" 
         {...getNavigationAttributes()}
-        dir={isRTL ? 'rtl' : 'ltr'}
       >
         <AppSidebar />
         

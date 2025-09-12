@@ -50,121 +50,32 @@
     }
   }
 
-  /* RTL mobile optimizations */
-  [dir="rtl"] {
-    /* RTL touch gestures */
-    .swipe-indicator {
-      transform: scaleX(-1);
-    }
+  /* RTL mobile optimizations (expanded selectors for plain CSS) */
+  [dir="rtl"] .swipe-indicator { transform: scaleX(-1); }
+  [dir="rtl"] .mobile-slide-in { animation: rtl-mobile-slide-in 0.3s ease-out; }
+  [dir="rtl"] .mobile-slide-out { animation: rtl-mobile-slide-out 0.3s ease-out; }
+  [dir="rtl"] .mobile-bottom-nav { flex-direction: row-reverse; right: 0; left: 0; }
+  [dir="rtl"] .mobile-bottom-nav .nav-item { transform: none; }
+  [dir="rtl"] [data-vaul-drawer][data-vaul-drawer-direction="left"] { right: 0 !important; left: auto !important; transform-origin: right center; }
+  [dir="rtl"] [data-vaul-drawer][data-vaul-drawer-direction="right"] { left: 0 !important; right: auto !important; transform-origin: left center; }
+  [dir="rtl"] .mobile-drawer,
+  [dir="rtl"] [data-sidebar="sidebar"] { right: 0 !important; left: auto !important; }
+  [dir="rtl"] [data-radix-popper-content-wrapper] { right: 0; left: auto; }
+  [dir="rtl"] .mobile-badge { left: -8px; right: auto; }
+  [dir="rtl"] .touch-feedback { transform-origin: right center; }
+  [dir="rtl"] .rtl-flip { transform: scaleX(-1); }
+  [dir="rtl"] .mobile-text { text-align: right; direction: rtl; }
+  [dir="rtl"] .mobile-flex-rtl { flex-direction: row-reverse; }
+  [dir="rtl"] .mobile-nav-rtl { direction: rtl; }
+  [dir="rtl"] .mobile-modal-rtl { transform-origin: right center; }
+  [dir="rtl"] .mobile-dropdown-rtl { right: 0; left: auto; }
+  [dir="rtl"] .touch-rtl { direction: rtl; }
+  [dir="rtl"] .swipe-rtl { touch-action: pan-x; direction: rtl; }
 
-    /* RTL mobile animations */
-    .mobile-slide-in {
-      animation: rtl-mobile-slide-in 0.3s ease-out;
-    }
+  /* LTR mobile overrides */
+  [dir="ltr"] .touch-feedback { transform-origin: left center; }
+  [dir="ltr"] .mobile-drawer { left: 0; right: auto; }
 
-    .mobile-slide-out {
-      animation: rtl-mobile-slide-out 0.3s ease-out;
-    }
-
-    /* RTL bottom navigation positioning and layout */
-    .mobile-bottom-nav {
-      flex-direction: row-reverse;
-      right: 0;
-      left: 0;
-    }
-
-    .mobile-bottom-nav .nav-item {
-      transform: none;
-    }
-
-    /* RTL Sheet/Drawer positioning - CRITICAL FIX */
-    [data-vaul-drawer][data-vaul-drawer-direction="left"] {
-      right: 0 !important;
-      left: auto !important;
-      transform-origin: right center;
-    }
-
-    [data-vaul-drawer][data-vaul-drawer-direction="right"] {
-      left: 0 !important;
-      right: auto !important;
-      transform-origin: left center;
-    }
-
-    /* RTL sidebar positioning */
-    .mobile-drawer,
-    [data-sidebar="sidebar"] {
-      right: 0 !important;
-      left: auto !important;
-    }
-
-    /* RTL Sheet content positioning */
-    [data-radix-popper-content-wrapper] {
-      right: 0;
-      left: auto;
-    }
-
-    /* RTL badge positioning */
-    .mobile-badge {
-      left: -8px;
-      right: auto;
-    }
-
-    /* RTL touch feedback */
-    .touch-feedback {
-      transform-origin: right center;
-    }
-
-    /* RTL icon flipping for navigation */
-    .rtl-flip {
-      transform: scaleX(-1);
-    }
-
-    /* RTL text alignment in mobile */
-    .mobile-text {
-      text-align: right;
-      direction: rtl;
-    }
-
-    /* RTL flex containers */
-    .mobile-flex-rtl {
-      flex-direction: row-reverse;
-    }
-
-    /* RTL positioning utilities */
-    .mobile-nav-rtl {
-      direction: rtl;
-    }
-
-    .mobile-modal-rtl {
-      transform-origin: right center;
-    }
-
-    .mobile-dropdown-rtl {
-      right: 0;
-      left: auto;
-    }
-
-    .touch-rtl {
-      direction: rtl;
-    }
-
-    /* RTL swipe directions */
-    .swipe-rtl {
-      touch-action: pan-x;
-      direction: rtl;
-    }
-  }
-
-  [dir="ltr"] {
-    .touch-feedback {
-      transform-origin: left center;
-    }
-
-    .mobile-drawer {
-      left: 0;
-      right: auto;
-    }
-  }
 
   /* Enhanced focus styles for mobile */
   .mobile-focus\:ring-2:focus {
