@@ -96,9 +96,7 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
 
   return (
     <RTLContext.Provider value={{ isRTL, toggleRTL, setRTL, isLoading }}>
-      <div className={`rtl-container ${isRTL ? 'rtl' : 'ltr'} transition-all duration-300 ease-in-out`}>
-        {children}
-      </div>
+      {children}
     </RTLContext.Provider>
   );
 };

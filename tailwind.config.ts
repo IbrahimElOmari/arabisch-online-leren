@@ -28,6 +28,19 @@ const config: Config = {
     'arabic-text',
     'arabic-display',
     'arabic-body',
+    // Mobile RTL patterns
+    {
+      pattern: /^(mobile|touch|swipe)-(nav|modal|dropdown|card)-(rtl|ltr)$/
+    },
+    {
+      pattern: /^(rtl|ltr)-(flip|container|layout)$/
+    },
+    {
+      pattern: /^animate-slide-in-(left|right)$/
+    },
+    {
+      pattern: /^(haptic|mobile)-(light|medium|heavy|fade|slide|bounce)$/
+    },
     // Critical typography
     'text-sm',
     'text-base',
