@@ -18,7 +18,7 @@ export const AppLayout = () => {
   return (
     <SidebarProvider>
       <div 
-        className="min-h-screen flex w-full" 
+        className="min-h-screen flex w-full overflow-x-hidden" 
         {...getNavigationAttributes()}
       >
         <AppSidebar />
@@ -28,7 +28,7 @@ export const AppLayout = () => {
           <EnhancedNotificationSystem />
           
           <main 
-            className="flex-1 w-full" 
+            className="flex-1 w-full overflow-x-hidden" 
             role="main" 
             aria-label="Main content"
           >
