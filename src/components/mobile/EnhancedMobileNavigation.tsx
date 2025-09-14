@@ -134,6 +134,7 @@ export const EnhancedMobileSidebar = () => {
   const { getMobileModalClasses } = useMobileRTL();
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const menuSections = [
     {
@@ -165,10 +166,9 @@ export const EnhancedMobileSidebar = () => {
 
   const handleNavigation = (path: string) => {
     setIsOpen(false);
-    // Small delay for smooth animation
-    setTimeout(() => {
-      window.location.href = path;
-    }, 300);
+    if (location.pathname !== path) {
+      navigate(path);
+    }
   };
 
   return (
@@ -189,7 +189,7 @@ export const EnhancedMobileSidebar = () => {
       
       <SheetContent 
         side={isRTL ? "right" : "left"}
-        className="w-[85vw] max-w-sm p-0 mobile-sheet"
+        className="fixed z-50 w-[85vw] max-w-sm p-0 mobile-sheet"
       >
         <div className="flex flex-col h-full">
           {/* Header */}
