@@ -40,23 +40,23 @@ export function AppSidebar() {
   const isActive = (path: string) => location.pathname === path;
 
   const mainItems = [
-    { title: t('nav.home'), url: '/', icon: Home },
-    { title: t('nav.calendar'), url: '/calendar', icon: Calendar },
-    { title: t('nav.vision'), url: '/visie', icon: Eye },
+    { title: t('nav.home', 'Home'), url: '/', icon: Home },
+    { title: t('nav.calendar', 'Calendar'), url: '/calendar', icon: Calendar },
+    { title: t('nav.vision', 'Vision'), url: '/visie', icon: Eye },
   ];
 
   const userItems = user ? [
-    { title: t('nav.dashboard'), url: '/dashboard', icon: User },
-    { title: t('nav.forum'), url: '/forum', icon: MessageSquare },
-    { title: 'Profiel', url: '/profile', icon: User },
+    { title: t('nav.dashboard', 'Dashboard'), url: '/dashboard', icon: User },
+    { title: t('nav.forum', 'Forum'), url: '/forum', icon: MessageSquare },
+    { title: t('nav.profile', 'Profile'), url: '/profile', icon: User },
   ] : [];
 
 
   const adminItems = user && profile && ['admin', 'leerkracht'].includes(profile.role) ? [
-    { title: t('nav.forum_moderation'), url: '/forum-moderation', icon: MessageSquare },
-    { title: t('nav.security'), url: '/security', icon: Shield },
-    { title: 'Les Organisatie', url: '/lesson-organization', icon: Folder },
-    { title: 'Offline Content', url: '/offline-content', icon: HardDrive },
+    { title: t('nav.forum_moderation', 'Forum Moderation'), url: '/forum-moderation', icon: MessageSquare },
+    { title: t('nav.security', 'Security'), url: '/security', icon: Shield },
+    { title: t('nav.lesson_organization', 'Lesson Organization'), url: '/lesson-organization', icon: Folder },
+    { title: t('nav.offline_content', 'Offline Content'), url: '/offline-content', icon: HardDrive },
   ] : [];
 
   return (
@@ -79,7 +79,7 @@ export function AppSidebar() {
 
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>{t('nav.navigation')}</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('nav.navigation', 'Navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => (
@@ -101,7 +101,7 @@ export function AppSidebar() {
         {/* User Navigation */}
         {userItems.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>{t('nav.platform')}</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('nav.platform', 'Platform')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {userItems.map((item) => (
@@ -125,7 +125,7 @@ export function AppSidebar() {
         {/* Admin Navigation */}
         {adminItems.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>{t('nav.management')}</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('nav.management', 'Management')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {adminItems.map((item) => (
@@ -159,7 +159,7 @@ export function AppSidebar() {
                 onClick={() => handleNavigation('/auth')}
               >
                 <User className="h-4 w-4 me-2" />
-                <span>{t('nav.login')}</span>
+                <span>{t('nav.login', 'Login')}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

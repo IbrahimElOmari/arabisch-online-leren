@@ -173,7 +173,7 @@ All colors MUST be HSL.
   }
 
   /* Mobile RTL optimizations */
-  @media (max-width: 767px) {
+  @media (max-width: 1024px) {
     /* Mobile sidebar positioning - CRITICAL FIXES */
     [dir="rtl"] [data-sidebar="sidebar"] {
       right: 0 !important;

@@ -1,7 +1,7 @@
 /* Mobile Touch Optimizations and RTL-specific styles */
 
 /* Touch target optimizations */
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   /* Minimum touch target sizes */
   .touch-target {
     min-height: 44px;
