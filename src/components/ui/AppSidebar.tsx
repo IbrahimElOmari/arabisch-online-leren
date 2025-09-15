@@ -22,7 +22,7 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, profile } = useAuth();
-  const { state } = useSidebar();
+  const { state, setOpen } = useSidebar();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
 
@@ -33,6 +33,8 @@ export function AppSidebar() {
 
   const handleNavigation = (path: string) => {
     navigate(path);
+    // Auto-collapse after navigation for better UX
+    setOpen?.(false);
   };
 
   const isActive = (path: string) => location.pathname === path;

@@ -6,15 +6,15 @@ import { BookOpen } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { PWAInstallButton } from '@/components/pwa/PWAInstallButton';
-
+import { useIsMobile } from '@/hooks/use-mobile';
 export const NavigationHeader = React.memo(() => {
   const navigate = useNavigate();
   const { getFlexDirection, getIconSpacing, isRTL } = useRTLLayout();
   const { t } = useTranslation();
-
+  const isMobile = useIsMobile();
   return (
     <div className={`${getFlexDirection()} items-center gap-4`}>
-      <SidebarTrigger />
+      {!isMobile && <SidebarTrigger />}
       <button 
         onClick={() => navigate('/')}
         className={`text-2xl font-bold text-foreground hover:text-primary transition-colors duration-200 ${getFlexDirection()} items-center gap-2`}

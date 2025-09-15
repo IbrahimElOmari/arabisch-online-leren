@@ -189,7 +189,7 @@ export const EnhancedMobileSidebar = () => {
       
       <SheetContent 
         side={isRTL ? "right" : "left"}
-        className="fixed z-50 w-[85vw] max-w-sm p-0 mobile-sheet"
+        className="fixed inset-y-0 z-50 w-screen max-w-none md:w-[85vw] md:max-w-sm p-0 mobile-sheet"
       >
         <div className="flex flex-col h-full">
           {/* Header */}

@@ -40,7 +40,7 @@ export const AppLayout = () => {
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div 
         className="min-h-screen flex w-full overflow-x-hidden" 
         {...getNavigationAttributes()}
