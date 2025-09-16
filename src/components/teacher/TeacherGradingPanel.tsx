@@ -12,11 +12,13 @@ import {
   Calendar, 
   Star,
   MessageCircle,
-  Download
+  Download,
+  Gift
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useTaskStore } from '@/hooks/useTaskStore';
 import { useNotifications } from '@/hooks/useNotifications';
+import { BonusPointsModal } from '@/components/teacher/BonusPointsModal';
 
 interface TaskSubmission {
   id: string;
@@ -66,6 +68,11 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
   const [questionAnswers, setQuestionAnswers] = useState<QuestionAnswer[]>([]);
   const [loading, setLoading] = useState(true);
   const [gradingMode, setGradingMode] = useState<'tasks' | 'questions'>('tasks');
+  const [bonusPointsModal, setBonusPointsModal] = useState<{
+    isOpen: boolean;
+    student?: { id: string; full_name: string };
+    niveau?: { id: string; naam: string };
+  }>({ isOpen: false });
 
   useEffect(() => {
     loadSubmissions();
@@ -298,14 +305,28 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
             </div>
           </div>
 
-          <Button 
-            onClick={handleSubmit}
-            disabled={!grade || submitting}
-            className="w-full"
-          >
-            <Star className="h-4 w-4 mr-2" />
-            {submitting ? 'Bezig met beoordelen...' : 'Beoordeling Opslaan'}
-          </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleSubmit}
+                disabled={!grade || submitting}
+                className="flex-1"
+              >
+                <Star className="h-4 w-4 mr-2" />
+                {submitting ? 'Bezig met beoordelen...' : 'Beoordeling Opslaan'}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setBonusPointsModal({
+                  isOpen: true,
+                  student: { id: submission.student_id, full_name: submission.student?.full_name || 'Onbekend' },
+                  niveau: { id: levelId || '', naam: 'Niveau' }
+                })}
+                disabled={submitting}
+              >
+                <Gift className="h-4 w-4 mr-1" />
+                Bonus
+              </Button>
+            </div>
         </CardContent>
       </Card>
     );

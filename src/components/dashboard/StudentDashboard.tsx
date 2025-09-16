@@ -9,17 +9,21 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { TouchButton } from '@/components/touch/TouchOptimizedComponents';
+import { Button } from '@/components/ui/button';
 import { DashboardSkeleton } from '@/components/ui/enhanced-loading-system';
 import { EnhancedStudentTasksAndQuestions } from '@/components/student/EnhancedStudentTasksAndQuestions';
-import { useStudentProgress } from '@/hooks/useStudentProgress';
+import { useEnhancedProgress } from '@/hooks/useEnhancedProgress';
 import { LevelProgressCard } from '@/components/progress/LevelProgressCard';
 import { ThemeAwareProgressCard } from '@/components/progress/ThemeAwareProgressCard';
 import { ContinueLearningCard } from '@/components/progress/ContinueLearningCard';
 import { RecentAchievements } from '@/components/progress/RecentAchievements';
-import { BadgeSystem } from '@/components/gamification/BadgeSystem';
+import { EnhancedBadgeSystem } from '@/components/gamification/EnhancedBadgeSystem';
 import { LeaderboardSystem } from '@/components/gamification/LeaderboardSystem';
 import { RealtimeChat } from '@/components/communication/RealtimeChat';
+import { EnhancedPointsDisplay } from '@/components/progress/EnhancedPointsDisplay';
+import { useNotifications } from '@/hooks/useNotifications';
 import { useAgeTheme } from '@/contexts/AgeThemeContext';
+import { cn } from '@/lib/utils';
 
 type NiveauItem = {
   id: string;
@@ -50,8 +54,11 @@ const StudentDashboard = () => {
   const [selectedLevel, setSelectedLevel] = useState<NiveauItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Fetch student progress data
-  const { progress: progressData, isLoading: progressLoading } = useStudentProgress(user?.id);
+  // Fetch enhanced student progress data
+  const { progress: progressData, isLoading: progressLoading } = useEnhancedProgress(user?.id);
+  
+  // Get notifications
+  const { notifications, unreadCount } = useNotifications();
 
   useEffect(() => {
     if (profile?.id) {
@@ -170,7 +177,7 @@ const StudentDashboard = () => {
     const classLevels = selectedClass.klassen.niveaus;
     const incompleteLevels = progressData
       .filter(p => !p.is_completed && classLevels.some(n => n.id === p.niveau_id))
-      .sort((a, b) => b.total_points - a.total_points);
+      .sort((a, b) => (b.total_points_with_bonus || 0) - (a.total_points_with_bonus || 0));
       
     return incompleteLevels[0] || null;
   };
@@ -232,12 +239,58 @@ const StudentDashboard = () => {
           </CardHeader>
         </Card>
 
+        {/* Enhanced Points Display */}
+        <EnhancedPointsDisplay 
+          progress={progressData}
+          currentNiveauId={selectedLevel?.id}
+          compact={false}
+        />
+
         {/* Continue Learning Section */}
         {selectedClass && (
           <ContinueLearningCard 
             currentProgress={currentLevelProgress}
             onContinue={handleContinueLearning}
           />
+        )}
+
+        {/* Recent Notifications */}
+        {notifications.length > 0 && (
+          <Card className="border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageCircle className="h-5 w-5 text-primary" />
+                Recente Meldingen
+                {unreadCount > 0 && (
+                  <Badge variant="destructive" className="ml-2">
+                    {unreadCount}
+                  </Badge>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {notifications.slice(0, 3).map((notification) => (
+                  <div 
+                    key={notification.id}
+                    className={cn(
+                      "p-3 rounded-lg border text-sm",
+                      notification.is_read ? "bg-muted/50" : "bg-primary/10 border-primary/20"
+                    )}
+                  >
+                    {notification.message}
+                  </div>
+                ))}
+              </div>
+              {notifications.length > 3 && (
+                <div className="text-center mt-3">
+                  <Button variant="outline" size="sm">
+                    Alle meldingen bekijken
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         )}
 
         {/* Class and Level Selection */}
@@ -373,9 +426,10 @@ const StudentDashboard = () => {
             <TabsContent value="badges" className="mt-6">
               <div className="grid gap-6 lg:grid-cols-2">
                 <div>
-                  <BadgeSystem 
+                  <EnhancedBadgeSystem 
                     userId={user?.id || ''} 
-                    studentProgress={progressData}
+                    niveauId={selectedLevel?.id}
+                    showOnlyCurrentLevel={false}
                   />
                 </div>
                 <div>
