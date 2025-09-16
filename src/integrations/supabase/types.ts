@@ -239,6 +239,122 @@ export type Database = {
         }
         Relationships: []
       }
+      awarded_badges: {
+        Row: {
+          awarded_by: string | null
+          badge_description: string | null
+          badge_id: string
+          badge_name: string
+          badge_type: string
+          earned_at: string
+          id: string
+          niveau_id: string
+          points_threshold: number | null
+          reason: string | null
+          student_id: string
+        }
+        Insert: {
+          awarded_by?: string | null
+          badge_description?: string | null
+          badge_id: string
+          badge_name: string
+          badge_type: string
+          earned_at?: string
+          id?: string
+          niveau_id: string
+          points_threshold?: number | null
+          reason?: string | null
+          student_id: string
+        }
+        Update: {
+          awarded_by?: string | null
+          badge_description?: string | null
+          badge_id?: string
+          badge_name?: string
+          badge_type?: string
+          earned_at?: string
+          id?: string
+          niveau_id?: string
+          points_threshold?: number | null
+          reason?: string | null
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "awarded_badges_awarded_by_fkey"
+            columns: ["awarded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "awarded_badges_niveau_id_fkey"
+            columns: ["niveau_id"]
+            isOneToOne: false
+            referencedRelation: "niveaus"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "awarded_badges_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bonus_points: {
+        Row: {
+          awarded_by: string
+          created_at: string
+          id: string
+          niveau_id: string
+          points: number
+          reason: string
+          student_id: string
+        }
+        Insert: {
+          awarded_by: string
+          created_at?: string
+          id?: string
+          niveau_id: string
+          points: number
+          reason: string
+          student_id: string
+        }
+        Update: {
+          awarded_by?: string
+          created_at?: string
+          id?: string
+          niveau_id?: string
+          points?: number
+          reason?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bonus_points_awarded_by_fkey"
+            columns: ["awarded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bonus_points_niveau_id_fkey"
+            columns: ["niveau_id"]
+            isOneToOne: false
+            referencedRelation: "niveaus"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bonus_points_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       calendar_events: {
         Row: {
           class_id: string | null
@@ -1356,6 +1472,10 @@ export type Database = {
           sender_id: string
           updated_at: string
         }[]
+      }
+      get_total_niveau_points: {
+        Args: { p_niveau_id: string; p_student_id: string }
+        Returns: number
       }
       get_user_role: {
         Args: { user_id: string }
