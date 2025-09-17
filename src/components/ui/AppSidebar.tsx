@@ -17,6 +17,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { UserDropdown } from './UserDropdown';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 
 export function AppSidebar() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export function AppSidebar() {
   const { user, profile } = useAuth();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
+  const { isRTL } = useRTLLayout();
 
   // Don't render sidebar on mobile at all
   if (isMobile) {
@@ -64,6 +66,7 @@ export function AppSidebar() {
     <Sidebar 
       collapsible="icon"
       className="flex app-sidebar"
+      side={isRTL ? 'right' : 'left'}
     >
       <SidebarContent>
         {/* Logo */}

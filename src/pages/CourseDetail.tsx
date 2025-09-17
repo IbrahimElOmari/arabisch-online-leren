@@ -1,6 +1,6 @@
 
 import { useParams } from 'react-router-dom';
-import Navigation from '@/components/Navigation';
+
 import { CourseDetailPage } from '@/components/course/CourseDetailPage';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
@@ -18,7 +18,6 @@ const CourseDetail = () => {
 
   return (
     <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
-      <Navigation />
       <CourseDetailPage courseId={id} />
     </div>
   );
