@@ -63,7 +63,7 @@ export function AppSidebar() {
   return (
     <Sidebar 
       collapsible="icon"
-      className="flex"
+      className="flex app-sidebar"
     >
       <SidebarContent>
         {/* Logo */}

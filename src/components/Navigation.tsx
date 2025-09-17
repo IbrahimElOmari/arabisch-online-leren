@@ -15,7 +15,7 @@ const Navigation = React.memo(() => {
   const { user, profile } = useAuth();
 
   return (
-    <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 shadow-sm">
+    <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 navigation-header shadow-sm">
       <div className="max-w-7xl mx-auto px-4">
         <div className="rtl-safe-flex-row items-center justify-between h-16">
           <div className="flex items-center gap-3">

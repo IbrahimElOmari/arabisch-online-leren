@@ -187,10 +187,10 @@ export const EnhancedMobileSidebar = () => {
         </Button>
       </SheetTrigger>
       
-      <SheetContent 
-        side={isRTL ? "right" : "left"}
-        className="fixed inset-y-0 z-50 w-screen max-w-none md:w-[85vw] md:max-w-sm p-0 mobile-sheet bg-card text-card-foreground"
-      >
+        <SheetContent 
+          side={isRTL ? "right" : "left"}
+          className="fixed inset-y-0 mobile-sidebar-overlay w-screen max-w-none md:w-[85vw] md:max-w-sm p-0 mobile-sheet bg-card text-card-foreground"
+        >
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">

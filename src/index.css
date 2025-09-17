@@ -319,6 +319,27 @@ All colors MUST be HSL.
     box-shadow: 0 4px 12px hsl(var(--primary) / 0.1);
   }
 
+  /* Z-index hierarchy for navigation components */
+  .navigation-header {
+    z-index: 50;
+  }
+  
+  .mobile-sidebar-overlay {
+    z-index: 60;
+  }
+  
+  .mobile-bottom-nav {
+    z-index: 55;
+  }
+  
+  .app-sidebar {
+    z-index: 45;
+  }
+  
+  .modal-overlay {
+    z-index: 70;
+  }
+
   /* Typography scaling for different themes */
   .theme-playful .text-base {
     font-size: 1.125rem;

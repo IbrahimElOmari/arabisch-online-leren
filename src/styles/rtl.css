@@ -10,12 +10,42 @@
     direction: ltr;
   }
 
-  /* Arabic text styling */
+  /* Arabic text styling - Enhanced */
   .arabic-text {
-    font-family: 'Amiri', 'Times New Roman', serif;
+    font-family: "Amiri", "Noto Sans Arabic", "Tahoma", "Arial Unicode MS", sans-serif;
     line-height: 1.8;
     text-align: right;
     font-size: 1.1em;
+    letter-spacing: 0.02em;
+    word-spacing: 0.1em;
+  }
+
+  /* RTL Safe Flex Classes */
+  .rtl-safe-flex-row {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .rtl .rtl-safe-flex-row {
+    flex-direction: row-reverse;
+  }
+
+  /* RTL Navigation Container Fixes */
+  .rtl .sidebar-content {
+    direction: rtl;
+  }
+  
+  .rtl .main-content {
+    direction: rtl;
+  }
+
+  /* RTL Mobile specific fixes */
+  .rtl .mobile-sidebar-content {
+    text-align: right;
+  }
+  
+  .rtl .mobile-nav-item {
+    justify-content: flex-end;
   }
 
   /* RTL-specific utility classes */    
