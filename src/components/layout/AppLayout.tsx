@@ -15,12 +15,14 @@ export const AppLayout = () => {
   const { getNavigationAttributes } = useAccessibilityRTL();
   const isMobile = useIsMobile();
 
-  if (isMobile) {
-    return (
+  return (
+    <SidebarProvider defaultOpen={false}>
       <div 
         className="min-h-screen flex w-full overflow-x-hidden" 
         {...getNavigationAttributes()}
       >
+        {!isMobile && <AppSidebar />}
+        
         <div className="flex-1 min-w-0 flex flex-col main-content w-full">
           <Navigation />
           <EnhancedNotificationSystem />
@@ -33,31 +35,7 @@ export const AppLayout = () => {
             <Outlet />
           </main>
 
-          <EnhancedMobileBottomNav />
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <SidebarProvider defaultOpen={false}>
-      <div 
-        className="min-h-screen flex w-full overflow-x-hidden" 
-        {...getNavigationAttributes()}
-      >
-        <AppSidebar />
-        
-        <div className="flex-1 min-w-0 flex flex-col main-content">
-          <Navigation />
-          <EnhancedNotificationSystem />
-          
-          <main 
-            className="flex-1 w-full overflow-x-hidden" 
-            role="main" 
-            aria-label="Main content"
-          >
-            <Outlet />
-          </main>
+          {isMobile && <EnhancedMobileBottomNav />}
         </div>
       </div>
     </SidebarProvider>

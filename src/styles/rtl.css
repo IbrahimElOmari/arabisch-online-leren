@@ -1,4 +1,5 @@
 /* RTL-specific styles - loaded conditionally */
+@tailwind base;
 @layer base {
   /* RTL Support */
   .rtl {

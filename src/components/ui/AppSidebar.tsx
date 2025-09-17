@@ -22,7 +22,6 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, profile } = useAuth();
-  const { state, setOpen } = useSidebar();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
 
@@ -30,6 +29,8 @@ export function AppSidebar() {
   if (isMobile) {
     return null;
   }
+
+  const { state, setOpen } = useSidebar();
 
   const handleNavigation = (path: string) => {
     navigate(path);
