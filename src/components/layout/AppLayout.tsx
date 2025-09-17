@@ -17,26 +17,25 @@ export const AppLayout = () => {
 
   return (
     <SidebarProvider defaultOpen={false}>
-      <div 
-        className="min-h-screen flex w-full overflow-x-hidden" 
-        {...getNavigationAttributes()}
-      >
-        {!isMobile && <AppSidebar />}
-        
-        <div className="flex-1 min-w-0 flex flex-col main-content w-full">
-          <Navigation />
-          <EnhancedNotificationSystem />
+      <div className={`min-h-screen bg-background ${isRTL ? 'rtl' : 'ltr'}`}>
+        <div className="flex min-h-screen w-full" {...getNavigationAttributes()}>
+          {!isMobile && <AppSidebar />}
           
-          <main 
-            className="flex-1 w-full overflow-x-hidden" 
-            role="main" 
-            aria-label="Main content"
-          >
-            <Outlet />
-          </main>
-
-          {isMobile && <EnhancedMobileBottomNav />}
+          <div className="flex-1 min-w-0 flex flex-col">
+            <Navigation />
+            <EnhancedNotificationSystem />
+            
+            <main 
+              className="flex-1 p-4 overflow-x-hidden" 
+              role="main" 
+              aria-label="Main content"
+            >
+              <Outlet />
+            </main>
+          </div>
         </div>
+
+        {isMobile && <EnhancedMobileBottomNav />}
       </div>
     </SidebarProvider>
   );

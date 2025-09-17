@@ -330,14 +330,40 @@ All colors MUST be HSL.
   
   .mobile-bottom-nav {
     z-index: 55;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
   
   .app-sidebar {
-    z-index: 45;
+    z-index: 40;
+    position: relative;
   }
   
   .modal-overlay {
     z-index: 70;
+  }
+
+  /* Mobile breakpoint adjustments */
+  @media (max-width: 768px) {
+    .app-sidebar {
+      display: none;
+    }
+    
+    .mobile-bottom-nav {
+      display: flex;
+    }
+
+    .main-content {
+      padding-bottom: 5rem; /* Space for bottom nav */
+    }
+  }
+
+  @media (min-width: 769px) {
+    .mobile-bottom-nav {
+      display: none;
+    }
   }
 
   /* Typography scaling for different themes */

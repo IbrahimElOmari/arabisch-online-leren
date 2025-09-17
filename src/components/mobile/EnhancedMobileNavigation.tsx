@@ -65,8 +65,8 @@ export const EnhancedMobileBottomNav = () => {
   return (
     <nav 
       className={cn(
-        "fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm border-t border-border",
-        "safe-area-pb-4 mobile-bottom-nav", // Respect safe areas and mobile nav class
+        "fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-border mobile-bottom-nav",
+        "safe-area-pb-4", // Respect safe areas and mobile nav class
         getTouchClasses(),
         isRTL && "mobile-nav-rtl"
       )}
