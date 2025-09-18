@@ -26,12 +26,16 @@ export function AppSidebar() {
   const { t } = useTranslation();
   const { isRTL } = useRTLLayout();
 
-  const { state, setOpen } = useSidebar();
+  const { state, setOpen, isMobile, setOpenMobile } = useSidebar();
 
   const handleNavigation = (path: string) => {
     navigate(path);
     // Auto-collapse after navigation for better UX
-    setOpen?.(false);
+    if (isMobile) {
+      setOpenMobile?.(false);
+    } else {
+      setOpen?.(false);
+    }
   };
 
   const isActive = (path: string) => location.pathname === path;

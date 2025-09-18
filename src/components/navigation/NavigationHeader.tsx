@@ -14,7 +14,7 @@ export const NavigationHeader = React.memo(() => {
   
   return (
     <div className={`${getFlexDirection()} items-center gap-4`}>
-      <SidebarTrigger />
+      <SidebarTrigger className="sidebar-trigger" />
       <button 
         onClick={() => navigate('/')}
         className={`text-2xl font-bold text-foreground hover:text-primary transition-colors duration-200 ${getFlexDirection()} items-center gap-2`}
