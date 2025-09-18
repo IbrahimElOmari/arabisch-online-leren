@@ -174,41 +174,7 @@ All colors MUST be HSL.
 
   /* Mobile RTL optimizations */
   @media (max-width: 1024px) {
-    /* Mobile sidebar positioning - CRITICAL FIXES */
-    [dir="rtl"] [data-sidebar="sidebar"] {
-      right: 0 !important;
-      left: auto !important;
-      transform-origin: right center;
-    }
-    
-    [dir="ltr"] [data-sidebar="sidebar"] {
-      left: 0 !important;
-      right: auto !important;
-      transform-origin: left center;
-    }
-
-    /* Sheet/Drawer positioning for RTL */
-    [dir="rtl"] [data-vaul-drawer] {
-      right: 0 !important;
-      left: auto !important;
-    }
-
-    [dir="ltr"] [data-vaul-drawer] {
-      left: 0 !important;
-      right: auto !important;
-    }
-
-    /* Mobile sheet content positioning */
-    [dir="rtl"] [data-radix-dialog-content],
-    [dir="rtl"] [data-radix-drawer-content] {
-      transform-origin: right center;
-    }
-
-    [dir="ltr"] [data-radix-dialog-content],
-    [dir="ltr"] [data-radix-drawer-content] {
-      transform-origin: left center;
-    }
-    
+    /* Use default positions from components; avoid forcing sidebar/drawer sides here */
     /* Mobile bottom navigation RTL */
     [dir="rtl"] .mobile-bottom-nav {
       direction: rtl;
@@ -221,15 +187,10 @@ All colors MUST be HSL.
     }
     
     /* Sidebar trigger icon flip for RTL */
-    [dir="rtl"] .sidebar-trigger {
-      transform: scaleX(-1);
-    }
-
-    [dir="ltr"] .sidebar-trigger {
-      transform: scaleX(1);
-    }
+    [dir="rtl"] .sidebar-trigger { transform: scaleX(-1); }
+    [dir="ltr"] .sidebar-trigger { transform: scaleX(1); }
     
-    /* Force proper width calculations for mobile RTL */
+    /* Force proper width calculations for mobile */
     [dir="rtl"] .main-content,
     [dir="ltr"] .main-content {
       width: 100% !important;
@@ -238,35 +199,16 @@ All colors MUST be HSL.
     }
 
     /* Mobile navigation icon spacing */
-    [dir="rtl"] .mobile-nav-item .lucide {
-      margin-left: 0.5rem;
-      margin-right: 0;
-    }
-
-    [dir="ltr"] .mobile-nav-item .lucide {
-      margin-right: 0.5rem;
-      margin-left: 0;
-    }
+    [dir="rtl"] .mobile-nav-item .lucide { margin-left: 0.5rem; margin-right: 0; }
+    [dir="ltr"] .mobile-nav-item .lucide { margin-right: 0.5rem; margin-left: 0; }
 
     /* Badge positioning for mobile RTL */
-    [dir="rtl"] .mobile-badge {
-      left: -8px !important;
-      right: auto !important;
-    }
-
-    [dir="ltr"] .mobile-badge {
-      right: -8px !important;
-      left: auto !important;
-    }
+    [dir="rtl"] .mobile-badge { left: -8px !important; right: auto !important; }
+    [dir="ltr"] .mobile-badge { right: -8px !important; left: auto !important; }
 
     /* Touch feedback direction */
-    [dir="rtl"] .touch-feedback {
-      transform-origin: right center;
-    }
-
-    [dir="ltr"] .touch-feedback {
-      transform-origin: left center;
-    }
+    [dir="rtl"] .touch-feedback { transform-origin: right center; }
+    [dir="ltr"] .touch-feedback { transform-origin: left center; }
   }
 
   /* RTL Icon spacing fixes */
@@ -347,10 +289,6 @@ All colors MUST be HSL.
 
   /* Mobile breakpoint adjustments */
   @media (max-width: 768px) {
-    .app-sidebar {
-      display: none;
-    }
-    
     .mobile-bottom-nav {
       display: flex;
     }

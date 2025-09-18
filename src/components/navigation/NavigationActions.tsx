@@ -21,12 +21,16 @@ export const NavigationActions = React.memo(({ user }: NavigationActionsProps) =
 
   return (
     <div className={`${getFlexDirection()} items-center gap-4`}>
-      <SearchCommand />
-      <RTLToggle />
+      <div className="hidden sm:flex items-center gap-4">
+        <SearchCommand />
+        <RTLToggle />
+      </div>
       
       {user ? (
         <>
-          <NotificationBell />
+          <div className="hidden sm:block">
+            <NotificationBell />
+          </div>
           <UserDropdown />
         </>
       ) : (

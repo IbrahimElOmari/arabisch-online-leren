@@ -19,7 +19,7 @@ export const AppLayout = () => {
     <SidebarProvider defaultOpen={false}>
       <div className={`min-h-screen bg-background ${isRTL ? 'rtl' : 'ltr'}`}>
         <div className="flex min-h-screen w-full" {...getNavigationAttributes()}>
-          {!isMobile && <AppSidebar />}
+          <AppSidebar />
           
           <div className="flex-1 min-w-0 flex flex-col">
             <Navigation />

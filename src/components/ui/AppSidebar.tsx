@@ -2,7 +2,7 @@ import { Home, Calendar, MessageSquare, Eye, BookOpen, User, Shield, Folder, Har
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { useIsMobile } from '@/hooks/use-mobile';
+
 import { cn } from '@/lib/utils';
 import {
   Sidebar,
@@ -24,13 +24,7 @@ export function AppSidebar() {
   const location = useLocation();
   const { user, profile } = useAuth();
   const { t } = useTranslation();
-  const isMobile = useIsMobile();
   const { isRTL } = useRTLLayout();
-
-  // Don't render sidebar on mobile at all
-  if (isMobile) {
-    return null;
-  }
 
   const { state, setOpen } = useSidebar();
 
