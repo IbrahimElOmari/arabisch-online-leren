@@ -22,10 +22,10 @@ export const SECURITY_CONFIG = {
     referrerPolicy: "strict-origin-when-cross-origin",
   },
   
-  // Session configuration
+  // Session configuration (can be overridden by environment variables)
   session: {
-    timeoutWarningMinutes: 25, // Warning at 25 minutes
-    maxIdleMinutes: 30, // Auto logout after 30 minutes
+    timeoutWarningMinutes: parseInt(import.meta.env.VITE_SESSION_TIMEOUT_MINUTES) - 5 || 25, // Warning 5 minutes before timeout
+    maxIdleMinutes: parseInt(import.meta.env.VITE_SESSION_TIMEOUT_MINUTES) || 30, // Auto logout after timeout
     extendOnActivity: true,
   },
   

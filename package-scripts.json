@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "dev": "vite --mode development",
+    "dev:staging": "vite --mode staging",
+    "dev:production": "vite --mode production",
+    "build": "vite build --mode production",
+    "build:staging": "vite build --mode staging",
+    "build:development": "vite build --mode development",
+    "preview": "vite preview",
+    "setup:env": "echo 'Copying environment files...' && cp .env.development .env"
+  }
+}
