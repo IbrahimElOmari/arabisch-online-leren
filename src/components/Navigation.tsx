@@ -1,32 +1,16 @@
 
 import React from 'react';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
-import { NavigationHeader } from '@/components/navigation/NavigationHeader';
-import { NavigationMenuItems } from '@/components/navigation/NavigationMenuItems';
-import { NavigationActions } from '@/components/navigation/NavigationActions';
+import { EnhancedNavigationHeader } from '@/components/navigation/EnhancedNavigationHeader';
 
 
 
 /**
  * Main navigation component that provides site-wide navigation functionality
- * Optimized with React.memo and split into smaller, focused sub-components
+ * Enhanced with global search, notifications, and improved UX
  */
 const Navigation = React.memo(() => {
-  const { user, profile } = useAuth();
-
-  return (
-    <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 navigation-header shadow-sm">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="rtl-safe-flex-row items-center justify-between h-16">
-          <div className="flex items-center gap-3">
-            <NavigationHeader />
-          </div>
-          <NavigationMenuItems user={user} profile={profile} />
-          <NavigationActions user={user} />
-        </div>
-      </div>
-    </nav>
-  );
+  return <EnhancedNavigationHeader />;
 });
 
 Navigation.displayName = 'Navigation';
