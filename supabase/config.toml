@@ -1,1 +1,4 @@
 project_id = "xugosdedyukizseveahx"
+
+[functions.security-config-manager]
+verify_jwt = false
