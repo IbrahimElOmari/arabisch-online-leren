@@ -1,6 +1,7 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { useAuthSession } from '@/hooks/useAuthSession';
 import { supabase } from '@/integrations/supabase/client';
+import type { Session, User } from '@supabase/supabase-js';
 
 describe('useAuthSession Hook', () => {
   beforeEach(() => {
@@ -17,8 +18,17 @@ describe('useAuthSession Hook', () => {
   });
 
   it('sets session and user when getSession returns data', async () => {
-    const mockSession = {
-      user: { id: '123', email: 'test@example.com' },
+    const mockUser: Partial<User> = { 
+      id: '123', 
+      email: 'test@example.com',
+      app_metadata: {},
+      user_metadata: {},
+      aud: 'authenticated',
+      created_at: new Date().toISOString(),
+    };
+    
+    const mockSession: Partial<Session> = {
+      user: mockUser as User,
       access_token: 'token',
       refresh_token: 'refresh',
       expires_in: 3600,
@@ -26,19 +36,20 @@ describe('useAuthSession Hook', () => {
     };
     
     vi.mocked(supabase.auth.getSession).mockResolvedValue({
-      data: { session: mockSession },
+      data: { session: mockSession as Session },
       error: null
     });
 
     const { result } = renderHook(() => useAuthSession());
     
-    await waitFor(() => {
+    // Wait for loading to complete
+    await vi.waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
     
     expect(result.current.authReady).toBe(true);
     expect(result.current.session).toEqual(mockSession);
-    expect(result.current.user).toEqual(mockSession.user);
+    expect(result.current.user).toEqual(mockUser);
   });
 
   it('handles null session correctly', async () => {
@@ -49,7 +60,7 @@ describe('useAuthSession Hook', () => {
 
     const { result } = renderHook(() => useAuthSession());
     
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
     
@@ -70,7 +81,7 @@ describe('useAuthSession Hook', () => {
 
     const { result } = renderHook(() => useAuthSession());
     
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
     

@@ -50,6 +50,76 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
+## Tests en CI/CD
+
+This project includes comprehensive testing infrastructure with automated CI/CD pipelines.
+
+### Running Tests Locally
+
+**Unit Tests**
+```sh
+npm test              # Run tests in watch mode
+npm run test:run      # Run tests once
+npm run test:ui       # Run tests with UI interface
+```
+
+**Integration Tests**
+Integration tests are included with the unit tests and mock Supabase API calls.
+
+**End-to-End Tests**
+```sh
+npm run e2e           # Run E2E tests headless
+npm run e2e:ui        # Run E2E tests with UI
+npm run e2e:headed    # Run E2E tests in headed mode
+```
+
+**Code Coverage**
+```sh
+npm run test:coverage # Generate coverage report
+```
+
+Coverage reports are generated in the `coverage/` directory:
+- `coverage/index.html` - Interactive HTML report
+- `coverage/coverage-final.json` - JSON data
+- `coverage/lcov.info` - LCOV format for CI integration
+
+### Coverage Thresholds
+
+The project maintains a 70% minimum coverage threshold for:
+- **Statements**: 70%
+- **Branches**: 70% 
+- **Functions**: 70%
+- **Lines**: 70%
+
+### CI/CD Workflow
+
+The project uses GitHub Actions (`.github/workflows/ci.yml`) with the following pipeline:
+
+**On Push/PR to main/develop:**
+1. **Linting** - Code quality checks with ESLint
+2. **Unit Tests** - Vitest with React Testing Library
+3. **Coverage** - Generate and upload coverage reports
+4. **E2E Tests** - Playwright across multiple browsers
+5. **Build** - Create staging/production builds
+6. **Artifacts** - Store coverage and E2E reports
+
+**Build Environments:**
+- `develop` branch → staging build
+- `main` branch → production build
+
+**Test Reports:**
+- Coverage reports uploaded as CI artifacts
+- Playwright HTML reports for E2E test results
+- Failed test screenshots and videos for debugging
+
+### Linting
+
+```sh
+npm run lint          # Run ESLint checks
+```
+
+The project uses ESLint with TypeScript and React hooks rules for consistent code quality.
+
 ## What technologies are used for this project?
 
 This project is built with:
@@ -59,10 +129,14 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- **Testing**: Vitest, React Testing Library, Playwright
+- **CI/CD**: GitHub Actions
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/0e45c786-7455-4ed2-80f9-d3ea8a94e8c9) and click on Share -> Publish.
+Simply open [Lovable](https://lovable.dev/projects/0e45c786-7455-4ed2-80f9-d3ea8a94e8c9) and click on Share → Publish.
+
+Alternative deployment options are available after connecting to GitHub.
 
 ## Can I connect a custom domain to my Lovable project?
 

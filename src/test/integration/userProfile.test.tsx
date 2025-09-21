@@ -1,7 +1,8 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useUserProfileQuery } from '@/hooks/useUserProfileQuery';
 import { supabase } from '@/integrations/supabase/client';
+import type { User } from '@supabase/supabase-js';
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -19,10 +20,13 @@ const createWrapper = () => {
 };
 
 describe('useUserProfileQuery Integration', () => {
-  const mockUser = {
+  const mockUser: Partial<User> = {
     id: '123',
     email: 'test@example.com',
     created_at: new Date().toISOString(),
+    app_metadata: {},
+    user_metadata: {},
+    aud: 'authenticated',
   };
 
   beforeEach(() => {
@@ -57,7 +61,7 @@ describe('useUserProfileQuery Integration', () => {
       { wrapper: createWrapper() }
     );
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(result.current.profile).toEqual(mockProfile);
     });
 
@@ -83,7 +87,7 @@ describe('useUserProfileQuery Integration', () => {
       { wrapper: createWrapper() }
     );
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(result.current.profile).toBeTruthy(); // Should fallback to createFallbackProfile
     });
 
@@ -128,14 +132,14 @@ describe('useUserProfileQuery Integration', () => {
       { wrapper: createWrapper() }
     );
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(result.current.profile).toBeTruthy();
     });
 
     // Test refresh functionality
     result.current.refreshProfile();
     
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(result.current.isRefreshing).toBe(false);
     });
 
