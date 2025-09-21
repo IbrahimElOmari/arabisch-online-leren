@@ -65,7 +65,7 @@ export const EnhancedNavigationHeader = () => {
     fetchUnreadCount();
   }, [user?.id]);
 
-  // Global search functionality
+  // Global search functionality with database integration
   const performSearch = async (query: string) => {
     if (!query.trim()) {
       setSearchResults([]);
@@ -76,15 +76,106 @@ export const EnhancedNavigationHeader = () => {
     
     try {
       const results: SearchResult[] = [];
+      const searchTerm = query.toLowerCase();
 
-      // Add page navigation results based on query
+      // Search in forum threads
+      try {
+        const { data: forumThreads } = await supabase
+          .from('forum_threads')
+          .select('id, title, content')
+          .ilike('title', `%${query}%`)
+          .limit(5);
+
+        forumThreads?.forEach(thread => {
+          results.push({
+            id: thread.id,
+            type: 'forum',
+            title: thread.title,
+            subtitle: 'Forum Thread',
+            url: `/forum/thread/${thread.id}`,
+            icon: <MessageSquare className="h-4 w-4" />
+          });
+        });
+      } catch (error) {
+        console.log('Forum search failed:', error);
+      }
+
+      // Search in forum posts
+      try {
+        const { data: forumPosts } = await supabase
+          .from('forum_posts')
+          .select('id, titel, inhoud')
+          .or(`titel.ilike.%${query}%,inhoud.ilike.%${query}%`)
+          .limit(5);
+
+        forumPosts?.forEach(post => {
+          results.push({
+            id: post.id,
+            type: 'forum',
+            title: post.titel,
+            subtitle: 'Forum Post',
+            url: `/forum/post/${post.id}`,
+            icon: <MessageSquare className="h-4 w-4" />
+          });
+        });
+      } catch (error) {
+        console.log('Forum posts search failed:', error);
+      }
+
+      // Search in lessons
+      try {
+        const { data: lessons } = await supabase
+          .from('lessen')
+          .select('id, title')
+          .ilike('title', `%${query}%`)
+          .limit(5);
+
+        lessons?.forEach(lesson => {
+          results.push({
+            id: lesson.id,
+            type: 'lesson',
+            title: lesson.title,
+            subtitle: 'Les',
+            url: `/lesson/${lesson.id}`,
+            icon: <BookOpen className="h-4 w-4" />
+          });
+        });
+      } catch (error) {
+        console.log('Lessons search failed:', error);
+      }
+
+      // Search in user profiles
+      try {
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, full_name, role')
+          .ilike('full_name', `%${query}%`)
+          .limit(5);
+
+        profiles?.forEach(profile => {
+          results.push({
+            id: profile.id,
+            type: 'user',
+            title: profile.full_name,
+            subtitle: profile.role === 'admin' ? 'Beheerder' : profile.role === 'leerkracht' ? 'Leerkracht' : 'Leerling',
+            url: `/profile/${profile.id}`,
+            icon: <User className="h-4 w-4" />
+          });
+        });
+      } catch (error) {
+        console.log('Profiles search failed:', error);
+      }
+
+      // Add page navigation results
       const pages = [
         { title: 'Dashboard', url: '/dashboard', icon: <Home className="h-4 w-4" /> },
         { title: 'Leerstof', url: '/leerstof', icon: <BookOpen className="h-4 w-4" /> },
         { title: 'Forum', url: '/forum', icon: <MessageSquare className="h-4 w-4" /> },
         { title: 'Analytics', url: '/analytics', icon: <BarChart3 className="h-4 w-4" /> },
         { title: 'Beveiliging', url: '/security', icon: <Shield className="h-4 w-4" /> },
-      ].filter(page => page.title.toLowerCase().includes(query.toLowerCase()));
+        { title: 'Kalender', url: '/calendar', icon: <BookOpen className="h-4 w-4" /> },
+        { title: 'Profiel', url: '/profile', icon: <User className="h-4 w-4" /> },
+      ].filter(page => page.title.toLowerCase().includes(searchTerm));
 
       pages.forEach(page => {
         results.push({
@@ -96,7 +187,14 @@ export const EnhancedNavigationHeader = () => {
         });
       });
 
-      setSearchResults(results);
+      // Sort results by relevance (exact matches first)
+      results.sort((a, b) => {
+        const aExact = a.title.toLowerCase().includes(searchTerm) ? 0 : 1;
+        const bExact = b.title.toLowerCase().includes(searchTerm) ? 0 : 1;
+        return aExact - bExact;
+      });
+
+      setSearchResults(results.slice(0, 20)); // Limit to 20 results
     } catch (error) {
       console.error('Search error:', error);
       setSearchResults([]);
@@ -323,15 +421,15 @@ export const EnhancedNavigationHeader = () => {
           
           {searchResults.length > 0 && (
             <>
-              {/* Classes */}
-              {searchResults.filter(r => r.type === 'class').length > 0 && (
-                <CommandGroup heading="Klassen">
+              {/* Forum Content */}
+              {searchResults.filter(r => r.type === 'forum').length > 0 && (
+                <CommandGroup heading="Forum">
                   {searchResults
-                    .filter(r => r.type === 'class')
+                    .filter(r => r.type === 'forum')
                     .map(result => (
                       <CommandItem
                         key={result.id}
-                        value={`class-${result.id}`}
+                        value={`forum-${result.id}`}
                         onSelect={() => handleSearchSelect(result)}
                       >
                         {result.icon}
@@ -346,15 +444,38 @@ export const EnhancedNavigationHeader = () => {
                 </CommandGroup>
               )}
 
-              {/* Forum */}
-              {searchResults.filter(r => r.type === 'forum').length > 0 && (
-                <CommandGroup heading="Forum">
+              {/* Lessons */}
+              {searchResults.filter(r => r.type === 'lesson').length > 0 && (
+                <CommandGroup heading="Lessen">
                   {searchResults
-                    .filter(r => r.type === 'forum')
+                    .filter(r => r.type === 'lesson')
                     .map(result => (
                       <CommandItem
                         key={result.id}
-                        value={`forum-${result.id}`}
+                        value={`lesson-${result.id}`}
+                        onSelect={() => handleSearchSelect(result)}
+                      >
+                        {result.icon}
+                        <div className="ml-2">
+                          <div className="font-medium">{result.title}</div>
+                          {result.subtitle && (
+                            <div className="text-sm text-muted-foreground">{result.subtitle}</div>
+                          )}
+                        </div>
+                      </CommandItem>
+                    ))}
+                </CommandGroup>
+              )}
+
+              {/* Users */}
+              {searchResults.filter(r => r.type === 'user').length > 0 && (
+                <CommandGroup heading="Gebruikers">
+                  {searchResults
+                    .filter(r => r.type === 'user')
+                    .map(result => (
+                      <CommandItem
+                        key={result.id}
+                        value={`user-${result.id}`}
                         onSelect={() => handleSearchSelect(result)}
                       >
                         {result.icon}

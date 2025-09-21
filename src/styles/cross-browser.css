@@ -1,0 +1,187 @@
+/* Cross-Browser Compatibility Styles */
+
+/* Safari specific fixes */
+@supports (-webkit-backdrop-filter: blur(10px)) {
+  .safari-backdrop-blur {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+}
+
+/* Firefox scrollbar styling */
+@-moz-document url-prefix() {
+  .firefox-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  
+  .firefox-scrollbar::-moz-scrollbar {
+    width: 8px;
+  }
+  
+  .firefox-scrollbar::-moz-scrollbar-track {
+    background: transparent;
+  }
+  
+  .firefox-scrollbar::-moz-scrollbar-thumb {
+    background-color: hsl(var(--border));
+    border-radius: 4px;
+  }
+}
+
+/* Chrome and Safari scrollbar styling */
+.webkit-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.webkit-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.webkit-scrollbar::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--border));
+  border-radius: 4px;
+}
+
+.webkit-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--border) / 0.8);
+}
+
+/* Edge specific fixes */
+@supports (-ms-ime-align: auto) {
+  .edge-specific {
+    /* Legacy Edge specific styles */
+  }
+}
+
+/* Mobile webkit fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .webkit-mobile-fix input,
+  .webkit-mobile-fix textarea,
+  .webkit-mobile-fix select {
+    font-size: 16px; /* Prevent zoom on focus */
+    transform: translateZ(0); /* Force hardware acceleration */
+  }
+  
+  .webkit-mobile-fix input:focus,
+  .webkit-mobile-fix textarea:focus,
+  .webkit-mobile-fix select:focus {
+    transform: translateZ(0);
+  }
+}
+
+/* Cross-browser focus styles */
+.focus-visible:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.focus-visible:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Smooth scrolling fallback */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .high-contrast {
+    border: 1px solid hsl(var(--border));
+  }
+  
+  .high-contrast button,
+  .high-contrast input,
+  .high-contrast textarea {
+    border: 2px solid hsl(var(--foreground));
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .reduce-motion,
+  .reduce-motion * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode color scheme */
+@media (prefers-color-scheme: dark) {
+  .auto-dark-mode {
+    color-scheme: dark;
+  }
+}
+
+/* Light mode color scheme */
+@media (prefers-color-scheme: light) {
+  .auto-light-mode {
+    color-scheme: light;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-friendly {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .touch-friendly {
+    min-height: 44px; /* Apple's recommended minimum touch target */
+    min-width: 44px;
+  }
+  
+  .touch-friendly button,
+  .touch-friendly a {
+    padding: 12px 16px;
+  }
+}
+
+/* Browser-specific class additions */
+.browser-chrome .chrome-only {
+  display: block;
+}
+
+.browser-safari .safari-only {
+  display: block;
+}
+
+.browser-firefox .firefox-only {
+  display: block;
+}
+
+.browser-edge .edge-only {
+  display: block;
+}
+
+.browser-mobile .mobile-only {
+  display: block;
+}
+
+.browser-legacy .modern-only {
+  display: none;
+}
+
+/* Default hide browser-specific elements */
+.chrome-only,
+.safari-only,
+.firefox-only,
+.edge-only,
+.mobile-only {
+  display: none;
+}

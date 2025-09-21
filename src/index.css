@@ -1,4 +1,6 @@
 
+@import url('./styles/cross-browser.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
