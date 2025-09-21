@@ -1,27 +1,13 @@
 import React, { lazy } from 'react';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 
-// Analytics components - heavy charts and data processing
-export const AnalyticsDashboard = lazy(() => 
-  import('@/components/analytics/AnalyticsDashboard')
-);
+// Analytics components - using direct imports for now
+export const AnalyticsDashboard = lazy(() => import('@/components/analytics/AnalyticsDashboard'));
 
-export const TeacherAnalytics = lazy(() => 
-  import('@/components/teacher/TeacherAnalytics')
-);
+// Forum components - using direct imports  
+export const ForumMain = lazy(() => import('@/components/forum/ForumMain'));
 
-export const GradingAnalytics = lazy(() => 
-  import('@/components/teacher/GradingAnalytics')
-);
-
-// Forum components - rich text editor and multimedia
-export const ForumMain = lazy(() => 
-  import('@/components/forum/ForumMain')
-);
-
-export const CreateThreadForm = lazy(() => 
-  import('@/components/forum/CreateThreadForm')
-);
+export const CreateThreadForm = lazy(() => import('@/components/forum/CreateThreadForm'));
 
 // Media components - video player and recording
 export const AdvancedVideoPlayer = lazy(() => 

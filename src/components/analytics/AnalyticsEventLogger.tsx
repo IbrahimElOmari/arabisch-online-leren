@@ -34,16 +34,10 @@ export const useAnalyticsLogger = () => {
         timestamp: new Date().toISOString(),
       };
 
-      // Store in Supabase (you'll need to create this table)
-      const { error } = await supabase
-        .from('analytics_events')
-        .insert([analyticsEvent]);
-
-      if (error) {
-        console.warn('Failed to log analytics event:', error);
-        // Fallback to localStorage for debugging
-        storeEventLocally(analyticsEvent);
-      }
+      // Store in localStorage as fallback (since types haven't been regenerated yet)
+      storeEventLocally(analyticsEvent);
+      
+      console.debug('Analytics event logged:', analyticsEvent);
     } catch (error) {
       console.warn('Analytics logging error:', error);
       storeEventLocally({ event_type: eventType, event_data: eventData, timestamp: new Date().toISOString() });
