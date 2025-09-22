@@ -9,8 +9,8 @@ import { MessageInput } from './MessageInput';
 import { MessageBubble } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
 import { useMessages, useChatRealtime, useMarkConversationAsRead } from '@/hooks/useChat';
-import { LoadingSpinner } from '@/components/ui/enhanced-loading-states';
-import { EmptyState } from '@/components/ui/enhanced-empty-states';
+import { EnhancedSkeleton, EnhancedLoadingSpinner } from '@/components/ui/enhanced-loading-states';
+import { NoChatMessagesEmptyState } from '@/components/ui/enhanced-empty-states';
 import { cn } from '@/lib/utils';
 
 interface ConversationViewProps {
@@ -58,17 +58,17 @@ export function ConversationView({ conversationId, onBack, className }: Conversa
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <LoadingSkeleton className="h-10 w-10 rounded-full" />
+          <EnhancedSkeleton className="h-10 w-10 rounded-full" />
           <div className="flex-1">
-            <LoadingSkeleton className="h-4 w-32 mb-1" />
-            <LoadingSkeleton className="h-3 w-20" />
+            <EnhancedSkeleton className="h-4 w-32 mb-1" />
+            <EnhancedSkeleton className="h-3 w-20" />
           </div>
         </div>
         <div className="flex-1 p-4 space-y-4">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className={cn("flex gap-3", i % 2 === 0 ? "justify-start" : "justify-end")}>
-              {i % 2 === 0 && <LoadingSkeleton className="h-8 w-8 rounded-full" />}
-              <LoadingSkeleton className={cn("h-12 max-w-xs rounded-lg", i % 2 === 0 ? "w-48" : "w-32")} />
+              {i % 2 === 0 && <EnhancedSkeleton className="h-8 w-8 rounded-full" />}
+              <EnhancedSkeleton className={cn("h-12 max-w-xs rounded-lg", i % 2 === 0 ? "w-48" : "w-32")} />
             </div>
           ))}
         </div>
@@ -86,13 +86,8 @@ export function ConversationView({ conversationId, onBack, className }: Conversa
           <span className="font-medium">Fout</span>
         </div>
         <div className="flex-1 flex items-center justify-center">
-          <EmptyState
-            title="Fout bij laden"
-            description="Kon de berichten niet laden. Probeer het opnieuw."
-            action={{
-              label: "Probeer opnieuw",
-              onClick: () => window.location.reload(),
-            }}
+          <NoChatMessagesEmptyState
+            onSendFirstMessage={() => window.location.reload()}
           />
         </div>
       </div>
@@ -151,10 +146,7 @@ export function ConversationView({ conversationId, onBack, className }: Conversa
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-4">
           {messages.length === 0 ? (
-            <EmptyState
-              title="Nog geen berichten"
-              description="Start het gesprek door een bericht te sturen!"
-            />
+            <NoChatMessagesEmptyState />
           ) : (
             messages.map((message, index) => (
               <MessageBubble
