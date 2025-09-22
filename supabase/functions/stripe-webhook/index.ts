@@ -10,6 +10,17 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Early guard: check if payments are enabled
+  if (!Deno.env.get('ENABLE_PAYMENTS') || Deno.env.get('ENABLE_PAYMENTS') !== 'true') {
+    return new Response(
+      JSON.stringify({ error: 'Payments are disabled' }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 501 
+      }
+    );
+  }
+
   try {
     // Placeholder for future Stripe webhook implementation
     const body = await req.text();

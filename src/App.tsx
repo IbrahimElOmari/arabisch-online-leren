@@ -28,6 +28,9 @@ import ResetPassword from '@/pages/ResetPassword';
 import ForumModeration from '@/pages/ForumModeration';
 import LessonOrganizationPage from '@/pages/LessonOrganization';
 import OfflineContentPage from '@/pages/OfflineContent';
+import Pricing from '@/pages/Pricing';
+import Billing from '@/pages/Billing';
+import BillingComingSoon from '@/pages/BillingComingSoon';
 import Profile from '@/pages/Profile';
 import NotFound from '@/pages/NotFound';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
@@ -79,6 +82,9 @@ function App() {
                     <Route path="profile" element={<AppGate><Profile /></AppGate>} />
                     <Route path="courses/:id" element={<AppGate><CourseDetail /></AppGate>} />
                     <Route path="enroll/:classId" element={<AppGate><EnrollConfirm /></AppGate>} />
+                    <Route path="pricing" element={<Pricing />} />
+                    <Route path="billing" element={<AppGate><Billing /></AppGate>} />
+                    <Route path="billing/coming-soon" element={<BillingComingSoon />} />
                     
                     {/* Redirects for removed AI routes */}
                     <Route path="ai-tutor" element={<Navigate to="/dashboard" replace />} />

@@ -11,6 +11,7 @@ export interface FeatureFlags {
   notifications: boolean;
   globalSearch: boolean;
   realtime: boolean;
+  payments: boolean;
 }
 
 export const FEATURE_FLAGS: FeatureFlags = {
@@ -21,6 +22,7 @@ export const FEATURE_FLAGS: FeatureFlags = {
   notifications: true,
   globalSearch: true,
   realtime: true,
+  payments: import.meta.env.VITE_ENABLE_PAYMENTS === 'true', // default false
 };
 
 export const isFeatureEnabled = (feature: keyof FeatureFlags): boolean => {
