@@ -30,18 +30,28 @@ interface GlobalSearchProps {
   trigger?: React.ReactNode;
   placeholder?: string;
   className?: string;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onNavigate?: (url: string) => void;
 }
 
 export function GlobalSearch({ 
   trigger, 
   placeholder = "Zoek in alles... (Cmd+K)",
-  className 
+  className,
+  isOpen: externalIsOpen,
+  onOpenChange: externalOnOpenChange,
+  onNavigate
 }: GlobalSearchProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedType, setSelectedType] = useState<SearchResult['entity_type'] | 'all'>('all');
   const [page, setPage] = useState(1);
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  // Use external control if provided, otherwise use internal state
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  const setIsOpen = externalOnOpenChange !== undefined ? externalOnOpenChange : setInternalIsOpen;
   
   const { isRTL } = useRTLLayout();
   const debouncedQuery = useDebounce(query, 300);
@@ -89,10 +99,17 @@ export function GlobalSearch({
   }, [isOpen]);
 
   const handleResultClick = useCallback((result: SearchResult) => {
+    const url = SearchService.getEntityUrl(result);
+    
     setIsOpen(false);
     setQuery('');
     setPage(1);
-  }, []);
+    
+    // Use external navigation handler if provided
+    if (onNavigate) {
+      onNavigate(url);
+    }
+  }, [onNavigate]);
 
   const handleClearSearch = useCallback(() => {
     setQuery('');
@@ -113,9 +130,8 @@ export function GlobalSearch({
     const typeLabel = SearchService.getEntityTypeLabel(result.entity_type);
     
     return (
-      <Link
+      <div
         key={`${result.entity_type}-${result.entity_id}`}
-        to={url}
         onClick={() => handleResultClick(result)}
         className={cn(
           "flex items-start gap-3 p-3 rounded-lg transition-colors",
@@ -155,7 +171,7 @@ export function GlobalSearch({
             )}
           </div>
         </div>
-      </Link>
+      </div>
     );
   };
 
