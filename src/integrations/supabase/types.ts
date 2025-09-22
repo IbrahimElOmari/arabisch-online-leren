@@ -660,6 +660,7 @@ export type Database = {
       forum_posts: {
         Row: {
           author_id: string
+          body: string
           class_id: string
           created_at: string
           dislikes_count: number | null
@@ -674,11 +675,13 @@ export type Database = {
           parent_post_id: string | null
           thread_id: string | null
           titel: string
+          tsv: unknown | null
           updated_at: string
           verwijderd_door: string | null
         }
         Insert: {
           author_id: string
+          body?: string
           class_id: string
           created_at?: string
           dislikes_count?: number | null
@@ -693,11 +696,13 @@ export type Database = {
           parent_post_id?: string | null
           thread_id?: string | null
           titel: string
+          tsv?: unknown | null
           updated_at?: string
           verwijderd_door?: string | null
         }
         Update: {
           author_id?: string
+          body?: string
           class_id?: string
           created_at?: string
           dislikes_count?: number | null
@@ -712,6 +717,7 @@ export type Database = {
           parent_post_id?: string | null
           thread_id?: string | null
           titel?: string
+          tsv?: unknown | null
           updated_at?: string
           verwijderd_door?: string | null
         }
@@ -821,6 +827,7 @@ export type Database = {
       forum_threads: {
         Row: {
           author_id: string
+          body: string
           class_id: string
           comments_enabled: boolean | null
           content: string
@@ -828,9 +835,11 @@ export type Database = {
           id: string
           is_pinned: boolean | null
           title: string
+          tsv: unknown | null
         }
         Insert: {
           author_id: string
+          body?: string
           class_id: string
           comments_enabled?: boolean | null
           content: string
@@ -838,9 +847,11 @@ export type Database = {
           id?: string
           is_pinned?: boolean | null
           title: string
+          tsv?: unknown | null
         }
         Update: {
           author_id?: string
+          body?: string
           class_id?: string
           comments_enabled?: boolean | null
           content?: string
@@ -848,6 +859,7 @@ export type Database = {
           id?: string
           is_pinned?: boolean | null
           title?: string
+          tsv?: unknown | null
         }
         Relationships: [
           {
@@ -1006,6 +1018,7 @@ export type Database = {
           live_lesson_url: string | null
           preparation_deadline: string | null
           title: string
+          tsv: unknown | null
           updated_at: string
           youtube_url: string | null
         }
@@ -1017,6 +1030,7 @@ export type Database = {
           live_lesson_url?: string | null
           preparation_deadline?: string | null
           title: string
+          tsv?: unknown | null
           updated_at?: string
           youtube_url?: string | null
         }
@@ -1028,6 +1042,7 @@ export type Database = {
           live_lesson_url?: string | null
           preparation_deadline?: string | null
           title?: string
+          tsv?: unknown | null
           updated_at?: string
           youtube_url?: string | null
         }
@@ -1160,6 +1175,41 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          payload: Json
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          payload?: Json
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          payload?: Json
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       password_history: {
         Row: {
           created_at: string | null
@@ -1200,6 +1250,7 @@ export type Database = {
           phone_number: string | null
           role: Database["public"]["Enums"]["app_role"]
           theme_preference: string | null
+          tsv: unknown | null
           updated_at: string
         }
         Insert: {
@@ -1212,6 +1263,7 @@ export type Database = {
           phone_number?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           theme_preference?: string | null
+          tsv?: unknown | null
           updated_at?: string
         }
         Update: {
@@ -1224,6 +1276,7 @@ export type Database = {
           phone_number?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           theme_preference?: string | null
+          tsv?: unknown | null
           updated_at?: string
         }
         Relationships: []
@@ -1364,6 +1417,7 @@ export type Database = {
           media_url: string | null
           required_submission_type: Database["public"]["Enums"]["submission_type"]
           title: string
+          tsv: unknown | null
           youtube_url: string | null
         }
         Insert: {
@@ -1378,6 +1432,7 @@ export type Database = {
           media_url?: string | null
           required_submission_type: Database["public"]["Enums"]["submission_type"]
           title: string
+          tsv?: unknown | null
           youtube_url?: string | null
         }
         Update: {
@@ -1392,6 +1447,7 @@ export type Database = {
           media_url?: string | null
           required_submission_type?: Database["public"]["Enums"]["submission_type"]
           title?: string
+          tsv?: unknown | null
           youtube_url?: string | null
         }
         Relationships: [
@@ -1707,6 +1763,23 @@ export type Database = {
       mark_messages_read: {
         Args: { receiver_id: string; sender_id: string }
         Returns: undefined
+      }
+      search_global: {
+        Args: {
+          p_class_id?: string
+          p_limit?: number
+          p_offset?: number
+          p_query: string
+        }
+        Returns: {
+          body: string
+          class_id: string
+          created_at: string
+          entity_id: string
+          entity_type: string
+          rank: number
+          title: string
+        }[]
       }
       send_direct_message: {
         Args: {
