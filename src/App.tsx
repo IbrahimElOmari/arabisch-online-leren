@@ -33,8 +33,12 @@ import Billing from '@/pages/Billing';
 import BillingComingSoon from '@/pages/BillingComingSoon';
 import Profile from '@/pages/Profile';
 import NotFound from '@/pages/NotFound';
-import PrivacyPolicy from '@/pages/PrivacyPolicy';
-import TermsOfService from '@/pages/TermsOfService';
+// Import admin routes
+import AdminLayout from '@/pages/admin/AdminLayout';
+import UsersAdmin from '@/pages/admin/UsersAdmin';
+import Operations from '@/pages/admin/Operations';
+import AuditLogs from '@/pages/admin/AuditLogs';
+import PrivacyTools from '@/pages/account/PrivacyTools';
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -67,7 +71,13 @@ function App() {
                   <Route path="/" element={<AppLayout />}>
                     <Route index element={<Index />} />
                     <Route path="dashboard" element={<AppGate><Dashboard /></AppGate>} />
-                    <Route path="admin" element={<AppGate><Admin /></AppGate>} />
+                    <Route path="admin" element={<AppGate><AdminLayout /></AppGate>}>
+                      <Route path="users" element={<UsersAdmin />} />
+                      <Route path="operations" element={<Operations />} />
+                      <Route path="audit" element={<AuditLogs />} />
+                      <Route index element={<UsersAdmin />} />
+                    </Route>
+                    <Route path="account/privacy" element={<AppGate><PrivacyTools /></AppGate>} />
                     <Route path="lesson-organization" element={<AppGate><LessonOrganizationPage /></AppGate>} />
                     <Route path="offline-content" element={<AppGate><OfflineContentPage /></AppGate>} />
                     <Route path="forum" element={<AppGate><Forum /></AppGate>} />

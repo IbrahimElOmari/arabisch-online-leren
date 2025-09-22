@@ -236,6 +236,50 @@ export type Database = {
           },
         ]
       }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          ip_address: string | null
+          meta: Json | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          ip_address?: string | null
+          meta?: Json | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          ip_address?: string | null
+          meta?: Json | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       auth_rate_limits: {
         Row: {
           action_type: string
@@ -327,6 +371,44 @@ export type Database = {
           {
             foreignKeyName: "awarded_badges_student_id_fkey"
             columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      backup_jobs: {
+        Row: {
+          artifact_url: string | null
+          created_at: string
+          finished_at: string | null
+          id: string
+          note: string | null
+          requested_by: string | null
+          status: string
+        }
+        Insert: {
+          artifact_url?: string | null
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          note?: string | null
+          requested_by?: string | null
+          status?: string
+        }
+        Update: {
+          artifact_url?: string | null
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          note?: string | null
+          requested_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backup_jobs_requested_by_fkey"
+            columns: ["requested_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -834,6 +916,7 @@ export type Database = {
           created_at: string
           id: string
           is_pinned: boolean | null
+          status: string | null
           title: string
           tsv: unknown | null
         }
@@ -846,6 +929,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_pinned?: boolean | null
+          status?: string | null
           title: string
           tsv?: unknown | null
         }
@@ -858,6 +942,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_pinned?: boolean | null
+          status?: string | null
           title?: string
           tsv?: unknown | null
         }
@@ -1017,6 +1102,7 @@ export type Database = {
           live_lesson_datetime: string | null
           live_lesson_url: string | null
           preparation_deadline: string | null
+          status: string | null
           title: string
           tsv: unknown | null
           updated_at: string
@@ -1029,6 +1115,7 @@ export type Database = {
           live_lesson_datetime?: string | null
           live_lesson_url?: string | null
           preparation_deadline?: string | null
+          status?: string | null
           title: string
           tsv?: unknown | null
           updated_at?: string
@@ -1041,6 +1128,7 @@ export type Database = {
           live_lesson_datetime?: string | null
           live_lesson_url?: string | null
           preparation_deadline?: string | null
+          status?: string | null
           title?: string
           tsv?: unknown | null
           updated_at?: string
@@ -1356,6 +1444,24 @@ export type Database = {
         }
         Relationships: []
       }
+      system_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       task_submissions: {
         Row: {
           feedback: string | null
@@ -1416,6 +1522,7 @@ export type Database = {
           media_type: string | null
           media_url: string | null
           required_submission_type: Database["public"]["Enums"]["submission_type"]
+          status: string | null
           title: string
           tsv: unknown | null
           youtube_url: string | null
@@ -1431,6 +1538,7 @@ export type Database = {
           media_type?: string | null
           media_url?: string | null
           required_submission_type: Database["public"]["Enums"]["submission_type"]
+          status?: string | null
           title: string
           tsv?: unknown | null
           youtube_url?: string | null
@@ -1446,6 +1554,7 @@ export type Database = {
           media_type?: string | null
           media_url?: string | null
           required_submission_type?: Database["public"]["Enums"]["submission_type"]
+          status?: string | null
           title?: string
           tsv?: unknown | null
           youtube_url?: string | null
@@ -1759,6 +1868,15 @@ export type Database = {
       get_user_role: {
         Args: { user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      log_audit_event: {
+        Args: {
+          p_action: string
+          p_entity_id?: string
+          p_entity_type: string
+          p_meta?: Json
+        }
+        Returns: undefined
       }
       mark_messages_read: {
         Args: { receiver_id: string; sender_id: string }
