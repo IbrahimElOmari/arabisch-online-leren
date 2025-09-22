@@ -12,12 +12,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { moderationService } from '@/services/moderationService';
 import { Search, UserCog, Shield, GraduationCap, User } from 'lucide-react';
+import { APP_ROLES, AppRole } from '@/types/roles';
 
 interface UserProfile {
   id: string;
   full_name: string;
   email?: string;
-  role: 'admin' | 'leerkracht' | 'leerling';
+  role: AppRole;
   created_at: string;
   parent_email?: string;
   age?: number;
@@ -39,7 +40,7 @@ export default function UsersAdmin() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [changeRoleUserId, setChangeRoleUserId] = useState<string | null>(null);
-  const [newRole, setNewRole] = useState<'admin' | 'leerkracht' | 'leerling'>('leerling');
+  const [newRole, setNewRole] = useState<AppRole>('leerling');
   const [reason, setReason] = useState('');
   
   const { toast } = useToast();
@@ -58,7 +59,7 @@ export default function UsersAdmin() {
       }
 
       if (selectedRole !== 'all') {
-        query = query.eq('role', selectedRole);
+        query = query.eq('role', selectedRole as AppRole);
       }
 
       const { data, error } = await query;
@@ -68,7 +69,7 @@ export default function UsersAdmin() {
   });
 
   const changeRoleMutation = useMutation({
-    mutationFn: async ({ userId, role, reason }: { userId: string; role: 'admin' | 'leerkracht' | 'leerling'; reason?: string }) => {
+    mutationFn: async ({ userId, role, reason }: { userId: string; role: AppRole; reason?: string }) => {
       await moderationService.changeUserRole(userId, role, reason);
     },
     onSuccess: (data) => {
@@ -180,7 +181,7 @@ export default function UsersAdmin() {
                       <div className="space-y-4">
                         <div>
                           <Label htmlFor="role">Nieuwe rol</Label>
-                            <Select value={newRole} onValueChange={(value: 'admin' | 'leerkracht' | 'leerling') => setNewRole(value)}>
+                            <Select value={newRole} onValueChange={(value: AppRole) => setNewRole(value)}>
                               <SelectTrigger>
                                 <SelectValue />
                               </SelectTrigger>

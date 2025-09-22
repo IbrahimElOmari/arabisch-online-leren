@@ -120,6 +120,66 @@ npm run lint          # Run ESLint checks
 
 The project uses ESLint with TypeScript and React hooks rules for consistent code quality.
 
+## Admin & Operations
+
+### Admin Dashboard
+Toegankelijk via `/admin` voor gebruikers met rol `admin` of `leerkracht`. Het admin dashboard biedt:
+
+**Gebruikersbeheer (`/admin/users`)**
+- Overzicht van alle gebruikers met zoek en filter functionaliteit
+- Rolwijzigingen (admin/leerkracht/leerling) met audit logging
+- Gebruikers activatie en deactivatie
+
+**Content Management**
+- Klassen beheer: CRUD operaties, teacher assignment
+- Lessen beheer: draft → published → archived workflow  
+- Taken beheer: bulk publish, status management
+- Forum moderatie: pin/unpin, archiveren, soft delete
+
+**Systeem Operaties (`/admin/operations`)**
+- **Maintenance Mode**: Toggle onderhoudsmodus (toont banner voor alle gebruikers)
+- **Backup Registry**: Registreer backup jobs (zie `ops/BACKUP_GUIDE.md` voor uitvoering)
+- **Audit Logs**: Inzicht in alle admin acties en systeemwijzigingen
+
+**GDPR Tools**
+- Self-service privacy tools via `/account/privacy`
+- Data export (JSON download van eigen gegevens)  
+- Account deletion requests met audit trail
+
+### Feature Flags
+Admin functionaliteit wordt gecontroleerd door feature flags in `src/config/featureFlags.ts`:
+```typescript
+ENABLE_ADMIN: true,           // Admin dashboard toegang
+ENABLE_MODERATION: true,      // Moderatie tools
+ENABLE_BACKUPS: true,         // Backup registry
+ENABLE_MAINTENANCE_MODE: false, // Onderhoudsmodus toggle
+ENABLE_GDPR_TOOLS: true       // Privacy tools
+```
+
+### Beveiliging
+- **RLS Policies**: Alle admin tabellen beveiligd met Row Level Security
+- **Role Verification**: Dubbele controle via database functies en UI guards
+- **Audit Logging**: Alle wijzigingen worden gelogd zonder PII (zie `SECURITY_NOTES.md`)
+- **Feature Guards**: Edge Functions controleren feature flags en permissions
+
+### Backup Workflow  
+Het backup systeem is registry-based (geen directe DB dumps):
+1. Admin maakt backup job aan via dashboard
+2. Externe tools voeren daadwerkelijke pg_dump uit  
+3. Artifacts worden handmatig geüpload naar storage
+4. Job status wordt bijgewerkt met artifact URL
+
+Zie `ops/BACKUP_GUIDE.md` voor gedetailleerde instructies.
+
+### Payments (Defer Mode)
+Betalingsfunctionaliteit is uitgeschakeld (`VITE_ENABLE_PAYMENTS=false`):
+- Geen runtime errors zonder Stripe keys
+- UI toont "Binnenkort beschikbaar" i.p.v. betaalacties  
+- Services gebruiken mock implementaties
+- Build/CI slaagt zonder Stripe configuratie
+
+Voor activering zie `FASE7A_FINAL_STATUS.md`.
+
 ## What technologies are used for this project?
 
 This project is built with:
@@ -129,6 +189,7 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Supabase (Database, Auth, Edge Functions)
 - **Testing**: Vitest, React Testing Library, Playwright
 - **CI/CD**: GitHub Actions
 

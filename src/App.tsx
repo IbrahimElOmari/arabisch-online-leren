@@ -39,6 +39,9 @@ import UsersAdmin from '@/pages/admin/UsersAdmin';
 import Operations from '@/pages/admin/Operations';
 import AuditLogs from '@/pages/admin/AuditLogs';
 import PrivacyTools from '@/pages/account/PrivacyTools';
+// Import legal pages
+import PrivacyPolicy from '@/pages/Legal/PrivacyPolicy';
+import TermsOfService from '@/pages/Legal/TermsOfService';
 import './App.css';
 
 const queryClient = new QueryClient({

@@ -70,6 +70,10 @@
 | GDPR Deletion | ✅ | Request workflow met audit logging |
 | Audit Logging | ✅ | Alle admin acties worden gelogd |
 | Feature Flags | ✅ | Alle features respecteren flags |
+| Unit Tests | ✅ | Admin services en privacy tools getest |
+| E2E Tests | ✅ | Admin flow en privacy workflow getest |
+| Legal Pages | ✅ | Privacy Policy en Terms of Service toegevoegd |
+| Documentation | ✅ | README, backup guide, security notes compleet |
 
 ## 📊 Database Objecten
 
