@@ -483,6 +483,84 @@ export type Database = {
           },
         ]
       }
+      conversation_participants: {
+        Row: {
+          conversation_id: string
+          joined_at: string
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          joined_at?: string
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          joined_at?: string
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          class_id: string | null
+          created_at: string
+          created_by: string
+          id: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          class_id?: string | null
+          created_at?: string
+          created_by: string
+          id?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          class_id?: string | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "klassen"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       data_retention_policies: {
         Row: {
           created_at: string | null
@@ -963,6 +1041,84 @@ export type Database = {
           },
         ]
       }
+      message_reads: {
+        Row: {
+          message_id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          message_id: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          message_id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_reads_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_reads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          attachments: Json | null
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_id: string
+          updated_at: string
+        }
+        Insert: {
+          attachments?: Json | null
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          sender_id: string
+          updated_at?: string
+        }
+        Update: {
+          attachments?: Json | null
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       niveaus: {
         Row: {
           beschrijving: string | null
@@ -1331,6 +1487,32 @@ export type Database = {
           },
         ]
       }
+      user_points: {
+        Row: {
+          total_points: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          total_points?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          total_points?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_points_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_security_sessions: {
         Row: {
           created_at: string | null
@@ -1459,7 +1641,18 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      global_search_index: {
+        Row: {
+          body: string | null
+          class_id: string | null
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string | null
+          title: string | null
+          tsv: unknown | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       check_rate_limit: {
