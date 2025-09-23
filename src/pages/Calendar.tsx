@@ -186,31 +186,156 @@ const fetchClasses = async () => {
   const canAddEvents = userRole === 'admin' || userRole === 'leerkracht';
 
   return (
-    <div className="container mx-auto p-6 bg-background min-h-screen" dir={isRTL ? 'rtl' : 'ltr'}>
-      <div className={`${getFlexDirection()} justify-between items-center mb-6`}>
-        <h1 className={`text-3xl font-bold ${getTextAlign('left')} ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('calendar.title')}</h1>
-        {canAddEvents && (
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className={`w-4 h-4 ${getIconSpacing('2')}`} />
-                <span className={isRTL ? 'arabic-text' : ''}>{t('calendar.addEvent')}</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle className={isRTL ? 'arabic-text' : ''}>{t('calendar.addNewEvent')}</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="title" className={isRTL ? 'arabic-text' : ''}>{t('calendar.title')} *</Label>
-                  <Input
-                    id="title"
-                    value={newEvent.title}
-                    onChange={(e) => setNewEvent({...newEvent, title: e.target.value})}
-                    dir={isRTL ? 'rtl' : 'ltr'}
-                  />
+    <div className="@container min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="container mx-auto p-4 sm:p-6">
+        <div className={`flex flex-col @md:flex-row @md:items-center @md:justify-between gap-4 mb-6`}>
+          <h1 className={`text-xl @md:text-2xl font-bold ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('calendar.title')}</h1>
+          {canAddEvents && (
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full @md:w-auto">
+                  <Plus className={`w-4 h-4 ${getIconSpacing('2')}`} />
+                  <span className={isRTL ? 'arabic-text' : ''}>{t('calendar.addEvent')}</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="w-full max-w-md @md:max-w-lg">
+                <DialogHeader>
+                  <DialogTitle className={isRTL ? 'arabic-text' : ''}>{t('calendar.addNewEvent')}</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="title" className={isRTL ? 'arabic-text' : ''}>{t('calendar.title')} *</Label>
+                    <Input
+                      id="title"
+                      value={newEvent.title}
+                      onChange={(e) => setNewEvent({...newEvent, title: e.target.value})}
+                      dir={isRTL ? 'rtl' : 'ltr'}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="description" className={isRTL ? 'arabic-text' : ''}>{t('calendar.description')}</Label>
+                    <Textarea
+                      id="description"
+                      value={newEvent.description}
+                      onChange={(e) => setNewEvent({...newEvent, description: e.target.value})}
+                      dir={isRTL ? 'rtl' : 'ltr'}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="start_date" className={isRTL ? 'arabic-text' : ''}>{t('calendar.startDate')} *</Label>
+                    <Input
+                      id="start_date"
+                      type="date"
+                      value={newEvent.start_date}
+                      onChange={(e) => setNewEvent({...newEvent, start_date: e.target.value})}
+                      dir="ltr"
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="end_date" className={isRTL ? 'arabic-text' : ''}>{t('calendar.endDate')} *</Label>
+                    <Input
+                      id="end_date"
+                      type="date"
+                      value={newEvent.end_date}
+                      onChange={(e) => setNewEvent({...newEvent, end_date: e.target.value})}
+                      dir="ltr"
+                      className="w-full"
+                    />
+                  </div>
+                  {classes.length > 0 && (
+                    <div>
+                      <Label htmlFor="class" className={isRTL ? 'arabic-text' : ''}>{t('calendar.classOptional')}</Label>
+                      <Select 
+                        value={newEvent.class_id} 
+                        onValueChange={(value) => setNewEvent({...newEvent, class_id: value})}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={t('calendar.selectClass')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">{t('calendar.allClasses')}</SelectItem>
+                          {classes.map((klas) => (
+                            <SelectItem key={klas.id} value={klas.id}>
+                              {klas.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                  <Button onClick={handleAddEvent} className="w-full">
+                    <span className={isRTL ? 'arabic-text' : ''}>{t('calendar.add')}</span>
+                  </Button>
                 </div>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 @lg:grid-cols-3 gap-4 @md:gap-6">
+          <Card className="@lg:col-span-2 @container">
+            <CardHeader>
+              <CardTitle className={`flex items-center gap-2 ${isRTL ? 'arabic-text' : ''}`}>
+                <CalendarIcon className="w-5 h-5" />
+                {t('calendar.calendar')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                className="rounded-md border w-full"
+                modifiers={{
+                  event: isEventDate
+                }}
+                modifiersClassNames={{
+                  event: "bg-primary text-primary-foreground"
+                }}
+              />
+            </CardContent>
+          </Card>
+
+          <Card className="@container">
+            <CardHeader>
+              <CardTitle className="text-base @md:text-lg">
+                {selectedDate ? format(selectedDate, 'dd MMMM yyyy') : 'Selecteer een datum'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {selectedDate && (
+                <div className="space-y-3">
+                  {getEventsForDate(selectedDate).length > 0 ? (
+                    getEventsForDate(selectedDate).map((event) => (
+                      <div key={event.id} className="p-3 border rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium text-sm @md:text-base">{event.title}</h4>
+                          <Badge variant={event.event_type === 'vacation' ? 'secondary' : 'default'}>
+                            {event.event_type === 'vacation' ? 'Vakantie' : 'Evenement'}
+                          </Badge>
+                        </div>
+                        {event.description && (
+                          <p className="text-xs @md:text-sm text-muted-foreground">{event.description}</p>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {format(parseISO(event.start_date), 'dd/MM/yyyy')} - {format(parseISO(event.end_date), 'dd/MM/yyyy')}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground">Geen evenementen voor deze datum</p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
                 <div>
                   <Label htmlFor="description" className={isRTL ? 'arabic-text' : ''}>{t('calendar.description')}</Label>
                   <Textarea

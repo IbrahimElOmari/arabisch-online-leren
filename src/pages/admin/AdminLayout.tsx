@@ -61,30 +61,32 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground">
+      <div className="@container container mx-auto p-4 sm:p-6">
+        <div className="mb-6 @md:mb-8">
+          <h1 className="text-2xl @md:text-3xl font-bold">Admin Dashboard</h1>
+          <p className="text-sm @md:text-base text-muted-foreground mt-1">
             Beheer gebruikers, content en systeeminstellingen
           </p>
         </div>
 
-        <Tabs value={currentTab} className="space-y-6">
-          <TabsList className="grid grid-cols-4 lg:grid-cols-8 w-full">
-            {adminTabs.map((tab) => (
-              <TabsTrigger
-                key={tab.id}
-                value={tab.id}
-                className="flex items-center gap-2 text-sm"
-                onClick={() => window.history.pushState(null, '', `/admin/${tab.id}`)}
-              >
-                <tab.icon className="h-4 w-4" />
-                <span className="hidden sm:inline">{tab.label}</span>
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        <Tabs value={currentTab} className="space-y-4 @md:space-y-6">
+          <div className="overflow-x-auto">
+            <TabsList className="grid grid-cols-4 @lg:grid-cols-8 w-full min-w-max">
+              {adminTabs.map((tab) => (
+                <TabsTrigger
+                  key={tab.id}
+                  value={tab.id}
+                  className="flex items-center gap-1 @md:gap-2 text-xs @md:text-sm whitespace-nowrap px-2 @md:px-4"
+                  onClick={() => window.history.pushState(null, '', `/admin/${tab.id}`)}
+                >
+                  <tab.icon className="h-3 w-3 @md:h-4 @md:w-4" />
+                  <span className="hidden @sm:inline">{tab.label}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
 
-          <div className="min-h-[600px]">
+          <div className="min-h-[400px] @md:min-h-[600px]">
             <Outlet />
           </div>
         </Tabs>

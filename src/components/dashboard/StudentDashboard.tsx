@@ -206,33 +206,35 @@ const StudentDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="space-y-6">
+    <div className="min-h-screen bg-background p-4 sm:p-6">
+      <div className="@container space-y-4 @md:space-y-6">
         {/* Header with Level Display */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <CardTitle className="text-2xl font-bold flex items-center gap-2">
+        <Card className="@container">
+          <CardHeader className="p-4 @md:p-6">
+            <div className="flex flex-col @md:flex-row @md:items-center @md:justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <CardTitle className="text-xl @md:text-2xl font-bold flex items-center gap-2 mb-2">
                   {currentLevelProgress ? (
-                    <Target className="h-6 w-6 text-primary" />
+                    <Target className="h-5 w-5 @md:h-6 @md:w-6 text-primary flex-shrink-0" />
                   ) : (
-                    <Trophy className="h-6 w-6 text-success" />
+                    <Trophy className="h-5 w-5 @md:h-6 @md:w-6 text-success flex-shrink-0" />
                   )}
-                  {t('dashboard.welcome')} {profile?.full_name || user?.email}! 👋
+                  <span className="truncate">
+                    {t('dashboard.welcome')} {profile?.full_name || user?.email}! 👋
+                  </span>
                 </CardTitle>
-                <div className="flex items-center gap-4 mt-2">
-                  <p className="text-muted-foreground">
+                <div className="flex flex-col @sm:flex-row @sm:items-center gap-2 @sm:gap-4">
+                  <p className="text-sm @md:text-base text-muted-foreground">
                     Welkom terug bij je Arabisch leertraject
                   </p>
                   {currentLevelProgress && (
-                    <Badge variant="outline" className="text-sm">
+                    <Badge variant="outline" className="text-xs @md:text-sm w-fit">
                       Huidig Level: {currentLevelProgress.niveau?.naam}
                     </Badge>
                   )}
                 </div>
               </div>
-              <Badge variant="secondary" className="text-sm">
+              <Badge variant="secondary" className="text-xs @md:text-sm w-fit">
                 Leerling
               </Badge>
             </div>
@@ -353,29 +355,34 @@ const StudentDashboard = () => {
 
         {/* Main Content Tabs */}
         {selectedClass && selectedLevel && (
-          <Tabs defaultValue="tasks" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="tasks" className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
-                Taken & Vragen
-              </TabsTrigger>
-              <TabsTrigger value="progress" className="flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
-                Level Voortgang
-              </TabsTrigger>
-              <TabsTrigger value="badges" className="flex items-center gap-2">
-                <Trophy className="h-4 w-4" />
-                Badges & Rankings
-              </TabsTrigger>
-              <TabsTrigger value="chat" className="flex items-center gap-2">
-                <MessageCircle className="h-4 w-4" />
-                Chat
-              </TabsTrigger>
-              <TabsTrigger value="forum" className="flex items-center gap-2">
-                <MessageCircle className="h-4 w-4" />
-                Forum
-              </TabsTrigger>
-            </TabsList>
+          <Tabs defaultValue="tasks" className="w-full @container">
+            <div className="overflow-x-auto">
+              <TabsList className="grid w-full grid-cols-3 @md:grid-cols-5 min-w-max">
+                <TabsTrigger value="tasks" className="flex items-center gap-1 @md:gap-2 text-xs @md:text-sm">
+                  <BookOpen className="h-3 w-3 @md:h-4 @md:w-4" />
+                  <span className="hidden @sm:inline">Taken & Vragen</span>
+                  <span className="@sm:hidden">Taken</span>
+                </TabsTrigger>
+                <TabsTrigger value="progress" className="flex items-center gap-1 @md:gap-2 text-xs @md:text-sm">
+                  <BarChart3 className="h-3 w-3 @md:h-4 @md:w-4" />
+                  <span className="hidden @sm:inline">Level Voortgang</span>
+                  <span className="@sm:hidden">Voortgang</span>
+                </TabsTrigger>
+                <TabsTrigger value="badges" className="flex items-center gap-1 @md:gap-2 text-xs @md:text-sm">
+                  <Trophy className="h-3 w-3 @md:h-4 @md:w-4" />
+                  <span className="hidden @sm:inline">Badges & Rankings</span>
+                  <span className="@sm:hidden">Badges</span>
+                </TabsTrigger>
+                <TabsTrigger value="chat" className="hidden @md:flex items-center gap-2 text-sm">
+                  <MessageCircle className="h-4 w-4" />
+                  Chat
+                </TabsTrigger>
+                <TabsTrigger value="forum" className="hidden @md:flex items-center gap-2 text-sm">
+                  <MessageCircle className="h-4 w-4" />
+                  Forum
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
             <TabsContent value="tasks" className="mt-6">
               <Suspense fallback={<DashboardSkeleton />}>
@@ -386,11 +393,11 @@ const StudentDashboard = () => {
               </Suspense>
             </TabsContent>
 
-            <TabsContent value="progress" className="mt-6">
-              <div className="grid gap-6 lg:grid-cols-2">
+            <TabsContent value="progress" className="mt-4 @md:mt-6">
+              <div className="grid gap-4 @md:gap-6 @lg:grid-cols-2">
                 {/* Level Progress Cards */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Je Level Voortgang</h3>
+                <div className="space-y-3 @md:space-y-4">
+                  <h3 className="text-lg @md:text-xl font-semibold">Je Level Voortgang</h3>
                   {selectedClass?.klassen.niveaus.map((niveau) => {
                     const levelProgress = progressData.find(p => p.niveau_id === niveau.id);
                     const isCurrentLevel = currentLevelProgress?.niveau_id === niveau.id;

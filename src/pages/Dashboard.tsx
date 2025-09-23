@@ -107,24 +107,26 @@ const Dashboard = () => {
           </div>
           
           {/* Basic fallback dashboard content */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-card rounded-lg p-6 border">
-              <h3 className={`text-lg font-semibold mb-2 ${isRTL ? 'arabic-text' : ''}`}>
-                {t('welcome.title', 'Welkom!')}
-              </h3>
-              <p className={`text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
-                {t('dashboard.full_loading_desc', 'Je dashboard wordt volledig geladen zodra je profiel beschikbaar is.')}
-                {' '}
-                {t('dashboard.current_role', 'Momenteel werken we met rol')}: <strong>{fallbackRole}</strong>
-              </p>
-            </div>
-            <div className="bg-card rounded-lg p-6 border">
-              <h3 className={`text-lg font-semibold mb-2 ${isRTL ? 'arabic-text' : ''}`}>
-                {t('nav.navigation', 'Navigatie')}
-              </h3>
-              <p className={`text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
-                {t('dashboard.navigation_desc', 'Je kunt al wel naar andere pagina\'s navigeren via de sidebar.')}
-              </p>
+          <div className="@container">
+            <div className="grid grid-cols-1 @md:grid-cols-2 @xl:grid-cols-3 gap-4 @md:gap-6">
+              <div className="bg-card rounded-lg p-4 @md:p-6 border">
+                <h3 className={`text-lg @md:text-xl font-semibold mb-2 ${isRTL ? 'arabic-text' : ''}`}>
+                  {t('welcome.title', 'Welkom!')}
+                </h3>
+                <p className={`text-sm @md:text-base text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
+                  {t('dashboard.full_loading_desc', 'Je dashboard wordt volledig geladen zodra je profiel beschikbaar is.')}
+                  {' '}
+                  {t('dashboard.current_role', 'Momenteel werken we met rol')}: <strong>{fallbackRole}</strong>
+                </p>
+              </div>
+              <div className="bg-card rounded-lg p-4 @md:p-6 border">
+                <h3 className={`text-lg @md:text-xl font-semibold mb-2 ${isRTL ? 'arabic-text' : ''}`}>
+                  {t('nav.navigation', 'Navigatie')}
+                </h3>
+                <p className={`text-sm @md:text-base text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
+                  {t('dashboard.navigation_desc', 'Je kunt al wel naar andere pagina\'s navigeren via de sidebar.')}
+                </p>
+              </div>
             </div>
           </div>
         </div>
