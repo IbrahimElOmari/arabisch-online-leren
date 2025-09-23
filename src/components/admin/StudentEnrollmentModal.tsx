@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import { useAdminStore } from '@/hooks/useAdminStore';
+import { useStudentStore } from '@/hooks/useStudentStore';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Mail, Send, Users, CheckSquare, Square } from 'lucide-react';
@@ -27,7 +27,7 @@ export const StudentEnrollmentModal = ({ isOpen, onClose, classId, className }: 
     assignStudent, 
     removeStudent,
     sendBulkNotification
-  } = useAdminStore();
+  } = useStudentStore();
   
   const { toast } = useToast();
   const [selectedStudents, setSelectedStudents] = useState<Set<string>>(new Set());

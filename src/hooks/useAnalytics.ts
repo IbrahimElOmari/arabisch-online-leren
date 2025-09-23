@@ -29,9 +29,10 @@ interface AnalyticsStore {
   trackClassEnrollment: (classId: string, className: string) => void;
 }
 
-// Generate a session ID
+// Generate a secure session ID
 const generateSessionId = () => {
-  return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+  // Use the Web Crypto API for a cryptographically secure UUID
+  return crypto.randomUUID();
 };
 
 export const useAnalytics = create<AnalyticsStore>((set, get) => ({

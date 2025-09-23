@@ -3,7 +3,9 @@
  * Centralized TypeScript interfaces for the application
  */
 
-export type UserRole = 'admin' | 'leerkracht' | 'leerling';
+import type { AppRole } from './roles';
+
+export type UserRole = AppRole;
 
 export interface UserProfile {
   id: string;

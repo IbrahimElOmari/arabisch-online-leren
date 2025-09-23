@@ -34,14 +34,18 @@ export const ENV_CONFIG = {
     
     const missing = required.filter(key => !import.meta.env[key]);
     
-    if (missing.length > 0) {
-      throw new Error(
-        `Missing required environment variables: ${missing.join(', ')}\n` +
-        'Please check your .env file and ensure all required variables are set.'
-      );
-    }
+    return missing;
+  },
+
+  // Get missing environment variables
+  getMissingEnvVars: () => {
+    return ENV_CONFIG.validateRequiredEnvVars();
+  },
+
+  // Check if there are missing environment variables
+  hasMissingEnvVars: () => {
+    return ENV_CONFIG.getMissingEnvVars().length > 0;
   }
 };
 
-// Validate environment on module load
-ENV_CONFIG.validateRequiredEnvVars();
+// No longer validate on module load to prevent crashes
