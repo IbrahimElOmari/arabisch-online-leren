@@ -17,6 +17,8 @@ import {
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useAgeTheme } from '@/contexts/AgeThemeContext';
 import { cn } from '@/lib/utils';
+import { UserRole } from '@/types/app';
+import { ROLE_LABELS } from '@/types/roles';
 
 interface Message {
   id: string;
@@ -31,7 +33,7 @@ interface Message {
 interface ChatUser {
   id: string;
   name: string;
-  role: 'student' | 'teacher' | 'admin';
+  role: UserRole;
   online: boolean;
   avatar?: string;
 }
@@ -88,25 +90,25 @@ export const RealtimeChat: React.FC<RealtimeChatProps> = ({
       {
         id: 'teacher1',
         name: 'Mevrouw Sarah',
-        role: 'teacher',
+        role: 'leerkracht',
         online: true
       },
       {
         id: 'student1',
         name: 'Ahmed',
-        role: 'student',
+        role: 'leerling',
         online: true
       },
       {
         id: 'student2',
         name: 'Fatima',
-        role: 'student',
+        role: 'leerling',
         online: false
       },
       {
         id: user?.id || 'current',
         name: profile?.full_name || 'Jij',
-        role: 'student',
+        role: 'leerling',
         online: true
       }
     ];
@@ -160,9 +162,9 @@ export const RealtimeChat: React.FC<RealtimeChatProps> = ({
     return senderId === user?.id || senderId === 'current';
   };
 
-  const getRoleColor = (role: string) => {
+  const getRoleColor = (role: UserRole) => {
     switch (role) {
-      case 'teacher': return 'text-primary';
+      case 'leerkracht': return 'text-primary';
       case 'admin': return 'text-destructive';
       default: return 'text-muted-foreground';
     }
@@ -216,7 +218,7 @@ export const RealtimeChat: React.FC<RealtimeChatProps> = ({
                   {user.name.split(' ')[0]}
                 </span>
                 <Badge variant="outline" className={cn("text-xs mt-1", getRoleColor(user.role))}>
-                  {user.role === 'teacher' ? 'Leraar' : 'Leerling'}
+                  {ROLE_LABELS[user.role]}
                 </Badge>
               </div>
             ))}

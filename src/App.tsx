@@ -42,7 +42,8 @@ import PrivacyTools from '@/pages/account/PrivacyTools';
 // Import legal pages
 import PrivacyPolicy from '@/pages/Legal/PrivacyPolicy';
 import TermsOfService from '@/pages/Legal/TermsOfService';
-import './App.css';
+import { ENV_CONFIG } from '@/config/environment';
+import Maintenance from '@/pages/Maintenance';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,6 +55,11 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  // Check for missing environment variables and show maintenance page
+  if (ENV_CONFIG.hasMissingEnvVars()) {
+    return <Maintenance />;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">

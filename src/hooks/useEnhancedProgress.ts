@@ -30,7 +30,7 @@ export interface AwardedBadge {
   badge_id: string;
   badge_name: string;
   badge_description?: string;
-  badge_type: 'automatic' | 'teacher';
+  badge_type: 'automatic' | 'leerkracht';
   points_threshold?: number;
   reason?: string;
   earned_at: string;

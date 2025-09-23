@@ -17,7 +17,7 @@ export interface Conversation {
 export interface ConversationParticipant {
   conversation_id: string;
   user_id: string;
-  role: 'member' | 'owner' | 'teacher' | 'admin';
+  role: 'member' | 'owner' | 'leerkracht' | 'admin';
   joined_at: string;
   user?: {
     id: string;

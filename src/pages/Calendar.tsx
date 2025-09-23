@@ -69,14 +69,14 @@ const fetchUserRole = async () => {
 const fetchEvents = async () => {
   let query = supabase.from('calendar_events').select('*').order('start_date');
 
-  if (userRole === 'leerkracht' || userRole === 'teacher') {
+  if (userRole === 'leerkracht') {
     const { data: teacherClasses } = await supabase
       .from('klassen')
       .select('id')
       .eq('teacher_id', user?.id);
     const ids = (teacherClasses || []).map(c => c.id);
     if (ids.length > 0) query = query.in('class_id', ids).or('class_id.is.null');
-  } else if (userRole === 'leerling' || userRole === 'student') {
+  } else if (userRole === 'leerling') {
     const { data: enrollments } = await supabase
       .from('inschrijvingen')
       .select('class_id')
@@ -95,7 +95,7 @@ const fetchEvents = async () => {
 };
 
 const fetchClasses = async () => {
-  if (userRole === 'leerkracht' || userRole === 'teacher') {
+  if (userRole === 'leerkracht') {
     const { data, error } = await supabase
       .from('klassen')
       .select('id, name')
@@ -106,7 +106,7 @@ const fetchClasses = async () => {
       .from('klassen')
       .select('id, name');
     if (!error && data) setClasses(data);
-  } else if (userRole === 'leerling' || userRole === 'student') {
+  } else if (userRole === 'leerling') {
     const { data: enrollments } = await supabase
       .from('inschrijvingen')
       .select('class_id')
@@ -183,7 +183,7 @@ const fetchClasses = async () => {
     });
   };
 
-  const canAddEvents = userRole === 'admin' || userRole === 'leerkracht' || userRole === 'teacher';
+  const canAddEvents = userRole === 'admin' || userRole === 'leerkracht';
 
   return (
     <div className="container mx-auto p-6 bg-background min-h-screen" dir={isRTL ? 'rtl' : 'ltr'}>
