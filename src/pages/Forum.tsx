@@ -42,10 +42,10 @@ const Forum = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
-      <div className="container mx-auto p-6">
-        <div className={`${getFlexDirection()} items-center justify-between mb-6`}>
-          <h1 className={`text-2xl font-bold ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('forum.title')}</h1>
+    <div className="@container min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="container mx-auto p-4 sm:p-6">
+        <div className={`flex flex-col @md:flex-row @md:items-center @md:justify-between gap-4 mb-6`}>
+          <h1 className={`text-xl @md:text-2xl font-bold ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('forum.title')}</h1>
           <BackendStatusBadge compact />
         </div>
 
@@ -89,16 +89,16 @@ const Forum = () => {
           </Alert>
         )}
 
-        <div className="main-content-card mb-6">
-          <div className={`${getFlexDirection('col')} md:${getFlexDirection()} md:items-center md:justify-between gap-4`}>
-            <div className={`${getFlexDirection()} items-center gap-2`}>
+        <Card className="@container mb-6">
+          <CardContent className="p-4 @md:p-6 space-y-4 @md:space-y-6">
+            <div className="grid grid-cols-1 @sm:grid-cols-2 gap-3 @md:gap-4">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline">
+                  <Button variant="outline" className="w-full @sm:w-auto">
                     <span className={isRTL ? 'arabic-text' : ''}>{t('lessons.pastLessons')}</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-3xl">
+                <DialogContent className="w-full max-w-3xl">
                   <DialogHeader>
                     <DialogTitle className={isRTL ? 'arabic-text' : ''}>{t('lessons.pastLessons')}</DialogTitle>
                   </DialogHeader>
@@ -110,11 +110,11 @@ const Forum = () => {
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline">
+                  <Button variant="outline" className="w-full @sm:w-auto">
                     <span className={isRTL ? 'arabic-text' : ''}>{t('submissions.myImprovements')}</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="w-full max-w-2xl">
                   <DialogHeader>
                     <DialogTitle className={isRTL ? 'arabic-text' : ''}>{t('submissions.improvedAnswers')}</DialogTitle>
                   </DialogHeader>
@@ -124,27 +124,27 @@ const Forum = () => {
                 </DialogContent>
               </Dialog>
             </div>
-          </div>
 
-          {/* Class selector */}
-          {enrolledClasses.length > 1 && (
-            <div className="max-w-xs mt-4">
-              <label className={`text-sm font-medium mb-2 block ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>{t('classes.selectClass')}:</label>
-              <Select value={selectedClass} onValueChange={setSelectedClass}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('classes.chooseClass')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {enrolledClasses.map((enrollment) => (
-                    <SelectItem key={enrollment.id} value={enrollment.class_id}>
-                      {enrollment.klassen.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-        </div>
+            {/* Class selector */}
+            {enrolledClasses.length > 1 && (
+              <div className="w-full max-w-xs">
+                <label className={`text-sm font-medium mb-2 block ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>{t('classes.selectClass')}:</label>
+                <Select value={selectedClass} onValueChange={setSelectedClass}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={t('classes.chooseClass')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {enrolledClasses.map((enrollment) => (
+                      <SelectItem key={enrollment.id} value={enrollment.class_id}>
+                        {enrollment.klassen.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* No classes fallback */}
         {enrolledClasses.length === 0 && !classesLoading && (
@@ -170,9 +170,11 @@ const Forum = () => {
         )}
 
         {/* Forum main component */}
-        <div className="main-content-card">
-          <ForumMain classId={selectedClass || ''} />
-        </div>
+        <Card className="@container">
+          <CardContent className="p-0">
+            <ForumMain classId={selectedClass || ''} />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

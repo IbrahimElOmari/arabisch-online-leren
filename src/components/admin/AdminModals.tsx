@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,6 +9,7 @@ import { Plus, UserPlus, Users, MessageSquare } from 'lucide-react';
 import { ClassManagementModal } from './ClassManagementModal';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 
 interface AdminModalProps {
   trigger: React.ReactNode;
@@ -202,30 +201,30 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
     switch (type) {
       case 'create_class':
         return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="name">Klas Naam</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
-                placeholder="Bijv: Arabisch voor Beginners"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="description">Beschrijving</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="Korte beschrijving van de klas..."
-              />
-            </div>
-            <div>
-              <Label htmlFor="teacher_id">Leerkracht (optioneel)</Label>
+          <ResponsiveForm layout="single" onSubmit={(e) => { e.preventDefault(); handleSubmit(e); }}>
+            <ResponsiveFormField
+              label="Klas Naam"
+              name="name"
+              type="text"
+              placeholder="Bijv: Arabisch voor Beginners"
+              required
+              value={formData.name}
+              onChange={(value) => handleInputChange('name', value)}
+            />
+            <ResponsiveFormField
+              label="Beschrijving"
+              name="description"
+              type="textarea"
+              placeholder="Korte beschrijving van de klas..."
+              value={formData.description}
+              onChange={(value) => handleInputChange('description', value)}
+            />
+            <div className="w-full">
+              <label className={`text-sm font-medium mb-2 block ${isRTL ? 'arabic-text text-right' : 'text-left'}`}>
+                Leerkracht (optioneel)
+              </label>
               <Select value={formData.teacher_id} onValueChange={(value) => handleInputChange('teacher_id', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecteer een leerkracht" />
                 </SelectTrigger>
                 <SelectContent>
@@ -237,7 +236,7 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
                 </SelectContent>
               </Select>
             </div>
-          </div>
+          </ResponsiveForm>
         );
 
       case 'assign_teacher':
