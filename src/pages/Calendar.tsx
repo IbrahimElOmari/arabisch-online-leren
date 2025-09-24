@@ -15,6 +15,7 @@ import { toast } from '@/hooks/use-toast';
 import { format, parseISO, isWithinInterval } from 'date-fns';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 
 interface CalendarEvent {
   id: string;
@@ -202,57 +203,63 @@ const fetchClasses = async () => {
                 <DialogHeader>
                   <DialogTitle className={isRTL ? 'arabic-text' : ''}>{t('calendar.addNewEvent')}</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="title" className={isRTL ? 'arabic-text' : ''}>{t('calendar.title')} *</Label>
+                <ResponsiveForm layout="single" onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAddEvent();
+                }}>
+                  <ResponsiveFormField
+                    label={`${t('calendar.title')} *`}
+                    name="title"
+                    type="text"
+                    required
+                    value={newEvent.title}
+                    onChange={(value) => setNewEvent({...newEvent, title: value})}
+                    className={isRTL ? 'arabic-text' : ''}
+                  />
+                  <ResponsiveFormField
+                    label={t('calendar.description')}
+                    name="description"
+                    type="textarea"
+                    value={newEvent.description}
+                    onChange={(value) => setNewEvent({...newEvent, description: value})}
+                    className={isRTL ? 'arabic-text' : ''}
+                  />
+                  <div className="w-full">
+                    <label className={`text-sm font-medium mb-2 block ${isRTL ? 'arabic-text text-right' : 'text-left'}`}>
+                      {`${t('calendar.startDate')} *`}
+                    </label>
                     <Input
-                      id="title"
-                      value={newEvent.title}
-                      onChange={(e) => setNewEvent({...newEvent, title: e.target.value})}
-                      dir={isRTL ? 'rtl' : 'ltr'}
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="description" className={isRTL ? 'arabic-text' : ''}>{t('calendar.description')}</Label>
-                    <Textarea
-                      id="description"
-                      value={newEvent.description}
-                      onChange={(e) => setNewEvent({...newEvent, description: e.target.value})}
-                      dir={isRTL ? 'rtl' : 'ltr'}
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="start_date" className={isRTL ? 'arabic-text' : ''}>{t('calendar.startDate')} *</Label>
-                    <Input
-                      id="start_date"
                       type="date"
                       value={newEvent.start_date}
                       onChange={(e) => setNewEvent({...newEvent, start_date: e.target.value})}
                       dir="ltr"
                       className="w-full"
+                      required
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="end_date" className={isRTL ? 'arabic-text' : ''}>{t('calendar.endDate')} *</Label>
+                  <div className="w-full">
+                    <label className={`text-sm font-medium mb-2 block ${isRTL ? 'arabic-text text-right' : 'text-left'}`}>
+                      {`${t('calendar.endDate')} *`}
+                    </label>
                     <Input
-                      id="end_date"
                       type="date"
                       value={newEvent.end_date}
                       onChange={(e) => setNewEvent({...newEvent, end_date: e.target.value})}
                       dir="ltr"
                       className="w-full"
+                      required
                     />
                   </div>
                   {classes.length > 0 && (
-                    <div>
-                      <Label htmlFor="class" className={isRTL ? 'arabic-text' : ''}>{t('calendar.classOptional')}</Label>
+                    <div className="w-full">
+                      <label className={`text-sm font-medium mb-2 block ${isRTL ? 'arabic-text text-right' : 'text-left'}`}>
+                        {t('calendar.classOptional')}
+                      </label>
                       <Select 
                         value={newEvent.class_id} 
                         onValueChange={(value) => setNewEvent({...newEvent, class_id: value})}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder={t('calendar.selectClass')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -266,10 +273,10 @@ const fetchClasses = async () => {
                       </Select>
                     </div>
                   )}
-                  <Button onClick={handleAddEvent} className="w-full">
+                  <Button type="submit" className="w-full">
                     <span className={isRTL ? 'arabic-text' : ''}>{t('calendar.add')}</span>
                   </Button>
-                </div>
+                </ResponsiveForm>
               </DialogContent>
             </Dialog>
           )}

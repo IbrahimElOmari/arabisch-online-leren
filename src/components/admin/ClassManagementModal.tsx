@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Plus, Edit, Trash2 } from 'lucide-react';
@@ -189,27 +190,25 @@ export function ClassManagementModal({ isOpen, onClose }: ClassManagementModalPr
                 <CardTitle>{editingClass ? 'Klas Bewerken' : 'Nieuwe Klas Maken'}</CardTitle>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="name">Klas Naam</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="Bijv: Arabisch voor Beginners"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="description">Beschrijving</Label>
-                    <Textarea
-                      id="description"
-                      value={formData.description}
-                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                      placeholder="Korte beschrijving van de klas..."
-                    />
-                  </div>
-                  <div className="flex justify-end space-x-2">
+                <ResponsiveForm layout="single" onSubmit={handleSubmit}>
+                  <ResponsiveFormField
+                    label="Klas Naam"
+                    name="name"
+                    type="text"
+                    placeholder="Bijv: Arabisch voor Beginners"
+                    required
+                    value={formData.name}
+                    onChange={(value) => setFormData(prev => ({ ...prev, name: value }))}
+                  />
+                  <ResponsiveFormField
+                    label="Beschrijving"
+                    name="description"
+                    type="textarea"
+                    placeholder="Korte beschrijving van de klas..."
+                    value={formData.description}
+                    onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
+                  />
+                  <div className="flex justify-end space-x-2 pt-4">
                     <Button type="button" variant="outline" onClick={resetForm}>
                       Annuleren
                     </Button>
@@ -217,7 +216,7 @@ export function ClassManagementModal({ isOpen, onClose }: ClassManagementModalPr
                       {loading ? 'Bezig...' : (editingClass ? 'Bijwerken' : 'Aanmaken')}
                     </Button>
                   </div>
-                </form>
+                </ResponsiveForm>
               </CardContent>
             </Card>
           )}

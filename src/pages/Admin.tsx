@@ -2,6 +2,7 @@
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Navigate } from 'react-router-dom';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
+import { Card, CardContent } from '@/components/ui/card';
 
 const Admin = () => {
   const { user, profile, authReady, loading: authLoading } = useAuth();
@@ -25,11 +26,13 @@ const Admin = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
         <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
-        <div className="main-content-card">
-          <p className="text-muted-foreground">
-            De admin dashboard wordt binnenkort beschikbaar gesteld.
-          </p>
-        </div>
+        <Card className="@container">
+          <CardContent className="p-6">
+            <p className="text-muted-foreground">
+              De admin dashboard wordt binnenkort beschikbaar gesteld.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -201,7 +201,7 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
     switch (type) {
       case 'create_class':
         return (
-          <ResponsiveForm layout="single" onSubmit={(e) => { e.preventDefault(); handleSubmit(e); }}>
+          <ResponsiveForm layout="single" onSubmit={(e: React.FormEvent) => { e.preventDefault(); handleSubmit(e); }}>
             <ResponsiveFormField
               label="Klas Naam"
               name="name"
@@ -236,16 +236,26 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
                 </SelectContent>
               </Select>
             </div>
+            <div className={`${getFlexDirection()} justify-end space-x-2 pt-4`}>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                {t('form.cancel')}
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? t('form.loading') : t('form.save')}
+              </Button>
+            </div>
           </ResponsiveForm>
         );
 
       case 'assign_teacher':
         return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="class_id">Klas</Label>
+          <ResponsiveForm layout="single">
+            <div className="w-full">
+              <label className={`text-sm font-medium mb-2 block ${isRTL ? 'arabic-text text-right' : 'text-left'}`}>
+                Klas
+              </label>
               <Select value={formData.class_id} onValueChange={(value) => handleInputChange('class_id', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecteer een klas" />
                 </SelectTrigger>
                 <SelectContent>
@@ -257,10 +267,12 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label htmlFor="teacher_id">Leerkracht</Label>
+            <div className="w-full">
+              <label className={`text-sm font-medium mb-2 block ${isRTL ? 'arabic-text text-right' : 'text-left'}`}>
+                Leerkracht
+              </label>
               <Select value={formData.teacher_id} onValueChange={(value) => handleInputChange('teacher_id', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecteer een leerkracht" />
                 </SelectTrigger>
                 <SelectContent>
@@ -272,16 +284,18 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
                 </SelectContent>
               </Select>
             </div>
-          </div>
+          </ResponsiveForm>
         );
 
       case 'manage_users':
         return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="user_id">Gebruiker</Label>
+          <ResponsiveForm layout="single">
+            <div className="w-full">
+              <label className={`text-sm font-medium mb-2 block ${isRTL ? 'arabic-text text-right' : 'text-left'}`}>
+                Gebruiker
+              </label>
               <Select value={formData.user_id} onValueChange={(value) => handleInputChange('user_id', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecteer een gebruiker" />
                 </SelectTrigger>
                 <SelectContent>
@@ -293,10 +307,12 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label htmlFor="role">Nieuwe Rol</Label>
+            <div className="w-full">
+              <label className={`text-sm font-medium mb-2 block ${isRTL ? 'arabic-text text-right' : 'text-left'}`}>
+                Nieuwe Rol
+              </label>
               <Select value={formData.role} onValueChange={(value) => handleInputChange('role', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -306,7 +322,7 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
                 </SelectContent>
               </Select>
             </div>
-          </div>
+          </ResponsiveForm>
         );
 
       case 'forum_moderation':
@@ -333,17 +349,19 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
           <DialogTitle className={`${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>{getModalTitle()}</DialogTitle>
         </DialogHeader>
         {type !== 'forum_moderation' ? (
-          <form onSubmit={handleSubmit}>
+          <div>
             {renderFormContent()}
-            <div className={`${getFlexDirection()} justify-end space-x-2 pt-4`}>
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                {t('form.cancel')}
-              </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? t('form.loading') : t('form.save')}
-              </Button>
-            </div>
-          </form>
+            {type !== 'create_class' && (
+              <div className={`${getFlexDirection()} justify-end space-x-2 pt-4`}>
+                <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                  {t('form.cancel')}
+                </Button>
+                <Button type="button" onClick={handleSubmit} disabled={loading}>
+                  {loading ? t('form.loading') : t('form.save')}
+                </Button>
+              </div>
+            )}
+          </div>
         ) : (
           <div className={`${getFlexDirection()} justify-end pt-4`}>
             <Button onClick={() => setOpen(false)}>{t('form.close')}</Button>

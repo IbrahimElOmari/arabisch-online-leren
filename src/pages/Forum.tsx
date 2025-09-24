@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { SolvedSubmissionsList } from '@/components/tasks/SolvedSubmissionsList';
 import PastLessonsManager from '@/components/lessons/PastLessonsManager';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
+import { ResponsiveForm } from '@/components/forms/ResponsiveForm';
 import { Navigate } from 'react-router-dom';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -127,28 +128,32 @@ const Forum = () => {
 
             {/* Class selector */}
             {enrolledClasses.length > 1 && (
-              <div className="w-full max-w-xs">
-                <label className={`text-sm font-medium mb-2 block ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>{t('classes.selectClass')}:</label>
-                <Select value={selectedClass} onValueChange={setSelectedClass}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder={t('classes.chooseClass')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {enrolledClasses.map((enrollment) => (
-                      <SelectItem key={enrollment.id} value={enrollment.class_id}>
-                        {enrollment.klassen.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <ResponsiveForm layout="single" className="w-full max-w-xs">
+                <div className="w-full">
+                  <label className={`text-sm font-medium mb-2 block ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>
+                    {t('classes.selectClass')}:
+                  </label>
+                  <Select value={selectedClass} onValueChange={setSelectedClass}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={t('classes.chooseClass')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {enrolledClasses.map((enrollment) => (
+                        <SelectItem key={enrollment.id} value={enrollment.class_id}>
+                          {enrollment.klassen.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </ResponsiveForm>
             )}
           </CardContent>
         </Card>
 
         {/* No classes fallback */}
         {enrolledClasses.length === 0 && !classesLoading && (
-          <Card className="main-content-card mb-6">
+          <Card className="@container mb-6">
             <CardContent className="py-6">
               <h2 className="text-lg font-semibold mb-2">Geen klassen gevonden</h2>
               <p className="text-muted-foreground mb-4">

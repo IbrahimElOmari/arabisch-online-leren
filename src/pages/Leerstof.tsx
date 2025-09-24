@@ -4,6 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { Card, CardContent } from '@/components/ui/card';
 
 const Leerstof = () => {
   const { user, authReady, loading: authLoading } = useAuth();
@@ -24,11 +25,13 @@ const Leerstof = () => {
     <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="container mx-auto p-6">
         <h1 className={`text-2xl font-bold mb-6 ${getTextAlign('left')} ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('leerstof.title')}</h1>
-        <div className="main-content-card">
-          <p className={`text-muted-foreground ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>
-            {t('leerstof.comingSoon')}
-          </p>
-        </div>
+        <Card className="@container">
+          <CardContent className="p-6">
+            <p className={`text-muted-foreground ${getTextAlign('left')} ${isRTL ? 'arabic-text' : ''}`}>
+              {t('leerstof.comingSoon')}
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

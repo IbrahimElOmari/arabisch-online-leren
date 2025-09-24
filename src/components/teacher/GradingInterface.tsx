@@ -252,8 +252,9 @@ export const GradingInterface = () => {
 
   return (
     <div className="space-y-6">
-      <div className="main-content-card">
-        <h2 className="text-2xl font-bold mb-6">Inzendingen Beoordelen</h2>
+      <Card className="@container">
+        <CardContent className="p-6">
+          <h2 className="text-2xl font-bold mb-6">Inzendingen Beoordelen</h2>
         
         <Tabs defaultValue="tasks" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
@@ -449,7 +450,8 @@ export const GradingInterface = () => {
             )}
           </TabsContent>
         </Tabs>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
