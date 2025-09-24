@@ -227,7 +227,7 @@ export const AuthForm = ({
                 minLength={isSignUp ? 12 : 8}
                 value={formData.password}
                 onChange={(e) => handlePasswordChange(e.target.value)}
-                className={`pr-10 ${passwordErrors.length > 0 ? "border-destructive" : ""}`}
+                className={`pe-10 ${passwordErrors.length > 0 ? "border-destructive" : ""}`}
                 placeholder={isSignUp 
                   ? (isRTL ? 'حد أدنى 12 حرفاً' : 'Minimaal 12 karakters')
                   : (isRTL ? 'حد أدنى 8 أحرف' : 'Minimaal 8 karakters')

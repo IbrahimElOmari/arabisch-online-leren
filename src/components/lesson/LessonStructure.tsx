@@ -151,7 +151,7 @@ export const LessonStructure: React.FC<LessonStructureProps> = ({
             <div className="mt-6 space-y-3">
               <Button onClick={onNext} className="w-full" size="lg">
                 Volgende Les
-                <ArrowRight className="h-4 w-4 ml-2" />
+                <ArrowRight className="h-4 w-4 ms-2" />
               </Button>
               <Button variant="outline" onClick={() => setShowCelebration(false)} className="w-full">
                 Les Opnieuw Bekijken

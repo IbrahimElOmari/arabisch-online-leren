@@ -157,7 +157,7 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
               </div>
 
               <Button className="w-full">
-                <CheckCircle2 className="h-4 w-4 mr-2" />
+                <CheckCircle2 className="h-4 w-4 me-2" />
                 Antwoorden Indienen
               </Button>
             </CardContent>

@@ -45,7 +45,7 @@ export const ResponsiveFormField = ({
     'block text-sm font-medium mb-2',
     getTextAlign('left'),
     isRTL ? 'arabic-text' : '',
-    required && "after:content-['*'] after:text-destructive after:ml-1"
+    required && "after:content-['*'] after:text-destructive after:ms-1"
   );
 
   const containerClasses = cn(
@@ -95,7 +95,7 @@ export const ResponsiveFormField = ({
             onChange={(e) => onChange?.(e.target.value)}
             className={cn(
               fieldClasses,
-              Icon && (isRTL ? 'pr-10' : 'pl-10')
+              Icon && (isRTL ? 'pe-10' : 'ps-10')
             )}
             dir={isRTL ? 'rtl' : 'ltr'}
           />

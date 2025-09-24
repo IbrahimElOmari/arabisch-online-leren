@@ -205,7 +205,7 @@ export function MessageBubble({
       )}
 
       {/* Message content */}
-      <div className={cn("flex-1 max-w-xs sm:max-w-md", !showAvatar && "ml-11")}>
+      <div className={cn("flex-1 max-w-xs sm:max-w-md", !showAvatar && "ms-11")}>
         {/* Sender info */}
         {showAvatar && !isOwn && (
           <div className="flex items-center gap-2 mb-1">
@@ -231,7 +231,7 @@ export function MessageBubble({
             className={cn(
               "relative px-4 py-2 rounded-2xl break-words",
               isOwn
-                ? "bg-primary text-primary-foreground ml-auto"
+                ? "bg-primary text-primary-foreground ms-auto"
                 : "bg-muted",
               // RTL adjustments for bubble direction
               isOwn && !isRTL && "rounded-br-md",
@@ -268,18 +268,18 @@ export function MessageBubble({
               </DropdownMenuTrigger>
               <DropdownMenuContent align={isOwn ? "start" : "end"}>
                 <DropdownMenuItem onClick={handleCopy}>
-                  <Copy className="h-4 w-4 mr-2" />
+                  <Copy className="h-4 w-4 me-2" />
                   Kopiëren
                 </DropdownMenuItem>
                 {onReply && (
                   <DropdownMenuItem onClick={() => onReply(message)}>
-                    <Reply className="h-4 w-4 mr-2" />
+                    <Reply className="h-4 w-4 me-2" />
                     Beantwoorden
                   </DropdownMenuItem>
                 )}
                 {isOwn && onEdit && (
                   <DropdownMenuItem onClick={() => onEdit(message)}>
-                    <Edit3 className="h-4 w-4 mr-2" />
+                    <Edit3 className="h-4 w-4 me-2" />
                     Bewerken
                   </DropdownMenuItem>
                 )}
@@ -288,7 +288,7 @@ export function MessageBubble({
                     onClick={() => onDelete(message)}
                     className="text-destructive focus:text-destructive"
                   >
-                    <Trash2 className="h-4 w-4 mr-2" />
+                    <Trash2 className="h-4 w-4 me-2" />
                     Verwijderen
                   </DropdownMenuItem>
                 )}

@@ -264,7 +264,7 @@ const StudentDashboard = () => {
                 <MessageCircle className="h-5 w-5 text-primary" />
                 Recente Meldingen
                 {unreadCount > 0 && (
-                  <Badge variant="destructive" className="ml-2">
+                  <Badge variant="destructive" className="ms-2">
                     {unreadCount}
                   </Badge>
                 )}

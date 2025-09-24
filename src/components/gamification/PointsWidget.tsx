@@ -93,8 +93,8 @@ export function PointsWidget({
           Punten Overzicht
           
           {recentGain && recentGain > 0 && (
-            <Badge variant="secondary" className="ml-auto animate-pulse">
-              <TrendingUp className="h-3 w-3 mr-1" />
+            <Badge variant="secondary" className="ms-auto animate-pulse">
+              <TrendingUp className="h-3 w-3 me-1" />
               +{recentGain}
             </Badge>
           )}

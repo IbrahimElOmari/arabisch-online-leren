@@ -361,7 +361,7 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
             onClick={createReply}
             disabled={!canReply || !replyContent.trim() || isSubmitting}
           >
-            <Send className="h-4 w-4 mr-2" />
+            <Send className="h-4 w-4 me-2" />
             {isSubmitting ? t('forum.posting') : t('forum.postReply')}
           </Button>
         </CardContent>

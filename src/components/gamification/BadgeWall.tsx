@@ -83,7 +83,7 @@ export function BadgeWall({ badges, showAll = false, className }: BadgeWallProps
         <CardTitle className={cn("flex items-center gap-2", isRTL && "arabic-text")}>
           <Trophy className="h-5 w-5" />
           Badge Wall
-          <Badge variant="secondary" className="ml-auto">
+          <Badge variant="secondary" className="ms-auto">
             {badges.length} badges
           </Badge>
         </CardTitle>

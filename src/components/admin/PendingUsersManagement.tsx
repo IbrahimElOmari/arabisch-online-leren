@@ -106,11 +106,11 @@ const PendingUsersManagement = () => {
                 {user.parent_email && <p>Parent Email: {user.parent_email}</p>}
                 <div className="flex justify-end gap-2 mt-4">
                   <Button variant="ghost" size="sm" onClick={() => rejectUser(user)}>
-                    <X className="h-4 w-4 mr-2" />
+                    <X className="h-4 w-4 me-2" />
                     Reject
                   </Button>
                   <Button size="sm" onClick={() => approveUser(user)}>
-                    <Check className="h-4 w-4 mr-2" />
+                    <Check className="h-4 w-4 me-2" />
                     Approve
                   </Button>
                 </div>

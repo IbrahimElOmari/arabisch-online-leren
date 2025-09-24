@@ -229,7 +229,7 @@ export const ClassOverviewModal = ({ classId, className, trigger }: ClassOvervie
               Melding Sturen ({selectedStudents.length})
             </Button>
             
-            <div className="flex items-center gap-2 ml-auto">
+            <div className="flex items-center gap-2 ms-auto">
               <Checkbox
                 id="select-all"
                 checked={selectAll}

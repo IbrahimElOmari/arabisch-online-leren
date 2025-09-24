@@ -88,7 +88,7 @@ export function ChatDrawer({ className }: ChatDrawerProps) {
                       <User className="h-4 w-4" />
                       Direct
                       {dmConversations.reduce((sum, c) => sum + (c.unread_count || 0), 0) > 0 && (
-                        <Badge variant="destructive" className="ml-1 h-4 w-4 p-0 text-xs">
+                        <Badge variant="destructive" className="ms-1 h-4 w-4 p-0 text-xs">
                           {dmConversations.reduce((sum, c) => sum + (c.unread_count || 0), 0)}
                         </Badge>
                       )}
@@ -97,7 +97,7 @@ export function ChatDrawer({ className }: ChatDrawerProps) {
                       <Users className="h-4 w-4" />
                       Klas
                       {classConversations.reduce((sum, c) => sum + (c.unread_count || 0), 0) > 0 && (
-                        <Badge variant="destructive" className="ml-1 h-4 w-4 p-0 text-xs">
+                        <Badge variant="destructive" className="ms-1 h-4 w-4 p-0 text-xs">
                           {classConversations.reduce((sum, c) => sum + (c.unread_count || 0), 0)}
                         </Badge>
                       )}

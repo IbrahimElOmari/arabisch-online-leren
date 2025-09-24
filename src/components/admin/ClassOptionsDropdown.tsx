@@ -88,20 +88,20 @@ export function ClassOptionsDropdown({ classId, className, onRefresh }: ClassOpt
             className={className}
             trigger={
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                <Users className="h-4 w-4 mr-2" />
+                <Users className="h-4 w-4 me-2" />
                 Overzicht Leerlingen
               </DropdownMenuItem>
             }
           />
           <DropdownMenuItem onClick={handleEdit}>
-            <Edit className="h-4 w-4 mr-2" />
+            <Edit className="h-4 w-4 me-2" />
             Bewerken/Beheren
           </DropdownMenuItem>
           <DropdownMenuItem 
             onClick={() => setShowDeleteDialog(true)}
             className="text-destructive focus:text-destructive"
           >
-            <Trash2 className="h-4 w-4 mr-2" />
+            <Trash2 className="h-4 w-4 me-2" />
             Verwijder Klas
           </DropdownMenuItem>
         </DropdownMenuContent>

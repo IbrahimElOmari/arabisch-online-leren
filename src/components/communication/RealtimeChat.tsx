@@ -264,7 +264,7 @@ export const RealtimeChat: React.FC<RealtimeChatProps> = ({
                     className={cn(
                       "inline-block p-3 rounded-lg text-sm",
                       isCurrentUser(message.sender_id)
-                        ? "bg-primary text-primary-foreground ml-auto"
+                        ? "bg-primary text-primary-foreground ms-auto"
                         : "bg-muted"
                     )}
                   >
@@ -286,7 +286,7 @@ export const RealtimeChat: React.FC<RealtimeChatProps> = ({
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Typ je bericht..."
-                className="pr-24"
+                className="pe-24"
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                 <Button

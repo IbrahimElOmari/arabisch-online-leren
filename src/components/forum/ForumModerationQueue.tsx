@@ -147,7 +147,7 @@ const ForumModerationQueue = () => {
                       size="sm"
                       onClick={() => handleModeratePost(post.id, 'approve')}
                     >
-                      <CheckCircle className="h-4 w-4 mr-1" />
+                      <CheckCircle className="h-4 w-4 me-1" />
                       Goedkeuren
                     </Button>
                     <Button
@@ -155,7 +155,7 @@ const ForumModerationQueue = () => {
                       size="sm"
                       onClick={() => handleModeratePost(post.id, 'delete')}
                     >
-                      <XCircle className="h-4 w-4 mr-1" />
+                      <XCircle className="h-4 w-4 me-1" />
                       Verwijderen
                     </Button>
                   </div>

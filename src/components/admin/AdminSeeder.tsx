@@ -52,7 +52,7 @@ const AdminSeeder = () => {
       <CardContent className="space-y-4">
         <div className="text-sm text-muted-foreground space-y-2">
           <p>Deze actie zal de database vullen met:</p>
-          <ul className="list-disc pl-4 space-y-1">
+          <ul className="list-disc ps-4 space-y-1">
             <li>Admin gebruiker (admin@arabischonline.nl)</li>
             <li>Dummy leerkracht (leerkracht@arabischonline.nl)</li>
             <li>Twee initiële klassen met 4 niveaus elk</li>
@@ -74,7 +74,7 @@ const AdminSeeder = () => {
         >
           {loading ? (
             <>
-              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              <RefreshCw className="h-4 w-4 me-2 animate-spin" />
               Bezig met seeding...
             </>
           ) : completed ? (

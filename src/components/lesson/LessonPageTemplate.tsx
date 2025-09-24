@@ -155,7 +155,7 @@ export const LessonPageTemplate = ({
               onClick={() => setCurrentStepIndex(Math.max(0, currentStepIndex - 1))}
               disabled={currentStepIndex === 0}
             >
-              <ChevronLeft className="h-4 w-4 mr-1" />
+              <ChevronLeft className="h-4 w-4 me-1" />
               Vorige
             </Button>
             
@@ -194,7 +194,7 @@ export const LessonPageTemplate = ({
               disabled={currentStepIndex === steps.length - 1}
             >
               Volgende
-              <ChevronRight className="h-4 w-4 ml-1" />
+              <ChevronRight className="h-4 w-4 ms-1" />
             </Button>
           </div>
         </CardContent>
@@ -218,7 +218,7 @@ export const LessonPageTemplate = ({
               </div>
               {completedSteps.has(currentStep.id) && (
                 <Badge className="bg-success text-success-foreground">
-                  <CheckCircle2 className="h-4 w-4 mr-1" />
+                  <CheckCircle2 className="h-4 w-4 me-1" />
                   Voltooid
                 </Badge>
               )}
@@ -265,7 +265,7 @@ export const LessonPageTemplate = ({
                       size="sm"
                       className="mt-3 w-full"
                     >
-                      <Volume2 className="h-4 w-4 mr-2" />
+                      <Volume2 className="h-4 w-4 me-2" />
                       Luister naar Uitspraak
                     </Button>
                   )}
@@ -281,7 +281,7 @@ export const LessonPageTemplate = ({
                   className="w-full"
                   size="lg"
                 >
-                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  <CheckCircle2 className="h-4 w-4 me-2" />
                   Stap Voltooien
                 </Button>
               </div>

@@ -275,7 +275,7 @@ export function Leaderboard({
                     )}>
                       {entry.full_name}
                       {isCurrentUser && (
-                        <Badge variant="secondary" className="ml-2 text-xs">
+                        <Badge variant="secondary" className="ms-2 text-xs">
                           Jij
                         </Badge>
                       )}

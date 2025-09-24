@@ -93,7 +93,7 @@ export const MentorSystem = ({ mentors, onBookSession }: MentorSystemProps) => {
                         size="sm"
                         onClick={() => setSelectedMentor(mentor)}
                       >
-                        <Calendar className="h-4 w-4 mr-2" />
+                        <Calendar className="h-4 w-4 me-2" />
                         Sessie Boeken
                       </Button>
                     </DialogTrigger>
@@ -127,7 +127,7 @@ export const MentorSystem = ({ mentors, onBookSession }: MentorSystemProps) => {
                                   className="w-full justify-start"
                                   onClick={() => onBookSession(mentor.id, `${slot.day} ${slot.time}`)}
                                 >
-                                  <Clock className="h-4 w-4 mr-2" />
+                                  <Clock className="h-4 w-4 me-2" />
                                   {slot.day} om {slot.time}
                                 </Button>
                               ))}
@@ -136,11 +136,11 @@ export const MentorSystem = ({ mentors, onBookSession }: MentorSystemProps) => {
 
                         <div className="flex gap-2">
                           <Button variant="outline" className="flex-1">
-                            <MessageCircle className="h-4 w-4 mr-2" />
+                            <MessageCircle className="h-4 w-4 me-2" />
                             Chat
                           </Button>
                           <Button variant="outline" className="flex-1">
-                            <Video className="h-4 w-4 mr-2" />
+                            <Video className="h-4 w-4 me-2" />
                             Video Call
                           </Button>
                         </div>

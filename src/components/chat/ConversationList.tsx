@@ -123,7 +123,7 @@ function ConversationItem({ conversation, isSelected, onSelect }: ConversationIt
             {conversation.unread_count && conversation.unread_count > 0 && (
               <Badge 
                 variant="destructive" 
-                className="h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs ml-2"
+                className="h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs ms-2"
               >
                 {conversation.unread_count > 9 ? '9+' : conversation.unread_count}
               </Badge>
@@ -134,7 +134,7 @@ function ConversationItem({ conversation, isSelected, onSelect }: ConversationIt
             <p className="text-xs text-muted-foreground truncate">
               {getLastMessagePreview()}
             </p>
-            <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">
+            <span className="text-xs text-muted-foreground ms-2 flex-shrink-0">
               {getTimeAgo()}
             </span>
           </div>

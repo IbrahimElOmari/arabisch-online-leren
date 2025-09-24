@@ -180,7 +180,7 @@ export function ClassManagementModal({ isOpen, onClose }: ClassManagementModalPr
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-medium">Alle Klassen</h3>
               <Button onClick={() => setShowCreateForm(true)}>
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4 me-2" />
                 Nieuwe Klas
               </Button>
             </div>
@@ -248,7 +248,7 @@ export function ClassManagementModal({ isOpen, onClose }: ClassManagementModalPr
                           size="sm"
                           onClick={() => handleEdit(classItem)}
                         >
-                          <Edit className="h-4 w-4 mr-1" />
+                          <Edit className="h-4 w-4 me-1" />
                           Bewerken
                         </Button>
                         <Button
@@ -256,7 +256,7 @@ export function ClassManagementModal({ isOpen, onClose }: ClassManagementModalPr
                           size="sm"
                           onClick={() => handleDelete(classItem.id, classItem.name)}
                         >
-                          <Trash2 className="h-4 w-4 mr-1" />
+                          <Trash2 className="h-4 w-4 me-1" />
                           Verwijderen
                         </Button>
                       </div>

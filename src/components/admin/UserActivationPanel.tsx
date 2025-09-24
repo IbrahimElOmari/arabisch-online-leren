@@ -193,7 +193,7 @@ const UserActivationPanel = () => {
             <UserCheck className="h-5 w-5" />
             Gebruikers & Toewijzingen
             {pendingUsers.length > 0 && (
-              <Badge variant="destructive" className="ml-2">
+              <Badge variant="destructive" className="ms-2">
                 {pendingUsers.length} wachtend
               </Badge>
             )}
