@@ -11,6 +11,7 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAnalyticsTracking } from '@/hooks/useAnalytics';
+import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 
 interface AnnouncementFormData {
   title: string;

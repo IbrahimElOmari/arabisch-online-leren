@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 import { Mail } from 'lucide-react';
 
 interface ForgotPasswordModalProps {
@@ -87,18 +88,16 @@ export const ForgotPasswordModal = ({ isOpen, onClose }: ForgotPasswordModalProp
         </DialogHeader>
         
         {!emailSent ? (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="reset-email">E-mailadres</Label>
-              <Input
-                id="reset-email"
-                type="email"
-                placeholder="je-email@voorbeeld.nl"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+          <ResponsiveForm layout="single" onSubmit={handleSubmit}>
+            <ResponsiveFormField
+              label="E-mailadres"
+              name="reset-email"
+              type="email"
+              placeholder="je-email@voorbeeld.nl"
+              required
+              value={email}
+              onChange={setEmail}
+            />
             
             <div className="flex justify-end gap-2">
               <Button
@@ -116,7 +115,7 @@ export const ForgotPasswordModal = ({ isOpen, onClose }: ForgotPasswordModalProp
                 {isLoading ? 'Verzenden...' : 'Reset-link verzenden'}
               </Button>
             </div>
-          </form>
+          </ResponsiveForm>
         ) : (
           <div className="flex justify-end">
             <Button onClick={handleClose}>

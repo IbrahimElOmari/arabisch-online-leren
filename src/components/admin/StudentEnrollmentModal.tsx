@@ -10,6 +10,7 @@ import { useStudentStore } from '@/hooks/useStudentStore';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Mail, Send, Users, CheckSquare, Square } from 'lucide-react';
+import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 
 interface StudentEnrollmentModalProps {
   isOpen: boolean;
@@ -259,17 +260,17 @@ export const StudentEnrollmentModal = ({ isOpen, onClose, classId, className }: 
               </div>
 
               {showNotificationForm && (
-                <form onSubmit={handleSendNotification} className="mt-4 p-4 border rounded-lg space-y-3">
-                  <Label htmlFor="notification-message">Notificatie bericht</Label>
-                  <Textarea
-                    id="notification-message"
-                    value={notificationMessage}
-                    onChange={(e) => setNotificationMessage(e.target.value)}
+                <ResponsiveForm layout="single" onSubmit={handleSendNotification} className="mt-4 p-4 border rounded-lg">
+                  <ResponsiveFormField
+                    label="Notificatie bericht"
+                    name="notification-message"
+                    type="textarea"
                     placeholder="Typ je bericht hier..."
                     required
-                    rows={3}
+                    value={notificationMessage}
+                    onChange={setNotificationMessage}
                   />
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 pt-4">
                     <Button type="submit" disabled={loading}>
                       Verstuur Notificatie
                     </Button>
@@ -281,7 +282,7 @@ export const StudentEnrollmentModal = ({ isOpen, onClose, classId, className }: 
                       Annuleren
                     </Button>
                   </div>
-                </form>
+                </ResponsiveForm>
               )}
             </CardContent>
           </Card>
