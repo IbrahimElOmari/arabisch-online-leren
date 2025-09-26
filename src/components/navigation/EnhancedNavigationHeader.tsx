@@ -107,7 +107,7 @@ export const EnhancedNavigationHeader = () => {
                 placeholder={t('search.placeholder', 'Zoeken... (Cmd+K)')}
                 className={cn(
                   'w-full cursor-pointer',
-                  isRTL ? 'pr-10' : 'pl-10',
+                  isRTL ? 'pe-10' : 'ps-10',
                   'focus-visible:ring-primary'
                 )}
                 onClick={() => setIsSearchOpen(true)}
@@ -193,7 +193,7 @@ export const EnhancedNavigationHeader = () => {
                   onClick={handleSignOut}
                   className="text-destructive focus:text-destructive"
                 >
-                  <LogOut className="h-4 w-4 mr-2" />
+                  <LogOut className="h-4 w-4 me-2" />
                   Uitloggen
                 </DropdownMenuItem>
               </DropdownMenuContent>

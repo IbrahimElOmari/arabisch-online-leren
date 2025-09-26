@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
@@ -402,7 +403,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
           {loadingSubmission ? (
             <div className="text-center py-4">Laden...</div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <ResponsiveForm layout="single" onSubmit={handleSubmit}>
               {renderSubmissionType()}
               
               <div className={`flex gap-2 ${getFlexDirection()}`}>
@@ -414,7 +415,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
                   Sluiten
                 </Button>
               </div>
-            </form>
+            </ResponsiveForm>
           )}
         </div>
       </DialogContent>

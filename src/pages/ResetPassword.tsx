@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 import { Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -240,7 +241,7 @@ const ResetPassword = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <ResponsiveForm layout="single" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <Label htmlFor="password">Nieuw wachtwoord</Label>
               <div className="relative">
@@ -315,7 +316,7 @@ const ResetPassword = () => {
             >
               {isLoading ? 'Bezig...' : 'Wachtwoord bijwerken'}
             </Button>
-          </form>
+          </ResponsiveForm>
         </CardContent>
       </Card>
     </div>

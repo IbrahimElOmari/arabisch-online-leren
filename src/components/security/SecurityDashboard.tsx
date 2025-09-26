@@ -215,7 +215,7 @@ export const SecurityDashboard = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Beveiliging & Monitoring</h1>
         <Button onClick={exportSecurityData} variant="outline">
-          <Download className="h-4 w-4 mr-2" />
+          <Download className="h-4 w-4 me-2" />
           Export Data
         </Button>
       </div>

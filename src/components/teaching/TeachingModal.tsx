@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Video, FileQuestion, Calendar, Upload, Plus, UserCheck, ClipboardList } from 'lucide-react';
@@ -274,40 +275,34 @@ export function TeachingModal({
     switch (type) {
       case 'youtube':
         return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="title" className={getTextAlign()}>{t('form.title')}</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => handleInputChange('title', e.target.value)}
-                placeholder="Bijv: Introductie tot Arabische letters"
-                className={getTextAlign()}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="url" className={getTextAlign()}>YouTube URL</Label>
-              <Input
-                id="url"
-                value={formData.url}
-                onChange={(e) => handleInputChange('url', e.target.value)}
-                placeholder="https://youtube.com/watch?v=..."
-                className={getTextAlign()}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="description" className={getTextAlign()}>{t('form.description')}</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="Korte beschrijving van de video..."
-                className={getTextAlign()}
-              />
-            </div>
-          </div>
+          <>
+            <ResponsiveFormField
+              label={t('form.title')}
+              name="title"
+              type="text"
+              value={formData.title}
+              onChange={(value) => handleInputChange('title', value)}
+              placeholder="Bijv: Introductie tot Arabische letters"
+              required
+            />
+            <ResponsiveFormField
+              label="YouTube URL"
+              name="url"
+              type="text"
+              value={formData.url}
+              onChange={(value) => handleInputChange('url', value)}
+              placeholder="https://youtube.com/watch?v=..."
+              required
+            />
+            <ResponsiveFormField
+              label={t('form.description')}
+              name="description"
+              type="textarea"
+              value={formData.description}
+              onChange={(value) => handleInputChange('description', value)}
+              placeholder="Korte beschrijving van de video..."
+            />
+          </>
         );
 
       case 'questions':

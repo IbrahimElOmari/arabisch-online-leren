@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 import { useTaskStore } from '@/hooks/useTaskStore';
 import { toast } from 'sonner';
 
@@ -92,31 +93,25 @@ export const QuickGradeModal = ({ isOpen, onClose, submission, gradingScale }: Q
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="grade">Cijfer (0-{gradingScale})</Label>
-              <Input
-                id="grade"
-                type="number"
-                min="0"
-                max={gradingScale}
-                value={grade}
-                onChange={(e) => setGrade(e.target.value)}
-                placeholder={`Voer cijfer in (0-${gradingScale})`}
-                required
-              />
-            </div>
+            <ResponsiveForm layout="single" onSubmit={handleSubmit}>
+            <ResponsiveFormField
+              label={`Cijfer (0-${gradingScale})`}
+              name="grade"
+              type="number"
+              value={grade}
+              onChange={setGrade}
+              placeholder={`Voer cijfer in (0-${gradingScale})`}
+              required
+            />
 
-            <div>
-              <Label htmlFor="feedback">Feedback (optioneel)</Label>
-              <Textarea
-                id="feedback"
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Geef feedback aan de student..."
-                className="min-h-[100px]"
-              />
-            </div>
+            <ResponsiveFormField
+              label="Feedback (optioneel)"
+              name="feedback"
+              type="textarea"
+              value={feedback}
+              onChange={setFeedback}
+              placeholder="Geef feedback aan de student..."
+            />
 
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={onClose}>
@@ -126,7 +121,7 @@ export const QuickGradeModal = ({ isOpen, onClose, submission, gradingScale }: Q
                 {isSubmitting ? 'Bezig...' : 'Beoordeling Opslaan'}
               </Button>
             </div>
-          </form>
+          </ResponsiveForm>
         </div>
       </DialogContent>
     </Dialog>

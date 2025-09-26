@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 import { useTaskStore } from '@/hooks/useTaskStore';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
@@ -227,28 +228,25 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
             <CardTitle>Nieuwe Taak Aanmaken</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleCreateTask} className="space-y-4">
-              <div>
-                <Label htmlFor="task-title">Titel *</Label>
-                <Input
-                  id="task-title"
-                  value={taskForm.title}
-                  onChange={(e) => setTaskForm(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="Taak titel..."
-                  required
-                />
-              </div>
+            <ResponsiveForm layout="single" onSubmit={handleCreateTask}>
+              <ResponsiveFormField
+                label="Titel *"
+                name="task-title"
+                type="text"
+                value={taskForm.title}
+                onChange={(value) => setTaskForm(prev => ({ ...prev, title: value }))}
+                placeholder="Taak titel..."
+                required
+              />
               
-              <div>
-                <Label htmlFor="task-description">Beschrijving</Label>
-                <Textarea
-                  id="task-description"
-                  value={taskForm.description}
-                  onChange={(e) => setTaskForm(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Taak beschrijving..."
-                  rows={3}
-                />
-              </div>
+              <ResponsiveFormField
+                label="Beschrijving"
+                name="task-description"
+                type="textarea"
+                value={taskForm.description}
+                onChange={(value) => setTaskForm(prev => ({ ...prev, description: value }))}
+                placeholder="Taak beschrijving..."
+              />
 
               <div className={`grid grid-cols-2 gap-4 ${getFlexDirection()}`}>
                 <div>
@@ -297,7 +295,7 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
                   Annuleren
                 </Button>
               </div>
-            </form>
+            </ResponsiveForm>
           </CardContent>
         </Card>
       )}
@@ -356,20 +354,19 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
 
                   {/* Student Submission Form */}
                   {!isTeacherOrAdmin && !hasSubmitted && (
-                    <form onSubmit={(e) => handleSubmitTask(task.id, e)} className="space-y-3 border-t pt-4">
+                    <ResponsiveForm layout="single" onSubmit={(e) => handleSubmitTask(task.id, e)} className="space-y-3 border-t pt-4">
                       <h4 className="font-semibold">Jouw Inlevering</h4>
                       
                       {task.required_submission_type === 'text' ? (
-                        <div>
-                          <Label>Antwoord</Label>
-                          <Textarea
-                            value={submissionForm.content}
-                            onChange={(e) => setSubmissionForm(prev => ({ ...prev, content: e.target.value }))}
-                            placeholder="Schrijf je antwoord hier..."
-                            required
-                            rows={4}
-                          />
-                        </div>
+                        <ResponsiveFormField
+                          label="Antwoord"
+                          name="submission-content"
+                          type="textarea"
+                          value={submissionForm.content}
+                          onChange={(value) => setSubmissionForm(prev => ({ ...prev, content: value }))}
+                          placeholder="Schrijf je antwoord hier..."
+                          required
+                        />
                       ) : (
                         <div>
                           <Label>Bestand uploaden</Label>
@@ -392,7 +389,7 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
                       <Button type="submit" disabled={loading}>
                         Inleveren
                       </Button>
-                    </form>
+                    </ResponsiveForm>
                   )}
 
                   {/* Student Submission Status */}
@@ -486,7 +483,8 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
                   )}
 
                   {/* Grading Form */}
-                  <form 
+                  <ResponsiveForm 
+                    layout="single"
                     onSubmit={(e) => {
                       setGradingForm(prev => ({ ...prev, submissionId: submission.id }));
                       handleGradeSubmission(e);
@@ -517,7 +515,7 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
                     <Button type="submit" size="sm" disabled={loading}>
                       Beoordeel
                     </Button>
-                  </form>
+                  </ResponsiveForm>
                 </div>
               ))}
             </div>

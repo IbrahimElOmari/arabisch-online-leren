@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 import { Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { sanitizeInput, validatePassword, validateEmail } from '@/utils/validation';
 import { useRateLimit } from '@/hooks/useRateLimit';
@@ -111,28 +112,22 @@ export const AuthForm = ({
         </div>
       )}
       
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <ResponsiveForm layout="single" onSubmit={handleSubmit}>
         {isSignUp && (
           <>
-            <div className="space-y-2">
-              <Label htmlFor="fullName" className={isRTL ? 'arabic-text' : ''}>
-                {isRTL ? 'الاسم الكامل' : 'Volledige naam'}
-              </Label>
-              <Input
-                id="fullName"
-                type="text"
-                required
-                minLength={2}
-                maxLength={50}
-                value={formData.fullName}
-                onChange={(e) => {
-                  // Security: Sanitize input - remove potentially harmful characters
-                  const sanitized = e.target.value.replace(/[<>\"'&]/g, '');
-                  setFormData({...formData, fullName: sanitized});
-                }}
-                placeholder={isRTL ? 'أدخل اسمك الكامل' : 'Voer je volledige naam in'}
-              />
-            </div>
+            <ResponsiveFormField
+              label={isRTL ? 'الاسم الكامل' : 'Volledige naam'}
+              name="fullName"
+              type="text"
+              required
+              value={formData.fullName}
+              onChange={(value) => {
+                // Security: Sanitize input - remove potentially harmful characters
+                const sanitized = value.replace(/[<>\"'&]/g, '');
+                setFormData({...formData, fullName: sanitized});
+              }}
+              placeholder={isRTL ? 'أدخل اسمك الكامل' : 'Voer je volledige naam in'}
+            />
             
             <div className="space-y-2">
               <Label htmlFor="role" className={isRTL ? 'arabic-text' : ''}>
@@ -186,34 +181,26 @@ export const AuthForm = ({
           </>
         )}
         
-        <div className="space-y-2">
-          <Label htmlFor="emailOrName" className={isRTL ? 'arabic-text' : ''}>
-            {isSignUp 
-              ? (isRTL ? 'البريد الإلكتروني' : 'E-mail')
-              : (isRTL ? 'البريد الإلكتروني أو الاسم' : 'E-mail of naam')
+        <ResponsiveFormField
+          label={isSignUp 
+            ? (isRTL ? 'البريد الإلكتروني' : 'E-mail')
+            : (isRTL ? 'البريد الإلكتروني أو الاسم' : 'E-mail of naam')
+          }
+          name="emailOrName"
+          type={isSignUp ? "email" : "text"}
+          required
+          value={formData.emailOrName}
+          onChange={(value) => {
+            if (isSignUp) {
+              handleEmailChange(value);
+            } else {
+              const sanitized = sanitizeInput(value.trim());
+              setFormData({...formData, emailOrName: sanitized});
             }
-          </Label>
-          <Input
-            id="emailOrName"
-            type={isSignUp ? "email" : "text"}
-            required
-            maxLength={100}
-            value={formData.emailOrName}
-                onChange={(e) => {
-              if (isSignUp) {
-                handleEmailChange(e.target.value);
-              } else {
-                const sanitized = sanitizeInput(e.target.value.trim());
-                setFormData({...formData, emailOrName: sanitized});
-              }
-            }}
-            placeholder={isSignUp ? "je@email.com" : "E-mail of volledige naam"}
-            className={emailError ? "border-destructive" : ""}
-          />
-          {emailError && (
-            <p className="text-sm text-destructive">{emailError}</p>
-          )}
-        </div>
+          }}
+          placeholder={isSignUp ? "je@email.com" : "E-mail of volledige naam"}
+          error={emailError}
+        />
         
         <div className="space-y-2">
           <Label htmlFor="password" className={isRTL ? 'arabic-text' : ''}>
@@ -270,7 +257,7 @@ export const AuthForm = ({
             }
           </span>
         </Button>
-      </form>
+      </ResponsiveForm>
       
       <div className="mt-4 text-center space-y-2">
         {!isSignUp && onForgotPassword && (

@@ -41,7 +41,7 @@ export const ErrorAlert = React.memo(({
             onClick={onRetry}
             disabled={isRetrying}
           >
-            <RefreshCw className={`h-4 w-4 ${isRTL ? 'ml-1' : 'mr-1'} ${isRetrying ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 ${isRTL ? 'ms-1' : 'me-1'} ${isRetrying ? 'animate-spin' : ''}`} />
             {isRetrying ? t('status.loading') : defaultRetryText}
           </Button>
         )}

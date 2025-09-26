@@ -77,7 +77,7 @@ export const BackendStatusBadge = ({ compact = false }: BackendStatusBadgeProps)
         className={`${config.className} cursor-pointer`}
         onClick={() => refetch()}
       >
-        <Icon className={`h-3 w-3 mr-1 ${isLoading || isFetching ? 'animate-spin' : ''}`} />
+        <Icon className={`h-3 w-3 me-1 ${isLoading || isFetching ? 'animate-spin' : ''}`} />
         {config.label}
       </Badge>
     </div>
