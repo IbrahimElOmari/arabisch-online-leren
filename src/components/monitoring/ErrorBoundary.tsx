@@ -159,7 +159,7 @@ class ErrorBoundary extends Component<Props, State> {
                 className="flex-1"
                 variant="default"
               >
-                <RefreshCw className="mr-2 h-4 w-4" />
+                <RefreshCw className="me-2 h-4 w-4" />
                 Probeer opnieuw
               </Button>
               
@@ -168,7 +168,7 @@ class ErrorBoundary extends Component<Props, State> {
                 className="flex-1"
                 variant="outline"
               >
-                <Home className="mr-2 h-4 w-4" />
+                <Home className="me-2 h-4 w-4" />
                 Naar hoofdpagina
               </Button>
             </div>

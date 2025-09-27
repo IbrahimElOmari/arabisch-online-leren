@@ -161,14 +161,14 @@ export function NotificationList({
                   markAsReadMutation.mutate(notification.id);
                 }}
               >
-                <Check className="h-4 w-4 mr-2" />
+                <Check className="h-4 w-4 me-2" />
                 Als gelezen markeren
               </DropdownMenuItem>
             )}
             {actionUrl && (
               <DropdownMenuItem asChild>
                 <Link to={actionUrl} onClick={onClose}>
-                  <ExternalLink className="h-4 w-4 mr-2" />
+                  <ExternalLink className="h-4 w-4 me-2" />
                   Bekijk details
                 </Link>
               </DropdownMenuItem>
@@ -246,7 +246,7 @@ export function NotificationList({
           <h3 className="font-semibold">
             Meldingen
             {unreadCount > 0 && (
-              <Badge variant="secondary" className="ml-2">
+              <Badge variant="secondary" className="ms-2">
                 {unreadCount} nieuw
               </Badge>
             )}
@@ -259,7 +259,7 @@ export function NotificationList({
               onClick={onMarkAllAsRead}
               className="text-xs"
             >
-              <CheckCheck className="h-4 w-4 mr-1" />
+              <CheckCheck className="h-4 w-4 me-1" />
               Alles gelezen
             </Button>
           )}

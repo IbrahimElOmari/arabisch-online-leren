@@ -151,41 +151,38 @@ const AnnouncementSystem = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Titel</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => handleInputChange('title', e.target.value)}
-                placeholder="Aankondiging titel..."
-                required
-              />
-            </div>
+        <ResponsiveForm layout="double" onSubmit={handleSubmit}>
+          <ResponsiveFormField
+            label="Titel"
+            name="title"
+            type="text"
+            required
+            value={formData.title}
+            onChange={(v) => handleInputChange('title', v)}
+            placeholder="Aankondiging titel..."
+          />
 
-            <div className="space-y-2">
-              <Label htmlFor="priority">Prioriteit</Label>
-              <Select
-                value={formData.priority}
-                onValueChange={(value) => handleInputChange('priority', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">
-                    <span className={getPriorityColor('low')}>Laag</span>
-                  </SelectItem>
-                  <SelectItem value="medium">
-                    <span className={getPriorityColor('medium')}>Gemiddeld</span>
-                  </SelectItem>
-                  <SelectItem value="high">
-                    <span className={getPriorityColor('high')}>Hoog</span>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="priority">Prioriteit</Label>
+            <Select
+              value={formData.priority}
+              onValueChange={(value) => handleInputChange('priority', value)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">
+                  <span className={getPriorityColor('low')}>Laag</span>
+                </SelectItem>
+                <SelectItem value="medium">
+                  <span className={getPriorityColor('medium')}>Gemiddeld</span>
+                </SelectItem>
+                <SelectItem value="high">
+                  <span className={getPriorityColor('high')}>Hoog</span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
@@ -216,7 +213,7 @@ const AnnouncementSystem = () => {
 
           {formData.target === 'class' && (
             <>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-full @md:col-span-1">
                 <Label htmlFor="classId">Selecteer Klas</Label>
                 <Select
                   value={formData.classId || ''}
@@ -234,9 +231,8 @@ const AnnouncementSystem = () => {
                   </SelectContent>
                 </Select>
               </div>
-              
               {formData.classId && levels.length > 0 && (
-                <div className="space-y-2">
+                <div className="space-y-2 col-span-full">
                   <Label>Selecteer Niveaus (optioneel)</Label>
                   <div className="grid grid-cols-2 gap-2">
                     {levels.map((level) => (
@@ -270,19 +266,18 @@ const AnnouncementSystem = () => {
             </>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="content">Bericht</Label>
-            <Textarea
-              id="content"
-              value={formData.content}
-              onChange={(e) => handleInputChange('content', e.target.value)}
-              placeholder="Typ hier je aankondiging..."
-              rows={6}
-              required
-            />
-          </div>
+          <ResponsiveFormField
+            label="Bericht"
+            name="content"
+            type="textarea"
+            required
+            value={formData.content}
+            onChange={(v) => handleInputChange('content', v)}
+            placeholder="Typ hier je aankondiging..."
+            className="col-span-full"
+          />
 
-          <div className="flex justify-end">
+          <div className="col-span-full flex justify-end">
             <Button
               type="submit"
               disabled={isSubmitting || !formData.title || !formData.content}
@@ -292,7 +287,7 @@ const AnnouncementSystem = () => {
               {isSubmitting ? 'Bezig met verzenden...' : 'Verzend Aankondiging'}
             </Button>
           </div>
-        </form>
+        </ResponsiveForm>
 
         {/* Preview */}
         {formData.title && formData.content && (

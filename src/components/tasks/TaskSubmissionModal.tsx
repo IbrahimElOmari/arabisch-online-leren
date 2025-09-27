@@ -277,7 +277,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
     if (submission.grade !== null && submission.grade !== undefined) {
       return (
         <Badge variant="default" className="bg-green-500">
-          <CheckCircle className="h-3 w-3 mr-1" />
+          <CheckCircle className="h-3 w-3 me-1" />
           Beoordeeld ({submission.grade}/{task.grading_scale})
         </Badge>
       );
@@ -285,7 +285,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
     
     return (
       <Badge variant="secondary">
-        <Clock className="h-3 w-3 mr-1" />
+        <Clock className="h-3 w-3 me-1" />
         Ingeleverd
       </Badge>
     );
@@ -331,7 +331,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
                       href={task.external_link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-primary hover:underline ml-2"
+                      className="text-primary hover:underline ms-2"
                     >
                       {task.external_link}
                     </a>
@@ -345,7 +345,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
                       href={task.youtube_url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-primary hover:underline ml-2"
+                      className="text-primary hover:underline ms-2"
                     >
                       Bekijk video
                     </a>
@@ -379,7 +379,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
                         href={submission.submission_file_path} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-primary hover:underline ml-2"
+                        className="text-primary hover:underline ms-2"
                       >
                         {submission.submission_file_path.split('/').pop()}
                       </a>
@@ -411,7 +411,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
                   {loading ? 'Verzenden...' : (submission ? 'Bijwerken' : 'Inleveren')}
                 </Button>
                 <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                  <X className="h-4 w-4 mr-1" />
+                  <X className="h-4 w-4 me-1" />
                   Sluiten
                 </Button>
               </div>

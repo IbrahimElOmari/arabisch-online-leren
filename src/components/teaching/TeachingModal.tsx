@@ -548,7 +548,7 @@ export function TeachingModal({
         <DialogHeader>
           <DialogTitle>{getModalTitle()}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <ResponsiveForm layout="single" onSubmit={handleSubmit}>
           {renderFormContent()}
           <div className="flex justify-end space-x-2 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
@@ -558,7 +558,7 @@ export function TeachingModal({
               {loading ? 'Bezig...' : 'Opslaan'}
             </Button>
           </div>
-        </form>
+        </ResponsiveForm>
       </DialogContent>
     </Dialog>
   );

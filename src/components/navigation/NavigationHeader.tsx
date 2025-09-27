@@ -24,7 +24,7 @@ export const NavigationHeader = React.memo(() => {
           {isRTL ? 'تعلم العربية' : 'Leer Arabisch'}
         </span>
       </button>
-      <div className="ml-auto hidden sm:block">
+      <div className="ms-auto hidden sm:block">
         <PWAInstallButton />
       </div>
     </div>

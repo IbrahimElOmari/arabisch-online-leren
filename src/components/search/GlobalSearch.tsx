@@ -177,7 +177,7 @@ export function GlobalSearch({
 
   const defaultTrigger = (
     <Button variant="outline" className={cn("justify-start", className)}>
-      <Search className="h-4 w-4 mr-2" />
+      <Search className="h-4 w-4 me-2" />
       <span className="flex-1 text-left text-muted-foreground">
         {placeholder}
       </span>
@@ -213,7 +213,7 @@ export function GlobalSearch({
               onChange={(e) => setQuery(e.target.value)}
               placeholder={placeholder}
               className={cn(
-                "pl-10 pr-10",
+                "ps-10 pe-10",
                 isRTL && "text-right arabic-text"
               )}
             />
@@ -233,7 +233,7 @@ export function GlobalSearch({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4 mr-2" />
+                <Filter className="h-4 w-4 me-2" />
                 {entityTypes.find(t => t.value === selectedType)?.label}
               </Button>
             </DropdownMenuTrigger>

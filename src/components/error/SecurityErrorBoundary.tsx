@@ -196,12 +196,12 @@ export class SecurityErrorBoundary extends Component<Props, State> {
               <div className="flex gap-2">
                 {this.state.retryCount < this.maxRetries ? (
                   <Button onClick={this.handleManualRetry} variant="outline">
-                    <RefreshCw className="h-4 w-4 mr-2" />
+                    <RefreshCw className="h-4 w-4 me-2" />
                     Probeer opnieuw ({this.maxRetries - this.state.retryCount} pogingen over)
                   </Button>
                 ) : (
                   <Button onClick={() => window.location.reload()} variant="outline">
-                    <RefreshCw className="h-4 w-4 mr-2" />
+                    <RefreshCw className="h-4 w-4 me-2" />
                     Pagina verversen
                   </Button>
                 )}

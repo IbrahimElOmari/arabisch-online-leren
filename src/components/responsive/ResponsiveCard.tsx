@@ -60,7 +60,7 @@ export const ResponsiveCard = ({
               {title}
             </CardTitle>
             {headerAction && (
-              <div className={cn(isRTL ? 'mr-auto' : 'ml-auto')}>
+              <div className={cn('ms-auto')}>
                 {headerAction}
               </div>
             )}

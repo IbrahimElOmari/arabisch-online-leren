@@ -9,7 +9,7 @@ const CRITICAL_CSS_CLASSES = [
   'bg-background',
   'text-foreground',
   'border-border',
-  'main-content-card',
+  
   'floating-content',
   // Navigation
   'sidebar',

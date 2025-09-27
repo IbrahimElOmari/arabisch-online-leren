@@ -108,6 +108,8 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleCreateClassSubmit = (e: React.FormEvent<HTMLFormElement>) => { e.preventDefault(); handleSubmit(e); };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -201,7 +203,7 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
     switch (type) {
       case 'create_class':
         return (
-          <ResponsiveForm layout="single" onSubmit={(e: React.FormEvent) => { e.preventDefault(); handleSubmit(e); }}>
+          <ResponsiveForm layout="single" onSubmit={handleCreateClassSubmit}>
             <ResponsiveFormField
               label="Klas Naam"
               name="name"

@@ -184,10 +184,6 @@ All colors MUST be HSL.
     background-attachment: fixed;
   }
 
-  .main-content-card {
-    @apply bg-card border border-border rounded-lg p-6;
-    box-shadow: 0 4px 12px hsl(var(--muted) / 0.15);
-  }
 
   .floating-content {
     @apply bg-card/95 backdrop-blur-sm border border-border rounded-lg;
