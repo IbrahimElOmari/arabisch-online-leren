@@ -221,7 +221,7 @@ export function PerformanceModal({ open, onOpenChange, classId, className, level
                   <CardContent className="pt-6">
                     <div className="flex items-center">
                       <Users className="h-8 w-8 text-blue-600" />
-                      <div className="ml-4">
+                      <div className="ms-4">
                         <p className="text-sm font-medium text-muted-foreground">Totaal Leerlingen</p>
                         <p className="text-2xl font-bold">{students.length}</p>
                       </div>
@@ -233,7 +233,7 @@ export function PerformanceModal({ open, onOpenChange, classId, className, level
                   <CardContent className="pt-6">
                     <div className="flex items-center">
                       <CheckCircle className="h-8 w-8 text-green-600" />
-                      <div className="ml-4">
+                      <div className="ms-4">
                         <p className="text-sm font-medium text-muted-foreground">Gemiddelde Aanwezigheid</p>
                         <p className="text-2xl font-bold">
                           {students.length > 0 ? Math.round(students.reduce((sum, s) => sum + getAttendancePercentage(s.attendanceCount, s.totalLessons), 0) / students.length) : 0}%
@@ -247,7 +247,7 @@ export function PerformanceModal({ open, onOpenChange, classId, className, level
                   <CardContent className="pt-6">
                     <div className="flex items-center">
                       <FileText className="h-8 w-8 text-purple-600" />
-                      <div className="ml-4">
+                      <div className="ms-4">
                         <p className="text-sm font-medium text-muted-foreground">Totaal Lessen</p>
                         <p className="text-2xl font-bold">{students[0]?.totalLessons || 0}</p>
                       </div>

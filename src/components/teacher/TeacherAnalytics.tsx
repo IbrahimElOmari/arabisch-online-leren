@@ -126,11 +126,11 @@ export const TeacherAnalytics: React.FC<TeacherAnalyticsProps> = ({
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
+            <Filter className="h-4 w-4 me-2" />
             Filter
           </Button>
           <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
+            <Download className="h-4 w-4 me-2" />
             Export
           </Button>
         </div>

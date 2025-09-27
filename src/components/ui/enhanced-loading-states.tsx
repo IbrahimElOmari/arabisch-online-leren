@@ -305,7 +305,7 @@ export const EnhancedLoadingSpinner = ({
         <span className={cn(
           textSizeClasses[size], 
           "text-muted-foreground animate-fade-in",
-          variant === 'inline' ? 'ml-2' : 'mt-2',
+          variant === 'inline' ? 'ms-2' : 'mt-2',
           isRTL && 'arabic-text'
         )}>
           {text}

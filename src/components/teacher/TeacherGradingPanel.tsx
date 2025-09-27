@@ -269,7 +269,7 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
                 <FileText className="h-4 w-4" />
                 <span className="text-sm">Bestand ingeleverd</span>
                 <Button variant="outline" size="sm">
-                  <Download className="h-4 w-4 mr-1" />
+                  <Download className="h-4 w-4 me-1" />
                   Download
                 </Button>
               </div>
@@ -311,7 +311,7 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
                 disabled={!grade || submitting}
                 className="flex-1"
               >
-                <Star className="h-4 w-4 mr-2" />
+                <Star className="h-4 w-4 me-2" />
                 {submitting ? 'Bezig met beoordelen...' : 'Beoordeling Opslaan'}
               </Button>
               <Button
@@ -323,7 +323,7 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
                 })}
                 disabled={submitting}
               >
-                <Gift className="h-4 w-4 mr-1" />
+                <Gift className="h-4 w-4 me-1" />
                 Bonus
               </Button>
             </div>
@@ -444,7 +444,7 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
             disabled={!points || submitting}
             className="w-full"
           >
-            <MessageCircle className="h-4 w-4 mr-2" />
+            <MessageCircle className="h-4 w-4 me-2" />
             {submitting ? 'Bezig met beoordelen...' : 'Beoordeling Opslaan'}
           </Button>
         </CardContent>
@@ -478,7 +478,7 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
           >
             Taken ({taskSubmissions.length})
             {ungraded.tasks > 0 && (
-              <Badge variant="destructive" className="ml-2 h-5 w-5 p-0 text-xs">
+              <Badge variant="destructive" className="ms-2 h-5 w-5 p-0 text-xs">
                 {ungraded.tasks}
               </Badge>
             )}
@@ -491,7 +491,7 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
           >
             Vragen ({questionAnswers.length})
             {ungraded.questions > 0 && (
-              <Badge variant="destructive" className="ml-2 h-5 w-5 p-0 text-xs">
+              <Badge variant="destructive" className="ms-2 h-5 w-5 p-0 text-xs">
                 {ungraded.questions}
               </Badge>
             )}

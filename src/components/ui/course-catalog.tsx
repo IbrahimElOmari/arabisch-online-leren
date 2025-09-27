@@ -146,7 +146,7 @@ export const CourseCatalog = ({ courses = mockCourses, showFilters = true }: Cou
                 placeholder="Zoek cursussen..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="ps-10"
               />
             </div>
 

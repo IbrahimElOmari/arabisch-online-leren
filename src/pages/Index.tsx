@@ -112,7 +112,7 @@ const Index = () => {
                   className="text-lg px-8 py-6 group"
                   onClick={() => navigate('/visie')}
                 >
-                  <Play className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+                  <Play className="me-2 h-5 w-5 group-hover:scale-110 transition-transform" />
                   Bekijk Demo
                 </Button>
               </div>
@@ -132,7 +132,7 @@ const Index = () => {
                   {[1, 2, 3, 4, 5].map((i) => (
                     <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   ))}
-                  <span className="text-sm text-muted-foreground ml-1">4.9/5 sterren</span>
+                  <span className="text-sm text-muted-foreground ms-1">4.9/5 sterren</span>
                 </div>
               </div>
             </div>
@@ -164,7 +164,7 @@ const Index = () => {
 
                   <Button className="w-full" onClick={() => navigate('/auth')}>
                     Doe Gratis Mee
-                    <Heart className="ml-2 h-4 w-4" />
+                    <Heart className="ms-2 h-4 w-4" />
                   </Button>
                   
                   <p className="text-xs text-center text-muted-foreground">
@@ -204,7 +204,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
             <Badge variant="outline" className="px-4 py-2">
-              <Zap className="mr-2 h-4 w-4" />
+              <Zap className="me-2 h-4 w-4" />
               Waarom Kiezen Voor Ons
             </Badge>
             <h2 className="text-4xl lg:text-5xl font-bold tracking-tight">
@@ -297,7 +297,7 @@ const Index = () => {
               onClick={() => navigate('/auth')}
             >
               Start Gratis Proefles
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="ms-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             
             <Button 

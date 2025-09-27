@@ -229,7 +229,7 @@ export const BulkGradingModal = ({ isOpen, onClose, classId, levelId }: BulkGrad
               onClick={handleBulkGrade}
               disabled={selectedSubmissions.size === 0 || !bulkGrade || loading}
             >
-              <Star className="h-4 w-4 mr-2" />
+              <Star className="h-4 w-4 me-2" />
               {loading ? 'Bezig...' : `Beoordeel ${selectedSubmissions.size} inzendingen`}
             </Button>
           </div>

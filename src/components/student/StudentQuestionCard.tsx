@@ -150,7 +150,7 @@ export const StudentQuestionCard = ({ question, onSubmit }: StudentQuestionCardP
                 disabled={!answerText.trim() || submitting}
                 className="w-full"
               >
-                <CheckCircle2 className="h-4 w-4 mr-2" />
+                <CheckCircle2 className="h-4 w-4 me-2" />
                 {submitting ? 'Bezig met indienen...' : 'Antwoord Indienen'}
               </Button>
             </div>

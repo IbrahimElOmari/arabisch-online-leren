@@ -153,7 +153,7 @@ export const EnhancedThemeToggle = ({
                 {getThemeLabel(themeOption)}
               </span>
               {theme === themeOption && (
-                <div className="ml-auto w-2 h-2 bg-primary rounded-full" />
+                <div className="ms-auto w-2 h-2 bg-primary rounded-full" />
               )}
             </DropdownMenuItem>
           ))}
@@ -161,7 +161,7 @@ export const EnhancedThemeToggle = ({
           <DropdownMenuSeparator />
           
           <DropdownMenuItem disabled className="text-xs text-muted-foreground justify-center">
-            <Palette className="h-3 w-3 mr-1" />
+            <Palette className="h-3 w-3 me-1" />
             <span className={isRTL ? 'arabic-text' : ''}>
               {t('theme.auto_detect', 'Automatisch detecteren')}
             </span>

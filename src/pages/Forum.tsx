@@ -83,7 +83,7 @@ const Forum = () => {
                 onClick={refetchClasses}
                 disabled={isRefetching}
               >
-                <RefreshCw className={`h-4 w-4 mr-1 ${isRefetching ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 me-1 ${isRefetching ? 'animate-spin' : ''}`} />
                 Opnieuw proberen
               </Button>
             </AlertDescription>
@@ -167,7 +167,7 @@ const Forum = () => {
                 onClick={refetchClasses}
                 disabled={isRefetching}
               >
-                <RefreshCw className={`h-4 w-4 mr-2 ${isRefetching ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 me-2 ${isRefetching ? 'animate-spin' : ''}`} />
                 Opnieuw proberen
               </Button>
             </CardContent>

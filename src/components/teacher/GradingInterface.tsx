@@ -284,7 +284,7 @@ export const GradingInterface = () => {
                       </p>
                     </div>
                     <Badge variant="outline">
-                      <Clock className="w-3 h-3 mr-1" />
+                      <Clock className="w-3 h-3 me-1" />
                       Te beoordelen
                     </Badge>
                   </div>
@@ -308,7 +308,7 @@ export const GradingInterface = () => {
                         className="mt-1"
                         onClick={() => downloadFile(submission.submission_file_path!)}
                       >
-                        <Download className="w-4 h-4 mr-2" />
+                        <Download className="w-4 h-4 me-2" />
                         Download bestand
                       </Button>
                     </div>
@@ -352,7 +352,7 @@ export const GradingInterface = () => {
                       className="mt-3"
                       disabled={grades[submission.id] === undefined}
                     >
-                      <Star className="w-4 h-4 mr-2" />
+                      <Star className="w-4 h-4 me-2" />
                       Beoordeling Opslaan
                     </Button>
                   </div>
@@ -424,7 +424,7 @@ export const GradingInterface = () => {
                           variant="default"
                           className="bg-green-600 hover:bg-green-700"
                         >
-                          <CheckCircle className="w-4 h-4 mr-2" />
+                          <CheckCircle className="w-4 h-4 me-2" />
                           Juist
                         </Button>
                         <Button 

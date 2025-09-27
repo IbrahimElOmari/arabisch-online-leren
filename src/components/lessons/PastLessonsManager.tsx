@@ -130,7 +130,7 @@ const PastLessonsManager = ({ classId, niveauId }: PastLessonsManagerProps) => {
         <CardTitle className="flex items-center gap-2">
           <Play className="h-5 w-5" />
           Voorbije Lessen
-          <Badge variant="outline" className="ml-auto">
+          <Badge variant="outline" className="ms-auto">
             {lessons.length} video{lessons.length !== 1 ? 's' : ''}
           </Badge>
         </CardTitle>
@@ -172,7 +172,7 @@ const PastLessonsManager = ({ classId, niveauId }: PastLessonsManagerProps) => {
                               size="sm"
                               onClick={() => window.open(lesson.youtube_url!, '_blank')}
                             >
-                              <ExternalLink className="h-4 w-4 mr-1" />
+                              <ExternalLink className="h-4 w-4 me-1" />
                               Bekijken
                             </Button>
                           )}
@@ -182,7 +182,7 @@ const PastLessonsManager = ({ classId, niveauId }: PastLessonsManagerProps) => {
                               size="sm"
                               onClick={() => deleteLesson(lesson.id)}
                             >
-                              <Trash2 className="h-4 w-4 mr-1" />
+                              <Trash2 className="h-4 w-4 me-1" />
                               Verwijderen
                             </Button>
                           )}

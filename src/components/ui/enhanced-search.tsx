@@ -153,7 +153,7 @@ export const EnhancedSearch = ({
             placeholder={placeholder || t('search.placeholder', 'Zoeken...')}
             className={cn(
               sizeClasses[size],
-              isRTL ? 'pr-10 pl-10' : 'pl-10 pr-10',
+              isRTL ? 'pe-10 ps-10' : 'ps-10 pe-10',
               'transition-all duration-200',
               isRTL && 'arabic-text'
             )}

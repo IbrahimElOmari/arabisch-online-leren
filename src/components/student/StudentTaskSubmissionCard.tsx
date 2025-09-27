@@ -182,7 +182,7 @@ export const StudentTaskSubmissionCard = ({
                   disabled={!submissionText.trim()}
                   className="w-full"
                 >
-                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  <CheckCircle2 className="h-4 w-4 me-2" />
                   Antwoord Indienen
                 </Button>
               </div>
@@ -204,7 +204,7 @@ export const StudentTaskSubmissionCard = ({
                   disabled={!selectedFile || uploading}
                   className="w-full"
                 >
-                  <Upload className="h-4 w-4 mr-2" />
+                  <Upload className="h-4 w-4 me-2" />
                   {uploading ? 'Uploading...' : 'Bestand Indienen'}
                 </Button>
               </div>

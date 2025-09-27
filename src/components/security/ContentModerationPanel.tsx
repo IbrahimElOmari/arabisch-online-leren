@@ -284,7 +284,7 @@ export const ContentModerationPanel = () => {
                         />
                       )}
 
-                      <div className="flex gap-2 ml-auto">
+                      <div className="flex gap-2 ms-auto">
                         <Button
                           size="sm"
                           variant="outline"
@@ -295,7 +295,7 @@ export const ContentModerationPanel = () => {
                             selectedReason === 'custom' ? customReason : selectedReason
                           )}
                         >
-                          <CheckCircle className="h-4 w-4 mr-1" />
+                          <CheckCircle className="h-4 w-4 me-1" />
                           Goedkeuren
                         </Button>
                         <Button
@@ -308,7 +308,7 @@ export const ContentModerationPanel = () => {
                             selectedReason === 'custom' ? customReason : selectedReason
                           )}
                         >
-                          <XCircle className="h-4 w-4 mr-1" />
+                          <XCircle className="h-4 w-4 me-1" />
                           Afwijzen
                         </Button>
                         <Button
@@ -321,7 +321,7 @@ export const ContentModerationPanel = () => {
                             selectedReason === 'custom' ? customReason : selectedReason
                           )}
                         >
-                          <Trash2 className="h-4 w-4 mr-1" />
+                          <Trash2 className="h-4 w-4 me-1" />
                           Verwijderen
                         </Button>
                       </div>

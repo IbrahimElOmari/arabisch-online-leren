@@ -248,7 +248,7 @@ export const DirectMessaging = () => {
               placeholder={isRTL ? 'البحث عن المستخدمين...' : 'Zoek gebruikers...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="ps-10"
             />
           </div>
         </div>

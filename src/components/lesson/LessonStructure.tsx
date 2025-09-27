@@ -262,7 +262,7 @@ export const LessonStructure: React.FC<LessonStructureProps> = ({
                   size="lg"
                 >
                   Oefening Voltooid
-                  <CheckCircle className="h-4 w-4 ml-2" />
+                  <CheckCircle className="h-4 w-4 ms-2" />
                 </Button>
               </div>
             )}
@@ -297,7 +297,7 @@ export const LessonStructure: React.FC<LessonStructureProps> = ({
                 {isLastStep ? (
                   <>
                     Les Voltooien
-                    <Trophy className="h-4 w-4 ml-2" />
+                    <Trophy className="h-4 w-4 ms-2" />
                   </>
                 ) : (
                   <>

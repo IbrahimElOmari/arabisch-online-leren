@@ -99,7 +99,7 @@ const Dashboard = () => {
                   onClick={refreshProfile}
                   disabled={isRefreshing}
                 >
-                  <RefreshCw className={`h-4 w-4 ${isRTL ? 'ml-1' : 'mr-1'} ${isRefreshing ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`h-4 w-4 ${isRTL ? 'ms-1' : 'me-1'} ${isRefreshing ? 'animate-spin' : ''}`} />
                   {isRefreshing ? t('status.loading') : t('dashboard.force_profile', 'Forceer profiel')}
                 </Button>
               </AlertDescription>

@@ -233,7 +233,7 @@ export const SecurityMonitor: React.FC<{ children: React.ReactNode }> = ({ child
               <span>
                 Sessie verloopt over {Math.ceil((sessionState.timeUntilExpiry || 0) / 60000)} min
               </span>
-              <Button size="sm" onClick={extendSession} className="ml-2">
+              <Button size="sm" onClick={extendSession} className="ms-2">
                 Verlengen
               </Button>
             </AlertDescription>
@@ -252,7 +252,7 @@ export const SecurityMonitor: React.FC<{ children: React.ReactNode }> = ({ child
                 size="sm" 
                 variant="outline"
                 onClick={() => dismissThreat(threat.id)}
-                className="ml-2"
+                className="ms-2"
               >
                 Sluiten
               </Button>

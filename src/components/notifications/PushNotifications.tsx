@@ -301,7 +301,7 @@ export const PushNotifications = () => {
           </div>
 
           {settings.enabled && (
-            <div className="space-y-3 pl-6 border-l-2 border-border">
+            <div className="space-y-3 ps-6 border-s-2 border-border">
               <div className={`flex items-center justify-between ${getFlexDirection()}`}>
                 <label className={`text-sm ${isRTL ? 'arabic-text' : ''}`}>
                   {isRTL ? 'الرسائل الجديدة' : 'Nieuwe berichten'}
@@ -409,7 +409,7 @@ export const PushNotifications = () => {
                       <div className={`flex items-center gap-1 text-xs text-muted-foreground ${getFlexDirection()}`}>
                         <span>{formatTime(notification.timestamp)}</span>
                         
-                        <div className={`flex items-center gap-1 ml-2 ${getFlexDirection()}`}>
+                        <div className={`flex items-center gap-1 ms-2 ${getFlexDirection()}`}>
                           {!notification.read && (
                             <Button
                               variant="ghost"

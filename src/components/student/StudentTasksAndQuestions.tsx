@@ -322,7 +322,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
                       className="w-full resize-none"
                     />
                     <Button onClick={() => handleSubmitTextTask(task.id)} disabled={loading}>
-                      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
+                      {loading ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="me-2 h-4 w-4" />}
                       Taak Indienen
                     </Button>
                   </>
@@ -337,7 +337,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
                       )}
                     </div>
                     <Button onClick={() => handleUploadFileTask(task.id)} disabled={uploading}>
-                      {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+                      {uploading ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <Upload className="me-2 h-4 w-4" />}
                       Bestand Uploaden en Taak Indienen
                     </Button>
                   </>
@@ -373,7 +373,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
                   className="w-full resize-none"
                 />
                 <Button>
-                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  <CheckCircle2 className="h-4 w-4 me-2" />
                   Antwoord Indienen
                 </Button>
               </div>

@@ -326,7 +326,7 @@ export const TaskQuestionManagement = () => {
                       onClick={() => viewTaskSubmissions(task.id, task.title)}
                       className="flex-1"
                     >
-                      <Eye className="w-4 h-4 mr-2" />
+                      <Eye className="w-4 h-4 me-2" />
                       Bekijk Inzendingen
                     </Button>
                     <Button 
@@ -334,7 +334,7 @@ export const TaskQuestionManagement = () => {
                       size="sm"
                       onClick={() => viewTaskSubmissions(task.id, task.title)}
                     >
-                      <Users className="w-4 h-4 mr-2" />
+                      <Users className="w-4 h-4 me-2" />
                       Leerlingen
                     </Button>
                   </div>
@@ -413,7 +413,7 @@ export const TaskQuestionManagement = () => {
                       onClick={() => viewQuestionAnswers(question.id, question.vraag_tekst)}
                       className="flex-1"
                     >
-                      <Eye className="w-4 h-4 mr-2" />
+                      <Eye className="w-4 h-4 me-2" />
                       Bekijk Antwoorden
                     </Button>
                     <Button 
@@ -421,7 +421,7 @@ export const TaskQuestionManagement = () => {
                       size="sm"
                       onClick={() => viewQuestionAnswers(question.id, question.vraag_tekst)}
                     >
-                      <Users className="w-4 h-4 mr-2" />
+                      <Users className="w-4 h-4 me-2" />
                       Leerlingen
                     </Button>
                   </div>

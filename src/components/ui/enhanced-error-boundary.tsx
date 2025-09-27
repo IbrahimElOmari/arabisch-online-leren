@@ -199,7 +199,7 @@ export class EnhancedErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
                   className="flex-1 sm:flex-none"
                   variant="default"
                 >
-                  <RefreshCw className="h-4 w-4 mr-2" />
+                  <RefreshCw className="h-4 w-4 me-2" />
                   Opnieuw Proberen
                 </Button>
                 
@@ -208,7 +208,7 @@ export class EnhancedErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
                   className="flex-1 sm:flex-none"
                   variant="outline"
                 >
-                  <RefreshCw className="h-4 w-4 mr-2" />
+                  <RefreshCw className="h-4 w-4 me-2" />
                   Pagina Verversen
                 </Button>
                 
@@ -217,7 +217,7 @@ export class EnhancedErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
                   className="flex-1 sm:flex-none"
                   variant="outline"
                 >
-                  <Home className="h-4 w-4 mr-2" />
+                  <Home className="h-4 w-4 me-2" />
                   Naar Dashboard
                 </Button>
               </div>
@@ -230,7 +230,7 @@ export class EnhancedErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
                   size="sm"
                   className="text-muted-foreground"
                 >
-                  <MessageCircle className="h-4 w-4 mr-2" />
+                  <MessageCircle className="h-4 w-4 me-2" />
                   Rapporteer Fout
                 </Button>
               </div>

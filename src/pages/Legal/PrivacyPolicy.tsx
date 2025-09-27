@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
           onClick={() => navigate(-1)}
           className="mb-6"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 me-2" />
           Terug
         </Button>
 

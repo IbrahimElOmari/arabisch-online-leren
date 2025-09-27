@@ -268,7 +268,7 @@ export const AutoGradingSystem = ({ classId, levelId }: AutoGradingSystemProps) 
             disabled={processing}
             className="bg-yellow-600 hover:bg-yellow-700"
           >
-            <Play className="h-4 w-4 mr-2" />
+            <Play className="h-4 w-4 me-2" />
             {processing ? 'Bezig...' : `Beoordeel Alles (${getTotalUngradedCount()})`}
           </Button>
         )}
@@ -330,7 +330,7 @@ export const AutoGradingSystem = ({ classId, levelId }: AutoGradingSystemProps) 
                     onClick={() => handleAutoGradeSingle(question.id)}
                     disabled={processing}
                   >
-                    <Zap className="h-4 w-4 mr-1" />
+                    <Zap className="h-4 w-4 me-1" />
                     Beoordeel
                   </Button>
                 </div>

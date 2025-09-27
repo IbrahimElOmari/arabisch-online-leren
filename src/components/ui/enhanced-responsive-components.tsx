@@ -241,7 +241,7 @@ export const ResponsiveButtonGroup = ({
           {button.icon && (
             <span className={cn(
               'shrink-0',
-              isRTL ? 'ml-2' : 'mr-2'
+              isRTL ? 'ms-2' : 'me-2'
             )}>
               {button.icon}
             </span>
