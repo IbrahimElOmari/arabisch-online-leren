@@ -13,6 +13,8 @@ import { useToast } from '@/hooks/use-toast';
 import { moderationService } from '@/services/moderationService';
 import { Search, UserCog, Shield, GraduationCap, User } from 'lucide-react';
 import { APP_ROLES, AppRole } from '@/types/roles';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface UserProfile {
   id: string;
@@ -42,6 +44,8 @@ export default function UsersAdmin() {
   const [changeRoleUserId, setChangeRoleUserId] = useState<string | null>(null);
   const [newRole, setNewRole] = useState<AppRole>('leerling');
   const [reason, setReason] = useState('');
+  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -109,27 +113,28 @@ export default function UsersAdmin() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
+    <div className="@container space-y-4 @md:space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <Card className="@container">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className={`flex items-center gap-2 ${getFlexDirection()} ${isRTL ? 'arabic-text font-amiri' : ''}`}>
             <UserCog className="h-5 w-5" />
             Gebruikersbeheer
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex flex-col @sm:flex-row gap-4 mb-4 @md:mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-3 h-4 w-4 text-muted-foreground`} />
               <Input
                 placeholder="Zoek gebruikers..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className={isRTL ? 'pe-10 arabic-text' : 'ps-10'}
+                dir={isRTL ? 'rtl' : 'ltr'}
               />
             </div>
             <Select value={selectedRole} onValueChange={setSelectedRole}>
-              <SelectTrigger className="w-full sm:w-48">
+              <SelectTrigger className="w-full @sm:w-48">
                 <SelectValue placeholder="Filter op rol" />
               </SelectTrigger>
               <SelectContent>
@@ -147,14 +152,14 @@ export default function UsersAdmin() {
               return (
                 <div
                   key={user.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50"
+                  className="flex flex-col @sm:flex-row @sm:items-center @sm:justify-between gap-4 p-4 border rounded-lg hover:bg-muted/50"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-4 ${getFlexDirection()}`}>
+                    <div className={`flex items-center gap-2 ${getFlexDirection()}`}>
                       <RoleIcon className="h-4 w-4 text-muted-foreground" />
                       <div>
-                        <div className="font-medium">{user.full_name}</div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className={`font-medium ${isRTL ? 'arabic-text' : ''}`}>{user.full_name}</div>
+                        <div className={`text-sm text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
                           {user.email || user.parent_email}
                         </div>
                       </div>
@@ -170,17 +175,20 @@ export default function UsersAdmin() {
                         variant="outline" 
                         size="sm"
                         onClick={() => setChangeRoleUserId(user.id)}
+                        className="w-full @sm:w-auto"
                       >
-                        Rol wijzigen
+                        <span className={isRTL ? 'arabic-text' : ''}>Rol wijzigen</span>
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="@container">
                       <DialogHeader>
-                        <DialogTitle>Rol wijzigen voor {user.full_name}</DialogTitle>
+                        <DialogTitle className={isRTL ? 'arabic-text font-amiri' : ''}>
+                          Rol wijzigen voor {user.full_name}
+                        </DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>
-                          <Label htmlFor="role">Nieuwe rol</Label>
+                          <Label htmlFor="role" className={isRTL ? 'arabic-text' : ''}>Nieuwe rol</Label>
                             <Select value={newRole} onValueChange={(value: AppRole) => setNewRole(value)}>
                               <SelectTrigger>
                                 <SelectValue />
@@ -193,12 +201,14 @@ export default function UsersAdmin() {
                             </Select>
                         </div>
                         <div>
-                          <Label htmlFor="reason">Reden (optioneel)</Label>
+                          <Label htmlFor="reason" className={isRTL ? 'arabic-text' : ''}>Reden (optioneel)</Label>
                           <Textarea
                             id="reason"
                             placeholder="Waarom wordt deze rol gewijzigd?"
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
+                            className={isRTL ? 'arabic-text' : ''}
+                            dir={isRTL ? 'rtl' : 'ltr'}
                           />
                         </div>
                         <div className="flex gap-2">
@@ -206,7 +216,9 @@ export default function UsersAdmin() {
                             onClick={handleChangeRole}
                             disabled={changeRoleMutation.isPending}
                           >
-                            {changeRoleMutation.isPending ? 'Wijzigen...' : 'Rol wijzigen'}
+                            <span className={isRTL ? 'arabic-text' : ''}>
+                              {changeRoleMutation.isPending ? 'Wijzigen...' : 'Rol wijzigen'}
+                            </span>
                           </Button>
                         </div>
                       </div>
@@ -218,7 +230,7 @@ export default function UsersAdmin() {
           </div>
 
           {users?.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
+            <div className={`text-center py-8 text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
               Geen gebruikers gevonden.
             </div>
           )}
