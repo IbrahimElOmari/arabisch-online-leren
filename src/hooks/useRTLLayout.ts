@@ -15,10 +15,10 @@ export const useRTLLayout = () => {
     return isRTL ? 'text-left' : 'text-right';
   };
 
-  const getMarginStart = (size: string) => isRTL ? `mr-${size}` : `ml-${size}`;
-  const getMarginEnd = (size: string) => isRTL ? `ml-${size}` : `mr-${size}`;
-  const getPaddingStart = (size: string) => isRTL ? `pr-${size}` : `pl-${size}`;
-  const getPaddingEnd = (size: string) => isRTL ? `pl-${size}` : `pr-${size}`;
+  const getMarginStart = (size: string) => isRTL ? `me-${size}` : `ms-${size}`;
+  const getMarginEnd = (size: string) => isRTL ? `ms-${size}` : `me-${size}`;
+  const getPaddingStart = (size: string) => isRTL ? `pe-${size}` : `ps-${size}`;
+  const getPaddingEnd = (size: string) => isRTL ? `ps-${size}` : `pe-${size}`;
 
   const getBorderStart = () => isRTL ? 'border-r' : 'border-l';
   const getBorderEnd = () => isRTL ? 'border-l' : 'border-r';
@@ -41,8 +41,8 @@ export const useRTLLayout = () => {
   };
 
   // Icon and content utilities  
-  const getIconSpacing = (size: string = '2') => isRTL ? `ml-${size}` : `mr-${size}`;
-  const getIconSpacingReverse = (size: string = '2') => isRTL ? `mr-${size}` : `ml-${size}`;
+  const getIconSpacing = (size: string = '2') => isRTL ? `ms-${size}` : `me-${size}`;
+  const getIconSpacingReverse = (size: string = '2') => isRTL ? `me-${size}` : `ms-${size}`;
 
   // Position utilities
   const getLeftPosition = (size: string) => isRTL ? `right-${size}` : `left-${size}`;

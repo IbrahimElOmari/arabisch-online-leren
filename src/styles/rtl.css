@@ -73,38 +73,35 @@
     direction: inherit;
   }
 
-  /* RTL-specific utility classes */    
-  .rtl .text-right {
+  /* Logical properties for RTL support */
+  .rtl .text-start {
     text-align: right;
   }
 
-  .rtl .text-left {
+  .rtl .text-end {
     text-align: left;
   }
 
-  .rtl .ml-auto {
-    margin-right: auto;
-    margin-left: unset;
+  .rtl .ms-auto {
+    margin-inline-end: auto;
+    margin-inline-start: unset;
   }
 
-  .rtl .mr-auto {
-    margin-left: auto;
-    margin-right: unset;
+  .rtl .me-auto {
+    margin-inline-start: auto;
+    margin-inline-end: unset;
   }
 
-  .rtl .pl-4 {
-    padding-right: 1rem;
-    padding-left: unset;
+  .rtl .ps-4 {
+    padding-inline-start: 1rem;
   }
 
-  .rtl .pr-4 {
-    padding-left: 1rem;
-    padding-right: unset;
+  .rtl .pe-4 {
+    padding-inline-end: 1rem;
   }
 
-  .rtl .border-l {
-    border-right: 1px solid;
-    border-left: unset;
+  .rtl .border-s {
+    border-inline-start: 1px solid;
   }
 
   .rtl .border-r {
