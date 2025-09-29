@@ -252,7 +252,7 @@ const ResetPassword = () => {
                   minLength={12}
                   value={password}
                   onChange={(e) => handlePasswordChange(e.target.value)}
-                  className={`pr-10 ${passwordErrors.length > 0 ? "border-destructive" : ""}`}
+                  className={`pe-10 ${passwordErrors.length > 0 ? "border-destructive" : ""}`}
                   placeholder="Minimaal 12 karakters"
                 />
                 <Button
