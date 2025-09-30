@@ -15,7 +15,10 @@
     }
   ],
   "devDependencies": {
-    "size-limit": "^9.0.0",
-    "@size-limit/file": "^9.0.0"
+    "@size-limit/file": "^9.0.0",
+    "size-limit": "^9.0.0"
+  },
+  "dependencies": {
+    "@types/node": "^24.6.0"
   }
 }
