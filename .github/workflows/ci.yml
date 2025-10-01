@@ -81,15 +81,15 @@ jobs:
       
     - name: Build for develop
       if: github.ref == 'refs/heads/develop'
-      run: pnpm run build:dev
+      run: pnpm build
+      
+    - name: Size limit check (develop)
+      if: github.ref == 'refs/heads/develop'
+      run: pnpm run size:ci
       
     - name: Build for production
       if: github.ref == 'refs/heads/main'
       run: pnpm run build:prod
-      
-    - name: Size limit check
-      if: github.ref == 'refs/heads/main'
-      run: pnpm run size:ci
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
