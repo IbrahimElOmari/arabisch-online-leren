@@ -5,6 +5,7 @@ import "./index.css";
 import { initializeRTLOptimizations } from "./utils/rtlBundleOptimization";
 import { initializeCriticalCSS } from "./utils/criticalCSS";
 import { initializeCrossBrowserRTL } from "./utils/crossBrowserRTL";
+import { GlobalErrorBoundary } from "./components/system/GlobalErrorBoundary";
 
 // Initialize optimizations
 if (import.meta.env.PROD) {
@@ -30,6 +31,8 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <GlobalErrorBoundary>
+      <App />
+    </GlobalErrorBoundary>
   </StrictMode>,
 );
