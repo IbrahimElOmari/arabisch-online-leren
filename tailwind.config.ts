@@ -190,7 +190,6 @@ const config: Config = {
   },
   plugins: [
     require("tailwindcss-animate"),
-    require("@tailwindcss/line-clamp"),
     require("@tailwindcss/container-queries")
   ],
 } satisfies Config;
