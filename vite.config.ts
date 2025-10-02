@@ -21,6 +21,9 @@ export default defineConfig({
           { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' }
         ]
       },
+       devOptions: {
+    enabled: false   // ⟵ PWA uit in development (build:dev)
+  }
       workbox: {
         navigateFallback: '/offline.html',
         cleanupOutdatedCaches: true,
