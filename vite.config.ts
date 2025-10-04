@@ -25,6 +25,8 @@ export default defineConfig({
         enabled: false
       },
       workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,avif}'],
         navigateFallback: '/offline.html',
         cleanupOutdatedCaches: true,
         clientsClaim: true,
@@ -50,6 +52,18 @@ export default defineConfig({
       }
     })
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', 'lucide-react'],
+          'data-vendor': ['@tanstack/react-query', '@supabase/supabase-js'],
+          'charts-vendor': ['recharts']
+        }
+      }
+    }
+  },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) }
   },

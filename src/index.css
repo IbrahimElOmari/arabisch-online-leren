@@ -1,5 +1,6 @@
-
 @import url('./styles/cross-browser.css');
+@import './styles/rtl.css';
+@import './mobile-optimizations.css';
 
 @tailwind base;
 @tailwind components;
@@ -346,6 +347,3 @@ All colors MUST be HSL.
   }
 }
 
-/* Import mobile optimizations */
-@import './styles/rtl.css';
-@import './mobile-optimizations.css';

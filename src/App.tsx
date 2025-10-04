@@ -1,15 +1,17 @@
-
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
-import { EnhancedRTLProvider } from '@/components/rtl/RTLProvider';
 import { TranslationProvider } from '@/contexts/TranslationContext';
 import { AgeThemeProvider } from '@/contexts/AgeThemeContext';
 import { AuthProviderQuery } from '@/components/auth/AuthProviderQuery';
 import { AppGate } from '@/components/auth/AppGate';
 import { AppLayout } from '@/components/layout/AppLayout';
+
+// Lazy load RTLProvider to avoid static/dynamic import conflicts
+const EnhancedRTLProvider = lazy(() => import('@/components/rtl/RTLProvider').then(m => ({ default: m.EnhancedRTLProvider })));
 
 import Index from '@/pages/Index';
 import Auth from '@/pages/Auth';
@@ -63,8 +65,9 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <EnhancedRTLProvider>
-          <TranslationProvider>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>}>
+          <EnhancedRTLProvider>
+            <TranslationProvider>
             <AuthProviderQuery>
               <AgeThemeProvider>
             <Router>
@@ -120,6 +123,7 @@ function App() {
             </AuthProviderQuery>
           </TranslationProvider>
         </EnhancedRTLProvider>
+        </Suspense>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
