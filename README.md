@@ -30,11 +30,46 @@ git clone <YOUR_GIT_URL>
 cd <YOUR_PROJECT_NAME>
 
 # Step 3: Install the necessary dependencies.
-npm i
+pnpm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# Step 4: Setup environment variables (CRITICAL - zie hieronder)
+cp .env.example .env
+# Open .env en vul je Supabase credentials in (zie .env.example voor instructies)
+
+# Step 5: Start the development server with auto-reloading and an instant preview.
+pnpm dev
 ```
+
+**Environment Setup (VEREIST)**
+
+Dit project gebruikt environment variables voor configuratie. **Commit nooit een .env bestand met echte waarden!**
+
+1. **Kopieer het template bestand:**
+   ```sh
+   cp .env.example .env
+   ```
+
+2. **Vul minimaal deze vereiste waarden in:**
+   - `VITE_SUPABASE_URL`: Je Supabase project URL
+   - `VITE_SUPABASE_ANON_KEY`: Je Supabase anon/public key
+
+   *Waar vind ik deze waarden?*
+   - Login op [Supabase](https://app.supabase.com)
+   - Selecteer je project → Settings → API
+   - Kopieer "Project URL" en "anon public" key
+
+3. **Optionele configuratie:**
+   - Analytics: `VITE_PLAUSIBLE_DOMAIN` (cookieless analytics)
+   - Monitoring: `VITE_SENTRY_DSN` (error tracking - prod only)
+   - Payments: `VITE_STRIPE_PUBLISHABLE_KEY` (als payments enabled)
+
+4. **Herstart development server** na wijzigingen in .env
+
+**Security:**
+- ✅ `.env.example` bevat alleen placeholders (safe to commit)
+- ❌ `.env` met echte waarden staat in `.gitignore` (never commit!)
+- ❌ Gebruik nooit Supabase **service_role** key client-side
+- ✅ Secrets voor server-side operaties: gebruik Supabase Edge Function secrets
 
 **Edit a file directly in GitHub**
 
