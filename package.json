@@ -13,7 +13,12 @@
     "typecheck": "tsc --noEmit",
     "size": "size-limit",
     "size:ci": "size-limit --why",
-    "test": "vitest"
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "e2e": "playwright test",
+    "e2e:ci": "playwright test --reporter=line",
+    "e2e:ui": "playwright test --ui"
   },
   "size-limit": [
     {
@@ -108,24 +113,5 @@
     "vite": "^5.4.11",
     "vite-plugin-pwa": "^0.20.5",
     "vitest": "^2.0.3"
-  }
-}
-{
-  "scripts": {
-    "dev": "vite --mode development",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
-    "build:prod": "NODE_ENV=production pnpm build && pnpm size",
-    "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
-    "size": "size-limit",
-    "size:ci": "size-limit --why",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "e2e": "playwright test",
-    "e2e:ci": "playwright test --reporter=line",
-    "e2e:ui": "playwright test --ui"
   }
 }
