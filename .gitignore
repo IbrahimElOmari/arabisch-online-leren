@@ -46,3 +46,23 @@ Thumbs.db
 .idea/
 .vscode/*
 *.swp
+# Geen environment-bestanden committen
+.env
+.env.*
+!.env.example
+
+# Negeer test- en build-mappen
+coverage/
+playwright-report/
+test-results/
+dist/
+.vite/
+
+# Negeer logbestanden en tijdelijke bestanden
+*.log
+logs/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+*.swp
