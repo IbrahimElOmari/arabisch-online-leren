@@ -6,10 +6,13 @@ import { initializeRTLOptimizations } from "./utils/rtlBundleOptimization";
 import { initializeCriticalCSS } from "./utils/criticalCSS";
 import { initializeCrossBrowserRTL } from "./utils/crossBrowserRTL";
 import { GlobalErrorBoundary } from "./components/system/GlobalErrorBoundary";
+import { initMonitoring } from "./lib/monitoring";
 
 // Initialize optimizations
 if (import.meta.env.PROD) {
   initializeRTLOptimizations();
+  // Initialize monitoring (Sentry) in production
+  initMonitoring().catch(console.error);
 }
 initializeCriticalCSS();
 

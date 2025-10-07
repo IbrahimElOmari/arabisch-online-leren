@@ -13,37 +13,38 @@ import { AppLayout } from '@/components/layout/AppLayout';
 // Lazy load RTLProvider to avoid static/dynamic import conflicts
 const EnhancedRTLProvider = lazy(() => import('@/components/rtl/RTLProvider').then(m => ({ default: m.EnhancedRTLProvider })));
 
+// Static imports for critical pages
 import Index from '@/pages/Index';
 import Auth from '@/pages/Auth';
-import Dashboard from '@/pages/Dashboard';
-import Admin from '@/pages/Admin';
-import Forum from '@/pages/Forum';
-import Taken from '@/pages/Taken';
-import Analytics from '@/pages/Analytics';
-import Security from '@/pages/Security';
-import Leerstof from '@/pages/Leerstof';
-import Visie from '@/pages/Visie';
-import Calendar from '@/pages/Calendar';
-import CourseDetail from '@/pages/CourseDetail';
-import EnrollConfirm from '@/pages/EnrollConfirm';
 import ResetPassword from '@/pages/ResetPassword';
-import ForumModeration from '@/pages/ForumModeration';
-import LessonOrganizationPage from '@/pages/LessonOrganization';
-import OfflineContentPage from '@/pages/OfflineContent';
-import Pricing from '@/pages/Pricing';
-import Billing from '@/pages/Billing';
-import BillingComingSoon from '@/pages/BillingComingSoon';
-import Profile from '@/pages/Profile';
-import NotFound from '@/pages/NotFound';
-// Import admin routes
-import AdminLayout from '@/pages/admin/AdminLayout';
-import UsersAdmin from '@/pages/admin/UsersAdmin';
-import Operations from '@/pages/admin/Operations';
-import AuditLogs from '@/pages/admin/AuditLogs';
-import PrivacyTools from '@/pages/account/PrivacyTools';
-// Import legal pages
 import PrivacyPolicy from '@/pages/Legal/PrivacyPolicy';
 import TermsOfService from '@/pages/Legal/TermsOfService';
+import NotFound from '@/pages/NotFound';
+
+// Lazy load heavy pages for better performance
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const Admin = lazy(() => import('@/pages/Admin'));
+const Analytics = lazy(() => import('@/pages/Analytics'));
+const Security = lazy(() => import('@/pages/Security'));
+const Forum = lazy(() => import('@/pages/Forum'));
+const ForumModeration = lazy(() => import('@/pages/ForumModeration'));
+const Taken = lazy(() => import('@/pages/Taken'));
+const Leerstof = lazy(() => import('@/pages/Leerstof'));
+const Visie = lazy(() => import('@/pages/Visie'));
+const Calendar = lazy(() => import('@/pages/Calendar'));
+const CourseDetail = lazy(() => import('@/pages/CourseDetail'));
+const EnrollConfirm = lazy(() => import('@/pages/EnrollConfirm'));
+const LessonOrganizationPage = lazy(() => import('@/pages/LessonOrganization'));
+const OfflineContentPage = lazy(() => import('@/pages/OfflineContent'));
+const Pricing = lazy(() => import('@/pages/Pricing'));
+const Billing = lazy(() => import('@/pages/Billing'));
+const BillingComingSoon = lazy(() => import('@/pages/BillingComingSoon'));
+const Profile = lazy(() => import('@/pages/Profile'));
+const AdminLayout = lazy(() => import('@/pages/admin/AdminLayout'));
+const UsersAdmin = lazy(() => import('@/pages/admin/UsersAdmin'));
+const Operations = lazy(() => import('@/pages/admin/Operations'));
+const AuditLogs = lazy(() => import('@/pages/admin/AuditLogs'));
+const PrivacyTools = lazy(() => import('@/pages/account/PrivacyTools'));
 import { ENV_CONFIG } from '@/config/environment';
 import Maintenance from '@/pages/Maintenance';
 
