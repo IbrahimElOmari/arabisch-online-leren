@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
 import TeacherDashboard from '@/components/dashboard/TeacherDashboard';

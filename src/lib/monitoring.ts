@@ -31,7 +31,6 @@ export async function initMonitoring(): Promise<void> {
   
   try {
     // Dynamic import to avoid bundling Sentry in dev
-    // @ts-expect-error - Sentry is optional dependency, only loaded in production
     const Sentry = await import('@sentry/react');
     
     const config: SentryConfig = {

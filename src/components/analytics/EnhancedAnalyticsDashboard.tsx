@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
+import { useUserRole } from '@/hooks/useUserRole';
 import {
   LineChart,
   Line,
@@ -50,16 +51,17 @@ const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7c7c', '#8dd1e1', '#d084d0'
 
 export const EnhancedAnalyticsDashboard: React.FC = () => {
   const { profile } = useAuth();
+  const { isAdmin, isTeacher } = useUserRole();
   const [selectedTimeRange, setSelectedTimeRange] = useState<'week' | 'month' | 'quarter'>('week');
 
   const { data: analyticsData, isLoading } = useQuery({
     queryKey: ['enhanced-analytics', profile?.id, selectedTimeRange],
     queryFn: async () => await fetchAnalyticsData(profile?.id, selectedTimeRange),
-    enabled: !!profile?.id && (profile.role === 'admin' || profile.role === 'leerkracht'),
+    enabled: !!profile?.id && (isAdmin || isTeacher),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  if (profile?.role !== 'admin' && profile?.role !== 'leerkracht') {
+  if (!isAdmin && !isTeacher) {
     return (
       <div className="p-6 text-center">
         <p className="text-muted-foreground">

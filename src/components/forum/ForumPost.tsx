@@ -8,6 +8,7 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { useUserRole } from '@/hooks/useUserRole';
 import { 
   ThumbsUp, 
   ThumbsDown, 
@@ -67,7 +68,8 @@ export function ForumPost({
   isReply = false,
   nestingLevel = 0
 }: ForumPostProps) {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
+  const { isAdmin, isTeacher } = useUserRole();
   const { toast } = useToast();
   const { getFlexDirection, getTextAlign, getMarginStart, getMarginEnd } = useRTLLayout();
   const { t, language } = useTranslation();
@@ -87,11 +89,11 @@ export function ForumPost({
 
   const canDelete = user && (
     post.author_id === user.id || 
-    profile?.role === 'admin' || 
-    profile?.role === 'leerkracht'
+    isAdmin || 
+    isTeacher
   );
 
-  const canModerate = profile?.role === 'admin' || profile?.role === 'leerkracht';
+  const canModerate = isAdmin || isTeacher;
 
   const handleReply = async () => {
     if (!user) {

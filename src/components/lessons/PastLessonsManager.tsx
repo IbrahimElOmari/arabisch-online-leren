@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useUserRole } from '@/hooks/useUserRole';
 import { 
   Play, 
   Trash2, 
@@ -32,7 +33,7 @@ interface PastLessonsManagerProps {
 }
 
 const PastLessonsManager = ({ classId, niveauId }: PastLessonsManagerProps) => {
-  const { profile } = useAuth();
+  const { isAdmin, isTeacher } = useUserRole();
   const { toast } = useToast();
   const [lessons, setLessons] = useState<PastLesson[]>([]);
   const [loading, setLoading] = useState(true);
@@ -113,7 +114,7 @@ const PastLessonsManager = ({ classId, niveauId }: PastLessonsManagerProps) => {
   };
 
   const canManageLesson = () => {
-    return profile?.role === 'admin' || profile?.role === 'leerkracht';
+    return isAdmin || isTeacher;
   };
 
   if (loading) {

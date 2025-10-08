@@ -16,6 +16,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
+import { useUserRole } from '@/hooks/useUserRole';
 
 interface UserConsent {
   id: string;
@@ -34,7 +35,8 @@ interface DataRetentionPolicy {
 }
 
 export const GDPRCompliance = () => {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
+  const { isAdmin } = useUserRole();
   const [consents, setConsents] = useState<UserConsent[]>([]);
   const [retentionPolicies, setRetentionPolicies] = useState<DataRetentionPolicy[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,11 +68,11 @@ export const GDPRCompliance = () => {
   useEffect(() => {
     if (user) {
       loadUserConsents();
-      if (profile?.role === 'admin') {
+      if (isAdmin) {
         loadRetentionPolicies();
       }
     }
-  }, [user, profile]);
+  }, [user, isAdmin]);
 
   const loadUserConsents = async () => {
     try {
@@ -343,7 +345,7 @@ export const GDPRCompliance = () => {
       </Card>
 
       {/* Admin: Data Retention Policies */}
-      {profile?.role === 'admin' && (
+      {isAdmin && (
         <Card>
           <CardHeader>
             <CardTitle>Data Retentiebeleid (Admin)</CardTitle>

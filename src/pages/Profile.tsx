@@ -23,9 +23,11 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useStudentProgress } from '@/hooks/useStudentProgress';
 import { useAgeTheme } from '@/contexts/AgeThemeContext';
 import { cn } from '@/lib/utils';
+import { useUserRole } from '@/hooks/useUserRole';
 
 const Profile = () => {
   const { user, profile } = useAuth();
+  const { role } = useUserRole();
   const { progress: progressData } = useStudentProgress(user?.id);
   const { themeAge } = useAgeTheme();
   const [activeTab, setActiveTab] = useState('overview');
@@ -103,7 +105,7 @@ const Profile = () => {
                 <div className="flex items-center gap-4 text-muted-foreground">
                   <Badge variant="secondary" className="gap-2">
                     <User className="h-4 w-4" />
-                    {profile?.role === 'leerling' ? 'Leerling' : profile?.role}
+                    {role === 'leerling' ? 'Leerling' : role}
                   </Badge>
                   <span className="flex items-center gap-1">
                     <Trophy className="h-4 w-4" />

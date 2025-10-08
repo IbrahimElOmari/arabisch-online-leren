@@ -12,6 +12,7 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { Upload, FileText, Star, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { useUserRole } from '@/hooks/useUserRole';
 
 interface TaskSystemProps {
   levelId: string;
@@ -19,7 +20,8 @@ interface TaskSystemProps {
 }
 
 export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
+  const { isAdmin, isTeacher } = useUserRole();
   const { 
     tasks, 
     submissions, 
@@ -56,7 +58,7 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
     feedback: ''
   });
 
-  const isTeacherOrAdmin = profile?.role === 'leerkracht' || profile?.role === 'admin';
+  const isTeacherOrAdmin = isAdmin || isTeacher;
 
   useEffect(() => {
     if (levelId) {

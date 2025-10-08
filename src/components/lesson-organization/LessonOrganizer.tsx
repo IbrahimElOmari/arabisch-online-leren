@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DraggableLessonList } from '@/components/drag-drop/DraggableLessonList';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
+import { useUserRole } from '@/hooks/useUserRole';
 import { Plus, Save, BookOpen, GraduationCap } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { toast } from 'sonner';
@@ -37,6 +38,7 @@ interface Level {
 
 export const LessonOrganizer = () => {
   const { profile } = useAuth();
+  const { isAdmin, isTeacher } = useUserRole();
   const { isRTL, getFlexDirection, getTextAlign } = useRTLLayout();
   
   const [classes, setClasses] = useState<Class[]>([]);
@@ -46,8 +48,6 @@ export const LessonOrganizer = () => {
   const [lessons, setLessons] = useState<LessonItem[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const isAdmin = profile?.role === 'admin';
-  const isTeacher = profile?.role === 'leerkracht';
   const canEdit = isAdmin || isTeacher;
 
   useEffect(() => {

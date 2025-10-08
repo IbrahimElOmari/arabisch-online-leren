@@ -13,6 +13,7 @@ import {
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { useUserRole } from '@/hooks/useUserRole';
 import EnhancedThemeToggle from '@/components/ui/enhanced-theme-toggle';
 import { GlobalSearch } from '@/components/search/GlobalSearch';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
@@ -20,6 +21,7 @@ import { cn } from '@/lib/utils';
 
 export const EnhancedNavigationHeader = () => {
   const { user, profile, signOut } = useAuth();
+  const { isAdmin, role } = useUserRole();
   const { isRTL } = useRTLLayout();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -158,7 +160,7 @@ export const EnhancedNavigationHeader = () => {
                         {profile?.full_name || user?.email?.split('@')[0] || 'Gebruiker'}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {getRoleDisplayName(profile?.role)}
+                        {getRoleDisplayName(role)}
                       </p>
                     </div>
                   </div>
@@ -178,7 +180,7 @@ export const EnhancedNavigationHeader = () => {
                   </Link>
                 </DropdownMenuItem>
 
-                {profile?.role === 'admin' && (
+                {isAdmin && (
                   <DropdownMenuItem asChild>
                     <Link to="/admin" className="flex items-center gap-2">
                       <Settings className="h-4 w-4" />

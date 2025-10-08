@@ -1,27 +1,28 @@
-
 import { useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { securityLogger } from '@/utils/securityLogger';
 import { useRateLimit } from './useRateLimit';
+import { useUserRole } from './useUserRole';
 
 export const useSecurityMonitoring = () => {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
+  const { role } = useUserRole();
   const { checkRateLimit } = useRateLimit({ action: 'ADMIN_ACTION', identifier: user?.id });
 
   // Monitor sensitive operations
   const logSensitiveOperation = useCallback(async (action: string, details: any = {}) => {
     await securityLogger.logSensitiveAction(action as any, {
       user_id: user?.id,
-      user_role: profile?.role,
+      user_role: role,
       timestamp: new Date().toISOString(),
       ...details
     });
-  }, [user, profile]);
+  }, [user, role]);
 
   // Validate permissions for data access
   const validateDataAccess = useCallback(async (resource: string, operation: string) => {
-    if (!profile) return false;
+    if (!role) return false;
 
     // Rate limiting for sensitive operations
     const allowed = await checkRateLimit();
@@ -29,19 +30,19 @@ export const useSecurityMonitoring = () => {
       await securityLogger.logSuspiciousActivity('rate_limit_exceeded', {
         resource,
         operation,
-        user_role: profile.role
+        user_role: role
       });
       return false;
     }
 
     // Log data access
     await securityLogger.logDataAccess(resource, operation, {
-      user_role: profile.role,
+      user_role: role,
       user_id: user?.id
     });
 
     // Role-based access control
-    switch (profile.role) {
+    switch (role) {
       case 'admin':
         return true; // Admin can access everything
       case 'leerkracht':
@@ -53,7 +54,7 @@ export const useSecurityMonitoring = () => {
       default:
         return false;
     }
-  }, [profile, user, checkRateLimit]);
+  }, [role, user, checkRateLimit]);
 
   // Input validation and sanitization
   const validateInput = useCallback((input: string, type: 'text' | 'html' | 'file'): boolean => {
@@ -111,7 +112,7 @@ export const useSecurityMonitoring = () => {
 
   // Set up security event monitoring
   useEffect(() => {
-    if (!user || !profile) return;
+    if (!user || !role) return;
 
     // Monitor for security events
     const securityChannel = supabase
@@ -129,7 +130,7 @@ export const useSecurityMonitoring = () => {
     return () => {
       supabase.removeChannel(securityChannel);
     };
-  }, [user, profile]);
+  }, [user, role]);
 
   return {
     logSensitiveOperation,

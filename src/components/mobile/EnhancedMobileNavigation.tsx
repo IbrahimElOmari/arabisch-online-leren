@@ -7,6 +7,7 @@ import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useRTLAnimations } from '@/hooks/useRTLAnimations';
 import { useMobileRTL } from '@/hooks/useMobileRTL';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { useUserRole } from '@/hooks/useUserRole';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -129,6 +130,7 @@ export const EnhancedMobileBottomNav = () => {
 export const EnhancedMobileSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, profile } = useAuth();
+  const { isAdmin, role } = useUserRole();
   const { isRTL } = useRTLLayout();
   const { getSlideInAnimation, getSlideOutAnimation } = useRTLAnimations();
   const { getMobileModalClasses } = useMobileRTL();
@@ -154,7 +156,7 @@ export const EnhancedMobileSidebar = () => {
     }
   ];
 
-  if (profile?.role === 'admin') {
+  if (isAdmin) {
     menuSections.push({
       title: t('nav.admin', 'Admin'),
       items: [
@@ -207,9 +209,9 @@ export const EnhancedMobileSidebar = () => {
                 <h2 className="font-semibold text-sm">
                   {profile?.full_name || user?.email || t('nav.guest', 'Guest')}
                 </h2>
-                {profile?.role && (
+                {role && (
                   <p className="text-xs text-muted-foreground capitalize">
-                    {profile.role}
+                    {role}
                   </p>
                 )}
               </div>

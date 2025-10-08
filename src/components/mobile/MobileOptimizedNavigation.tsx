@@ -19,6 +19,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useAgeTheme } from '@/contexts/AgeThemeContext';
 import { cn } from '@/lib/utils';
+import { useUserRole } from '@/hooks/useUserRole';
 
 interface NavigationItem {
   icon: React.ComponentType<any>;
@@ -30,6 +31,7 @@ interface NavigationItem {
 
 export const MobileOptimizedNavigation: React.FC = () => {
   const { profile, signOut } = useAuth();
+  const { role } = useUserRole();
   const { themeAge } = useAgeTheme();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -76,7 +78,7 @@ export const MobileOptimizedNavigation: React.FC = () => {
   ];
 
   const filteredItems = navigationItems.filter(item => 
-    item.roles.includes(profile?.role || 'leerling')
+    item.roles.includes(role || 'leerling')
   );
 
   const getThemeClasses = () => {

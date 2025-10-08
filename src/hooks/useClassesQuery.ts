@@ -1,8 +1,10 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { queryKeys } from '@/lib/queryKeys';
 import { UserProfile, EnrolledClass } from '@/types/app';
+
+// NOTE: This file uses profile?.role temporarily for backward compatibility
+// After RBAC migration is complete, use useUserRole hook instead
 
 /**
  * Fetches classes for a user based on their role

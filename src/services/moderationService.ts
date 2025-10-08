@@ -100,7 +100,7 @@ export const moderationService = {
     if (error) throw error;
 
     await logAudit(AUDIT_ACTIONS.USER_ROLE_CHANGED, { type: 'profile', id: userId }, { 
-      old_role: currentProfile?.role,
+      old_role: currentProfile?.role || 'unknown',
       new_role: newRole,
       reason 
     });

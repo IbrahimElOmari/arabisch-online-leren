@@ -5,6 +5,7 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
 import { TaskNotificationCard } from './TaskNotificationCard';
 import { Bell, CheckCircle2 } from 'lucide-react';
+import { useUserRole } from '@/hooks/useUserRole';
 
 interface TaskWithSubmission {
   id: string;
@@ -27,14 +28,15 @@ interface TaskWithSubmission {
 
 export const StudentTaskNotifications: React.FC = () => {
   const { profile } = useAuth();
+  const { isStudent } = useUserRole();
   const [recentTasks, setRecentTasks] = useState<TaskWithSubmission[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (profile?.role === 'leerling') {
+    if (isStudent) {
       fetchRecentTasks();
     }
-  }, [profile]);
+  }, [isStudent]);
 
   const fetchRecentTasks = async () => {
     try {
@@ -111,7 +113,7 @@ export const StudentTaskNotifications: React.FC = () => {
     }
   };
 
-  if (profile?.role !== 'leerling') {
+  if (!isStudent) {
     return null;
   }
 

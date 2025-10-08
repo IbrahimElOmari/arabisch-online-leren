@@ -6,18 +6,19 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Clock, Users, TrendingUp, Award } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { useUserRole } from '@/hooks/useUserRole';
 
 export const AnalyticsDashboard = () => {
-  const { profile } = useAuth();
+  const { isAdmin } = useUserRole();
   const { analyticsData, loading, fetchAnalytics } = useAnalyticsStore();
   const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (profile?.role === 'admin') {
+    if (isAdmin) {
       fetchAnalytics();
     }
-  }, [profile, fetchAnalytics]);
+  }, [isAdmin, fetchAnalytics]);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -25,7 +26,7 @@ export const AnalyticsDashboard = () => {
     return `${hours}u ${minutes}m`;
   };
 
-  if (profile?.role !== 'admin') {
+  if (!isAdmin) {
     return (
       <div className={`${getTextAlign('center')} py-8`} dir={isRTL ? 'rtl' : 'ltr'}>
         <p className={`text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>{t('errors.accessDenied')}</p>

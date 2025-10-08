@@ -7,6 +7,7 @@ import { Trash2, Check, X } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { useUserRole } from '@/hooks/useUserRole';
 
 interface PendingUser {
   id: string;
@@ -18,14 +19,14 @@ interface PendingUser {
 
 const PendingUsersManagement = () => {
   const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
-  const { profile } = useAuth();
+  const { isAdmin } = useUserRole();
 
   useEffect(() => {
-    if (profile?.role === 'admin') {
+    if (isAdmin) {
       // For now, show empty state since pending_users table doesn't exist in current schema
       setPendingUsers([]);
     }
-  }, [profile]);
+  }, [isAdmin]);
 
   const generatePassword = () => {
     const length = 12;
@@ -73,7 +74,7 @@ const PendingUsersManagement = () => {
     }
   };
 
-  if (profile?.role !== 'admin') {
+  if (!isAdmin) {
     return (
       <div className="text-center py-8">
         <p className="text-muted-foreground">Access Denied - Admin rights required</p>
