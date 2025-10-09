@@ -18,7 +18,8 @@
     "test:coverage": "vitest run --coverage",
     "e2e": "playwright test",
     "e2e:ci": "playwright test --reporter=line",
-    "e2e:ui": "playwright test --ui"
+    "e2e:ui": "playwright test --ui",
+    "lint": "eslint . --max-warnings=0" 
   },
   "size-limit": [
     {
