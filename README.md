@@ -93,9 +93,9 @@ This project includes comprehensive testing infrastructure with automated CI/CD 
 
 **Unit Tests**
 ```sh
-npm test              # Run tests in watch mode
-npm run test:run      # Run tests once
-npm run test:ui       # Run tests with UI interface
+pnpm test              # Run tests in watch mode
+pnpm test:run          # Run tests once
+pnpm test:coverage     # Run tests with coverage
 ```
 
 **Integration Tests**
@@ -103,14 +103,14 @@ Integration tests are included with the unit tests and mock Supabase API calls.
 
 **End-to-End Tests**
 ```sh
-npm run e2e           # Run E2E tests headless
-npm run e2e:ui        # Run E2E tests with UI
-npm run e2e:headed    # Run E2E tests in headed mode
+pnpm e2e              # Run E2E tests headless
+pnpm e2e:ui           # Run E2E tests with UI
+pnpm e2e:ci           # Run E2E tests for CI
 ```
 
 **Code Coverage**
 ```sh
-npm run test:coverage # Generate coverage report
+pnpm test:coverage    # Generate coverage report
 ```
 
 Coverage reports are generated in the `coverage/` directory:
@@ -150,10 +150,69 @@ The project uses GitHub Actions (`.github/workflows/ci.yml`) with the following 
 ### Linting
 
 ```sh
-npm run lint          # Run ESLint checks
+pnpm lint             # Run ESLint checks
 ```
 
 The project uses ESLint with TypeScript and React hooks rules for consistent code quality.
+
+## Beveiliging en RBAC
+
+### Role-Based Access Control (RBAC)
+
+Het project gebruikt een veilige RBAC-implementatie met een aparte `user_roles` tabel:
+
+**Architectuur:**
+- Rollen worden **niet** opgeslagen in `profiles.role` (privilege escalation risico)
+- Aparte `user_roles` tabel met RLS policies
+- Server-side verificatie via `has_role()` RPC functie
+- Client-side checks via `useUserRole()` hook
+
+**Beschikbare rollen:**
+- `admin`: Volledige toegang tot systeem, gebruikersbeheer, content management
+- `leerkracht`: Toegang tot eigen klassen, lessen, taken beoordelen
+- `leerling`: Toegang tot ingeschreven klassen, taken inleveren
+
+**Database Migratie (VEREIST voor productie):**
+
+Voer de RBAC migratie uit in Supabase Dashboard → SQL Editor:
+```sql
+-- Zie supabase/migrations/20250110_implement_rbac.sql
+-- Creëert: user_roles tabel, has_role() functie, RLS policies
+```
+
+**Client-side gebruik:**
+```typescript
+import { useUserRole } from '@/hooks/useUserRole';
+
+function AdminPanel() {
+  const { isAdmin, isLoading } = useUserRole();
+  
+  if (isLoading) return <Loading />;
+  if (!isAdmin) return <AccessDenied />;
+  
+  return <AdminContent />;
+}
+```
+
+### Monitoring en Observability
+
+**Sentry Error Tracking (Productie):**
+
+Monitoring is geactiveerd in productie via `src/lib/monitoring.ts`:
+- **Privacy-first**: Alle PII wordt gefilterd (emails, passwords, tokens)
+- **Selective**: Alleen in productie actief (`VITE_APP_ENV=production`)
+- **Configuratie**: Zet `VITE_SENTRY_DSN` in environment variables
+
+```bash
+# .env.production
+VITE_SENTRY_DSN=https://your-sentry-dsn@sentry.io/project-id
+VITE_APP_ENV=production
+```
+
+**Session Security:**
+- Automatische timeout na inactiviteit (configureerbaar per environment)
+- Rate limiting op auth endpoints
+- Audit logging voor alle sensitieve acties
 
 ## Admin & Operations
 
