@@ -2,10 +2,12 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { fileURLToPath, URL } from 'node:url';
+import { componentTagger } from "lovable-tagger";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
+    mode === 'development' && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico','apple-touch-icon.png','masked-icon.svg'],
@@ -51,7 +53,7 @@ export default defineConfig({
         ]
       }
     })
-  ],
+  ].filter(Boolean),
   build: {
     rollupOptions: {
       output: {
@@ -68,7 +70,8 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) }
   },
   server: {
+    host: "::",
     port: 8080
   },
   base: '/'
-});
+}));
