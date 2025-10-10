@@ -1,0 +1,38 @@
+# Environment (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+.vite/
+
+# Testing output
+coverage/
+playwright-report/
+test-results/
+
+# Logs
+*.log
+logs/
+pnpm-debug.log*
+
+# OS/IDE artefacts
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.local
+
+# Miscellaneous
+.eslintcache
+*.tsbuildinfo
