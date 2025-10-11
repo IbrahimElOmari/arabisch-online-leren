@@ -1,12 +1,14 @@
-{
+ {
   "name": "arabisch-online-leren",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@8.15.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode development",
     "build": "vite build",
+    "build:dev": "vite build --mode development",
+    "build:prod": "NODE_ENV=production pnpm build && pnpm size",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0",
@@ -15,8 +17,19 @@
     "test:coverage": "vitest run --coverage",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
-    "e2e:ci": "playwright test --headed=false"
+    "e2e:ci": "playwright test --headed=false",
+    "size": "size-limit"
   },
+  "size-limit": [
+    {
+      "path": "dist/assets/*.js",
+      "limit": "250 KB"
+    },
+    {
+      "path": "dist/assets/*.css",
+      "limit": "100 KB"
+    }
+  ],
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "^1.2.2",
@@ -46,9 +59,6 @@
     "@radix-ui/react-toggle": "^1.1.1",
     "@radix-ui/react-toggle-group": "^1.1.1",
     "@radix-ui/react-tooltip": "^1.1.6",
-    "@size-limit/file": "^11.2.0",
-    "@stripe/react-stripe-js": "^3.0.1",
-    "@stripe/stripe-js": "^5.1.2",
     "@supabase/supabase-js": "^2.50.5",
     "@tanstack/react-query": "^5.62.13",
     "@tanstack/react-query-devtools": "^5.90.2",
@@ -69,7 +79,6 @@
     "react-resizable-panels": "^3.0.6",
     "react-router-dom": "^7.1.1",
     "recharts": "^2.15.0",
-    "size-limit": "^11.2.0",
     "sonner": "^1.7.3",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
@@ -81,6 +90,7 @@
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "@sentry/react": "^10.18.0",
+    "@size-limit/file": "^11.2.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",
@@ -96,9 +106,9 @@
     "jsdom": "^25.0.1",
     "lovable-tagger": "^1.0.7",
     "postcss": "^8.4.49",
+    "size-limit": "^11.2.0",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.19.1",
     "vite": "^6.0.5",
     "vite-plugin-pwa": "^0.21.2",
     "vitest": "^2.1.8"
