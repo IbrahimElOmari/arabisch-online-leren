@@ -1,0 +1,28 @@
+--- a/package.json
++++ b/package.json
+@@ -7,6 +7,9 @@
+   "scripts": {
+     "dev": "vite",
+     "build": "vite build",
++    "build:dev": "vite build --mode development",
++    "build:prod": "NODE_ENV=production pnpm build && pnpm size",
++    "size": "size-limit",
+     "preview": "vite preview",
+     "typecheck": "tsc --noEmit",
+     "lint": "eslint . --max-warnings=0",
+@@ -16,6 +19,16 @@
+     "e2e": "playwright test",
+     "e2e:ui": "playwright test --ui",
+     "e2e:ci": "playwright test --headed=false"
+   },
++  "size-limit": [
++    {
++      "path": "dist/assets/*.js",
++      "limit": "250 KB"
++    },
++    {
++      "path": "dist/assets/*.css",
++      "limit": "100 KB"
++    }
++  ],
+   "dependencies": {

@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI
 
 on:
   push:
@@ -27,16 +27,20 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 8.15.0
+          run_install: false
       
-      - name: Install dependencies
+      - name: Install dependencies (pnpm)
         run: pnpm install --frozen-lockfile
       
       - name: Type checking
         run: pnpm typecheck
       
-      - name: Linting
+      - name: Linting (fail on warnings)
         run: pnpm lint
+      
+      - name: Build (dev mode, required by Lovable)
+        run: pnpm run build:dev
       
       - name: Run unit tests with coverage
         run: pnpm test:coverage
