@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, '**' ]
   pull_request:
     branches: [ main, master ]
 
@@ -13,51 +13,58 @@ jobs:
       contents: read
       id-token: write
       actions: read
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
-      
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 8.15.0
           run_install: false
-      
+
       - name: Install dependencies (pnpm)
         run: pnpm install --frozen-lockfile
-      
+
       - name: Type checking
         run: pnpm typecheck
-      
+
       - name: Linting (fail on warnings)
         run: pnpm lint
-      
-      - name: Build (dev mode, required by Lovable)
+
+      # Dev build for non-main branches (Lovable requires build:dev)
+      - name: Build (development)
+        if: github.ref != 'refs/heads/main'
         run: pnpm run build:dev
-      
+
+      # Production build + size check on main
+      - name: Build (production)
+        if: github.ref == 'refs/heads/main'
+        run: pnpm run build:prod
+
       - name: Run unit tests with coverage
         run: pnpm test:coverage
-      
+
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
-      
+
       - name: Run E2E tests
         run: pnpm e2e:ci
-      
+
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage-report
           path: coverage/
-      
+
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
         if: always()
