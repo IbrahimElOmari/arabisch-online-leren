@@ -1,21 +1,20 @@
 // eslint.config.js — Flat config voor ESLint v9 + TypeScript + React + Vite
-// Volledig te plakken bestand.
+// Volledig te plakken bestand (werkt met het meta-pakket `typescript-eslint`).
 
 import js from '@eslint/js'
 import globals from 'globals'
 
-// Typescript ESLint (optioneel maar aanbevolen voor TS-projecten)
-import tseslint from '@typescript-eslint/eslint-plugin'
-import tsparser from '@typescript-eslint/parser'
+// Meta-pakket met kant-en-klare flat configs
+import tseslint from 'typescript-eslint'
 
-// Plugins
+// Extra plugins
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
-  // Basis JS/TS omgeving
+  // Negeer build- en artefact-mappen
   {
     ignores: [
       'dist/**',
@@ -23,7 +22,6 @@ export default [
       'playwright-report/**',
       'test-results/**',
       'node_modules/**',
-      // lockfiles en build artefacten negeren
       'pnpm-lock.yaml',
     ],
   },
@@ -31,16 +29,18 @@ export default [
   // Standaard JS rules
   js.configs.recommended,
 
-  // TypeScript in src/
+  // TypeScript basisregels (zonder project-typechecking om setup simpel te houden)
+  ...tseslint.configs.recommended,
+
+  // Projectspecifieke TS/React regels
   {
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      parser: tsparser,
       parserOptions: {
-        // als je tsconfig anders heet/verplaatst is, pas hier aan
-        project: false, // zet op true + tsconfigRootDir als je project-based rules wil
+        // Wil je type-aware linting later? Zet hier `project: './tsconfig.json'`.
+        project: false,
         ecmaFeatures: { jsx: true },
       },
       globals: {
@@ -49,13 +49,12 @@ export default [
       },
     },
     plugins: {
-      '@typescript-eslint': tseslint,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       'jsx-a11y': jsxA11y,
     },
     rules: {
-      // TypeScript best practices (lichtgewicht set)
+      // TypeScript
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports', fixStyle: 'inline-type-imports' }],
 
@@ -63,22 +62,28 @@ export default [
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
 
-      // React Fast Refresh (Vite)
+      // Vite React Fast Refresh
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
-      // Toegankelijkheid
+      // Toegankelijkheid (basis)
       'jsx-a11y/alt-text': 'warn',
       'jsx-a11y/anchor-is-valid': 'warn',
 
-      // Algemeen strakker
+      // Algemeen
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
     },
   },
 
-  // Toestaan van importeren van .tsx in tests en tooling
+  // Tests en config files mogen wat losser met console
   {
-    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx', 'vitest.config.*', 'vite.config.*'],
+    files: [
+      '**/*.test.{ts,tsx}',
+      '**/*.spec.{ts,tsx}',
+      'vitest.config.*',
+      'vite.config.*',
+      'playwright.config.*'
+    ],
     rules: {
       'no-console': 'off',
     },
