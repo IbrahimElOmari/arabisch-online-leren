@@ -1,0 +1,21 @@
+--- a/tsconfig.app.json
++++ b/tsconfig.app.json
+@@ -14,12 +14,11 @@
+     "moduleDetection": "force",
+     "noEmit": true,
+     "jsx": "react-jsx",
+ 
+-    /* Linting */
+-    "strict": false,
+-    "noUnusedLocals": false,
+-    "noUnusedParameters": false,
+-    "noImplicitAny": false,
+-    "noFallthroughCasesInSwitch": false,
++    /* Linting - PHASE 4: STRICT MODE */
++    "strict": true,
++    "noUnusedLocals": true,
++    "noUnusedParameters": true,
++    "noFallthroughCasesInSwitch": true,
+ 
+     "baseUrl": ".",
+     "paths": {

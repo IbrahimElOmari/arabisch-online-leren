@@ -49,34 +49,42 @@ export default [
       'jsx-a11y': jsxA11y,
     },
     rules: {
-      // --- TypeScript soepel ---
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-empty-object-type': 'off',
-      '@typescript-eslint/consistent-type-imports': ['warn', { prefer: 'type-imports', fixStyle: 'inline-type-imports' }],
+      // --- TypeScript STRICT MODE (Phase 4) ---
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-empty-object-type': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { 
+        argsIgnorePattern: '^_', 
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_'
+      }],
+      '@typescript-eslint/consistent-type-imports': ['error', { 
+        prefer: 'type-imports', 
+        fixStyle: 'inline-type-imports' 
+      }],
 
-      // --- Algemene soepel ---
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
-      'no-debugger': 'warn',
-      'prefer-const': 'warn',
-      'no-useless-escape': 'warn',
-      'no-case-declarations': 'off',
+      // --- Algemene STRICT ---
+      'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+      'no-debugger': 'error',
+      'prefer-const': 'error',
+      'no-useless-escape': 'error',
+      'no-case-declarations': 'error',
 
-      // --- React Hooks soepel (tijdelijk) ---
-      // Let op: dit staat nu uit om snel door te kunnen.
-      // Later weer terug naar 'error' en de code fixen.
-      'react-hooks/rules-of-hooks': 'off',
-      'react-hooks/exhaustive-deps': 'warn',
+      // --- React Hooks STRICT (Phase 4) ---
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'error',
 
-      // --- Fast Refresh waarschuwingen uit in non-pure files ---
-      'react-refresh/only-export-components': 'off',
+      // --- Fast Refresh STRICT ---
+      'react-refresh/only-export-components': ['warn', { 
+        allowConstantExport: true 
+      }],
 
-      // --- Toegankelijkheid als waarschuwing ---
-      'jsx-a11y/click-events-have-key-events': 'warn',
-      'jsx-a11y/no-static-element-interactions': 'warn',
-      'jsx-a11y/label-has-associated-control': 'warn',
-      'jsx-a11y/no-redundant-roles': 'warn',
-      'jsx-a11y/alt-text': 'warn',
-      'jsx-a11y/anchor-is-valid': 'warn',
+      // --- Toegankelijkheid STRICT ---
+      'jsx-a11y/click-events-have-key-events': 'error',
+      'jsx-a11y/no-static-element-interactions': 'error',
+      'jsx-a11y/label-has-associated-control': 'error',
+      'jsx-a11y/no-redundant-roles': 'error',
+      'jsx-a11y/alt-text': 'error',
+      'jsx-a11y/anchor-is-valid': 'error',
     },
   },
 
