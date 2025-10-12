@@ -1,4 +1,4 @@
- {
+{
   "name": "arabisch-online-leren",
   "version": "0.1.0",
   "private": true,
@@ -60,6 +60,7 @@
     "@radix-ui/react-toggle-group": "^1.1.1",
     "@radix-ui/react-tooltip": "^1.1.6",
     "@supabase/supabase-js": "^2.50.5",
+    "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/react-query": "^5.62.13",
     "@tanstack/react-query-devtools": "^5.90.2",
     "class-variance-authority": "^0.7.1",
