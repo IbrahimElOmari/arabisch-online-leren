@@ -1,5 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 import { logAudit, AUDIT_ACTIONS } from '@/utils/audit';
+import { securityLogger } from '@/utils/securityLogger';
+
+type AppRole = 'admin' | 'leerkracht' | 'leerling';
 
 export interface ModerationAction {
   id: string;
@@ -84,25 +87,31 @@ export const moderationService = {
     await logAudit(action, { type: 'task', id: taskId }, { status, reason });
   },
 
-  async changeUserRole(userId: string, newRole: 'admin' | 'leerkracht' | 'leerling', reason?: string): Promise<void> {
-    // Get current role first
-    const { data: currentProfile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', userId)
-      .single();
+  async changeUserRole(userId: string, newRole: AppRole, reason?: string): Promise<{ success: boolean; data?: any }> {
+    try {
+      // Use the new change_user_role RPC function that handles RBAC properly
+      const { data, error } = await supabase.rpc('change_user_role', {
+        target_user_id: userId,
+        new_role: newRole,
+        reason: reason || null
+      });
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ role: newRole })
-      .eq('id', userId);
+      if (error) throw error;
 
-    if (error) throw error;
+      // Parse the JSONB response
+      const result = data as { old_role?: string; new_role?: string } | null;
 
-    await logAudit(AUDIT_ACTIONS.USER_ROLE_CHANGED, { type: 'profile', id: userId }, { 
-      old_role: currentProfile?.role || 'unknown',
-      new_role: newRole,
-      reason 
-    });
+      // Additional security logging
+      await securityLogger.logPrivilegeChange(
+        userId,
+        result?.old_role || 'unknown',
+        newRole
+      );
+
+      return { success: true, data: result };
+    } catch (error) {
+      console.error('Error changing user role:', error);
+      throw error;
+    }
   }
 };

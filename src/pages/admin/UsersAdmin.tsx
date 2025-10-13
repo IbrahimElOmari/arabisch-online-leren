@@ -74,18 +74,20 @@ export default function UsersAdmin() {
 
   const changeRoleMutation = useMutation({
     mutationFn: async ({ userId, role, reason }: { userId: string; role: AppRole; reason?: string }) => {
-      await moderationService.changeUserRole(userId, role, reason);
+      const result = await moderationService.changeUserRole(userId, role, reason);
+      return result;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      queryClient.invalidateQueries({ queryKey: ['user_role'] });
       setChangeRoleUserId(null);
       setReason('');
       toast({
         title: 'Rol gewijzigd',
-        description: 'De gebruikersrol is succesvol gewijzigd.',
+        description: 'De gebruikersrol is succesvol gewijzigd via RBAC.',
       });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: 'Fout',
         description: error.message || 'Er is een fout opgetreden bij het wijzigen van de rol.',

@@ -1841,6 +1841,14 @@ export type Database = {
       }
     }
     Functions: {
+      change_user_role: {
+        Args: {
+          new_role: Database["public"]["Enums"]["app_role"]
+          reason?: string
+          target_user_id: string
+        }
+        Returns: Json
+      }
       check_rate_limit: {
         Args: {
           p_action_type: string
@@ -1889,6 +1897,10 @@ export type Database = {
       get_user_role: {
         Args: { user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      get_user_role_name: {
+        Args: { user_id: string }
+        Returns: string
       }
       has_role: {
         Args: {

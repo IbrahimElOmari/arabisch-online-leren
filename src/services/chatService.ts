@@ -137,7 +137,7 @@ export class ChatService {
         *,
         participants:conversation_participants(
           *,
-          user:profiles(id, full_name, role)
+          user:profiles(id, full_name)
         )
       `)
       .order('updated_at', { ascending: false });
@@ -149,7 +149,7 @@ export class ChatService {
       data.map(async (conv) => {
         const { data: lastMessage } = await supabase
           .from('messages')
-          .select('*, sender:profiles(id, full_name, role)')
+          .select('*, sender:profiles(id, full_name)')
           .eq('conversation_id', conv.id)
           .order('created_at', { ascending: false })
           .limit(1)
@@ -185,7 +185,7 @@ export class ChatService {
       .from('messages')
       .select(`
         *,
-        sender:profiles(id, full_name, role)
+        sender:profiles(id, full_name)
       `)
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: false })
@@ -239,7 +239,7 @@ export class ChatService {
       })
       .select(`
         *,
-        sender:profiles(id, full_name, role)
+        sender:profiles(id, full_name)
       `)
       .single();
 
