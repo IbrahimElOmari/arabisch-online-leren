@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
@@ -9,13 +8,15 @@ import { ContentModerationPanel } from '@/components/security/ContentModerationP
 import { Shield, FileText, MessageSquare, Users } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { useUserRole } from '@/hooks/useUserRole';
 
 const Security = () => {
   const { user, profile, loading } = useAuth();
+  const { isAdmin, isTeacher, isLoading: roleLoading } = useUserRole();
   const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
   const { t } = useTranslation();
 
-  if (loading) {
+  if (loading || roleLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-lg">Laden...</div>
@@ -28,7 +29,7 @@ const Security = () => {
   }
 
   // Only admins and teachers can access security features
-  if (!['admin', 'leerkracht'].includes(profile.role)) {
+  if (!isAdmin && !isTeacher) {
     return <Navigate to="/dashboard" replace />;
   }
 

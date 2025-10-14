@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAnalyticsTracking } from '@/hooks/useAnalytics';
 import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
+import { useUserRole } from '@/hooks/useUserRole';
 
 interface AnnouncementFormData {
   title: string;
@@ -24,6 +25,7 @@ interface AnnouncementFormData {
 
 const AnnouncementSystem = () => {
   const { profile } = useAuth();
+  const { isAdmin } = useUserRole();
   const { toast } = useToast();
   const { trackEvent } = useAnalyticsTracking();
   const [formData, setFormData] = useState<AnnouncementFormData>({
@@ -77,7 +79,7 @@ const AnnouncementSystem = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!profile || profile.role !== 'admin') {
+    if (!profile || !isAdmin) {
       toast({
         title: "Fout",
         description: "Alleen administrators kunnen aankondigingen versturen.",

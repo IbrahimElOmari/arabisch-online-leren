@@ -1,15 +1,21 @@
-
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Navigate } from 'react-router-dom';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
 import { Card, CardContent } from '@/components/ui/card';
+import { useUserRole } from '@/hooks/useUserRole';
 
 const Admin = () => {
-  const { user, profile, authReady, loading: authLoading } = useAuth();
+  const { user, authReady, loading: authLoading } = useAuth();
+  const { isAdmin, isLoading: roleLoading } = useUserRole();
 
   // Auth loading gate
   if (authLoading && !authReady) {
     return <FullPageLoader text="Laden..." />;
+  }
+
+  // Role loading gate
+  if (roleLoading) {
+    return <FullPageLoader text="Toegang controleren..." />;
   }
 
   // Redirect if no user
@@ -17,8 +23,8 @@ const Admin = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Check admin permission
-  if (profile && profile.role !== 'admin') {
+  // Check admin permission using RBAC
+  if (!isAdmin) {
     return <Navigate to="/dashboard" replace />;
   }
 

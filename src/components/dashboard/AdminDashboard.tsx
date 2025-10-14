@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useUserRole } from '@/hooks/useUserRole';
 import { 
   Users, 
   BookOpen, 
@@ -21,6 +21,7 @@ import TaskQuestionManagementNew from '@/components/management/TaskQuestionManag
 
 const AdminDashboard = () => {
   const { profile } = useAuth();
+  const { isAdmin } = useUserRole();
   const [showClassModal, setShowClassModal] = useState(false);
   const { 
     isRTL, 
@@ -30,7 +31,7 @@ const AdminDashboard = () => {
     getMarginEnd 
   } = useRTLLayout();
 
-  if (!profile || profile.role !== 'admin') {
+  if (!profile || !isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

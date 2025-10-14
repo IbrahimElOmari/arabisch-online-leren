@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,16 +8,18 @@ import ForumModerationQueue from '@/components/forum/ForumModerationQueue';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useAccessibilityRTL } from '@/hooks/useAccessibilityRTL';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { useUserRole } from '@/hooks/useUserRole';
 
 const ForumModeration = () => {
   const navigate = useNavigate();
   const { profile } = useAuth();
+  const { isAdmin, isTeacher } = useUserRole();
   const { getTextAlign, getFlexDirection, getIconSpacing } = useRTLLayout();
   const { getNavigationAttributes, getButtonAttributes } = useAccessibilityRTL();
   const { t } = useTranslation();
 
   // Only admins and teachers can access this page
-  if (!profile || (profile.role !== 'admin' && profile.role !== 'leerkracht')) {
+  if (!profile || (!isAdmin && !isTeacher)) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Card>

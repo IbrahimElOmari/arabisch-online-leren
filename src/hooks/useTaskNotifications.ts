@@ -1,8 +1,8 @@
-
 import { useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useNotifications } from './useNotifications';
+import { useUserRole } from './useUserRole';
 
 interface NotificationEvent {
   type: 'task_created' | 'task_submitted' | 'task_graded' | 'question_created' | 'question_answered' | 'question_graded';
@@ -11,6 +11,7 @@ interface NotificationEvent {
 
 export const useTaskNotifications = () => {
   const { profile } = useAuth();
+  const { isStudent, isTeacher, isAdmin } = useUserRole();
   const { createNotification } = useNotifications();
 
   const handleTaskCreated = useCallback(async (task: any) => {
@@ -140,7 +141,7 @@ export const useTaskNotifications = () => {
     const channels = [];
 
     // Subscribe to task creations (for students)
-    if (profile.role === 'leerling') {
+    if (isStudent) {
       const taskChannel = supabase
         .channel('task-notifications')
         .on('postgres_changes', {
@@ -165,7 +166,7 @@ export const useTaskNotifications = () => {
     }
 
     // Subscribe to submissions (for teachers)
-    if (profile.role === 'leerkracht' || profile.role === 'admin') {
+    if (isTeacher || isAdmin) {
       const submissionChannel = supabase
         .channel('submission-notifications')
         .on('postgres_changes', {

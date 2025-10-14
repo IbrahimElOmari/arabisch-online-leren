@@ -2,6 +2,7 @@ import { Home, Calendar, MessageSquare, Eye, BookOpen, User, Shield, Folder, Har
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { useUserRole } from '@/hooks/useUserRole';
 
 import { cn } from '@/lib/utils';
 import {
@@ -22,7 +23,8 @@ import { useRTLLayout } from '@/hooks/useRTLLayout';
 export function AppSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
+  const { isAdmin, isTeacher } = useUserRole();
   const { t } = useTranslation();
   const { isRTL } = useRTLLayout();
 
@@ -52,8 +54,7 @@ export function AppSidebar() {
     { title: t('nav.profile', 'Profile'), url: '/profile', icon: User },
   ] : [];
 
-
-  const adminItems = user && profile && ['admin', 'leerkracht'].includes(profile.role) ? [
+  const adminItems = user && (isAdmin || isTeacher) ? [
     { title: t('nav.forum_moderation', 'Forum Moderation'), url: '/forum-moderation', icon: MessageSquare },
     { title: t('nav.security', 'Security'), url: '/security', icon: Shield },
     { title: t('nav.lesson_organization', 'Lesson Organization'), url: '/lesson-organization', icon: Folder },

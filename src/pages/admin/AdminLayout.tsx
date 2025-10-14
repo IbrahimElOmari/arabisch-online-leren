@@ -3,6 +3,7 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { FEATURE_FLAGS } from '@/config/featureFlags';
+import { useUserRole } from '@/hooks/useUserRole';
 import {
   Users,
   BookOpen,
@@ -26,16 +27,17 @@ const adminTabs = [
 ];
 
 export default function AdminLayout() {
-  const { profile, authReady, loading } = useAuth();
+  const { authReady, loading } = useAuth();
+  const { isAdmin, isTeacher, isLoading: roleLoading } = useUserRole();
   const location = useLocation();
 
   // Auth loading
-  if (loading || !authReady) {
+  if (loading || !authReady || roleLoading) {
     return <div className="flex items-center justify-center min-h-screen">Laden...</div>;
   }
 
-  // Check permissions
-  if (!profile || !['admin', 'leerkracht'].includes(profile.role)) {
+  // Check permissions using RBAC
+  if (!isAdmin && !isTeacher) {
     return <Navigate to="/dashboard" replace />;
   }
 

@@ -10,13 +10,17 @@ import { BackendStatusBadge } from '@/components/status/BackendStatusBadge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useUserRole } from '@/hooks/useUserRole';
 
 const Dashboard = () => {
   const { user, profile, authReady, loading, refreshProfile, isRefreshing } = useAuth();
+  const { isAdmin, isTeacher, isStudent, role, isLoading: roleLoading } = useUserRole();
   const { t } = useTranslation();
   const { getTextAlign, isRTL } = useRTLLayout();
 
-  console.debug('📊 Dashboard: user:', !!user, 'profile:', !!profile, 'role:', profile?.role);
+  if (import.meta.env.DEV) {
+    console.debug('📊 Dashboard: user:', !!user, 'profile:', !!profile, 'role:', role);
+  }
 
   // Early guard: if auth is ready and no user, redirect to auth
   if (authReady && !user) {
@@ -24,9 +28,11 @@ const Dashboard = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Show loading while auth isn't ready
-  if (!authReady && loading) {
-    console.debug('⏳ Dashboard: Auth not ready yet');
+  // Show loading while auth isn't ready or role is loading
+  if ((!authReady && loading) || roleLoading) {
+    if (import.meta.env.DEV) {
+      console.debug('⏳ Dashboard: Auth not ready yet or role loading');
+    }
     return (
       <FullPageEnhancedLoader 
         text={t('status.loading')} 
@@ -41,33 +47,39 @@ const Dashboard = () => {
     );
   }
 
-  // If we have a profile, render the appropriate dashboard
-  if (profile) {
-    console.debug('✅ Dashboard: Rendering dashboard for role:', profile.role);
-    
-    switch (profile.role) {
-      case 'admin':
-        return <AdminDashboard />;
-      case 'leerkracht':
-        return <TeacherDashboard />;
-      case 'leerling':
-        return <EnhancedStudentDashboard />;
-      default:
-        console.error('❌ Dashboard: Unknown role:', profile.role);
-        return (
-          <div className="min-h-screen flex items-center justify-center bg-background">
-            <div className={`text-lg text-destructive ${getTextAlign('center')} ${isRTL ? 'arabic-text' : ''}`}>
-              {t('error.unknown_role', 'Onbekende gebruikersrol')}: {profile.role}
-            </div>
-          </div>
-        );
+  // Render dashboard based on role from RBAC
+  if (profile && role) {
+    if (import.meta.env.DEV) {
+      console.debug('✅ Dashboard: Rendering dashboard for role:', role);
     }
+    
+    if (isAdmin) {
+      return <AdminDashboard />;
+    }
+    if (isTeacher) {
+      return <TeacherDashboard />;
+    }
+    if (isStudent) {
+      return <EnhancedStudentDashboard />;
+    }
+    
+    // Unknown role fallback
+    console.error('❌ Dashboard: Unknown role:', role);
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className={`text-lg text-destructive ${getTextAlign('center')} ${isRTL ? 'arabic-text' : ''}`}>
+          {t('error.unknown_role', 'Onbekende gebruikersrol')}: {role}
+        </div>
+      </div>
+    );
   }
 
   // Fallback dashboard when profile is loading
   if (user) {
-    console.debug('🔄 Dashboard: User available but no profile, showing fallback');
-    const fallbackRole = user.user_metadata?.role || 'leerling';
+    if (import.meta.env.DEV) {
+      console.debug('🔄 Dashboard: User available but no profile, showing fallback');
+    }
+    const fallbackRole = role || user.user_metadata?.role || 'leerling';
     
     return (
       <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -134,7 +146,9 @@ const Dashboard = () => {
   }
 
   // Final fallback - should rarely be reached
-  console.debug('⏳ Dashboard: No user yet, showing loading');
+  if (import.meta.env.DEV) {
+    console.debug('⏳ Dashboard: No user yet, showing loading');
+  }
   return <FullPageEnhancedLoader text={t('status.loading')} />;
 };
 

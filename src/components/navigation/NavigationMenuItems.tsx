@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, BookOpen, Calendar, MessageSquare, Shield } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { useUserRole } from '@/hooks/useUserRole';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -24,6 +24,7 @@ export const NavigationMenuItems = React.memo(({ user, profile }: NavigationMenu
   const navigate = useNavigate();
   const { getFlexDirection, getIconSpacing, isRTL } = useRTLLayout();
   const { t } = useTranslation();
+  const { isAdmin, isTeacher } = useUserRole();
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -99,7 +100,7 @@ export const NavigationMenuItems = React.memo(({ user, profile }: NavigationMenu
             </NavigationMenuItem>
           )}
 
-          {user && profile && ['admin', 'leerkracht'].includes(profile.role) && (
+          {user && (isAdmin || isTeacher) && (
             <NavigationMenuItem>
               <NavigationMenuTrigger className={`${getFlexDirection()} items-center gap-2`}>
                 <Shield className="h-4 w-4" />
