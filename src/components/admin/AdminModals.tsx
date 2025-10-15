@@ -36,26 +36,15 @@ interface ClassData {
 }
 
 export function AdminModal({ trigger, type }: AdminModalProps) {
+  // ✅ ALL HOOKS AT TOP-LEVEL (React Rules compliance)
   const [open, setOpen] = useState(false);
-  const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
-  const { t } = useTranslation();
-  
-  // Handle class management modal separately
-  if (type === 'manage_classes') {
-    return (
-      <>
-        <div onClick={() => setOpen(true)}>
-          {trigger}
-        </div>
-        <ClassManagementModal isOpen={open} onClose={() => setOpen(false)} />
-      </>
-    );
-  }
   const [loading, setLoading] = useState(false);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [classes, setClasses] = useState<ClassData[]>([]);
   const { toast } = useToast();
+  const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -67,10 +56,28 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
   });
 
   useEffect(() => {
-    if (open) {
+    if (open && type !== 'manage_classes') {
       loadData();
     }
   }, [open, type]);
+  
+  // Guard: Handle class management modal separately
+  if (type === 'manage_classes') {
+    return (
+      <>
+        <span 
+          onClick={() => setOpen(true)}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(true); } }}
+          role="button"
+          tabIndex={0}
+          className="cursor-pointer"
+        >
+          {trigger}
+        </span>
+        <ClassManagementModal isOpen={open} onClose={() => setOpen(false)} />
+      </>
+    );
+  }
 
   const loadData = async () => {
     try {

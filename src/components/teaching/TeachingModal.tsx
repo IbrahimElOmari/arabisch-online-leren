@@ -38,10 +38,23 @@ export function TeachingModal({
   isOpen,
   onClose
 }: TeachingModalProps) {
+  // ✅ ALL HOOKS AT TOP-LEVEL (React Rules compliance)
   const [internalOpen, setInternalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [attendanceOpen, setAttendanceOpen] = useState(false);
   const [performanceOpen, setPerformanceOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    url: '',
+    description: '',
+    vraag_tekst: '',
+    vraag_type: 'enkelvoudig',
+    opties: ['', '', '', ''] as string[],
+    correct_antwoord: '',
+    live_lesson_datetime: '',
+    live_lesson_url: '',
+    preparation_deadline: ''
+  });
   const { toast } = useToast();
   const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
   const { t } = useTranslation();
@@ -56,13 +69,19 @@ export function TeachingModal({
       }
     : setInternalOpen;
 
-  // For attendance and performance types, render the special modals
+  // Guard: Handle attendance and performance modals separately
   if (type === 'attendance') {
     return (
       <>
-        <div onClick={() => setAttendanceOpen(true)}>
+        <span 
+          onClick={() => setAttendanceOpen(true)}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setAttendanceOpen(true); } }}
+          role="button"
+          tabIndex={0}
+          className="cursor-pointer"
+        >
           {trigger}
-        </div>
+        </span>
         <AttendanceModal
           open={attendanceOpen}
           onOpenChange={setAttendanceOpen}
@@ -77,9 +96,15 @@ export function TeachingModal({
   if (type === 'performance') {
     return (
       <>
-        <div onClick={() => setPerformanceOpen(true)}>
+        <span 
+          onClick={() => setPerformanceOpen(true)}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPerformanceOpen(true); } }}
+          role="button"
+          tabIndex={0}
+          className="cursor-pointer"
+        >
           {trigger}
-        </div>
+        </span>
         <PerformanceModal
           open={performanceOpen}
           onOpenChange={setPerformanceOpen}
@@ -90,19 +115,6 @@ export function TeachingModal({
       </>
     );
   }
-
-  const [formData, setFormData] = useState({
-    title: '',
-    url: '',
-    description: '',
-    vraag_tekst: '',
-    vraag_type: 'enkelvoudig',
-    opties: ['', '', '', ''] as string[],
-    correct_antwoord: '',
-    live_lesson_datetime: '',
-    live_lesson_url: '',
-    preparation_deadline: ''
-  });
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
