@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
+import { useUserRole } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,6 +27,7 @@ interface ProfileModalProps {
 
 export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
   const { user, profile } = useAuth();
+  const { role } = useUserRole();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -140,7 +142,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
               </Label>
               <div className="p-2">
                 <Badge variant="secondary" className="capitalize">
-                  {profile.role}
+                  {role || profile.role}
                 </Badge>
               </div>
             </div>

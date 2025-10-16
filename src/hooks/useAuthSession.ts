@@ -25,7 +25,9 @@ export const useAuthSession = () => {
       setUser(data.session?.user ?? null);
       setLoading(false);
       setAuthReady(true);
-      console.debug('🔐 useAuthSession: initial session loaded, user:', !!data.session?.user);
+      if (import.meta.env.DEV) {
+        console.log('🔐 useAuthSession: initial session loaded, user:', !!data.session?.user);
+      }
     });
 
     // Luisteren naar auth changes
@@ -33,7 +35,9 @@ export const useAuthSession = () => {
       if (!isMounted) return;
       setSession(newSession);
       setUser(newSession?.user ?? null);
-      console.debug('🔄 useAuthSession: auth state changed, user:', !!newSession?.user);
+      if (import.meta.env.DEV) {
+        console.log('🔄 useAuthSession: auth state changed, user:', !!newSession?.user);
+      }
     });
 
     return () => {
@@ -43,7 +47,9 @@ export const useAuthSession = () => {
   }, []);
 
   const signOut = async () => {
-    console.debug('🚪 useAuthSession: signing out');
+    if (import.meta.env.DEV) {
+      console.log('🚪 useAuthSession: signing out');
+    }
     await supabase.auth.signOut();
   };
 

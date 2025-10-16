@@ -60,7 +60,9 @@ export function normalizePost(post: any): ForumPostFlat {
 export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
   if (!posts || posts.length === 0) return [];
 
-  console.log('organizePosts: Processing', posts.length, 'posts');
+  if (import.meta.env.DEV) {
+    console.log('organizePosts: Processing', posts.length, 'posts');
+  }
 
   // Normalize all posts first
   const normalized = posts.map(normalizePost);
@@ -80,7 +82,9 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
 
     // Guard against self-parent loops
     if (p.parent_post_id && p.parent_post_id === p.id) {
-      console.warn(`Self-parent post detected: ${p.id}. Treating as root.`);
+      if (import.meta.env.DEV) {
+        console.warn(`Self-parent post detected: ${p.id}. Treating as root.`);
+      }
       roots.push(current);
       return;
     }
@@ -91,9 +95,11 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
         parent.replies.push(current);
       } else {
         // Orphaned reply - treat as root but mark it
-        console.warn(
-          `Orphaned post found: ${p.id} references non-existent parent ${p.parent_post_id}`
-        );
+        if (import.meta.env.DEV) {
+          console.warn(
+            `Orphaned post found: ${p.id} references non-existent parent ${p.parent_post_id}`
+          );
+        }
         orphans.push(current);
       }
     } else {
@@ -101,8 +107,10 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
     }
   });
 
-  console.log('organizePosts: Found', orphans.length, 'orphaned posts');
-  console.log('organizePosts: Created', roots.length, 'root posts');
+  if (import.meta.env.DEV) {
+    console.log('organizePosts: Found', orphans.length, 'orphaned posts');
+    console.log('organizePosts: Created', roots.length, 'root posts');
+  }
 
   // Sort replies by creation date (oldest first for chronological order)
   const sortReplies = (post: ForumPostNested) => {
@@ -121,7 +129,9 @@ export function organizePosts(posts: ForumPostFlat[]): ForumPostNested[] {
   const allRoots = [...roots, ...orphans];
   allRoots.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-  console.log('organizePosts: Returning', allRoots.length, 'total root posts (including orphans)');
+  if (import.meta.env.DEV) {
+    console.log('organizePosts: Returning', allRoots.length, 'total root posts (including orphans)');
+  }
 
   return allRoots;
 }

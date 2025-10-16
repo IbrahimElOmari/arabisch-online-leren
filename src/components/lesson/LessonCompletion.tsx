@@ -45,7 +45,9 @@ export const LessonCompletion: React.FC<LessonCompletionProps> = ({
     // Play completion sound if available
     if (themeAge === 'playful') {
       // Could integrate actual sound files here
-      console.log('🎵 Playing completion sound!');
+      if (import.meta.env.DEV) {
+        console.log('🎵 Playing completion sound!');
+      }
     }
   }, [themeAge]);
 

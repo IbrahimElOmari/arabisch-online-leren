@@ -18,7 +18,9 @@ export const RTLTestSuite: React.FC = () => {
 
   const runCompatibilityTest = () => {
     const results = testRTLCompatibility();
-    console.log('RTL Compatibility Test Results:', results);
+    if (import.meta.env.DEV) {
+      console.log('RTL Compatibility Test Results:', results);
+    }
   };
 
   return (

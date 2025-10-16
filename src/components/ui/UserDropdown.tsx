@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
+import { useUserRole } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -27,6 +28,7 @@ import { useTranslation } from '@/contexts/TranslationContext';
 
 export const UserDropdown = () => {
   const { user, profile, signOut } = useAuth();
+  const { role } = useUserRole();
   const navigate = useNavigate();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -62,7 +64,7 @@ export const UserDropdown = () => {
             <div className={`hidden sm:flex flex-col ${getTextAlign('left')}`}>
               <span className="text-sm font-medium">{profile.full_name}</span>
               <span className="text-xs text-muted-foreground capitalize">
-                {profile.role}
+                {role || profile.role}
               </span>
             </div>
             <ChevronDown className="h-4 w-4 text-muted-foreground" />

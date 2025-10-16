@@ -87,7 +87,9 @@ export const useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
 
     // Special handling for auth context errors
     if (typeof error === 'string' && error.includes('useAuth must be used within an AuthProvider')) {
-      console.log('Auth context error detected, reloading page...');
+      if (import.meta.env.DEV) {
+        console.log('Auth context error detected, reloading page...');
+      }
       setTimeout(() => window.location.reload(), 1000);
       return;
     }

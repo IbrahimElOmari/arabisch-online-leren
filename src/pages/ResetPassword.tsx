@@ -42,7 +42,9 @@ const ResetPassword = () => {
         }
 
         if (session?.user) {
-          console.log('Valid session found for password reset');
+          if (import.meta.env.DEV) {
+            console.log('Valid session found for password reset');
+          }
           setIsValidSession(true);
           return;
         }
@@ -53,7 +55,9 @@ const ResetPassword = () => {
         const type = searchParams.get('type');
 
         if (type === 'recovery' && accessToken) {
-          console.log('Recovery link detected, setting session');
+          if (import.meta.env.DEV) {
+            console.log('Recovery link detected, setting session');
+          }
           const { error: sessionError } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken || '',

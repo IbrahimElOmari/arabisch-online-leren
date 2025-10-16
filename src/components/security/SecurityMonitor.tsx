@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useSessionSecurity } from '@/hooks/useSessionSecurity';
+import { useUserRole } from '@/hooks/useUserRole';
 import { securityLogger } from '@/utils/securityLogger';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ interface SecurityThreat {
 
 export const SecurityMonitor: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, profile } = useAuth();
+  const { isAdmin } = useUserRole();
   const { sessionState, extendSession, getSessionHealth } = useSessionSecurity();
   const [threats, setThreats] = useState<SecurityThreat[]>([]);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -73,13 +75,17 @@ export const SecurityMonitor: React.FC<{ children: React.ReactNode }> = ({ child
   // Log user sessions with enhanced null safety
   useEffect(() => {
     if (user && profile && !initialLoadRef.current) {
-      // Safe logging with null checks
+      // Safe logging with null checks - role display only
       const email = user.email || 'unknown';
-      const role = profile.role || 'unknown';
+      const roleDisplay = profile.role || 'unknown';
+      
+      if (import.meta.env.DEV) {
+        console.log('SecurityMonitor: Session restored', { email, role: roleDisplay, isAdmin });
+      }
       
       securityLogger.logAuthAttempt(true, email, {
         login_method: 'session_restored',
-        role: role,
+        role: roleDisplay,
         user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
         screen_resolution: typeof screen !== 'undefined' ? `${screen.width}x${screen.height}` : 'unknown',
         timezone: typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'unknown'
@@ -90,7 +96,7 @@ export const SecurityMonitor: React.FC<{ children: React.ReactNode }> = ({ child
     if (initialLoadRef.current) {
       initialLoadRef.current = false;
     }
-  }, [user, profile]);
+  }, [user, profile, isAdmin]);
 
   // Enhanced security monitoring with reduced frequency
   useEffect(() => {

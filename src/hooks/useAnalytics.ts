@@ -57,8 +57,10 @@ export const useAnalytics = create<AnalyticsStore>((set, get) => ({
       events: [...state.events, event],
     }));
 
-    // In production, you would send this to your analytics service
-    console.log('Analytics Event:', event);
+    // In production, send to analytics service; in dev, log
+    if (import.meta.env.DEV) {
+      console.log('Analytics Event:', event);
+    }
   },
 
   setUserId: (userId: string | null) => {

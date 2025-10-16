@@ -1909,6 +1909,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_enrolled_in_class: {
+        Args: { _class: string; _user: string }
+        Returns: boolean
+      }
+      is_teacher_of_class: {
+        Args: { _class: string; _user: string }
+        Returns: boolean
+      }
       log_audit_event: {
         Args: {
           p_action: string
