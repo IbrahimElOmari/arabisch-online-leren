@@ -23,7 +23,6 @@ import NotFound from '@/pages/NotFound';
 
 // Lazy load heavy pages for better performance
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
-const Admin = lazy(() => import('@/pages/Admin'));
 const Analytics = lazy(() => import('@/pages/Analytics'));
 const Security = lazy(() => import('@/pages/Security'));
 const Forum = lazy(() => import('@/pages/Forum'));

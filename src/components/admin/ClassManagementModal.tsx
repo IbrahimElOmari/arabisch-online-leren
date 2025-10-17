@@ -18,7 +18,7 @@ interface ClassManagementModalProps {
 interface ClassData {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   teacher_id: string | null;
   created_at: string;
 }

@@ -10,9 +10,9 @@ import { UserCheck, Mail, Phone, Calendar } from 'lucide-react';
 interface PendingUser {
   id: string;
   full_name: string;
-  email: string;
-  parent_email?: string;
-  phone_number?: string;
+  email: string | null;
+  parent_email?: string | null;
+  phone_number?: string | null;
   created_at: string;
   role: string;
 }

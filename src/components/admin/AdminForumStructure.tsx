@@ -12,10 +12,7 @@ import {
   Plus, 
   Edit, 
   Trash2, 
-  Users, 
-  Eye,
-  Pin,
-  Lock
+  Eye
 } from 'lucide-react';
 
 interface ForumRoom {

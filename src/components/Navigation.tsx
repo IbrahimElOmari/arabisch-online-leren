@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { EnhancedNavigationHeader } from '@/components/navigation/EnhancedNavigationHeader';
 
 

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Plus, UserPlus, Users, MessageSquare } from 'lucide-react';
 import { ClassManagementModal } from './ClassManagementModal';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
