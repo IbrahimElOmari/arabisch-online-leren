@@ -21,7 +21,9 @@ export function useForumRealtime(
   useEffect(() => {
     if (!classId) return;
 
-    console.log('[useForumRealtime] Setting up enhanced realtime for class:', classId);
+    if (import.meta.env.DEV) {
+      console.log('[useForumRealtime] Setting up enhanced realtime for class:', classId);
+    }
 
     const channels: any[] = [];
 
@@ -42,7 +44,9 @@ export function useForumRealtime(
               ? payload.new.title 
               : 'Unknown thread';
             
-            console.log('[useForumRealtime] Thread change:', payload.eventType, threadTitle);
+            if (import.meta.env.DEV) {
+              console.log('[useForumRealtime] Thread change:', payload.eventType, threadTitle);
+            }
             
             if (payload.eventType === 'INSERT' && callbacks.onNewThread) {
               callbacks.onNewThread(payload.new);
@@ -54,7 +58,9 @@ export function useForumRealtime(
           }
         )
         .subscribe((status) => {
-          console.log('[useForumRealtime] Threads subscription status:', status);
+          if (import.meta.env.DEV) {
+            console.log('[useForumRealtime] Threads subscription status:', status);
+          }
         });
 
       channels.push(threadsChannel);
@@ -77,7 +83,9 @@ export function useForumRealtime(
               ? payload.new.id 
               : 'Unknown post';
             
-            console.log('[useForumRealtime] Post change:', payload.eventType, postId);
+            if (import.meta.env.DEV) {
+              console.log('[useForumRealtime] Post change:', payload.eventType, postId);
+            }
             
             if (payload.eventType === 'INSERT' && callbacks.onNewPost) {
               callbacks.onNewPost(payload.new);
@@ -89,14 +97,18 @@ export function useForumRealtime(
           }
         )
         .subscribe((status) => {
-          console.log('[useForumRealtime] Posts subscription status:', status);
+          if (import.meta.env.DEV) {
+            console.log('[useForumRealtime] Posts subscription status:', status);
+          }
         });
 
       channels.push(postsChannel);
     }
 
     return () => {
-      console.log('[useForumRealtime] Cleaning up realtime subscriptions');
+      if (import.meta.env.DEV) {
+        console.log('[useForumRealtime] Cleaning up realtime subscriptions');
+      }
       channels.forEach(channel => {
         supabase.removeChannel(channel);
       });

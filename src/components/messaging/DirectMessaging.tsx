@@ -80,7 +80,7 @@ export const DirectMessaging = () => {
         .rpc('get_direct_messages', { user_id: profile.id });
       
       if (messagesError) {
-        console.log('RPC failed, using fallback approach:', messagesError);
+        if (import.meta.env.DEV) console.log('RPC failed, using fallback approach:', messagesError);
         // Fallback to creating conversations from user list
         const convMap = new Map<string, Conversation>();
         
@@ -146,7 +146,7 @@ export const DirectMessaging = () => {
         });
       
       if (error) {
-        console.log('Messages RPC failed:', error);
+        if (import.meta.env.DEV) console.log('Messages RPC failed:', error);
         setMessages([]);
         return;
       }
@@ -176,7 +176,7 @@ export const DirectMessaging = () => {
         });
       
       if (error) {
-        console.log('Send message RPC failed:', error);
+        if (import.meta.env.DEV) console.log('Send message RPC failed:', error);
         toast.error(isRTL ? 'فشل إرسال الرسالة' : 'Fout bij versturen bericht');
         return;
       }
@@ -203,7 +203,7 @@ export const DirectMessaging = () => {
         });
       
       if (error) {
-        console.log('Mark read RPC failed:', error);
+        if (import.meta.env.DEV) console.log('Mark read RPC failed:', error);
       }
     } catch (error) {
       console.error('Error marking messages as read:', error);

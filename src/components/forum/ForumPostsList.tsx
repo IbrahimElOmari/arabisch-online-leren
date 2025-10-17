@@ -64,7 +64,9 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
     try {
       setLoading(true);
       
-      console.log('ForumPostsList: Fetching posts for thread:', threadId);
+      if (import.meta.env.DEV) {
+        console.log('ForumPostsList: Fetching posts for thread:', threadId);
+      }
       
       // Get all posts including deleted ones to preserve reply structure
       const { data, error } = await supabase
@@ -81,7 +83,9 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
 
       if (error) throw error;
       
-      console.log('ForumPostsList: Raw posts data:', data?.length || 0, 'posts');
+      if (import.meta.env.DEV) {
+        console.log('ForumPostsList: Raw posts data:', data?.length || 0, 'posts');
+      }
       
       const flat: Post[] = (data as any) || [];
       
@@ -102,7 +106,9 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
       
       // Use the centralized organizePosts function with safe data
       const organized = organizePosts(safeFlat as any);
-      console.log('ForumPostsList: Organized posts:', organized.length, 'root posts');
+      if (import.meta.env.DEV) {
+        console.log('ForumPostsList: Organized posts:', organized.length, 'root posts');
+      }
       
       setPosts(organized as any);
       } catch (error) {
@@ -156,11 +162,13 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
 
         const accessToken = sessionData.session.access_token;
         
-        console.log('Creating reply with edge function...', {
-          threadId,
-          contentLength: replyContent.length,
-          hasToken: !!accessToken
-        });
+        if (import.meta.env.DEV) {
+          console.log('Creating reply with edge function...', {
+            threadId,
+            contentLength: replyContent.length,
+            hasToken: !!accessToken
+          });
+        }
 
         const { data: functionData, error: functionError } = await supabase.functions.invoke('manage-forum', {
           body: {
@@ -173,7 +181,9 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
           }
         });
 
-        console.log('Edge function response:', { functionData, functionError });
+        if (import.meta.env.DEV) {
+          console.log('Edge function response:', { functionData, functionError });
+        }
 
         if (functionError) {
           console.warn('Edge function failed, trying fallback...', functionError);
@@ -187,7 +197,9 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
           return;
         }
 
-        console.log('Reply created successfully via edge function');
+        if (import.meta.env.DEV) {
+          console.log('Reply created successfully via edge function');
+        }
         setReplyContent('');
         fetchPosts();
         
@@ -215,7 +227,9 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
     };
 
   const createReplyFallback = async () => {
-    console.log('Attempting fallback direct insert...');
+    if (import.meta.env.DEV) {
+      console.log('Attempting fallback direct insert...');
+    }
     
     const { data: thread, error: threadError } = await supabase
       .from('forum_threads')
@@ -243,7 +257,9 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
       throw new Error(`Directe insert mislukt: ${insertError.message}`);
     }
 
+    if (import.meta.env.DEV) {
       console.log('Fallback insert successful');
+    }
       setReplyContent('');
       fetchPosts();
       

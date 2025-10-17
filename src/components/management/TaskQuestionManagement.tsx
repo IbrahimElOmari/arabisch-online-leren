@@ -205,7 +205,9 @@ export const TaskQuestionManagement = () => {
       if (error) throw error;
 
       // Show submissions in a modal or new view
-      console.log('Task submissions:', submissions);
+      if (import.meta.env.DEV) {
+        console.log('Task submissions:', submissions);
+      }
       toast.success(`${submissions?.length || 0} inzendingen gevonden voor "${taskTitle}"`);
     } catch (error) {
       console.error('Error fetching task submissions:', error);
@@ -233,7 +235,9 @@ export const TaskQuestionManagement = () => {
       if (error) throw error;
 
       // Show answers in a modal or new view
-      console.log('Question answers:', answers);
+      if (import.meta.env.DEV) {
+        console.log('Question answers:', answers);
+      }
       toast.success(`${answers?.length || 0} antwoorden gevonden voor de vraag`);
     } catch (error) {
       console.error('Error fetching question answers:', error);

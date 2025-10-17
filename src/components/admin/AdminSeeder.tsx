@@ -23,17 +23,18 @@ const AdminSeeder = () => {
       });
 
       setCompleted(true);
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('Seeding result:', data);
       }
       
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.error('Seeding error:', error);
       }
+      const errorMessage = error instanceof Error ? error.message : "Er is een fout opgetreden bij het seeden van de database.";
       toast({
         title: "Seeding Mislukt",
-        description: error.message || "Er is een fout opgetreden bij het seeden van de database.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

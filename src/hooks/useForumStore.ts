@@ -82,7 +82,9 @@ export const useForumStore = create<ForumState>((set, get) => ({
   fetchPosts: async (threadId: string) => {
     set({ loading: true, error: null });
     try {
-      console.log('[useForumStore.fetchPosts] thread:', threadId);
+      if (import.meta.env.DEV) {
+        console.log('[useForumStore.fetchPosts] thread:', threadId);
+      }
 
       const { data, error } = await supabase
         .from('forum_posts')
@@ -95,7 +97,9 @@ export const useForumStore = create<ForumState>((set, get) => ({
 
       if (error) throw error;
 
-      console.log('[useForumStore.fetchPosts] Raw posts:', data?.length || 0);
+      if (import.meta.env.DEV) {
+        console.log('[useForumStore.fetchPosts] Raw posts:', data?.length || 0);
+      }
 
       const postsWithAuthor = (data || []).map((post: any) => {
         const normalizedParent =
@@ -116,7 +120,9 @@ export const useForumStore = create<ForumState>((set, get) => ({
       });
 
       const organizedPosts = organizePosts(postsWithAuthor as any);
-      console.log('[useForumStore.fetchPosts] Organized root count:', organizedPosts.length);
+      if (import.meta.env.DEV) {
+        console.log('[useForumStore.fetchPosts] Organized root count:', organizedPosts.length);
+      }
 
       set({ posts: organizedPosts as any, loading: false });
     } catch (error: any) {
@@ -128,10 +134,12 @@ export const useForumStore = create<ForumState>((set, get) => ({
   createPost: async (threadId: string, content: string, parentPostId?: string) => {
     set({ loading: true, error: null });
     try {
-      console.log('[useForumStore.createPost] Creating post', {
-        threadId,
-        hasParent: !!parentPostId,
-      });
+      if (import.meta.env.DEV) {
+        console.log('[useForumStore.createPost] Creating post', {
+          threadId,
+          hasParent: !!parentPostId,
+        });
+      }
 
       const { error } = await supabase.functions.invoke('manage-forum', {
         body: {

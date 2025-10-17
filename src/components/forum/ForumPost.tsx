@@ -134,11 +134,13 @@ export function ForumPost({
 
       const accessToken = sessionData.session.access_token;
 
-      console.log('Creating nested reply with edge function...', {
-        threadId: post.thread_id,
-        parentPostId: post.id,
-        hasToken: !!accessToken
-      });
+      if (import.meta.env.DEV) {
+        console.log('Creating nested reply with edge function...', {
+          threadId: post.thread_id,
+          parentPostId: post.id,
+          hasToken: !!accessToken
+        });
+      }
 
       const { data: functionData, error: functionError } = await supabase.functions.invoke('manage-forum', {
         body: {
@@ -189,7 +191,9 @@ export function ForumPost({
   };
 
   const createReplyFallback = async () => {
-    console.log('Attempting reply fallback...');
+    if (import.meta.env.DEV) {
+      console.log('Attempting reply fallback...');
+    }
     
     const { data: thread, error: threadError } = await supabase
       .from('forum_threads')
@@ -217,7 +221,9 @@ export function ForumPost({
       throw new Error(`Reactie insert mislukt: ${insertError.message}`);
     }
 
-    console.log('Reply fallback successful');
+    if (import.meta.env.DEV) {
+      console.log('Reply fallback successful');
+    }
     
     toast({
       title: "Reactie geplaatst",

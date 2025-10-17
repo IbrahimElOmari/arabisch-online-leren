@@ -56,7 +56,7 @@ const ForumMain = ({ classId }: ForumMainProps) => {
   // Enhanced real-time callbacks
   const handleThreadsChange = useCallback(() => {
     if (selectedRoom) {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('[ForumMain] Real-time threads update detected');
       }
       fetchThreads(selectedRoom);
@@ -64,7 +64,7 @@ const ForumMain = ({ classId }: ForumMainProps) => {
   }, [selectedRoom]);
 
   const handleNewThread = useCallback((newThread: any) => {
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.log('[ForumMain] New thread detected:', newThread.title);
     }
     toast({
