@@ -81,10 +81,15 @@ const TeacherDashboard = () => {
         controller.abort();
       }, 4000);
 
+      if (!profile?.id) {
+        setClasses([]);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('klassen')
         .select('*')
-        .eq('teacher_id', profile?.id)
+        .eq('teacher_id', profile.id)
         .abortSignal(controller.signal);
 
       clearTimeout(timer);

@@ -16,9 +16,7 @@ import { Separator } from '@/components/ui/separator';
 import { 
   Mail, 
   Send, 
-  Users, 
-  CheckSquare, 
-  Square,
+  Users,
   MessageSquare,
   ExternalLink
 } from 'lucide-react';

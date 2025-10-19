@@ -197,6 +197,7 @@ const ForumMain = ({ classId }: ForumMainProps) => {
         .insert({
           title: newThreadTitle,
           content: newThreadContent,
+          body: newThreadContent,
           author_id: profile?.id,
           class_id: classId
         });

@@ -49,8 +49,7 @@ export const AuthForm = ({
   
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [emailError, setEmailError] = useState<string>('');
-  const { getFlexDirection, getTextAlign, getMarginEnd, getPaddingEnd, isRTL } = useRTLLayout();
-  const { t } = useTranslation();
+  const { getFlexDirection, getTextAlign, getPaddingEnd, isRTL } = useRTLLayout();
 
   const handlePasswordChange = (password: string) => {
     setFormData({ ...formData, password });

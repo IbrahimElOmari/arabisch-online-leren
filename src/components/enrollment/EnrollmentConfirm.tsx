@@ -14,7 +14,7 @@ interface ClassDetails {
   id: string;
   name: string;
   description: string;
-  teacher_id: string;
+  teacher_id: string | null;
   created_at: string;
 }
 
@@ -49,7 +49,10 @@ const EnrollmentConfirm = () => {
         return;
       }
 
-      setClassDetails(data);
+      setClassDetails({
+        ...data,
+        description: data.description || ''
+      });
     };
 
     fetchClassDetails();
@@ -73,11 +76,11 @@ const EnrollmentConfirm = () => {
 
       // Navigate to dashboard
       navigate('/dashboard');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Enrollment error:', error);
       toast({
         title: "Inschrijving Mislukt",
-        description: error.message || "Er is een fout opgetreden bij het inschrijven.",
+        description: error?.message || "Er is een fout opgetreden bij het inschrijven.",
         variant: "destructive",
       });
     } finally {

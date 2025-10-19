@@ -1,132 +1,143 @@
-import { onCLS, onFCP, onLCP, onTTFB, onINP } from 'web-vitals';
+import { getCLS, getLCP, getFID, getFCP, getTTFB } from 'web-vitals';
+import { supabase } from '@/integrations/supabase/client';
 
-export interface WebVital {
+type Rating = 'good' | 'needs-improvement' | 'poor';
+
+const THRESHOLDS: Record<string, [number, number]> = {
+  CLS: [0.1, 0.25],        // Cumulative Layout Shift
+  FID: [100, 300],         // First Input Delay (ms)
+  LCP: [2500, 4000],       // Largest Contentful Paint (ms)
+  FCP: [1800, 3000],       // First Contentful Paint (ms)
+  TTFB: [800, 1800],       // Time to First Byte (ms)
+  INP: [200, 500],         // Interaction to Next Paint (ms)
+};
+
+function getRating(name: string, value: number): Rating {
+  const [good, poor] = THRESHOLDS[name] || [0, 0];
+  if (value <= good) return 'good';
+  if (value >= poor) return 'poor';
+  return 'needs-improvement';
+}
+
+interface Metric {
   name: string;
-  value: number;
   delta: number;
   id: string;
-  rating: 'good' | 'needs-improvement' | 'poor';
+  value: number;
 }
 
-export class WebVitalsReporter {
-  private vitals: Map<string, WebVital> = new Map();
-  private thresholds = {
-    FCP: { good: 1800, poor: 3000 },
-    LCP: { good: 2500, poor: 4000 },
-    CLS: { good: 0.1, poor: 0.25 },
-    TTFB: { good: 800, poor: 1800 },
-    INP: { good: 200, poor: 500 }
+async function sendToAnalytics(metric: Metric): Promise<void> {
+  const { name, delta, id, value } = metric;
+  const rating = getRating(name, value);
+  const metricData = {
+    name,
+    value: Math.round(value),
+    delta: Math.round(delta),
+    id,
+    rating,
   };
 
-  constructor() {
-    this.initWebVitals();
+  if (import.meta.env.DEV) {
+    const emoji = rating === 'good' ? '✅' : rating === 'needs-improvement' ? '⚠️' : '❌';
+    console.log(`${emoji} Web Vital: ${name}`, metricData);
   }
 
-  private initWebVitals() {
-    // Collect Core Web Vitals (FID is deprecated, using INP instead)
-    onCLS(this.handleVital.bind(this));
-    onFCP(this.handleVital.bind(this));
-    onLCP(this.handleVital.bind(this));
-    onTTFB(this.handleVital.bind(this));
-    onINP(this.handleVital.bind(this));
-  }
-
-  private handleVital(vital: any) {
-    const rating = this.getRating(vital.name, vital.value);
-    const webVital: WebVital = {
-      name: vital.name,
-      value: vital.value,
-      delta: vital.delta,
-      id: vital.id,
-      rating
-    };
-
-    this.vitals.set(vital.name, webVital);
-    
-    // Log in development
-    if (process.env.NODE_ENV === 'development') {
-      this.logVital(webVital);
-    }
-
-    // Send to analytics in production
-    if (process.env.NODE_ENV === 'production') {
-      this.sendToAnalytics(webVital);
-    }
-  }
-
-  private getRating(name: string, value: number): 'good' | 'needs-improvement' | 'poor' {
-    const threshold = this.thresholds[name as keyof typeof this.thresholds];
-    if (!threshold) return 'good';
-
-    if (value <= threshold.good) return 'good';
-    if (value <= threshold.poor) return 'needs-improvement';
-    return 'poor';
-  }
-
-  private logVital(vital: WebVital) {
-    const emoji = vital.rating === 'good' ? '✅' : vital.rating === 'needs-improvement' ? '⚠️' : '❌';
-    console.log(`${emoji} ${vital.name}: ${vital.value.toFixed(2)} (${vital.rating})`);
-
-    if (vital.rating === 'poor') {
-      console.warn(`Performance issue detected: ${vital.name} is ${vital.value.toFixed(2)}, threshold is ${this.thresholds[vital.name as keyof typeof this.thresholds]?.poor}`);
-    }
-  }
-
-  private sendToAnalytics(vital: WebVital) {
-    // In production, send to your analytics service
-    // For now, we'll use a beacon API
+  if (import.meta.env.PROD) {
     try {
-      const body = JSON.stringify({
-        name: vital.name,
-        value: vital.value,
-        rating: vital.rating,
-        url: window.location.href,
-        timestamp: Date.now()
-      });
-
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon('/api/analytics/vitals', body);
-      } else {
-        fetch('/api/analytics/vitals', {
-          method: 'POST',
-          body,
-          keepalive: true
-        });
+      let sessionId = sessionStorage.getItem('analytics_session_id');
+      if (!sessionId) {
+        sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        sessionStorage.setItem('analytics_session_id', sessionId);
       }
+
+      const { data: { user } } = await supabase.auth.getUser();
+
+      await supabase.from('analytics_events').insert({
+        event_type: 'web_vital',
+        event_data: {
+          ...metricData,
+          url: window.location.pathname,
+          user_agent: navigator.userAgent,
+          connection_type: (navigator as any).connection?.effectiveType || 'unknown',
+          device_memory: (navigator as any).deviceMemory || 'unknown',
+          screen_size: `${window.screen.width}x${window.screen.height}`,
+          viewport_size: `${window.innerWidth}x${window.innerHeight}`,
+        },
+        user_id: user?.id || null,
+        session_id: sessionId,
+        page_url: window.location.pathname,
+      });
     } catch (error) {
-      console.warn('Failed to send web vitals:', error);
+      console.warn('[WebVitals] Failed to send metric to analytics:', error);
     }
-  }
-
-  public getVitals(): WebVital[] {
-    return Array.from(this.vitals.values());
-  }
-
-  public getVitalsByRating(rating: 'good' | 'needs-improvement' | 'poor'): WebVital[] {
-    return this.getVitals().filter(vital => vital.rating === rating);
-  }
-
-  public generateReport(): string {
-    const vitals = this.getVitals();
-    if (vitals.length === 0) return 'No metrics available yet';
-
-    const report = vitals.map(vital => {
-      const emoji = vital.rating === 'good' ? '✅' : vital.rating === 'needs-improvement' ? '⚠️' : '❌';
-      return `${emoji} ${vital.name}: ${vital.value.toFixed(2)} (${vital.rating})`;
-    }).join('\n');
-
-    return `Web Vitals Report:\n${report}`;
   }
 }
 
-// Global instance
-export const webVitalsReporter = new WebVitalsReporter();
+export function initWebVitals(): void {
+  getCLS(sendToAnalytics);
+  getLCP(sendToAnalytics);
+  getFID(sendToAnalytics);
+  getFCP(sendToAnalytics);
+  getTTFB(sendToAnalytics);
+}
 
-// Hook for components
-export const useWebVitals = () => {
-  return {
-    vitals: webVitalsReporter.getVitals(),
-    getReport: () => webVitalsReporter.generateReport(),
-    getPoorVitals: () => webVitalsReporter.getVitalsByRating('poor')
-  };
-};
+export async function getWebVitalsReport(days = 7): Promise<{
+  metrics: Array<{ metric: string; rating: Rating; avgValue: number; p75Value: number; sampleCount: number }>;
+  trends: Array<{ date: string; metric: string; avgValue: number }>;
+}> {
+  try {
+    const { data, error } = await supabase.rpc('get_web_vitals_summary', { days_ago: days });
+    if (error) throw error;
+    return data || { metrics: [], trends: [] };
+  } catch (error) {
+    console.error('[WebVitals] Failed to fetch report:', error);
+    return { metrics: [], trends: [] };
+  }
+}
+
+export function markPerformance(name: string): void {
+  if ('performance' in window && 'mark' in performance) {
+    performance.mark(name);
+  }
+}
+
+export function measurePerformance(name: string, startMark: string, endMark?: string): number {
+  if ('performance' in window && 'measure' in performance) {
+    try {
+      if (endMark) {
+        performance.measure(name, startMark, endMark);
+      } else {
+        performance.measure(name, startMark);
+      }
+      const measure = performance.getEntriesByName(name, 'measure')[0];
+      return measure?.duration || 0;
+    } catch (error) {
+      console.warn('[WebVitals] Failed to measure performance:', error);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+export async function reportCustomMetric(name: string, value: number, unit: string = 'ms'): Promise<void> {
+  if (import.meta.env.DEV) {
+    console.log(`📊 Custom Metric: ${name} = ${value}${unit}`);
+  }
+
+  if (import.meta.env.PROD) {
+    try {
+      const sessionId = sessionStorage.getItem('analytics_session_id');
+      const { data: { user } } = await supabase.auth.getUser();
+
+      await supabase.from('analytics_events').insert({
+        event_type: 'custom_metric',
+        event_data: { name, value, unit, url: window.location.pathname },
+        user_id: user?.id || null,
+        session_id: sessionId,
+        page_url: window.location.pathname,
+      });
+    } catch (error) {
+      console.warn('[WebVitals] Failed to report custom metric:', error);
+    }
+  }
+}

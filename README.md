@@ -1,5 +1,10 @@
 # Welcome to your Lovable project
 
+![CI](https://github.com/IbrahimElOmari/arabisch-online-leren/actions/workflows/ci.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/coverage-70%25-green)
+![TypeScript](https://img.shields.io/badge/typescript-strict-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 ## Project info
 
 **URL**: https://lovable.dev/projects/0e45c786-7455-4ed2-80f9-d3ea8a94e8c9
