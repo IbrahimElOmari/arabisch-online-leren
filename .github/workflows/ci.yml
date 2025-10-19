@@ -1,10 +1,10 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master, '**' ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, develop]
 
 jobs:
   build-and-test:
@@ -22,7 +22,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -30,33 +29,32 @@ jobs:
           version: 8.15.0
           run_install: false
 
-      - name: Install dependencies (pnpm)
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Lint check
+        run: pnpm lint
 
       - name: Type checking
         run: pnpm typecheck
 
-      - name: Linting (fail on warnings)
-        run: pnpm lint
-
-      # Dev build for non-main branches (Lovable requires build:dev)
-      - name: Build (development)
-        if: github.ref != 'refs/heads/main'
-        run: pnpm run build:dev
-
-      # Production build + size check on main
-      - name: Build (production)
-        if: github.ref == 'refs/heads/main'
-        run: pnpm run build:prod
-
       - name: Run unit tests with coverage
         run: pnpm test:coverage
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps
-
-      - name: Run E2E tests
-        run: pnpm e2e:ci
+        env:
+          NODE_ENV: test
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
@@ -64,6 +62,34 @@ jobs:
         with:
           name: coverage-report
           path: coverage/
+          retention-days: 30
+
+      - name: Build (development)
+        if: github.ref != 'refs/heads/main'
+        run: pnpm run build:dev
+
+      - name: Build (production)
+        if: github.ref == 'refs/heads/main'
+        run: pnpm run build:prod
+
+      - name: Check bundle size
+        if: github.ref == 'refs/heads/main'
+        run: |
+          BUNDLE_SIZE=$(du -sb dist/assets/*.js | awk '{sum+=$1} END {print sum}')
+          echo "Bundle size: $BUNDLE_SIZE bytes"
+          if [ $BUNDLE_SIZE -gt 1048576 ]; then
+            echo "❌ Bundle size exceeds 1MB limit"
+            exit 1
+          fi
+          echo "✅ Bundle size within limits"
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps
+
+      - name: Run E2E tests
+        run: pnpm e2e:ci
+        env:
+          CI: true
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
@@ -71,3 +97,73 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
+          retention-days: 30
+
+      - name: Upload E2E test screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-screenshots
+          path: test-results/
+          retention-days: 30
+
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [build-and-test, security-scan]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to staging
+        run: echo "Deploy to staging environment"
+        # Add actual deployment steps here
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: [build-and-test, security-scan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: production
+      url: https://your-domain.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to production
+        run: echo "Deploy to production environment"
+        # Add actual deployment steps here
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          draft: false
+          prerelease: false
