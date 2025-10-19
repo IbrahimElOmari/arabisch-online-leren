@@ -4,9 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, UserPlus, Users, MessageSquare } from 'lucide-react';
 import { ClassManagementModal } from './ClassManagementModal';
-import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
@@ -115,7 +113,7 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleCreateClassSubmit = (e: React.FormEvent<HTMLFormElement>) => { e.preventDefault(); handleSubmit(e); };
+  const handleCreateClassSubmit = (e: React.FormEvent) => { e.preventDefault(); handleSubmit(e); };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -152,7 +150,7 @@ export function AdminModal({ trigger, type }: AdminModalProps) {
           throw new Error('Unsupported action type');
       }
 
-      const { data, error } = await supabase.functions.invoke('admin-manage-classes', {
+      const { error } = await supabase.functions.invoke('admin-manage-classes', {
         body: { action, ...payload }
       });
 

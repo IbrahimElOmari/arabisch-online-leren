@@ -1,19 +1,17 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, MessageCircle, BarChart3, ChevronRight, Users, Target, Trophy, Clock, CheckCircle, GraduationCap } from 'lucide-react';
+import { BookOpen, MessageCircle, BarChart3, Users, Target, Trophy, GraduationCap, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { TouchButton } from '@/components/touch/TouchOptimizedComponents';
 import { Button } from '@/components/ui/button';
 import { DashboardSkeleton } from '@/components/ui/enhanced-loading-system';
 import { EnhancedStudentTasksAndQuestions } from '@/components/student/EnhancedStudentTasksAndQuestions';
 import { useEnhancedProgress } from '@/hooks/useEnhancedProgress';
-import { LevelProgressCard } from '@/components/progress/LevelProgressCard';
 import { ThemeAwareProgressCard } from '@/components/progress/ThemeAwareProgressCard';
 import { ContinueLearningCard } from '@/components/progress/ContinueLearningCard';
 import { RecentAchievements } from '@/components/progress/RecentAchievements';
@@ -22,7 +20,6 @@ import { LeaderboardSystem } from '@/components/gamification/LeaderboardSystem';
 import { RealtimeChat } from '@/components/communication/RealtimeChat';
 import { EnhancedPointsDisplay } from '@/components/progress/EnhancedPointsDisplay';
 import { useNotifications } from '@/hooks/useNotifications';
-import { useAgeTheme } from '@/contexts/AgeThemeContext';
 import { cn } from '@/lib/utils';
 
 type NiveauItem = {
@@ -47,8 +44,6 @@ interface EnrolledClass {
 const StudentDashboard = () => {
   const { user, profile } = useAuth();
   const { t } = useTranslation();
-  const { getTextAlign } = useRTLLayout();
-  const { themeAge } = useAgeTheme();
   const [enrolledClasses, setEnrolledClasses] = useState<EnrolledClass[]>([]);
   const [selectedClass, setSelectedClass] = useState<EnrolledClass | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<NiveauItem | null>(null);
@@ -249,7 +244,7 @@ const StudentDashboard = () => {
         />
 
         {/* Continue Learning Section */}
-        {selectedClass && (
+        {selectedClass && currentLevelProgress && (
           <ContinueLearningCard 
             currentProgress={currentLevelProgress}
             onContinue={handleContinueLearning}
@@ -399,24 +394,29 @@ const StudentDashboard = () => {
                 <div className="space-y-3 @md:space-y-4">
                   <h3 className="text-lg @md:text-xl font-semibold">Je Level Voortgang</h3>
                   {selectedClass?.klassen.niveaus.map((niveau) => {
-                    const levelProgress = progressData.find(p => p.niveau_id === niveau.id);
+                     const levelProgress = progressData.find(p => p.niveau_id === niveau.id);
                     const isCurrentLevel = currentLevelProgress?.niveau_id === niveau.id;
+                    
+                    const fallbackProgress = {
+                      id: '',
+                      student_id: user?.id || '',
+                      niveau_id: niveau.id,
+                      total_points: 0,
+                      completed_tasks: 0,
+                      completed_questions: 0,
+                      is_completed: false as const,
+                      created_at: '',
+                      updated_at: '',
+                      niveau: {
+                        ...niveau,
+                        beschrijving: niveau.beschrijving || undefined
+                      }
+                    };
                     
                     return (
                       <ThemeAwareProgressCard
                         key={niveau.id}
-                        progress={levelProgress || {
-                          id: '',
-                          student_id: user?.id || '',
-                          niveau_id: niveau.id,
-                          total_points: 0,
-                          completed_tasks: 0,
-                          completed_questions: 0,
-                          is_completed: false,
-                          created_at: '',
-                          updated_at: '',
-                          niveau: niveau
-                        }}
+                        progress={levelProgress || fallbackProgress}
                         isCurrentLevel={isCurrentLevel}
                       />
                     );

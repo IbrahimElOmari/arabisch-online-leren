@@ -1,11 +1,8 @@
-
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Check, X } from 'lucide-react';
-import { useAuth } from '@/components/auth/AuthProviderQuery';
-import { supabase } from '@/integrations/supabase/client';
+import { Check, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useUserRole } from '@/hooks/useUserRole';
 
@@ -28,17 +25,7 @@ const PendingUsersManagement = () => {
     }
   }, [isAdmin]);
 
-  const generatePassword = () => {
-    const length = 12;
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-    let retVal = "";
-    for (let i = 0, n = charset.length; i < length; ++i) {
-      retVal += charset.charAt(Math.floor(Math.random() * n));
-    }
-    return retVal;
-  };
-
-  const approveUser = async (user: PendingUser) => {
+  const approveUser = async (_user: PendingUser) => {
     try {
       // This functionality requires the pending_users table to be created in Supabase
       toast({
@@ -56,7 +43,7 @@ const PendingUsersManagement = () => {
     }
   };
 
-  const rejectUser = async (user: PendingUser) => {
+  const rejectUser = async (_user: PendingUser) => {
     try {
       // This functionality requires the pending_users table to be created in Supabase
       toast({

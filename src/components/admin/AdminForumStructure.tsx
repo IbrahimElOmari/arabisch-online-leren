@@ -27,7 +27,6 @@ interface ForumRoom {
 const AdminForumStructure = () => {
   const [rooms, setRooms] = useState<ForumRoom[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRoom, setSelectedRoom] = useState<string>('');
   const [roomModal, setRoomModal] = useState({ open: false, mode: 'create', room: null as any });
   const { toast } = useToast();
 
@@ -93,7 +92,7 @@ const AdminForumStructure = () => {
     }
   };
 
-  const handleCreateRoom = async (roomData: { name: string; description: string }) => {
+  const handleCreateRoom = async (_roomData: { name: string; description: string }) => {
     try {
       // This would create a new class/niveau combination
       // For now, we'll show a message that this requires class management
@@ -251,7 +250,7 @@ const AdminForumStructure = () => {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={() => setSelectedRoom(room.id)}
+                          onClick={() => window.location.href = `/forum?room=${room.id}`}
                           className="flex items-center gap-1"
                         >
                           <Eye className="h-3 w-3" />

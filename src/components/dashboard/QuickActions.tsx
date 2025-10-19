@@ -75,7 +75,7 @@ export const QuickActions = ({ onAction }: QuickActionsProps) => {
       </CardHeader>
       <CardContent>
         <div className={`grid grid-cols-2 md:grid-cols-3 gap-3 ${isRTL ? 'rtl-grid' : ''}`}>
-          {actions.map(({ id, title, description, icon: Icon, color, primary }) => (
+          {actions.map(({ id, title, description, icon: Icon, primary }) => (
             <Button
               key={id}
               variant={primary ? "default" : "outline"}

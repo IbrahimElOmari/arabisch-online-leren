@@ -63,6 +63,8 @@ const AnnouncementSystem = () => {
   };
 
   const fetchLevels = async () => {
+    if (!formData.classId) return;
+    
     try {
       const { data, error } = await supabase
         .from('niveaus')

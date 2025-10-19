@@ -12,13 +12,12 @@ export interface LevelData {
 }
 
 interface LevelOverviewProps {
-  classId: string;
   className: string;
   levels: LevelData[];
   onLevelClick: (levelId: string) => void;
 }
 
-export const LevelOverview = ({ classId, className, levels, onLevelClick }: LevelOverviewProps) => {
+export const LevelOverview = ({ className, levels, onLevelClick }: LevelOverviewProps) => {
   return (
     <div className="space-y-6">
       <div className="text-center">
