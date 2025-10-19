@@ -5,7 +5,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ClassManagementModal } from './ClassManagementModal';
-import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 
