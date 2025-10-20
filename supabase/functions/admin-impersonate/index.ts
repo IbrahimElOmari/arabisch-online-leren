@@ -40,14 +40,24 @@ serve(async (req) => {
       throw new Error('Invalid user token')
     }
 
-    // Check if user is admin
-    const { data: profile, error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
+    // Check if user is admin using secure has_role RPC
+    const { data: isAdmin, error: roleError } = await supabaseAdmin
+      .rpc('has_role', {
+        _user_id: user.id,
+        _role: 'admin'
+      })
 
-    if (profileError || !profile || profile.role !== 'admin') {
+    if (roleError || !isAdmin) {
+      // Log unauthorized attempt
+      await supabaseAdmin.from('security_events').insert({
+        user_id: user.id,
+        actie: 'unauthorized_impersonation_attempt',
+        severity: 'critical',
+        details: { ip_address: req.headers.get('x-forwarded-for') },
+        ip_address: req.headers.get('x-forwarded-for') || null,
+        user_agent: req.headers.get('user-agent'),
+        event_category: 'security_violation'
+      })
       throw new Error('Unauthorized: Admin access required')
     }
 

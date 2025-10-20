@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -241,7 +242,12 @@ export const LessonPageTemplate = ({
 
             {/* Main Content */}
             <div className="prose prose-sm max-w-none dark:prose-invert">
-              <div dangerouslySetInnerHTML={{ __html: currentStep.content }} />
+              <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(currentStep.content, {
+                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre', 'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+                ALLOWED_ATTR: ['class', 'id', 'href', 'src', 'alt', 'title', 'target', 'rel'],
+                FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'style', 'link', 'meta'],
+                FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'onfocus', 'onblur']
+              }) }} />
             </div>
 
             {/* Arabic Text with Audio */}
