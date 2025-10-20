@@ -29,7 +29,7 @@ interface ForumThread {
   author_id: string;
   class_id: string;
   created_at: string;
-  is_pinned: boolean;
+  is_pinned: boolean | null;
   profiles?: {
     full_name: string;
     role: string;
@@ -199,7 +199,8 @@ const ForumMain = ({ classId }: ForumMainProps) => {
           content: newThreadContent,
           body: newThreadContent,
           author_id: profile?.id,
-          class_id: classId
+          class_id: classId,
+          is_pinned: false
         });
 
       if (error) throw error;
