@@ -29,7 +29,7 @@ const ForumModerationQueue = () => {
 
   const fetchReportedPosts = async () => {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('forum_posts')
         .select(`
           id,

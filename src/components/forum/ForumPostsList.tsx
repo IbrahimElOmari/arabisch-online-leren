@@ -44,7 +44,6 @@ interface Post {
 
 interface ForumPostsListProps {
   threadId: string;
-  classId: string;
 }
 
 const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
@@ -273,13 +272,13 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
       try {
         const { error } = await supabase
           .from('forum_likes')
-          .insert({
+          .upsert({
             post_id: postId,
             user_id: profile?.id,
             is_like: isLike
-          })
-          .select()
-          .single();
+          }, {
+            onConflict: 'post_id,user_id'
+          });
 
         if (error) throw error;
         
