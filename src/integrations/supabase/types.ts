@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.12 (cd3cf9e)"
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
@@ -1902,6 +1902,13 @@ export type Database = {
         Args: { user_id: string }
         Returns: string
       }
+      get_web_vitals_summary: {
+        Args: { days_ago?: number }
+        Returns: {
+          metrics: Database["public"]["CompositeTypes"]["web_vital_row"]
+          trends: Record<string, unknown>
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1961,7 +1968,13 @@ export type Database = {
       submission_type: "text" | "file"
     }
     CompositeTypes: {
-      [_ in never]: never
+      web_vital_row: {
+        metric: string | null
+        rating: string | null
+        avg_value: number | null
+        p75_value: number | null
+        sample_count: number | null
+      }
     }
   }
 }
