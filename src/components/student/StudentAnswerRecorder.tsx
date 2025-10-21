@@ -28,7 +28,6 @@ interface AnswerSubmission {
 }
 
 export const StudentAnswerRecorder = ({
-  questionId,
   questionText,
   onSubmit,
   allowedTypes = ['text', 'audio', 'video'],
@@ -70,7 +69,7 @@ export const StudentAnswerRecorder = ({
     }
   };
 
-  const handleRecordingComplete = (blob: Blob, mimeType: string) => {
+  const handleRecordingComplete = (blob: Blob) => {
     setRecordingBlob(blob);
     setHasRecording(true);
   };

@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { toast } from 'sonner';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Bell, BellOff, Settings, Check, X } from 'lucide-react';
 
 interface NotificationSettings {
   enabled: boolean;
@@ -282,7 +287,7 @@ export const PushNotifications = () => {
             ) : (
               <Switch
                 checked={settings.enabled}
-                onCheckedChange={(checked) => {
+                onCheckedChange={(checked: boolean) => {
                   if (checked) {
                     subscribeToPush();
                   } else {
@@ -301,7 +306,7 @@ export const PushNotifications = () => {
                 </label>
                 <Switch
                   checked={settings.messages}
-                  onCheckedChange={(checked) => updateSettings('messages', checked)}
+                  onCheckedChange={(checked: boolean) => updateSettings('messages', checked)}
                 />
               </div>
               
@@ -311,7 +316,7 @@ export const PushNotifications = () => {
                 </label>
                 <Switch
                   checked={settings.assignments}
-                  onCheckedChange={(checked) => updateSettings('assignments', checked)}
+                  onCheckedChange={(checked: boolean) => updateSettings('assignments', checked)}
                 />
               </div>
               
@@ -321,7 +326,7 @@ export const PushNotifications = () => {
                 </label>
                 <Switch
                   checked={settings.announcements}
-                  onCheckedChange={(checked) => updateSettings('announcements', checked)}
+                  onCheckedChange={(checked: boolean) => updateSettings('announcements', checked)}
                 />
               </div>
               
@@ -331,7 +336,7 @@ export const PushNotifications = () => {
                 </label>
                 <Switch
                   checked={settings.reminders}
-                  onCheckedChange={(checked) => updateSettings('reminders', checked)}
+                  onCheckedChange={(checked: boolean) => updateSettings('reminders', checked)}
                 />
               </div>
             </div>

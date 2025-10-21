@@ -1,4 +1,4 @@
-import React, { lazy } from 'react';
+import { lazy } from 'react';
 import WithEnhancedErrorHandling from '@/components/error/EnhancedErrorHandling';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useMobileRTL } from '@/hooks/useMobileRTL';

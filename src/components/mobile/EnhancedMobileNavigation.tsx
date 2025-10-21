@@ -131,7 +131,6 @@ export const EnhancedMobileSidebar = () => {
   const { user, profile } = useAuth();
   const { isAdmin, role } = useUserRole();
   const { isRTL } = useRTLLayout();
-  const { getSlideInAnimation, getSlideOutAnimation } = useRTLAnimations();
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();

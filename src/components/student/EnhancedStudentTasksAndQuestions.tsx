@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Radio, Loader2 } from 'lucide-react';
@@ -14,7 +14,7 @@ interface Task {
   id: string;
   level_id: string;
   title: string;
-  description?: string;
+  description?: string | null;
   required_submission_type: 'text' | 'file';
   grading_scale: number;
   created_at: string;
@@ -27,10 +27,10 @@ interface TaskSubmission {
   id: string;
   task_id: string;
   student_id: string;
-  submission_content?: string;
-  submission_file_path?: string;
-  grade?: number;
-  feedback?: string;
+  submission_content?: string | null;
+  submission_file_path?: string | null;
+  grade?: number | null;
+  feedback?: string | null;
   submitted_at: string;
 }
 
@@ -104,13 +104,13 @@ export const EnhancedStudentTasksAndQuestions = ({
       setTasks(formattedTasks);
 
       // Fetch submissions for these tasks
-      if (formattedTasks.length > 0) {
+      if (formattedTasks.length > 0 && profile?.id) {
         const taskIds = formattedTasks.map(t => t.id);
         const { data: submissionsData, error: submissionsError } = await supabase
           .from('task_submissions')
           .select('*')
           .in('task_id', taskIds)
-          .eq('student_id', profile?.id);
+          .eq('student_id', profile.id);
 
         if (submissionsError) throw submissionsError;
         setTaskSubmissions(submissionsData || []);
@@ -154,16 +154,20 @@ export const EnhancedStudentTasksAndQuestions = ({
         id: q.id,
         niveau_id: q.niveau_id,
         vraag: q.vraag_tekst || '',
-        audio_url: q.audio_url,
+        audio_url: q.audio_url || undefined,
         correct_antwoord: typeof q.correct_antwoord === 'string' 
           ? q.correct_antwoord 
-          : JSON.stringify(q.correct_antwoord) || '',
+          : JSON.stringify(q.correct_antwoord) || undefined,
         created_at: q.created_at,
         answer: q.antwoorden?.[0] ? {
-          ...q.antwoorden[0],
+          id: q.antwoorden[0].id,
           antwoord: typeof q.antwoorden[0].antwoord === 'string'
             ? q.antwoorden[0].antwoord
-            : JSON.stringify(q.antwoorden[0].antwoord) || ''
+            : JSON.stringify(q.antwoorden[0].antwoord) || '',
+          is_correct: q.antwoorden[0].is_correct ?? false,
+          punten: q.antwoorden[0].punten ?? 0,
+          feedback: q.antwoorden[0].feedback || '',
+          created_at: q.antwoorden[0].created_at
         } : undefined
       })) || [];
 
@@ -180,15 +184,16 @@ export const EnhancedStudentTasksAndQuestions = ({
     }
   };
 
-  const handleQuestionSubmission = async (questionId: string, answer: string) => {
+  const handleQuestionSubmission = async (_questionId: string, answer: string) => {
     try {
+      if (!profile?.id) return;
+      
       const { error } = await supabase
         .from('antwoorden')
         .insert({
-          vraag_id: questionId,
-          student_id: profile?.id,
+          student_id: profile.id,
           antwoord: answer
-        });
+        } as any); // Type assertion needed due to Supabase schema
 
       if (error) throw error;
       await fetchQuestions(); // Refresh to show the answer

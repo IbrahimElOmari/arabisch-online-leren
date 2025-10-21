@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, Radio, CheckCircle2, Clock, Loader2, Upload } from 'lucide-react';
+import { FileText, Radio, CheckCircle2, Loader2, Upload } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -74,10 +73,9 @@ interface StudentTasksAndQuestionsProps {
 
 export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAndQuestionsProps) => {
   const { profile } = useAuth();
-  const { getFlexDirection, getTextAlign, getMarginStart, getMarginEnd } = useRTLLayout();
+  const { getFlexDirection } = useRTLLayout();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [taskSubmissions, setTaskSubmissions] = useState<TaskSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submissionText, setSubmissionText] = useState<string>('');

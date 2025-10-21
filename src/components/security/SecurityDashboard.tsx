@@ -34,8 +34,8 @@ interface UserSession {
   ip_address: string | null;
   user_agent: string | null;
   is_active: boolean;
-  last_activity: string;
-  created_at: string;
+  last_activity: string | null;
+  created_at: string | null;
 }
 
 interface RateLimit {
@@ -96,8 +96,9 @@ export const SecurityDashboard = () => {
       })));
       setUserSessions((sessions || []).map(s => ({ 
         ...s, 
-        ip_address: String(s.ip_address || 'unknown'), 
-        user_agent: String(s.user_agent || 'unknown'),
+        ip_address: typeof s.ip_address === 'string' ? s.ip_address : null, 
+        user_agent: typeof s.user_agent === 'string' ? s.user_agent : null,
+        last_activity: typeof s.last_activity === 'string' ? s.last_activity : null,
         is_active: s.is_active ?? false
       })));
       setRateLimits((limits || []).map(l => ({
@@ -338,10 +339,10 @@ export const SecurityDashboard = () => {
                       ) : (
                         <XCircle className="h-5 w-5 text-red-500" />
                       )}
-                      <div>
-                        <div className="font-medium">IP: {session.ip_address}</div>
+                       <div>
+                        <div className="font-medium">IP: {session.ip_address || 'Onbekend'}</div>
                         <div className="text-sm text-muted-foreground">
-                          Laatste activiteit: {new Date(session.last_activity).toLocaleString()}
+                          Laatste activiteit: {session.last_activity ? new Date(session.last_activity).toLocaleString() : 'Onbekend'}
                         </div>
                       </div>
                     </div>
