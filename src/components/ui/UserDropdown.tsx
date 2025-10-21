@@ -70,7 +70,7 @@ export const UserDropdown = () => {
           </Button>
         </DropdownMenuTrigger>
         
-        <DropdownMenuContent className="w-56 bg-popover border shadow-md" align="end">
+        <DropdownMenuContent className="w-56 bg-popover border shadow-md" align={isRTL ? "start" : "end"}>
           <DropdownMenuLabel>
             <div className={`flex flex-col space-y-1 ${getTextAlign('left')}`}>
               <p className="text-sm font-medium">{profile.full_name}</p>
@@ -85,9 +85,7 @@ export const UserDropdown = () => {
             className={`${getFlexDirection()} items-center gap-2 cursor-pointer`}
           >
             <User className="h-4 w-4" />
-            <span className={isRTL ? 'arabic-text' : ''}>
-              {isRTL ? 'عرض الملف الشخصي' : 'Profiel bekijken'}
-            </span>
+            <span className={isRTL ? 'arabic-text' : ''}>{t('user.view_profile')}</span>
           </DropdownMenuItem>
           
           <DropdownMenuItem 
@@ -95,9 +93,7 @@ export const UserDropdown = () => {
             className={`${getFlexDirection()} items-center gap-2 cursor-pointer`}
           >
             <KeyRound className="h-4 w-4" />
-            <span className={isRTL ? 'arabic-text' : ''}>
-              {isRTL ? 'تغيير كلمة المرور' : 'Wachtwoord wijzigen'}
-            </span>
+            <span className={isRTL ? 'arabic-text' : ''}>{t('user.change_password')}</span>
           </DropdownMenuItem>
           
           <DropdownMenuItem 
@@ -115,9 +111,7 @@ export const UserDropdown = () => {
             className={`${getFlexDirection()} items-center gap-2 cursor-pointer text-destructive hover:text-destructive`}
           >
             <LogOut className="h-4 w-4" />
-            <span className={isRTL ? 'arabic-text' : ''}>
-              {isRTL ? 'تسجيل الخروج' : 'Afmelden'}
-            </span>
+            <span className={isRTL ? 'arabic-text' : ''}>{t('user.logout')}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

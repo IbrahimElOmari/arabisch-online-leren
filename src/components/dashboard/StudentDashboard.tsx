@@ -21,6 +21,7 @@ import { RealtimeChat } from '@/components/communication/RealtimeChat';
 import { EnhancedPointsDisplay } from '@/components/progress/EnhancedPointsDisplay';
 import { useNotifications } from '@/hooks/useNotifications';
 import { cn } from '@/lib/utils';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 
 type NiveauItem = {
   id: string;
@@ -44,6 +45,7 @@ interface EnrolledClass {
 const StudentDashboard = () => {
   const { user, profile } = useAuth();
   const { t } = useTranslation();
+  const { isRTL, getFlexDirection, getTextAlign } = useRTLLayout();
   const [enrolledClasses, setEnrolledClasses] = useState<EnrolledClass[]>([]);
   const [selectedClass, setSelectedClass] = useState<EnrolledClass | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<NiveauItem | null>(null);
@@ -192,10 +194,14 @@ const StudentDashboard = () => {
 
   if (!enrolledClasses.length) {
     return (
-      <div className="p-6 text-center">
+      <div className={cn("p-6 text-center", isRTL && "arabic-text")}>
         <GraduationCap className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-        <h2 className="text-2xl font-bold mb-4">Geen inschrijvingen gevonden</h2>
-        <p className="text-muted-foreground">Je bent nog niet ingeschreven voor een klas.</p>
+        <h2 className={cn("text-2xl font-bold mb-4", isRTL && "arabic-text")}>
+          {t('dashboard.no_enrollments')}
+        </h2>
+        <p className={cn("text-muted-foreground", isRTL && "arabic-text")}>
+          {t('dashboard.not_enrolled')}
+        </p>
       </div>
     );
   }
@@ -206,31 +212,31 @@ const StudentDashboard = () => {
         {/* Header with Level Display */}
         <Card className="@container">
           <CardHeader className="p-4 @md:p-6">
-            <div className="flex flex-col @md:flex-row @md:items-center @md:justify-between gap-4">
+            <div className={cn("flex flex-col @md:flex-row @md:items-center @md:justify-between gap-4", isRTL && "@md:flex-row-reverse")}>
               <div className="flex-1 min-w-0">
-                <CardTitle className="text-xl @md:text-2xl font-bold flex items-center gap-2 mb-2">
+                <CardTitle className={cn("text-xl @md:text-2xl font-bold flex items-center gap-2 mb-2", isRTL && "flex-row-reverse")}>
                   {currentLevelProgress ? (
                     <Target className="h-5 w-5 @md:h-6 @md:w-6 text-primary flex-shrink-0" />
                   ) : (
                     <Trophy className="h-5 w-5 @md:h-6 @md:w-6 text-success flex-shrink-0" />
                   )}
-                  <span className="truncate">
-                    {t('dashboard.welcome')} {profile?.full_name || user?.email}! 👋
+                  <span className={cn("truncate", isRTL && "arabic-text")}>
+                    {t('welcome.greeting')}, {profile?.full_name || user?.email}! 👋
                   </span>
                 </CardTitle>
-                <div className="flex flex-col @sm:flex-row @sm:items-center gap-2 @sm:gap-4">
-                  <p className="text-sm @md:text-base text-muted-foreground">
-                    Welkom terug bij je Arabisch leertraject
+                <div className={cn("flex flex-col @sm:flex-row @sm:items-center gap-2 @sm:gap-4", isRTL && "@sm:flex-row-reverse")}>
+                  <p className={cn("text-sm @md:text-base text-muted-foreground", isRTL && "arabic-text")}>
+                    {t('dashboard.welcome_back')}
                   </p>
                   {currentLevelProgress && (
-                    <Badge variant="outline" className="text-xs @md:text-sm w-fit">
-                      Huidig Level: {currentLevelProgress.niveau?.naam}
+                    <Badge variant="outline" className={cn("text-xs @md:text-sm w-fit", isRTL && "arabic-text")}>
+                      {t('dashboard.current_level')}: {currentLevelProgress.niveau?.naam}
                     </Badge>
                   )}
                 </div>
               </div>
-              <Badge variant="secondary" className="text-xs @md:text-sm w-fit">
-                Leerling
+              <Badge variant="secondary" className={cn("text-xs @md:text-sm w-fit", isRTL && "arabic-text")}>
+                {t('dashboard.student_role')}
               </Badge>
             </div>
           </CardHeader>
@@ -255,11 +261,11 @@ const StudentDashboard = () => {
         {notifications.length > 0 && (
           <Card className="border-primary/20">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className={cn("flex items-center gap-2", isRTL && "flex-row-reverse")}>
                 <MessageCircle className="h-5 w-5 text-primary" />
-                Recente Meldingen
+                <span className={isRTL ? 'arabic-text' : ''}>{t('dashboard.recent_notifications')}</span>
                 {unreadCount > 0 && (
-                  <Badge variant="destructive" className="ms-2">
+                  <Badge variant="destructive" className={isRTL ? "me-2" : "ms-2"}>
                     {unreadCount}
                   </Badge>
                 )}
@@ -272,7 +278,8 @@ const StudentDashboard = () => {
                     key={notification.id}
                     className={cn(
                       "p-3 rounded-lg border text-sm",
-                      notification.is_read ? "bg-muted/50" : "bg-primary/10 border-primary/20"
+                      notification.is_read ? "bg-muted/50" : "bg-primary/10 border-primary/20",
+                      isRTL && "arabic-text text-right"
                     )}
                   >
                     {notification.message}
@@ -281,8 +288,8 @@ const StudentDashboard = () => {
               </div>
               {notifications.length > 3 && (
                 <div className="text-center mt-3">
-                  <Button variant="outline" size="sm">
-                    Alle meldingen bekijken
+                  <Button variant="outline" size="sm" className={isRTL ? 'arabic-text' : ''}>
+                    {t('dashboard.view_all_notifications')}
                   </Button>
                 </div>
               )}
@@ -293,16 +300,18 @@ const StudentDashboard = () => {
         {/* Class and Level Selection */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className={cn("flex items-center gap-2", isRTL && "flex-row-reverse")}>
               <Users className="h-5 w-5" />
-              Klas & Level Selectie
+              <span className={isRTL ? 'arabic-text' : ''}>{t('dashboard.class_level_selection')}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div>
-                <h4 className="font-medium mb-2">Selecteer een klas:</h4>
-                <div className="flex flex-wrap gap-2">
+                <h4 className={cn("font-medium mb-2", isRTL && "arabic-text text-right")}>
+                  {t('dashboard.select_class')}:
+                </h4>
+                <div className={cn("flex flex-wrap gap-2", isRTL && "flex-row-reverse")}>
                   {enrolledClasses.map((enrollment) => (
                     <TouchButton
                       key={enrollment.id}
@@ -316,10 +325,10 @@ const StudentDashboard = () => {
                           setSelectedLevel(null);
                         }
                       }}
-                      className="flex items-center gap-2"
+                      className={cn("flex items-center gap-2", isRTL && "flex-row-reverse")}
                     >
                       <BookOpen className="h-4 w-4" />
-                      {enrollment.klassen.name}
+                      <span className={isRTL ? 'arabic-text' : ''}>{enrollment.klassen.name}</span>
                     </TouchButton>
                   ))}
                 </div>
@@ -327,16 +336,17 @@ const StudentDashboard = () => {
               
               {selectedClass && selectedClass.klassen.niveaus.length > 0 && (
                 <div>
-                  <h4 className="font-medium mb-2">
-                    Niveaus in {selectedClass.klassen.name}:
+                  <h4 className={cn("font-medium mb-2", isRTL && "arabic-text text-right")}>
+                    {t('dashboard.select_level')} {selectedClass.klassen.name}:
                   </h4>
-                  <div className="flex flex-wrap gap-2">
+                  <div className={cn("flex flex-wrap gap-2", isRTL && "flex-row-reverse")}>
                     {selectedClass.klassen.niveaus.map((niveau) => (
                       <TouchButton
                         key={niveau.id}
                         variant={selectedLevel?.id === niveau.id ? "default" : "outline"}
                         size="sm"
                         onClick={() => setSelectedLevel(niveau)}
+                        className={isRTL ? 'arabic-text' : ''}
                       >
                         {niveau.naam}
                       </TouchButton>
@@ -352,29 +362,41 @@ const StudentDashboard = () => {
         {selectedClass && selectedLevel && (
           <Tabs defaultValue="tasks" className="w-full @container">
             <div className="overflow-x-auto">
-              <TabsList className="grid w-full grid-cols-3 @md:grid-cols-5 min-w-max">
-                <TabsTrigger value="tasks" className="flex items-center gap-1 @md:gap-2 text-xs @md:text-sm">
+              <TabsList className={cn("grid w-full grid-cols-3 @md:grid-cols-5 min-w-max", isRTL && "flex-row-reverse")}>
+                <TabsTrigger value="tasks" className={cn("flex items-center gap-1 @md:gap-2 text-xs @md:text-sm", isRTL && "flex-row-reverse")}>
                   <BookOpen className="h-3 w-3 @md:h-4 @md:w-4" />
-                  <span className="hidden @sm:inline">Taken & Vragen</span>
-                  <span className="@sm:hidden">Taken</span>
+                  <span className={cn("hidden @sm:inline", isRTL && "arabic-text")}>
+                    {t('dashboard.tasks_questions')}
+                  </span>
+                  <span className={cn("@sm:hidden", isRTL && "arabic-text")}>
+                    {t('tasks.title')}
+                  </span>
                 </TabsTrigger>
-                <TabsTrigger value="progress" className="flex items-center gap-1 @md:gap-2 text-xs @md:text-sm">
+                <TabsTrigger value="progress" className={cn("flex items-center gap-1 @md:gap-2 text-xs @md:text-sm", isRTL && "flex-row-reverse")}>
                   <BarChart3 className="h-3 w-3 @md:h-4 @md:w-4" />
-                  <span className="hidden @sm:inline">Level Voortgang</span>
-                  <span className="@sm:hidden">Voortgang</span>
+                  <span className={cn("hidden @sm:inline", isRTL && "arabic-text")}>
+                    {t('dashboard.level_progress')}
+                  </span>
+                  <span className={cn("@sm:hidden", isRTL && "arabic-text")}>
+                    {t('common.progress')}
+                  </span>
                 </TabsTrigger>
-                <TabsTrigger value="badges" className="flex items-center gap-1 @md:gap-2 text-xs @md:text-sm">
+                <TabsTrigger value="badges" className={cn("flex items-center gap-1 @md:gap-2 text-xs @md:text-sm", isRTL && "flex-row-reverse")}>
                   <Trophy className="h-3 w-3 @md:h-4 @md:w-4" />
-                  <span className="hidden @sm:inline">Badges & Rankings</span>
-                  <span className="@sm:hidden">Badges</span>
+                  <span className={cn("hidden @sm:inline", isRTL && "arabic-text")}>
+                    {t('dashboard.badges_rankings')}
+                  </span>
+                  <span className={cn("@sm:hidden", isRTL && "arabic-text")}>
+                    {t('badges.earned')}
+                  </span>
                 </TabsTrigger>
-                <TabsTrigger value="chat" className="hidden @md:flex items-center gap-2 text-sm">
+                <TabsTrigger value="chat" className={cn("hidden @md:flex items-center gap-2 text-sm", isRTL && "flex-row-reverse")}>
                   <MessageCircle className="h-4 w-4" />
-                  Chat
+                  <span className={isRTL ? 'arabic-text' : ''}>{t('teacher.chat')}</span>
                 </TabsTrigger>
-                <TabsTrigger value="forum" className="hidden @md:flex items-center gap-2 text-sm">
+                <TabsTrigger value="forum" className={cn("hidden @md:flex items-center gap-2 text-sm", isRTL && "flex-row-reverse")}>
                   <MessageCircle className="h-4 w-4" />
-                  Forum
+                  <span className={isRTL ? 'arabic-text' : ''}>{t('nav.forum')}</span>
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -392,7 +414,9 @@ const StudentDashboard = () => {
               <div className="grid gap-4 @md:gap-6 @lg:grid-cols-2">
                 {/* Level Progress Cards */}
                 <div className="space-y-3 @md:space-y-4">
-                  <h3 className="text-lg @md:text-xl font-semibold">Je Level Voortgang</h3>
+                  <h3 className={cn("text-lg @md:text-xl font-semibold", isRTL && "arabic-text text-right")}>
+                    {t('dashboard.your_level_progress')}
+                  </h3>
                   {selectedClass?.klassen.niveaus.map((niveau) => {
                      const levelProgress = progressData.find(p => p.niveau_id === niveau.id);
                     const isCurrentLevel = currentLevelProgress?.niveau_id === niveau.id;

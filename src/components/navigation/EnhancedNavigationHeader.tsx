@@ -54,10 +54,10 @@ export const EnhancedNavigationHeader = () => {
 
   const getRoleDisplayName = (role?: string) => {
     switch (role) {
-      case 'admin': return 'Beheerder';
-      case 'leerkracht': return 'Leerkracht';
-      case 'leerling': return 'Leerling';
-      default: return 'Gebruiker';
+      case 'admin': return t('roles.admin');
+      case 'leerkracht': return t('roles.teacher');
+      case 'leerling': return t('roles.student');
+      default: return t('roles.unknown');
     }
   };
 
@@ -81,7 +81,7 @@ export const EnhancedNavigationHeader = () => {
                 <span className="text-primary-foreground font-bold text-sm">ع</span>
               </div>
               <span className={cn('hidden sm:block', isRTL && 'arabic-text')}>
-                Arabisch Leren
+                {isRTL ? 'تعلم العربية' : 'Arabisch Leren'}
               </span>
             </Link>
           </div>
@@ -158,24 +158,24 @@ export const EnhancedNavigationHeader = () => {
                 </div>
                 
                 <DropdownMenuItem asChild>
-                  <Link to="/profile" className="flex items-center gap-2">
+                  <Link to="/profile" className={cn("flex items-center gap-2", isRTL && "flex-row-reverse")}>
                     <User className="h-4 w-4" />
-                    Profiel
+                    <span className={isRTL ? 'arabic-text' : ''}>{t('user.profile')}</span>
                   </Link>
                 </DropdownMenuItem>
                 
                 <DropdownMenuItem asChild>
-                  <Link to="/dashboard" className="flex items-center gap-2">
+                  <Link to="/dashboard" className={cn("flex items-center gap-2", isRTL && "flex-row-reverse")}>
                     <Home className="h-4 w-4" />
-                    Dashboard
+                    <span className={isRTL ? 'arabic-text' : ''}>{t('nav.home_dashboard')}</span>
                   </Link>
                 </DropdownMenuItem>
 
                 {isAdmin && (
                   <DropdownMenuItem asChild>
-                    <Link to="/admin" className="flex items-center gap-2">
+                    <Link to="/admin" className={cn("flex items-center gap-2", isRTL && "flex-row-reverse")}>
                       <Settings className="h-4 w-4" />
-                      Beheer
+                      <span className={isRTL ? 'arabic-text' : ''}>{t('nav.admin')}</span>
                     </Link>
                   </DropdownMenuItem>
                 )}
@@ -184,10 +184,10 @@ export const EnhancedNavigationHeader = () => {
                 
                 <DropdownMenuItem 
                   onClick={handleSignOut}
-                  className="text-destructive focus:text-destructive"
+                  className={cn("text-destructive focus:text-destructive flex items-center gap-2", isRTL && "flex-row-reverse")}
                 >
-                  <LogOut className="h-4 w-4 me-2" />
-                  Uitloggen
+                  <LogOut className="h-4 w-4" />
+                  <span className={isRTL ? 'arabic-text' : ''}>{t('user.logout')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
