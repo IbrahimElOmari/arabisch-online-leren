@@ -46,7 +46,7 @@ interface ForumPostsListProps {
   threadId: string;
 }
 
-const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
+const ForumPostsList = ({ threadId }: ForumPostsListProps) => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const { t } = useTranslation();
@@ -270,13 +270,15 @@ const ForumPostsList = ({ threadId, classId }: ForumPostsListProps) => {
 
     const handleLike = async (postId: string, isLike: boolean) => {
       try {
+        if (!profile?.id) return;
+        
         const { error } = await supabase
           .from('forum_likes')
-          .upsert({
+          .upsert([{
             post_id: postId,
-            user_id: profile?.id,
+            user_id: profile.id,
             is_like: isLike
-          }, {
+          }], {
             onConflict: 'post_id,user_id'
           });
 

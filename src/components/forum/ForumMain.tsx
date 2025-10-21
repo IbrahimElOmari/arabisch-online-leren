@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
@@ -29,7 +29,7 @@ interface ForumThread {
   author_id: string;
   class_id: string;
   created_at: string;
-  is_pinned: boolean | null;
+  is_pinned: boolean;
   profiles?: {
     full_name: string;
     role: string;
@@ -157,6 +157,7 @@ const ForumMain = ({ classId }: ForumMainProps) => {
       
       const threadsWithSafeAuthors = (data || []).map(thread => ({
         ...thread,
+        is_pinned: thread.is_pinned ?? false,
         profiles: thread.profiles ? {
           full_name: thread.profiles.full_name || 'Onbekende gebruiker',
           role: thread.profiles.role || 'leerling'
@@ -164,7 +165,7 @@ const ForumMain = ({ classId }: ForumMainProps) => {
           full_name: 'Onbekende gebruiker',
           role: 'leerling'
         }
-      }));
+      })) as ForumThread[];
       
       setThreads(threadsWithSafeAuthors);
       setSelectedRoom(roomId);
@@ -194,14 +195,13 @@ const ForumMain = ({ classId }: ForumMainProps) => {
     try {
       const { error } = await supabase
         .from('forum_threads')
-        .insert({
+        .insert([{
           title: newThreadTitle,
           content: newThreadContent,
-          body: newThreadContent,
-          author_id: profile?.id,
+          author_id: profile?.id || '',
           class_id: classId,
           is_pinned: false
-        });
+        }]);
 
       if (error) throw error;
 

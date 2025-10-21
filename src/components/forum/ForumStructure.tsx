@@ -1,22 +1,10 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MessageSquare, Users, Pin, Settings } from 'lucide-react';
+import { MessageSquare, Pin } from 'lucide-react';
 import { useForumStore } from '@/hooks/useForumStore';
 
 const ForumStructure = () => {
-  const {
-    threads,
-    selectedThread,
-    loading,
-    error,
-    fetchThreads,
-    fetchPosts,
-    createPost,
-    setSelectedThread,
-    clearError
-  } = useForumStore();
+  const { threads } = useForumStore();
 
   return (
     <div className="space-y-6">

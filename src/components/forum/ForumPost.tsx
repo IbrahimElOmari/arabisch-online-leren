@@ -71,7 +71,7 @@ export function ForumPost({
   const { user } = useAuth();
   const { isAdmin, isTeacher } = useUserRole();
   const { toast } = useToast();
-  const { getFlexDirection, getTextAlign, getMarginStart, getMarginEnd } = useRTLLayout();
+  const { getFlexDirection, getTextAlign } = useRTLLayout();
   const { t, language } = useTranslation();
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState('');

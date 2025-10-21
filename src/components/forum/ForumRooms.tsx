@@ -21,7 +21,7 @@ interface ForumRoomsProps {
 }
 
 const ForumRooms: React.FC<ForumRoomsProps> = ({ rooms, onRoomSelect }) => {
-  const { getFlexDirection, getTextAlign } = useRTLLayout();
+  const { getFlexDirection } = useRTLLayout();
   if (rooms.length === 0) {
     return (
       <EmptyState

@@ -29,7 +29,7 @@ const ForumModerationQueue = () => {
 
   const fetchReportedPosts = async () => {
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('forum_posts')
         .select(`
           id,
@@ -52,7 +52,7 @@ const ForumModerationQueue = () => {
 
       if (error) throw error;
 
-      const formattedPosts = data?.map(post => ({
+      const formattedPosts = data?.map((post: any) => ({
         id: post.id,
         titel: post.titel,
         inhoud: post.inhoud,

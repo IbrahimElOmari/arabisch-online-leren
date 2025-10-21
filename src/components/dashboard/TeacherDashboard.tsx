@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 import TaskQuestionManagementNew from '@/components/management/TaskQuestionManagementNew';
 import { TeacherGradingPanel } from '@/components/teacher/TeacherGradingPanel';
 import { BulkGradingModal } from '@/components/teacher/BulkGradingModal';
