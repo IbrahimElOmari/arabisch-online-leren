@@ -24,7 +24,10 @@ interface CalendarEvent {
   start_date: string;
   end_date: string;
   event_type: string;
-  class_id?: string;
+  class_id?: string | null;
+  created_by?: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface Klas {
@@ -45,7 +48,7 @@ const CalendarPage = () => {
     end_date: '',
     class_id: ''
   });
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const { isRTL } = useRTLLayout();
   const { t } = useTranslation();
 
@@ -68,20 +71,22 @@ const fetchUserRole = async () => {
 };
 
 const fetchEvents = async () => {
+  if (!user?.id) return;
+  
   let query = supabase.from('calendar_events').select('*').order('start_date');
 
   if (userRole === 'leerkracht') {
     const { data: teacherClasses } = await supabase
       .from('klassen')
       .select('id')
-      .eq('teacher_id', user?.id);
+      .eq('teacher_id', user.id);
     const ids = (teacherClasses || []).map(c => c.id);
     if (ids.length > 0) query = query.in('class_id', ids).or('class_id.is.null');
   } else if (userRole === 'leerling') {
     const { data: enrollments } = await supabase
       .from('inschrijvingen')
       .select('class_id')
-      .eq('student_id', user?.id)
+      .eq('student_id', user.id)
       .eq('payment_status', 'paid');
     const ids = (enrollments || []).map(e => e.class_id);
     if (ids.length > 0) query = query.in('class_id', ids).or('class_id.is.null');
@@ -92,15 +97,28 @@ const fetchEvents = async () => {
     console.error('Error fetching events:', error);
     return;
   }
-  setEvents(data || []);
+  setEvents((data || []).map(event => ({
+    id: event.id,
+    title: event.title,
+    description: event.description ?? undefined,
+    start_date: event.start_date,
+    end_date: event.end_date,
+    event_type: event.event_type,
+    class_id: event.class_id ?? undefined,
+    created_by: event.created_by ?? undefined,
+    created_at: event.created_at,
+    updated_at: event.updated_at
+  })));
 };
 
 const fetchClasses = async () => {
+  if (!user?.id) return;
+  
   if (userRole === 'leerkracht') {
     const { data, error } = await supabase
       .from('klassen')
       .select('id, name')
-      .eq('teacher_id', user?.id);
+      .eq('teacher_id', user.id);
     if (!error && data) setClasses(data);
   } else if (userRole === 'admin') {
     const { data, error } = await supabase
@@ -111,7 +129,7 @@ const fetchClasses = async () => {
     const { data: enrollments } = await supabase
       .from('inschrijvingen')
       .select('class_id')
-      .eq('student_id', user?.id)
+      .eq('student_id', user.id)
       .eq('payment_status', 'paid');
     const ids = (enrollments || []).map(e => e.class_id);
     if (ids.length > 0) {
@@ -195,7 +213,7 @@ const fetchClasses = async () => {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="w-full @md:w-auto">
-                  <Plus className={`w-4 h-4 ${getIconSpacing('2')}`} />
+                  <Plus className="w-4 h-4 me-2" />
                   <span className={isRTL ? 'arabic-text' : ''}>{t('calendar.addEvent')}</span>
                 </Button>
               </DialogTrigger>

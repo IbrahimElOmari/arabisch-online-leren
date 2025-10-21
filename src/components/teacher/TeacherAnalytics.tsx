@@ -43,10 +43,7 @@ interface TeacherAnalyticsProps {
   teacherId: string;
 }
 
-export const TeacherAnalytics: React.FC<TeacherAnalyticsProps> = ({ 
-  classId, 
-  teacherId 
-}) => {
+export const TeacherAnalytics: React.FC<TeacherAnalyticsProps> = () => {
   const { themeAge } = useAgeTheme();
   const [selectedView, setSelectedView] = useState<'overview' | 'students' | 'performance'>('overview');
 

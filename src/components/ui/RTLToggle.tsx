@@ -8,7 +8,7 @@ import { useTranslation } from '@/contexts/TranslationContext';
 
 export const RTLToggle: React.FC = () => {
   const { isRTL, toggleRTL, isLoading } = useRTL();
-  const { getFlexDirection, getIconSpacing } = useRTLLayout();
+  const { getFlexDirection } = useRTLLayout();
   const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
 

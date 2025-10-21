@@ -102,12 +102,14 @@ export class ChatService {
   static async createConversation(data: z.infer<typeof createConversationSchema>): Promise<Conversation> {
     const validated = createConversationSchema.parse(data);
     
+    const user = await supabase.auth.getUser();
+    if (!user.data.user?.id) throw new Error('User not authenticated');
+    
     const { data: conversation, error } = await supabase
       .from('conversations')
       .insert({
-        type: validated.type,
         class_id: validated.class_id || null,
-        created_by: (await supabase.auth.getUser()).data.user?.id,
+        created_by: user.data.user.id,
       })
       .select()
       .single();
@@ -203,7 +205,10 @@ export class ChatService {
     const messages = hasMore ? data.slice(0, limit) : data;
 
     // Check read status for current user
-    const userId = (await supabase.auth.getUser()).data.user?.id;
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user?.id;
+    if (!userId) throw new Error('User not authenticated');
+    
     const messagesWithReadStatus = await Promise.all(
       messages.map(async (message) => {
         const { data: readStatus } = await supabase
@@ -229,11 +234,13 @@ export class ChatService {
   static async sendMessage(data: z.infer<typeof sendMessageSchema>): Promise<Message> {
     const validated = sendMessageSchema.parse(data);
     
+    const user = await supabase.auth.getUser();
+    if (!user.data.user?.id) throw new Error('User not authenticated');
+    
     const { data: message, error } = await supabase
       .from('messages')
       .insert({
-        conversation_id: validated.conversation_id,
-        sender_id: (await supabase.auth.getUser()).data.user?.id,
+        sender_id: user.data.user.id,
         content: validated.content,
         attachments: validated.attachments || [],
       })

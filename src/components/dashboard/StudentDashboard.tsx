@@ -410,7 +410,7 @@ const StudentDashboard = () => {
                       updated_at: '',
                       niveau: {
                         ...niveau,
-                        beschrijving: niveau.beschrijving || undefined
+                        beschrijving: niveau.beschrijving ?? null
                       }
                     };
                     

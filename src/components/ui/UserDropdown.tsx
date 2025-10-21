@@ -15,7 +15,6 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   User, 
-  Settings, 
   KeyRound, 
   LogOut, 
   ChevronDown,
@@ -32,7 +31,7 @@ export const UserDropdown = () => {
   const navigate = useNavigate();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
+  const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
   const { t } = useTranslation();
 
   if (!user || !profile) return null;
