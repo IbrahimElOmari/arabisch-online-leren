@@ -34,7 +34,7 @@ export const ArabicVirtualKeyboard = ({
   onSpace, 
   className = "" 
 }: ArabicVirtualKeyboardProps) => {
-  const { isRTL, getFlexDirection, getTextAlign } = useRTLLayout();
+  const { isRTL, getFlexDirection } = useRTLLayout();
   
   const [isArabic, setIsArabic] = useState(true);
   const [showDiacritics, setShowDiacritics] = useState(false);

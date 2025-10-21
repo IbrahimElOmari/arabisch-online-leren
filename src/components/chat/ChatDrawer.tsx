@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MessageCircle, X, Users, User } from 'lucide-react';
+import { useState } from 'react';
+import { MessageCircle, Users, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';

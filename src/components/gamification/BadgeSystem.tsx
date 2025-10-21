@@ -20,11 +20,10 @@ interface BadgeDefinition {
 }
 
 interface BadgeSystemProps {
-  userId: string;
   studentProgress?: any[];
 }
 
-export const BadgeSystem: React.FC<BadgeSystemProps> = ({ userId, studentProgress = [] }) => {
+export const BadgeSystem: React.FC<BadgeSystemProps> = ({ studentProgress = [] }) => {
   const { themeAge } = useAgeTheme();
 
   // Calculate earned badges based on progress

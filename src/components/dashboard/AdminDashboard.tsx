@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,6 @@ import {
   BookOpen, 
   MessageSquare, 
   Settings,
-  UserPlus,
   GraduationCap,
   Shield,
   TrendingUp
@@ -27,7 +26,6 @@ const AdminDashboard = () => {
     isRTL, 
     getFlexDirection, 
     getTextAlign, 
-    getMarginStart, 
     getMarginEnd 
   } = useRTLLayout();
 

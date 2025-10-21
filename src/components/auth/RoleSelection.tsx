@@ -24,8 +24,7 @@ export const RoleSelection = ({
   onContinue, 
   onBack 
 }: RoleSelectionProps) => {
-  const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
-  const { t } = useTranslation();
+  const { isRTL } = useRTLLayout();
 
   return (
     <div className="space-y-4">

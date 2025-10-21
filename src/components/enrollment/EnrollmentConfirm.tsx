@@ -24,7 +24,7 @@ const EnrollmentConfirm = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [classDetails, setClassDetails] = useState<ClassDetails | null>(null);
-  const { getTextAlign, getFlexDirection, getIconSpacing } = useRTLLayout();
+  const { getTextAlign, getFlexDirection } = useRTLLayout();
   const { getNavigationAttributes, getDialogAttributes } = useAccessibilityRTL();
   const { t } = useTranslation();
 

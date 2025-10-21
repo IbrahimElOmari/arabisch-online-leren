@@ -1,4 +1,3 @@
-import React from 'react';
 import { Zap, TrendingUp, Award, Star, Target } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -39,13 +38,6 @@ export function PointsWidget({
       return `${(points / 1000).toFixed(1)}k`;
     }
     return points.toString();
-  };
-
-  const getProgressColor = () => {
-    if (progressPercentage >= 80) return 'bg-green-500';
-    if (progressPercentage >= 50) return 'bg-blue-500';
-    if (progressPercentage >= 25) return 'bg-yellow-500';
-    return 'bg-gray-500';
   };
 
   const getRankColor = () => {

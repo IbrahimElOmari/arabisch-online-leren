@@ -5,7 +5,6 @@ import {
   BookOpen, 
   Trophy, 
   TrendingUp,
-  Clock,
   Target,
   BarChart3,
   PieChart,
@@ -56,7 +55,7 @@ export const EnhancedAnalyticsDashboard: React.FC = () => {
 
   const { data: analyticsData, isLoading } = useQuery({
     queryKey: ['enhanced-analytics', profile?.id, selectedTimeRange],
-    queryFn: async () => await fetchAnalyticsData(profile?.id, selectedTimeRange),
+    queryFn: async () => await fetchAnalyticsData(),
     enabled: !!profile?.id && (isAdmin || isTeacher),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -260,7 +259,7 @@ export const EnhancedAnalyticsDashboard: React.FC = () => {
                       dataKey="students"
                       nameKey="level"
                     >
-                      {(analyticsData?.levelDistribution || []).map((entry, index) => (
+                      {(analyticsData?.levelDistribution || []).map((_, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
@@ -406,7 +405,7 @@ const KPICard: React.FC<KPICardProps> = ({
 };
 
 // Analytics data fetching function
-const fetchAnalyticsData = async (userId?: string, timeRange: string = 'week'): Promise<AnalyticsData> => {
+const fetchAnalyticsData = async (): Promise<AnalyticsData> => {
   // Mock data - replace with actual Supabase queries
   const mockData: AnalyticsData = {
     totalStudents: 245,

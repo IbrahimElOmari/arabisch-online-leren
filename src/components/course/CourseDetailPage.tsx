@@ -13,9 +13,6 @@ import {
   Star, 
   BookOpen, 
   Trophy, 
-  Calendar,
-  MessageSquare,
-  FileText,
   Video
 } from 'lucide-react';
 

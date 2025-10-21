@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,10 +11,7 @@ import {
   HelpCircle, 
   Eye, 
   Users, 
-  CheckCircle, 
-  Clock,
-  Calendar,
-  BookOpen
+  Calendar
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { nl } from 'date-fns/locale';
@@ -22,7 +19,7 @@ import { nl } from 'date-fns/locale';
 interface Task {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
   created_at: string;
   grading_scale: number;
   niveaus: {

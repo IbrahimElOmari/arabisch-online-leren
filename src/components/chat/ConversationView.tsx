@@ -1,15 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { ArrowLeft, Users, User, Phone, VideoIcon, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MessageInput } from './MessageInput';
 import { MessageBubble } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
 import { useMessages, useChatRealtime, useMarkConversationAsRead } from '@/hooks/useChat';
-import { EnhancedSkeleton, EnhancedLoadingSpinner } from '@/components/ui/enhanced-loading-states';
+import { EnhancedSkeleton } from '@/components/ui/enhanced-loading-states';
 import { NoChatMessagesEmptyState } from '@/components/ui/enhanced-empty-states';
 import { cn } from '@/lib/utils';
 

@@ -11,8 +11,7 @@ import {
   CheckCircle,
   Target,
   Trophy,
-  ArrowRight,
-  Volume2
+  ArrowRight
 } from 'lucide-react';
 import { useAgeTheme } from '@/contexts/AgeThemeContext';
 import { cn } from '@/lib/utils';

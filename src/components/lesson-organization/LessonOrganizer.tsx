@@ -33,7 +33,7 @@ interface Level {
   id: string;
   naam: string;
   class_id: string;
-  beschrijving?: string;
+  beschrijving?: string | null;
 }
 
 export const LessonOrganizer = () => {

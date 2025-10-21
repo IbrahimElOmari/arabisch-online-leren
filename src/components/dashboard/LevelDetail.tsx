@@ -13,8 +13,7 @@ import {
   Radio,
   FileText,
   CheckCircle2,
-  Clock,
-  Users
+  Clock
 } from 'lucide-react';
 import { TaskSystem } from '@/components/tasks/TaskSystem';
 import { LevelQuestions } from '@/components/tasks/LevelQuestions';

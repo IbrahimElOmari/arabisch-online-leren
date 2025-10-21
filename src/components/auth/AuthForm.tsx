@@ -9,7 +9,6 @@ import { sanitizeInput, validatePassword, validateEmail } from '@/utils/validati
 import { useRateLimit } from '@/hooks/useRateLimit';
 import { useState } from 'react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
-import { useTranslation } from '@/contexts/TranslationContext';
 
 export interface AuthFormData {
   emailOrName: string;

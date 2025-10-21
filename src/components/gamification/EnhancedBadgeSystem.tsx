@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Trophy, Star, Target, Zap, Crown, Award, Gift, Medal, Sparkles } from 'lucide-react';
+import { Trophy, Star, Target, Zap, Crown, Award, Medal, Sparkles } from 'lucide-react';
 import { useAgeTheme } from '@/contexts/AgeThemeContext';
 import { cn } from '@/lib/utils';
 import { useEnhancedProgress, type AwardedBadge, type EnhancedStudentProgress } from '@/hooks/useEnhancedProgress';
