@@ -40,7 +40,7 @@ export const EnhancedBreadcrumbs = ({
   separator
 }: EnhancedBreadcrumbsProps) => {
   const location = useLocation();
-  const { isRTL, getFlexDirection } = useRTLLayout();
+  const { isRTL } = useRTLLayout();
   const { t } = useTranslation();
   
   // Generate breadcrumb items from current path if not provided

@@ -49,7 +49,7 @@ export const adminOpsService = {
     return data;
   },
 
-  async getAuditLogs(limit = 100, offset = 0): Promise<{ data: AuditLog[] }> {
+  async getAuditLogs(): Promise<{ data: AuditLog[] }> {
     const { data, error } = await supabase.functions.invoke('admin-ops', {
       method: 'GET',
       headers: {

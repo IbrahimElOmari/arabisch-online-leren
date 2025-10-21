@@ -7,7 +7,7 @@ import { useTranslation } from '@/contexts/TranslationContext';
 
 const TermsOfService = () => {
   const navigate = useNavigate();
-  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
+  const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
   const { t } = useTranslation();
 
   return (

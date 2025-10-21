@@ -5,17 +5,12 @@ import {
   BarChart3, 
   Users, 
   Search,
-  Plus,
-  RefreshCw,
   AlertTriangle,
-  Wifi,
   WifiOff,
-  FileX,
-  Calendar,
-  Target,
-  Trophy,
   Bell,
-  Settings
+  Settings,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -54,7 +49,6 @@ export const EmptyState = ({
   size = 'md'
 }: EmptyStateWithActionProps) => {
   const { isRTL, getTextAlign } = useRTLLayout();
-  const { t } = useTranslation();
 
   const sizeStyles = {
     sm: {

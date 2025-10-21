@@ -1,5 +1,5 @@
 import { FEATURE_FLAGS } from '@/config/featureFlags';
-import { supabase } from '@/integrations/supabase/client';
+
 import { useQuery } from '@tanstack/react-query';
 
 export type Payment = {

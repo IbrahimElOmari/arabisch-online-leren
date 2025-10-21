@@ -56,7 +56,7 @@ const plans = [
 
 export default function Pricing() {
   const navigate = useNavigate();
-  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
+  const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
   const { t } = useTranslation();
 
   const handleSelectPlan = (plan: typeof plans[0]) => {

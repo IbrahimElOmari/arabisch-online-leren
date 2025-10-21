@@ -24,7 +24,7 @@ interface AgeThemeProviderProps {
 }
 
 export const AgeThemeProvider: React.FC<AgeThemeProviderProps> = ({ children }) => {
-  const { profile, user } = useAuth();
+  const { profile } = useAuth();
   const [themeAge, setThemeAge] = useState<ThemeAge>('clean');
   const [isLoading, setIsLoading] = useState(true);
 

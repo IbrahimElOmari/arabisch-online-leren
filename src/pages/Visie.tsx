@@ -4,7 +4,7 @@ import { useAccessibilityRTL } from '@/hooks/useAccessibilityRTL';
 import { useTranslation } from '@/contexts/TranslationContext';
 
 const Visie = () => {
-  const { getTextAlign, isRTL } = useRTLLayout();
+  const { getTextAlign } = useRTLLayout();
   const { getNavigationAttributes } = useAccessibilityRTL();
   const { t } = useTranslation();
 

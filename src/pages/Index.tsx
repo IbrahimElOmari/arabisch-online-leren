@@ -12,8 +12,8 @@ import { useTranslation } from '@/contexts/TranslationContext';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { getTextAlign, getFlexDirection, getIconSpacing, isRTL } = useRTLLayout();
-  const { getAriaLabel, getNavigationAttributes } = useAccessibilityRTL();
+  const { getTextAlign, getFlexDirection, isRTL } = useRTLLayout();
+  const { getFlexDirection: getAccessibilityFlexDirection, getTextAlign: getAccessibilityTextAlign } = useAccessibilityRTL();
   const { getSlideInAnimation, getStaggerDelay } = useRTLAnimations();
   const { t } = useTranslation();
 

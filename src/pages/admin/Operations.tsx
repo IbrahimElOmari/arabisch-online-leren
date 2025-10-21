@@ -31,8 +31,8 @@ const statusColors = {
 export default function Operations() {
   const [backupNote, setBackupNote] = useState('');
   const [maintenanceMode, setMaintenanceMode] = useState(false);
-  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
-  const { t } = useTranslation();
+  const { isRTL, getFlexDirection } = useRTLLayout();
+  const { language } = useTranslation();
   
   const { toast } = useToast();
   const queryClient = useQueryClient();

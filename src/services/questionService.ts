@@ -39,7 +39,16 @@ export async function createQuestion(questionData: {
 }) {
   const { data, error } = await supabase
     .from('vragen')
-    .insert(questionData)
+    .insert([{
+      niveau_id: questionData.niveau_id,
+      vraag_tekst: questionData.vraag_tekst,
+      vraag_type: questionData.vraag_type,
+      opties: questionData.opties || null,
+      correct_antwoord: questionData.correct_antwoord || null,
+      audio_url: questionData.audio_url || null,
+      video_url: questionData.video_url || null,
+      volgorde: questionData.volgorde || 0,
+    }])
     .select()
     .single();
   
@@ -49,15 +58,15 @@ export async function createQuestion(questionData: {
 
 export async function updateQuestion(questionId: string, updates: Partial<{
   vraag_tekst: string;
-  opties: Record<string, unknown>;
-  correct_antwoord: Record<string, unknown>;
-  audio_url: string;
-  video_url: string;
+  opties: Record<string, unknown> | null;
+  correct_antwoord: Record<string, unknown> | null;
+  audio_url: string | null;
+  video_url: string | null;
   volgorde: number;
 }>) {
   const { data, error } = await supabase
     .from('vragen')
-    .update(updates)
+    .update(updates as any)
     .eq('id', questionId)
     .select()
     .single();
@@ -106,7 +115,7 @@ export async function submitAnswer(answerData: {
 }) {
   const { data, error } = await supabase
     .from('antwoorden')
-    .insert(answerData)
+    .insert([answerData as any])
     .select()
     .single();
   

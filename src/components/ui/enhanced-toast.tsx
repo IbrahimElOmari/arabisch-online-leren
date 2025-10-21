@@ -1,6 +1,5 @@
-import React from 'react';
 import { toast as sonnerToast, Toaster as SonnerToaster } from 'sonner';
-import { CheckCircle, AlertCircle, Info, X, AlertTriangle, Loader2 } from 'lucide-react';
+import { CheckCircle, AlertCircle, Info, AlertTriangle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
@@ -138,7 +137,6 @@ const enhancedToast = {
 // Enhanced Toaster component with better positioning and styling
 export const EnhancedToaster = () => {
   const { isRTL } = useRTLLayout();
-  const { t } = useTranslation();
   
   return (
     <SonnerToaster

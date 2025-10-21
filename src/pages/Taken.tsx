@@ -11,7 +11,7 @@ import { BookOpen, Clock, CheckCircle } from 'lucide-react';
 
 const Taken = () => {
   const { user, authReady, loading: authLoading } = useAuth();
-  const { getTextAlign, getFlexDirection, getIconSpacing } = useRTLLayout();
+  const { getTextAlign, getFlexDirection } = useRTLLayout();
   const { getNavigationAttributes } = useAccessibilityRTL();
   const { t } = useTranslation();
 

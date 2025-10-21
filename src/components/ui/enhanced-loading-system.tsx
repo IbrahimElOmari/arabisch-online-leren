@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader2, Wifi, WifiOff } from 'lucide-react';
+import { Loader2, WifiOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useRTLAnimations } from '@/hooks/useRTLAnimations';

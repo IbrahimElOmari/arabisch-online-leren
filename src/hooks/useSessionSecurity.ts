@@ -35,7 +35,6 @@ export const useSessionSecurity = () => {
     suspiciousActivity: 0
   });
 
-  const activityTimeoutRef = useRef<NodeJS.Timeout>();
   const warningShownRef = useRef(false);
   const sessionStartRef = useRef(Date.now());
 

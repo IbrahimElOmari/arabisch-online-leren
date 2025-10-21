@@ -42,25 +42,6 @@ export interface Message {
   is_read?: boolean;
 }
 
-// Database response types (for proper typing)
-interface ConversationRow {
-  id: string;
-  type: string;
-  class_id: string | null;
-  created_by: string;
-  created_at: string;
-  updated_at: string;
-}
-
-interface MessageRow {
-  id: string;
-  conversation_id: string;
-  sender_id: string;
-  content: string;
-  attachments: any; // Json type from Supabase
-  created_at: string;
-  updated_at: string;
-}
 
 export interface MessageRead {
   message_id: string;
@@ -107,10 +88,11 @@ export class ChatService {
     
     const { data: conversation, error } = await supabase
       .from('conversations')
-      .insert({
+      .insert([{
+        type: validated.type,
         class_id: validated.class_id || null,
         created_by: user.data.user.id,
-      })
+      }])
       .select()
       .single();
 
@@ -239,11 +221,12 @@ export class ChatService {
     
     const { data: message, error } = await supabase
       .from('messages')
-      .insert({
+      .insert([{
+        conversation_id: validated.conversation_id,
         sender_id: user.data.user.id,
         content: validated.content,
         attachments: validated.attachments || [],
-      })
+      }])
       .select(`
         *,
         sender:profiles(id, full_name)
@@ -262,21 +245,24 @@ export class ChatService {
   }
 
   static async markAsRead(messageId: string): Promise<void> {
-    const userId = (await supabase.auth.getUser()).data.user?.id;
+    const user = await supabase.auth.getUser();
+    if (!user.data.user?.id) throw new Error('User not authenticated');
     
     const { error } = await supabase
       .from('message_reads')
-      .upsert({
+      .insert([{
         message_id: messageId,
-        user_id: userId,
+        user_id: user.data.user.id,
         read_at: new Date().toISOString(),
-      });
+      }]);
 
     if (error) throw error;
   }
 
   static async markConversationAsRead(conversationId: string): Promise<void> {
-    const userId = (await supabase.auth.getUser()).data.user?.id;
+    const user = await supabase.auth.getUser();
+    if (!user.data.user?.id) throw new Error('User not authenticated');
+    const userId = user.data.user.id;
     
     // Get all unread messages in conversation
     const { data: messages } = await supabase
@@ -299,13 +285,15 @@ export class ChatService {
 
     const { error } = await supabase
       .from('message_reads')
-      .upsert(reads);
+      .insert(reads);
 
     if (error) throw error;
   }
 
   static async uploadAttachment(file: File, conversationId: string): Promise<string> {
-    const userId = (await supabase.auth.getUser()).data.user?.id;
+    const user = await supabase.auth.getUser();
+    if (!user.data.user?.id) throw new Error('User not authenticated');
+    const userId = user.data.user.id;
     const fileExt = file.name.split('.').pop();
     const fileName = `${userId}/${conversationId}/${Date.now()}.${fileExt}`;
 

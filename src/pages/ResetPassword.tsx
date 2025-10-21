@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 import { Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -26,8 +25,6 @@ const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { getTextAlign, getFlexDirection } = useRTLLayout();
-  const { getFormAttributes, getDialogAttributes } = useAccessibilityRTL();
   const { t } = useTranslation();
 
   useEffect(() => {

@@ -93,7 +93,7 @@ export const moderationService = {
       const { data, error } = await supabase.rpc('change_user_role', {
         target_user_id: userId,
         new_role: newRole,
-        reason: reason || null
+        reason: reason || undefined
       });
 
       if (error) throw error;

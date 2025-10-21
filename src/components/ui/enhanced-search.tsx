@@ -70,7 +70,7 @@ export const EnhancedSearch = ({
   const [searchValue, setSearchValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { isRTL, getFlexDirection } = useRTLLayout();
+  const { isRTL } = useRTLLayout();
   const { t } = useTranslation();
   
   // Debounce search input for better performance

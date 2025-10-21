@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Moon, Sun, Monitor, Palette } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -28,7 +28,7 @@ export const EnhancedThemeToggle = ({
 }: EnhancedThemeToggleProps) => {
   const [theme, setTheme] = useState<Theme>('system');
   const [mounted, setMounted] = useState(false);
-  const { isRTL, getTextAlign } = useRTLLayout();
+  const { isRTL } = useRTLLayout();
   const { t } = useTranslation();
 
   useEffect(() => {
