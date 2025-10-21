@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { User } from 'lucide-react';
 import { cn } from '@/lib/utils';

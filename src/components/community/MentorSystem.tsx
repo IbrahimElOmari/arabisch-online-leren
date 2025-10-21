@@ -28,7 +28,7 @@ interface MentorSystemProps {
 }
 
 export const MentorSystem = ({ mentors, onBookSession }: MentorSystemProps) => {
-  const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
+  const [, setSelectedMentor] = useState<Mentor | null>(null);
 
   const formatRating = (rating: number) => {
     return '★'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
