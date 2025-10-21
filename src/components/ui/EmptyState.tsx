@@ -17,14 +17,14 @@ interface EmptyStateProps {
 }
 
 export const EmptyState = ({ 
-  icon: Icon, 
+  icon, 
   title, 
   description, 
   action, 
   className 
 }: EmptyStateProps) => {
   const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   
   return (
     <Card className={cn('w-full', className)} dir={isRTL ? 'rtl' : 'ltr'}>

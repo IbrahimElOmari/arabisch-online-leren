@@ -11,7 +11,6 @@ interface LoadingSpinnerProps {
 
 export const LoadingSpinner = ({ size = 'md', className, text }: LoadingSpinnerProps) => {
   const { getFlexDirection, isRTL } = useRTLLayout();
-  const { t } = useTranslation();
   
   const sizeClasses = {
     sm: 'h-4 w-4',
@@ -34,7 +33,7 @@ export const LoadingSpinner = ({ size = 'md', className, text }: LoadingSpinnerP
 };
 
 export const FullPageLoader = ({ text }: { text?: string }) => {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const defaultText = text || t('status.loading');
   
   return (

@@ -17,7 +17,6 @@ export const TouchButton = React.forwardRef<HTMLButtonElement, TouchButtonProps>
   ({ className, variant = 'default', size = 'default', hapticFeedback = true, children, onClick, ...props }, ref) => {
     const [isPressed, setIsPressed] = useState(false);
     const { getTouchClasses } = useMobileRTL();
-    const { isRTL } = useRTLLayout();
 
     const handleTouchStart = useCallback(() => {
       setIsPressed(true);

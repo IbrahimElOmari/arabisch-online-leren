@@ -45,8 +45,8 @@ const CalendarPage = () => {
     end_date: '',
     class_id: ''
   });
-  const { user } = useAuth();
-  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
+  const { user, profile } = useAuth();
+  const { isRTL } = useRTLLayout();
   const { t } = useTranslation();
 
   useEffect(() => {

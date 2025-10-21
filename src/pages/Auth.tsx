@@ -37,8 +37,8 @@ const Auth = () => {
 
   const { user, authReady } = useAuth();
   const navigate = useNavigate();
-  const { getTextAlign, getFlexDirection } = useRTLLayout();
-  const { getFormAttributes, getDialogAttributes } = useAccessibilityRTL();
+  const { getTextAlign } = useRTLLayout();
+  const { getDialogAttributes } = useAccessibilityRTL();
   const { t } = useTranslation();
 
   // Auto-redirect: als je al ingelogd bent, ga direct naar dashboard

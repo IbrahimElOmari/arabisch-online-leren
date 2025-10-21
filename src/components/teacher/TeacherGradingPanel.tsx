@@ -12,13 +12,11 @@ import {
   Calendar, 
   Star,
   MessageCircle,
-  Download,
-  Gift
+  Download
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useTaskStore } from '@/hooks/useTaskStore';
 import { useNotifications } from '@/hooks/useNotifications';
-import { BonusPointsModal } from '@/components/teacher/BonusPointsModal';
 
 interface TaskSubmission {
   id: string;

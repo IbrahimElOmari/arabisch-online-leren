@@ -241,11 +241,9 @@ export async function startTransaction(name: string, op: string) {
   }
   
   try {
-    const Sentry = await import('@sentry/react');
-    return Sentry.startTransaction({
-      name,
-      op,
-    });
+    // Transaction tracking not available in current Sentry version
+    console.debug('[Monitoring] Transaction tracking:', name, op);
+    return null;
   } catch (err) {
     console.error('[Monitoring] Failed to start transaction:', err);
     return null;

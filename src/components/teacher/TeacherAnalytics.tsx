@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { 
   Users, 
   TrendingUp, 
-  Clock, 
   CheckCircle, 
   AlertTriangle,
   BarChart3,

@@ -27,7 +27,6 @@ interface TeachingModalProps {
 
 export function TeachingModal({ 
   selectedClass, 
-  selectedLevel, 
   trigger, 
   type = 'youtube', 
   niveauId,

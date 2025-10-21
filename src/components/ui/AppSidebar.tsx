@@ -3,8 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { useUserRole } from '@/hooks/useUserRole';
-
-import { cn } from '@/lib/utils';
 import {
   Sidebar,
   SidebarContent,

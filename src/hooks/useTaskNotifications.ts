@@ -4,11 +4,6 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useNotifications } from './useNotifications';
 import { useUserRole } from './useUserRole';
 
-interface NotificationEvent {
-  type: 'task_created' | 'task_submitted' | 'task_graded' | 'question_created' | 'question_answered' | 'question_graded';
-  payload: any;
-}
-
 export const useTaskNotifications = () => {
   const { profile } = useAuth();
   const { isStudent, isTeacher, isAdmin } = useUserRole();
@@ -138,7 +133,7 @@ export const useTaskNotifications = () => {
   useEffect(() => {
     if (!profile?.id) return;
 
-    const channels = [];
+    const channels: ReturnType<typeof supabase.channel>[] = [];
 
     // Subscribe to task creations (for students)
     if (isStudent) {

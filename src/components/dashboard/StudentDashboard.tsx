@@ -405,6 +405,7 @@ const StudentDashboard = () => {
                       completed_tasks: 0,
                       completed_questions: 0,
                       is_completed: false as const,
+                      completed_at: null,
                       created_at: '',
                       updated_at: '',
                       niveau: {
