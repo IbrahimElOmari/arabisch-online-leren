@@ -220,5 +220,14 @@
   
   "maintenance.title": "صيانة",
   "maintenance.description": "التطبيق غير متاح حالياً بسبب نقص في الإعدادات.",
-  "maintenance.contact": "تواصل مع المسؤول."
+  "maintenance.contact": "تواصل مع المسؤول.",
+  
+  "hero.topPlatform": "المنصة الأولى لتعلم اللغة العربية",
+  "hero.learnArabic": "تعلم اللغة العربية",
+  "hero.description": "اكتشف جمال اللغة العربية مع طرق تعليمية تفاعلية مبتكرة. من المبتدئ إلى المتقدم - نحن نوجهك في رحلتك لإتقان اللغة العربية.",
+  "hero.startJourney": "ابدأ رحلتك",
+  
+  "roles.admin": "المدير",
+  "roles.teacher": "المعلم",
+  "roles.student": "الطالب"
 }

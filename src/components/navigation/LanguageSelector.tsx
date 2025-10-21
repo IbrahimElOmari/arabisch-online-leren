@@ -43,6 +43,7 @@ export const LanguageSelector = React.memo(() => {
           variant="ghost" 
           size="sm"
           className="gap-2 text-foreground hover:text-primary"
+          data-testid="language-selector"
         >
           <Globe className="h-4 w-4" />
           <span className="hidden sm:inline">{currentLang.flag} {currentLang.label}</span>

@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import i18n from '@/lib/i18n';
 
 interface RTLContextType {
   isRTL: boolean;
@@ -75,7 +76,8 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
     html.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
     
     html.dir = isRTL ? 'rtl' : 'ltr';
-    html.lang = isRTL ? 'ar' : 'nl';
+    // Use actual i18n language, not hardcoded nl
+    html.lang = i18n.language || 'nl';
     
     // Add/remove RTL class for additional styling
     if (isRTL) {

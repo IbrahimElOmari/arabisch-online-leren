@@ -82,15 +82,15 @@ const Index = () => {
                   {t('hero.topPlatform') || '#1 Platform voor Arabisch Leren'}
                 </Badge>
                 
-                <h1 className={`text-5xl lg:text-7xl font-bold tracking-tight ${getTextAlign()}`}>
-                  <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                <h1 className={`text-5xl lg:text-7xl font-bold tracking-tight ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
+                  <span className={`bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent ${isRTL ? 'arabic-text' : ''}`}>
                     {isRTL ? 'أهلاً وسهلاً' : 'أهلاً وسهلاً'}
                   </span>
                   <br />
-                  <span className="text-foreground">{t('hero.learnArabic') || 'Leer Arabisch'}</span>
+                  <span className={`text-foreground ${isRTL ? 'arabic-text' : ''}`}>{t('hero.learnArabic') || 'Leer Arabisch'}</span>
                 </h1>
                 
-                <p className={`text-xl text-muted-foreground leading-relaxed max-w-lg ${getTextAlign()}`}>
+                <p className={`text-xl text-muted-foreground leading-relaxed max-w-lg ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
                   {t('hero.description') || 'Ontdek de schoonheid van de Arabische taal met onze innovatieve, interactieve lesmethoden. Van beginner tot gevorderd - wij begeleiden je reis naar vloeiend Arabisch.'}
                 </p>
               </div>
