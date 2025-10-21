@@ -1,14 +1,24 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { BookOpen } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { PWAInstallButton } from '@/components/pwa/PWAInstallButton';
+import { LanguageSelector } from './LanguageSelector';
+import { useTranslation } from 'react-i18next';
 
 export const NavigationHeader = React.memo(() => {
   const navigate = useNavigate();
   const { getFlexDirection, isRTL } = useRTLLayout();
+  const { i18n } = useTranslation();
+  
+  // Sync RTL with language changes
+  useEffect(() => {
+    const savedLang = localStorage.getItem('language_preference');
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
   
   return (
     <div className={`${getFlexDirection()} items-center gap-4`}>
@@ -22,8 +32,11 @@ export const NavigationHeader = React.memo(() => {
           {isRTL ? 'تعلم العربية' : 'Leer Arabisch'}
         </span>
       </button>
-      <div className="ms-auto hidden sm:block">
-        <PWAInstallButton />
+      <div className="ms-auto flex items-center gap-2">
+        <LanguageSelector />
+        <div className="hidden sm:block">
+          <PWAInstallButton />
+        </div>
       </div>
     </div>
   );
