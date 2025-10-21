@@ -7,7 +7,7 @@ import { DraggableLessonList } from '@/components/drag-drop/DraggableLessonList'
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
 import { useUserRole } from '@/hooks/useUserRole';
-import { Plus, Save, BookOpen, GraduationCap } from 'lucide-react';
+import { Save, BookOpen, GraduationCap } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { toast } from 'sonner';
 
@@ -160,8 +160,19 @@ export const LessonOrganizer = () => {
     }
   };
 
-  const handleReorder = async (reorderedItems: LessonItem[]) => {
-    setLessons(reorderedItems);
+  const handleReorder = (reorderedItems: { id: string; title: string; type: string; order: number }[]) => {
+    const updatedLessons: LessonItem[] = reorderedItems.map(item => {
+      const existingLesson = lessons.find(l => l.id === item.id);
+      return existingLesson ? { ...existingLesson, order: item.order } : {
+        id: item.id,
+        title: item.title,
+        type: item.type as 'video' | 'task' | 'question',
+        order: item.order,
+        class_id: selectedClass,
+        level_id: selectedLevel
+      };
+    });
+    setLessons(updatedLessons);
   };
 
   const handleSaveOrder = async () => {

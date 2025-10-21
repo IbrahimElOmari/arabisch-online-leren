@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Bell, BellRing } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,20 +32,20 @@ export function NotificationBell({ className }: NotificationBellProps) {
   // Subscribe to real-time notifications
   useEffect(() => {
     const channel = NotificationService.subscribeToNotifications(
-      (notification: Notification) => {
+      (_notification: Notification) => {
         // Invalidate queries to refresh data
         queryClient.invalidateQueries({ queryKey: ['notifications'] });
         
         // Show browser notification if permission granted
         if ('Notification' in window && Notification.permission === 'granted') {
-          const { title, description } = NotificationService.getNotificationText(notification);
+          const { title, description } = NotificationService.getNotificationText(_notification);
           new Notification(title, {
             body: description,
             icon: '/favicon.ico',
           });
         }
       },
-      (notification: Notification) => {
+      (_notification: Notification) => {
         // Update read status
         queryClient.invalidateQueries({ queryKey: ['notifications'] });
       }

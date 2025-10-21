@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, BookOpen, MessageSquare, Calendar, User, Menu, X, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';

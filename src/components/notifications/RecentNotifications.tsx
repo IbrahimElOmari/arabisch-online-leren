@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,13 +8,11 @@ import { formatDistanceToNow } from 'date-fns';
 import { nl } from 'date-fns/locale';
 
 interface RecentNotificationsProps {
-  userId: string;
   maxVisible?: number;
   compact?: boolean;
 }
 
 export const RecentNotifications = ({ 
-  userId, 
   maxVisible = 5, 
   compact = false 
 }: RecentNotificationsProps) => {

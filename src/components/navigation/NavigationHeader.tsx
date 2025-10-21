@@ -4,13 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { BookOpen } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
-import { useTranslation } from '@/contexts/TranslationContext';
 import { PWAInstallButton } from '@/components/pwa/PWAInstallButton';
 
 export const NavigationHeader = React.memo(() => {
   const navigate = useNavigate();
-  const { getFlexDirection, getIconSpacing, isRTL } = useRTLLayout();
-  const { t } = useTranslation();
+  const { getFlexDirection, isRTL } = useRTLLayout();
   
   return (
     <div className={`${getFlexDirection()} items-center gap-4`}>

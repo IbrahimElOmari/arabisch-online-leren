@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -27,6 +26,17 @@ interface Conversation {
   participantRole: string;
   unreadCount: number;
 }
+
+const formatMessageTime = (timestamp: string) => {
+  return new Date(timestamp).toLocaleTimeString([], { 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
+};
+
+const getConversationId = (userId1: string, userId2: string) => {
+  return [userId1, userId2].sort().join('_');
+};
 
 export const DirectMessaging = () => {
   const { profile } = useAuth();
@@ -77,7 +87,7 @@ export const DirectMessaging = () => {
         .rpc('get_direct_messages', { user_id: profile.id });
       
       if (messagesError) {
-        if (import.meta.env.DEV) console.log('RPC failed, using fallback approach:', messagesError);
+        if (import.meta.env.DEV) console.info('RPC failed, using fallback approach:', messagesError);
         // Fallback to creating conversations from user list
         const convMap = new Map<string, Conversation>();
         
@@ -138,7 +148,7 @@ export const DirectMessaging = () => {
         });
       
       if (error) {
-        if (import.meta.env.DEV) console.log('Messages RPC failed:', error);
+        if (import.meta.env.DEV) console.info('Messages RPC failed:', error);
         setMessages([]);
         return;
       }
@@ -168,7 +178,7 @@ export const DirectMessaging = () => {
         });
       
       if (error) {
-        if (import.meta.env.DEV) console.log('Send message RPC failed:', error);
+        if (import.meta.env.DEV) console.info('Send message RPC failed:', error);
         toast.error(isRTL ? 'فشل إرسال الرسالة' : 'Fout bij versturen bericht');
         return;
       }
@@ -194,16 +204,12 @@ export const DirectMessaging = () => {
           receiver_id: profile.id
         });
       
-      if (error) {
-        if (import.meta.env.DEV) console.log('Mark read RPC failed:', error);
+      if (error && import.meta.env.DEV) {
+        console.info('Mark read RPC failed:', error);
       }
     } catch (error) {
       console.error('Error marking messages as read:', error);
     }
-  };
-
-  const getConversationId = (userId1: string, userId2: string) => {
-    return [userId1, userId2].sort().join('_');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -211,13 +217,6 @@ export const DirectMessaging = () => {
       e.preventDefault();
       sendMessage();
     }
-  };
-
-  const formatMessageTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
   };
 
   const filteredConversations = conversations.filter(conv =>

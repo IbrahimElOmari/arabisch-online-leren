@@ -161,7 +161,7 @@ export const ContentModerationPanel = () => {
     }
   };
 
-  const flagContent = async (contentType: string, contentId: string) => {
+  const _flagContent = async (contentType: string, contentId: string) => {
     try {
       const { error } = await supabase
         .from('content_moderation')
@@ -357,7 +357,7 @@ export const ContentModerationPanel = () => {
                           {item.reason && `Reden: ${item.reason}`}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {new Date(item.created_at).toLocaleString()}
+                          {item.created_at && new Date(item.created_at).toLocaleString()}
                           {item.moderator_name && ` door ${item.moderator_name}`}
                         </div>
                       </div>

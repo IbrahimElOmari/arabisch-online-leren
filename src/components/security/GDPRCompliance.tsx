@@ -3,15 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { 
   Download, 
   Trash2, 
   Shield, 
-  AlertTriangle,
-  CheckCircle,
-  FileText
+  AlertTriangle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -84,7 +80,7 @@ export const GDPRCompliance = () => {
         .order('consented_at', { ascending: false });
 
       if (error) throw error;
-      setConsents(data || []);
+      setConsents((data || []).map(c => ({ ...c, consented_at: c.consented_at || '' })));
     } catch (error: any) {
       toast({
         title: 'Fout',
@@ -104,7 +100,7 @@ export const GDPRCompliance = () => {
         .order('table_name');
 
       if (error) throw error;
-      setRetentionPolicies(data || []);
+      setRetentionPolicies((data || []).map(p => ({ ...p, is_active: p.is_active ?? false })));
     } catch (error: any) {
       toast({
         title: 'Fout',

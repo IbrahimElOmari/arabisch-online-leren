@@ -15,18 +15,10 @@ export const ResponsiveWrapper = ({
   children,
   className,
   mobileClassName,
-  desktopClassName,
-  breakpoint = 'md'
+  desktopClassName
 }: ResponsiveWrapperProps) => {
   const isMobile = useIsMobile();
   const { isRTL } = useRTLLayout();
-  
-  const breakpointClasses = {
-    sm: isMobile ? 'block sm:hidden' : 'hidden sm:block',
-    md: isMobile ? 'block md:hidden' : 'hidden md:block', 
-    lg: isMobile ? 'block lg:hidden' : 'hidden lg:block',
-    xl: isMobile ? 'block xl:hidden' : 'hidden xl:block'
-  };
 
   return (
     <div 

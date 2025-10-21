@@ -16,7 +16,7 @@ interface NavigationActionsProps {
 
 export const NavigationActions = React.memo(({ user }: NavigationActionsProps) => {
   const navigate = useNavigate();
-  const { getFlexDirection, getMarginStart, getMarginEnd } = useRTLLayout();
+  const { getFlexDirection, getMarginEnd } = useRTLLayout();
   const { t } = useTranslation();
 
   return (

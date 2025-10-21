@@ -20,7 +20,7 @@ interface NavigationMenuItemsProps {
   profile: UserProfile | null;
 }
 
-export const NavigationMenuItems = React.memo(({ user, profile }: NavigationMenuItemsProps) => {
+export const NavigationMenuItems = React.memo(({ user }: NavigationMenuItemsProps) => {
   const navigate = useNavigate();
   const { getFlexDirection, getIconSpacing, isRTL } = useRTLLayout();
   const { t } = useTranslation();

@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect, useState } from 'react';
+import { useEffect, Suspense, useState } from 'react';
 import { withErrorBoundary } from '@/components/ui/enhanced-error-boundary';
 import { Skeleton } from '@/components/ui/skeleton';
 

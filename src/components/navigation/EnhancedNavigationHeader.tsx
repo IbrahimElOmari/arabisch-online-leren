@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Menu, User, LogOut, Settings, Home, BookOpen, MessageSquare, BarChart3, Shield } from 'lucide-react';
+import { Search, User, LogOut, Settings, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
@@ -27,7 +27,6 @@ export const EnhancedNavigationHeader = () => {
   const navigate = useNavigate();
   
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -36,18 +35,6 @@ export const EnhancedNavigationHeader = () => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setIsSearchOpen(true);
-      }
-      // g + n for notifications (Gmail-style)
-      if (e.key === 'g') {
-        const handleGKey = (nextE: KeyboardEvent) => {
-          if (nextE.key === 'n') {
-            nextE.preventDefault();
-            setIsNotificationOpen(true);
-          }
-          document.removeEventListener('keydown', handleGKey);
-        };
-        document.addEventListener('keydown', handleGKey);
-        setTimeout(() => document.removeEventListener('keydown', handleGKey), 1000);
       }
     };
 
@@ -160,7 +147,7 @@ export const EnhancedNavigationHeader = () => {
                         {profile?.full_name || user?.email?.split('@')[0] || 'Gebruiker'}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {getRoleDisplayName(role)}
+                        {getRoleDisplayName(role || undefined)}
                       </p>
                     </div>
                   </div>

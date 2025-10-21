@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { Search, X, Filter, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +24,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from '@/hooks/useDebounce';
 import { cn } from '@/lib/utils';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
-import { Link } from 'react-router-dom';
 
 interface GlobalSearchProps {
   trigger?: React.ReactNode;
@@ -126,7 +125,6 @@ export function GlobalSearch({
   ];
 
   const renderSearchResult = (result: SearchResult) => {
-    const url = SearchService.getEntityUrl(result);
     const typeLabel = SearchService.getEntityTypeLabel(result.entity_type);
     
     return (

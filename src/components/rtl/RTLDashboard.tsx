@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +12,7 @@ import { RTLTestSuite } from './RTLTestSuite';
 
 export const RTLDashboard = () => {
   const { isRTL, toggleRTL } = useRTL();
-  const { t, language, setLanguage } = useTranslation();
+  const { language, setLanguage } = useTranslation();
   const [activeTab, setActiveTab] = useState('testing');
 
   return (

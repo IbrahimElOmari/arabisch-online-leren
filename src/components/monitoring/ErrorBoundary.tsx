@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -93,7 +93,7 @@ class ErrorBoundary extends Component<Props, State> {
     return null;
   };
 
-  private reportToMonitoring = async (errorData: any) => {
+  private reportToMonitoring = async (_errorData: any) => {
     try {
       // This would integrate with Sentry, LogRocket, or similar service
       // For now, we'll log to console and could send to a Supabase function

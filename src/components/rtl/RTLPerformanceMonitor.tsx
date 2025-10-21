@@ -5,7 +5,6 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Activity, Zap, Globe, Smartphone } from 'lucide-react';
 import { useRTL } from '@/contexts/RTLContext';
-import { useTranslation } from '@/contexts/TranslationContext';
 
 interface PerformanceMetric {
   name: string;
@@ -17,7 +16,6 @@ interface PerformanceMetric {
 
 export const RTLPerformanceMonitor = () => {
   const { isRTL } = useRTL();
-  const { t } = useTranslation();
   const [metrics, setMetrics] = useState<PerformanceMetric[]>([]);
   const [isMonitoring, setIsMonitoring] = useState(false);
 

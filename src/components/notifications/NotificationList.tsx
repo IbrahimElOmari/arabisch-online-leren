@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { nl } from 'date-fns/locale';
@@ -6,8 +6,7 @@ import {
   Check, 
   CheckCheck, 
   MoreHorizontal,
-  ExternalLink,
-  Trash2
+  ExternalLink
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -65,7 +64,7 @@ export function NotificationList({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },
-    onError: (error) => {
+    onError: (_error) => {
       toast({
         title: "Fout",
         description: "Kon melding niet als gelezen markeren",

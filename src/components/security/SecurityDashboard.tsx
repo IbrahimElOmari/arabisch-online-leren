@@ -89,9 +89,22 @@ export const SecurityDashboard = () => {
 
       if (limitsError) throw limitsError;
 
-      setSecurityEvents((events || []).map(e => ({ ...e, event_category: 'GENERAL' })));
-      setUserSessions((sessions || []).map(s => ({ ...s, ip_address: String(s.ip_address || 'unknown'), user_agent: String(s.user_agent || 'unknown') })));
-      setRateLimits(limits || []);
+      setSecurityEvents((events || []).map(e => ({ 
+        ...e, 
+        event_category: 'GENERAL',
+        severity: e.severity || 'info'
+      })));
+      setUserSessions((sessions || []).map(s => ({ 
+        ...s, 
+        ip_address: String(s.ip_address || 'unknown'), 
+        user_agent: String(s.user_agent || 'unknown'),
+        is_active: s.is_active ?? false
+      })));
+      setRateLimits((limits || []).map(l => ({
+        ...l,
+        attempt_count: l.attempt_count || 0,
+        last_attempt: l.last_attempt || new Date().toISOString()
+      })));
 
     } catch (error: any) {
       toast({

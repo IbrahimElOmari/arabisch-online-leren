@@ -114,7 +114,7 @@ const TaskQuestionManagementNew = () => {
         .insert([
           {
             level_id: levelId,
-            author_id: profile?.id,
+            author_id: profile?.id || '',
             title: newTaskTitle,
             description: newTaskDescription || '',
             required_submission_type: newTaskType,

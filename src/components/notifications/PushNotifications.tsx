@@ -1,10 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
-import { Bell, BellOff, Settings, Check, X } from 'lucide-react';
-import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { toast } from 'sonner';
 
@@ -31,8 +25,7 @@ interface PushNotification {
 }
 
 export const PushNotifications = () => {
-  const { profile } = useAuth();
-  const { isRTL, getFlexDirection, getTextAlign } = useRTLLayout();
+  const { isRTL, getFlexDirection } = useRTLLayout();
   
   const [isSupported, setIsSupported] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission>('default');
