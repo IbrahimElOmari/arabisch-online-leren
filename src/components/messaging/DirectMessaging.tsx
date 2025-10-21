@@ -37,8 +37,7 @@ export const DirectMessaging = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState<Array<{id: string; full_name: string; role: string}>>([]);
+  
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -64,8 +63,6 @@ export const DirectMessaging = () => {
 
   const loadConversations = async () => {
     if (!profile?.id) return;
-    
-    setLoading(true);
     try {
       // Get all users first
       const { data: allUsers, error: usersError } = await supabase
@@ -95,8 +92,6 @@ export const DirectMessaging = () => {
         });
         
         setConversations(Array.from(convMap.values()));
-        setUsers(allUsers || []);
-        setLoading(false);
         return;
       }
       
@@ -122,12 +117,9 @@ export const DirectMessaging = () => {
       });
       
       setConversations(Array.from(convMap.values()));
-      setUsers(allUsers || []);
     } catch (error) {
       console.error('Error loading conversations:', error);
       toast.error(isRTL ? 'فشل تحميل المحادثات' : 'Fout bij laden gesprekken');
-    } finally {
-      setLoading(false);
     }
   };
 

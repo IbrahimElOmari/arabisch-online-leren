@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, BookOpen, MessageSquare, Calendar, User, Menu, X, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,9 +16,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 // Enhanced Bottom Navigation with Touch Optimizations
 export const EnhancedMobileBottomNav = () => {
   const location = useLocation();
-  const { profile } = useAuth();
   const { isRTL } = useRTLLayout();
-  const { getBounceInClasses, getPulseGlowClasses } = useRTLAnimations();
+  const { getBounceInClasses } = useRTLAnimations();
   const { isMobile, getTouchClasses, getMobileAnimationDelay } = useMobileRTL();
   const { t } = useTranslation();
 
@@ -133,7 +132,6 @@ export const EnhancedMobileSidebar = () => {
   const { isAdmin, role } = useUserRole();
   const { isRTL } = useRTLLayout();
   const { getSlideInAnimation, getSlideOutAnimation } = useRTLAnimations();
-  const { getMobileModalClasses } = useMobileRTL();
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();

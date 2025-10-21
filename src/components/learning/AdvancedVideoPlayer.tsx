@@ -51,7 +51,7 @@ export const AdvancedVideoPlayer = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(1);
+  
   const [isMuted, setIsMuted] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [playbackRate, setPlaybackRate] = useState(1);
@@ -100,13 +100,6 @@ export const AdvancedVideoPlayer = ({
     setCurrentTime(newTime);
   };
 
-  const handleVolumeChange = (value: number[]) => {
-    if (!videoRef.current) return;
-    const newVolume = value[0] / 100;
-    videoRef.current.volume = newVolume;
-    setVolume(newVolume);
-    setIsMuted(newVolume === 0);
-  };
 
   const toggleMute = () => {
     if (!videoRef.current) return;

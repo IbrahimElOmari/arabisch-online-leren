@@ -116,7 +116,7 @@ const TaskQuestionManagementNew = () => {
             level_id: levelId,
             author_id: profile?.id,
             title: newTaskTitle,
-            description: newTaskDescription,
+            description: newTaskDescription || '',
             required_submission_type: newTaskType,
             grading_scale: newTaskGradingScale,
           },

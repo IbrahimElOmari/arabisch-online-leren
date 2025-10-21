@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Mic, Video, Square, Play, Pause, Download, Upload, Trash2 } from 'lucide-react';
+import { Mic, Video, Square, Play, Pause, Download, Trash2 } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { toast } from 'sonner';
 

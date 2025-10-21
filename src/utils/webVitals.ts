@@ -1,5 +1,6 @@
 import { getCLS, getLCP, getFID, getFCP, getTTFB } from 'web-vitals';
 import { supabase } from '@/integrations/supabase/client';
+import { useState, useEffect } from 'react';
 
 type Rating = 'good' | 'needs-improvement' | 'poor';
 
@@ -19,6 +20,14 @@ function getRating(name: string, value: number): Rating {
   return 'needs-improvement';
 }
 
+export interface WebVital {
+  name: string;
+  value: number;
+  delta: number;
+  id: string;
+  rating: Rating;
+}
+
 interface Metric {
   name: string;
   delta: number;
@@ -29,7 +38,7 @@ interface Metric {
 async function sendToAnalytics(metric: Metric): Promise<void> {
   const { name, delta, id, value } = metric;
   const rating = getRating(name, value);
-  const metricData = {
+  const metricData: WebVital = {
     name,
     value: Math.round(value),
     delta: Math.round(delta),
@@ -79,6 +88,43 @@ export function initWebVitals(): void {
   getFID(sendToAnalytics);
   getFCP(sendToAnalytics);
   getTTFB(sendToAnalytics);
+}
+
+export function useWebVitals() {
+  const [vitals, setVitals] = useState<WebVital[]>([]);
+
+  useEffect(() => {
+    const handleMetric = (metric: Metric) => {
+      const rating = getRating(metric.name, metric.value);
+      const vital: WebVital = {
+        name: metric.name,
+        value: Math.round(metric.value),
+        delta: Math.round(metric.delta),
+        id: metric.id,
+        rating,
+      };
+      
+      setVitals(prev => {
+        const index = prev.findIndex(v => v.name === vital.name);
+        if (index >= 0) {
+          const newVitals = [...prev];
+          newVitals[index] = vital;
+          return newVitals;
+        }
+        return [...prev, vital];
+      });
+    };
+
+    getCLS(handleMetric);
+    getLCP(handleMetric);
+    getFID(handleMetric);
+    getFCP(handleMetric);
+    getTTFB(handleMetric);
+  }, []);
+
+  const getPoorVitals = () => vitals.filter(v => v.rating === 'poor');
+
+  return { vitals, getPoorVitals };
 }
 
 export async function getWebVitalsReport(days = 7): Promise<{

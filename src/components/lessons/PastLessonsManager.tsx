@@ -9,7 +9,6 @@ import {
   Play,
   Trash2, 
   Calendar,
-  User,
   ExternalLink 
 } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';

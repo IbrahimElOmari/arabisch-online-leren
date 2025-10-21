@@ -6,7 +6,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  AlertTriangle, 
   CheckCircle, 
   XCircle, 
   Eye,
@@ -26,8 +25,8 @@ interface ModerationItem {
   moderation_action: string;
   reason: string | null;
   moderator_id: string | null;
-  automated: boolean;
-  created_at: string;
+  automated: boolean | null;
+  created_at: string | null;
   // Joined data
   content_title?: string;
   content_text?: string;
@@ -40,8 +39,8 @@ interface ForumPost {
   titel: string;
   inhoud: string;
   author_id: string;
-  is_gerapporteerd: boolean;
-  is_verwijderd: boolean;
+  is_gerapporteerd: boolean | null;
+  is_verwijderd: boolean | null;
   created_at: string;
   author_name?: string;
 }

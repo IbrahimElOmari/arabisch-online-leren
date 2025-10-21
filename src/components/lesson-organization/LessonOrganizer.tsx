@@ -70,8 +70,8 @@ export const LessonOrganizer = () => {
     try {
       let query = supabase.from('klassen').select('*');
       
-      if (isTeacher) {
-        query = query.eq('teacher_id', profile?.id);
+      if (isTeacher && profile?.id) {
+        query = query.eq('teacher_id', profile.id);
       }
 
       const { data, error } = await query;
@@ -160,7 +160,7 @@ export const LessonOrganizer = () => {
     }
   };
 
-  const handleReorder = (reorderedItems: LessonItem[]) => {
+  const handleReorder = async (reorderedItems: LessonItem[]) => {
     setLessons(reorderedItems);
   };
 
