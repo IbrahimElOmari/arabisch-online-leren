@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
+import { ResponsiveForm } from '@/components/forms/ResponsiveForm';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
@@ -49,7 +49,7 @@ interface TaskSubmissionModalProps {
 
 export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, trigger }) => {
   const [open, setOpen] = useState(false);
-  const [submission, setSubmission] = useState<TaskSubmission | null>(null);
+  const [submission] = useState<TaskSubmission | null>(null);
   const [submissionContent, setSubmissionContent] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -57,7 +57,7 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const { submitTask, getSignedUploadUrl } = useTaskStore();
-  const { getFlexDirection, getTextAlign, getMarginStart, getMarginEnd } = useRTLLayout();
+  const { getFlexDirection, getTextAlign } = useRTLLayout();
 
   useEffect(() => {
     if (open) {

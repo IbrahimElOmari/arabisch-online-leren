@@ -14,7 +14,7 @@ interface Task {
   id: string;
   level_id: string;
   title: string;
-  description?: string | null;
+  description?: string;
   required_submission_type: 'text' | 'file';
   grading_scale: number;
   created_at: string;
@@ -27,10 +27,10 @@ interface TaskSubmission {
   id: string;
   task_id: string;
   student_id: string;
-  submission_content?: string | null;
-  submission_file_path?: string | null;
-  grade?: number | null;
-  feedback?: string | null;
+  submission_content?: string;
+  submission_file_path?: string;
+  grade?: number;
+  feedback?: string;
   submitted_at: string;
 }
 
@@ -98,6 +98,7 @@ export const EnhancedStudentTasksAndQuestions = ({
 
       const formattedTasks = tasksData?.map(task => ({
         ...task,
+        description: task.description || undefined,
         author: { full_name: task.profiles?.full_name || 'Onbekend' }
       })) || [];
 
@@ -113,7 +114,16 @@ export const EnhancedStudentTasksAndQuestions = ({
           .eq('student_id', profile.id);
 
         if (submissionsError) throw submissionsError;
-        setTaskSubmissions(submissionsData || []);
+        
+        const formattedSubmissions = submissionsData?.map(sub => ({
+          ...sub,
+          submission_content: sub.submission_content ?? undefined,
+          submission_file_path: sub.submission_file_path ?? undefined,
+          grade: sub.grade ?? undefined,
+          feedback: sub.feedback ?? undefined
+        })) || [];
+        
+        setTaskSubmissions(formattedSubmissions);
       }
     } catch (error) {
       console.error('Error fetching tasks:', error);

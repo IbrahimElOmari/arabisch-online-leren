@@ -10,7 +10,7 @@ import { useUserRole } from '@/hooks/useUserRole';
 interface TaskWithSubmission {
   id: string;
   title: string;
-  description?: string;
+  description?: string | null;
   required_submission_type: 'text' | 'file';
   grading_scale: number;
   created_at: string;
@@ -40,11 +40,13 @@ export const StudentTaskNotifications: React.FC = () => {
 
   const fetchRecentTasks = async () => {
     try {
+      if (!profile?.id) return;
+      
       // Get student's enrolled classes
       const { data: enrollments, error: enrollmentError } = await supabase
         .from('inschrijvingen')
         .select('class_id')
-        .eq('student_id', profile?.id)
+        .eq('student_id', profile.id)
         .eq('payment_status', 'paid');
 
       if (enrollmentError) throw enrollmentError;
@@ -87,7 +89,7 @@ export const StudentTaskNotifications: React.FC = () => {
         .from('task_submissions')
         .select('task_id')
         .in('task_id', taskIds)
-        .eq('student_id', profile?.id);
+        .eq('student_id', profile.id);
 
       const submittedTaskIds = new Set(submissions?.map(s => s.task_id) || []);
 

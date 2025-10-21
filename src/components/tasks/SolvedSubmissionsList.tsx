@@ -27,6 +27,8 @@ export const SolvedSubmissionsList: React.FC = () => {
   useEffect(() => {
     const load = async () => {
       try {
+        if (!profile?.id) return;
+        
         setLoading(true);
         const { data, error } = await supabase
           .from('task_submissions')
@@ -34,7 +36,7 @@ export const SolvedSubmissionsList: React.FC = () => {
             id, task_id, submission_content, submission_file_path, grade, feedback, submitted_at,
             tasks:task_id ( id, title )
           `)
-          .eq('student_id', profile?.id)
+          .eq('student_id', profile.id)
           .order('submitted_at', { ascending: false });
 
         if (error) throw error;

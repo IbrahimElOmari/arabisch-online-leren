@@ -55,17 +55,6 @@ interface Task {
   };
 }
 
-interface TaskSubmission {
-  id: string;
-  task_id: string;
-  student_id: string;
-  submission_content?: string;
-  submission_file_path?: string;
-  grade?: number;
-  feedback?: string;
-  submitted_at: string;
-}
-
 interface StudentTasksAndQuestionsProps {
   levelId: string;
   levelName: string;
@@ -76,6 +65,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
   const { getFlexDirection } = useRTLLayout();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [taskSubmissions, setTaskSubmissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submissionText, setSubmissionText] = useState<string>('');
@@ -83,14 +73,12 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    // Eén gecoördineerde laadstap voorkomt flicker en "feedback loop"
     const loadAll = async () => {
       setLoading(true);
       await Promise.all([fetchQuestions(levelId), fetchTasks(levelId)]);
       setLoading(false);
     };
     loadAll();
-    // Beperk dependency tot id, niet het hele object, om onnodige reruns te vermijden
   }, [levelId, profile?.id]);
 
   const fetchQuestions = async (levelId: string) => {
@@ -126,7 +114,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
         id: question.id,
         niveau_id: question.niveau_id,
         vraag: question.vraag_tekst || '',
-        audio_url: question.audio_url,
+        audio_url: question.audio_url ?? undefined,
         correct_antwoord: typeof question.correct_antwoord === 'string' 
           ? question.correct_antwoord 
           : JSON.stringify(question.correct_antwoord) || '',
@@ -161,6 +149,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
 
       const tasksWithAuthor = data?.map(task => ({
         ...task,
+        description: task.description ?? undefined,
         required_submission_type: task.required_submission_type || 'text' as 'text' | 'file',
         author: { full_name: task.profiles?.full_name || 'Onbekend' }
       })) || [];
@@ -176,12 +165,14 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
     setError(null);
 
     try {
+      if (!profile?.id) return;
+      
       const { data, error } = await supabase
         .from('task_submissions')
         .insert([
           {
             task_id: taskId,
-            student_id: profile?.id,
+            student_id: profile.id,
             submission_content: submissionText,
           },
         ])
@@ -192,12 +183,12 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
       }
 
       if (data && data.length > 0) {
-        setTaskSubmissions((prevSubmissions) => [
+        setTaskSubmissions((prevSubmissions: any[]) => [
           ...prevSubmissions,
           {
             id: data[0].id,
             task_id: taskId,
-            student_id: profile?.id || '',
+            student_id: profile.id || '',
             submission_content: submissionText,
             submitted_at: new Date().toISOString(),
           },
@@ -214,7 +205,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+    const file = event.target.files?.[0] || null;
     setSelectedFile(file);
   };
 
@@ -229,7 +220,9 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
     }
 
     try {
-      const filePath = `tasks/${profile?.id}/${taskId}/${selectedFile.name}`;
+      if (!profile?.id) return;
+      
+      const filePath = `tasks/${profile.id}/${taskId}/${selectedFile.name}`;
       const { data, error: uploadError } = await supabase.storage
         .from('task-submissions')
         .upload(filePath, selectedFile, {
@@ -246,7 +239,7 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
         .insert([
           {
             task_id: taskId,
-            student_id: profile?.id,
+            student_id: profile.id,
             submission_file_path: filePath,
           },
         ]);
@@ -255,12 +248,12 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
         throw new Error(`Bestandsinformatie kon niet worden opgeslagen: ${dbError.message}`);
       }
 
-      setTaskSubmissions((prevSubmissions) => [
+      setTaskSubmissions((prevSubmissions: any[]) => [
         ...prevSubmissions,
         {
           id: (data as any).path,
           task_id: taskId,
-          student_id: profile?.id || '',
+          student_id: profile.id || '',
           submission_file_path: filePath,
           submitted_at: new Date().toISOString(),
         },

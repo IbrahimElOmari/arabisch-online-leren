@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -144,14 +144,20 @@ export const BulkGradingModal = ({ isOpen, onClose, classId, levelId }: BulkGrad
         const notifications = selectedSubmissionData.map(submission => {
           const studentData = submissionStudentData.find(s => s.id === submission.id);
           return {
-            user_id: studentData?.student_id,
+            user_id: studentData?.student_id || '',
             message: `Je taak "${submission.task_title}" is beoordeeld met cijfer ${grade}${bulkFeedback ? '. ' + bulkFeedback : '.'}`
           };
         }).filter(n => n.user_id); // Filter out notifications without user_id
 
         // Insert notifications
         if (notifications.length > 0) {
-          await supabase.from('user_notifications').insert(notifications);
+          await supabase.from('notifications').insert(
+            notifications.map(n => ({
+              user_id: n.user_id,
+              type: 'grade_received',
+              payload: { message: n.message }
+            }))
+          );
         }
       }
 

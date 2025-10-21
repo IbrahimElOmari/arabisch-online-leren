@@ -3,15 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 import { useTaskStore } from '@/hooks/useTaskStore';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useToast } from '@/hooks/use-toast';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
-import { Upload, FileText, Star, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, FileText, Star, CheckCircle, AlertCircle } from 'lucide-react';
 import { useUserRole } from '@/hooks/useUserRole';
 
 interface TaskSystemProps {
@@ -36,7 +35,7 @@ export const TaskSystem = ({ levelId, levelName }: TaskSystemProps) => {
   } = useTaskStore();
   
   const { toast } = useToast();
-  const { getFlexDirection, getTextAlign, getMarginStart, getMarginEnd } = useRTLLayout();
+  const { getFlexDirection, getTextAlign } = useRTLLayout();
   
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedTask, setSelectedTask] = useState<string | null>(null);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { Star, Gift } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -64,12 +63,15 @@ export const BonusPointsModal = ({
     setSubmitting(true);
     try {
       // Award bonus points
+      const userId = (await supabase.auth.getUser()).data.user?.id;
+      if (!userId) throw new Error('Not authenticated');
+      
       const { error: bonusError } = await supabase
         .from('bonus_points')
         .insert({
           student_id: student.id,
           niveau_id: niveau.id,
-          awarded_by: (await supabase.auth.getUser()).data.user?.id,
+          awarded_by: userId,
           points: pointsNum,
           reason: reason.trim()
         });
