@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { TeachingModal } from '@/components/teaching/TeachingModal';
 import { AttendanceModal } from '@/components/teaching/AttendanceModal';
 import { PerformanceModal } from '@/components/teaching/PerformanceModal';
-import { useRTLLayout } from '@/hooks/useRTLLayout';
+
 import { TeacherAnalytics } from '@/components/teacher/TeacherAnalytics';
 import { RealtimeChat } from '@/components/communication/RealtimeChat';
 import {

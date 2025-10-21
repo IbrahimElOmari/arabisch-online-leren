@@ -79,7 +79,7 @@ const ForumModerationQueue = () => {
 
   const handleModeratePost = async (postId: string, action: 'approve' | 'delete') => {
     try {
-      const { data, error } = await supabase.functions.invoke('manage-forum', {
+      const { error } = await supabase.functions.invoke('manage-forum', {
         body: {
           action: action === 'approve' ? 'approve-post' : 'delete-post',
           postId: postId

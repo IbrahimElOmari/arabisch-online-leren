@@ -311,10 +311,9 @@ const ForumMain = ({ classId }: ForumMainProps) => {
           </div>
         </div>
 
-        <ForumPostsList
-          threadId={selectedThread}
-          classId={classId}
-        />
+            <ForumPostsList 
+              threadId={selectedThread}
+            />
       </div>
     );
   }

@@ -45,8 +45,6 @@ interface RealtimeChatProps {
 }
 
 export const RealtimeChat: React.FC<RealtimeChatProps> = ({ 
-  roomId, 
-  roomType, 
   className 
 }) => {
   const { user, profile } = useAuth();
