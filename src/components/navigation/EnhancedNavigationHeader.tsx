@@ -17,6 +17,7 @@ import { useUserRole } from '@/hooks/useUserRole';
 import EnhancedThemeToggle from '@/components/ui/enhanced-theme-toggle';
 import { GlobalSearch } from '@/components/search/GlobalSearch';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { LanguageSelector } from '@/components/navigation/LanguageSelector';
 import { cn } from '@/lib/utils';
 
 export const EnhancedNavigationHeader = () => {
@@ -122,6 +123,9 @@ export const EnhancedNavigationHeader = () => {
             >
               <Search className="h-5 w-5" />
             </Button>
+
+            {/* Language Selector */}
+            <LanguageSelector />
 
             {/* Theme Toggle */}
             <EnhancedThemeToggle size="sm" />
