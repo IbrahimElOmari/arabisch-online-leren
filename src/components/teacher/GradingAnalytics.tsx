@@ -9,7 +9,8 @@ import {
   BarChart3, 
   TrendingUp, 
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Clock
 } from 'lucide-react';
 
 interface GradingStats {

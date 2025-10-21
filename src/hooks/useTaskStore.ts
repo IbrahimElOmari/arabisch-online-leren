@@ -7,7 +7,7 @@ interface Task {
   level_id: string;
   author_id: string;
   title: string;
-  description?: string;
+  description: string | null;
   required_submission_type: 'text' | 'file';
   grading_scale: number;
   created_at: string;
@@ -20,10 +20,10 @@ interface TaskSubmission {
   id: string;
   task_id: string;
   student_id: string;
-  submission_content?: string;
-  submission_file_path?: string;
-  grade?: number;
-  feedback?: string;
+  submission_content: string | null;
+  submission_file_path: string | null;
+  grade: number | null;
+  feedback: string | null;
   submitted_at: string;
   student?: {
     full_name: string;

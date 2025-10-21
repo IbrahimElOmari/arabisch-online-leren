@@ -10,13 +10,13 @@ export interface StudentProgress {
   completed_tasks: number;
   completed_questions: number;
   is_completed: boolean;
-  completed_at?: string;
+  completed_at: string | null;
   created_at: string;
   updated_at: string;
   niveau?: {
     id: string;
     naam: string;
-    beschrijving?: string;
+    beschrijving: string | null;
     niveau_nummer?: number;
   };
 }

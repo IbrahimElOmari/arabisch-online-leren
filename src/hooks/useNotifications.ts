@@ -6,7 +6,7 @@ export interface Notification {
   id: string;
   user_id: string;
   message: string;
-  is_read: boolean;
+  is_read: boolean | null;
   created_at: string;
 }
 

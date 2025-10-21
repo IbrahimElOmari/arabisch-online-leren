@@ -121,7 +121,7 @@ export const useAuthForm = () => {
         return false;
       }
       
-      loginEmail = profiles[0].email;
+      loginEmail = profiles[0].email || '';
     }
 
     const { error } = await supabase.auth.signInWithPassword({

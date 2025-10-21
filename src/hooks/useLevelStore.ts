@@ -5,9 +5,9 @@ export interface Level {
   id: string;
   class_id: string;
   naam: string;
-  beschrijving?: string;
+  beschrijving: string | null;
   niveau_nummer: number;
-  is_actief: boolean;
+  is_actief: boolean | null;
   created_at: string;
   updated_at: string;
 }

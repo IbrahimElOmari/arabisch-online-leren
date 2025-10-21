@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { FileText, Star, Download, Clock, CheckCircle } from 'lucide-react';
+import { Star, Download, Clock, CheckCircle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { nl } from 'date-fns/locale';
 
@@ -148,7 +148,7 @@ export const GradingInterface = () => {
       setAnswers(answersWithProfiles as StudentAnswer[]);
     } catch (error) {
       console.error('Error fetching submissions and answers:', error);
-      sonnerToast.error('Fout bij het ophalen van inzendingen');
+      toast.error('Fout bij het ophalen van inzendingen');
     } finally {
       setLoading(false);
     }
@@ -160,7 +160,7 @@ export const GradingInterface = () => {
       const feedback = feedbacks[submissionId];
 
       if (grade === undefined) {
-        sonnerToast.error('Voer een cijfer in');
+        toast.error('Voer een cijfer in');
         return;
       }
 
@@ -182,7 +182,7 @@ export const GradingInterface = () => {
           });
       }
 
-      sonnerToast.success('Beoordeling opgeslagen!');
+      toast.success('Beoordeling opgeslagen!');
       fetchSubmissionsAndAnswers();
       
       // Clear form
@@ -190,7 +190,7 @@ export const GradingInterface = () => {
       setFeedbacks(prev => ({ ...prev, [submissionId]: '' }));
     } catch (error) {
       console.error('Error grading submission:', error);
-      sonnerToast.error('Fout bij het opslaan van de beoordeling');
+      toast.error('Fout bij het opslaan van de beoordeling');
     }
   };
 
@@ -221,14 +221,14 @@ export const GradingInterface = () => {
           });
       }
 
-      sonnerToast.success('Antwoord beoordeeld!');
+      toast.success('Antwoord beoordeeld!');
       fetchSubmissionsAndAnswers();
       
       // Clear feedback
       setFeedbacks(prev => ({ ...prev, [answerId]: '' }));
     } catch (error) {
       console.error('Error grading answer:', error);
-      sonnerToast.error('Fout bij het beoordelen van het antwoord');
+      toast.error('Fout bij het beoordelen van het antwoord');
     }
   };
 
@@ -250,7 +250,7 @@ export const GradingInterface = () => {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading file:', error);
-      sonnerToast.error('Fout bij het downloaden van het bestand');
+      toast.error('Fout bij het downloaden van het bestand');
     }
   };
 

@@ -10,7 +10,7 @@ export interface EnhancedStudentProgress {
   completed_tasks: number;
   completed_questions: number;
   is_completed: boolean;
-  completed_at?: string;
+  completed_at: string | null;
   created_at: string;
   updated_at: string;
   // Enhanced fields
@@ -20,9 +20,13 @@ export interface EnhancedStudentProgress {
   niveau?: {
     id: string;
     naam: string;
-    beschrijving?: string;
+    beschrijving: string | null;
     niveau_nummer?: number;
   };
+  class_name?: string;
+  niveau_name?: string;
+  niveau_number?: number;
+  badges_count?: number;
 }
 
 export interface AwardedBadge {

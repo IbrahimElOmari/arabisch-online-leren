@@ -1,7 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { queryKeys } from '@/lib/queryKeys';
-import { UserProfile, EnrolledClass } from '@/types/app';
+import { UserProfile } from '@/types/app';
+
+interface EnrolledClass {
+  id: string;
+  class_id: string;
+  payment_status: string;
+  klassen: {
+    id: string;
+    name: string;
+    description: string | null;
+  };
+}
 
 // NOTE: RBAC migration complete - using useUserRole for role checks
 
@@ -36,7 +47,7 @@ const fetchUserClasses = async (userId: string, role: string): Promise<EnrolledC
         klassen: {
           id: klas.id,
           name: klas.name,
-          description: klas.description || ''
+          description: klas.description
         }
       })) || [];
     } else if (role === 'leerkracht') {
@@ -55,7 +66,7 @@ const fetchUserClasses = async (userId: string, role: string): Promise<EnrolledC
         klassen: {
           id: klas.id,
           name: klas.name,
-          description: klas.description || ''
+          description: klas.description
         }
       })) || [];
     } else {

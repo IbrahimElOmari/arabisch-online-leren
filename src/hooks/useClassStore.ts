@@ -4,8 +4,9 @@ import { supabase } from '@/integrations/supabase/client';
 export interface Class {
   id: string;
   name: string;
-  description?: string;
-  teacher_id?: string;
+  description: string | null;
+  teacher_id: string | null;
+  stripe_price_id: string | null;
   created_at: string;
   updated_at: string;
 }

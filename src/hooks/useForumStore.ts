@@ -3,19 +3,25 @@ import { create } from 'zustand';
 import { supabase } from '@/integrations/supabase/client';
 import { organizePosts } from '@/utils/forumUtils';
 
-interface ForumThread {
+export interface ForumThread {
   id: string;
   class_id: string;
   author_id: string;
   title: string;
   content: string;
-  is_pinned: boolean;
-  comments_enabled: boolean;
+  body: string;
   created_at: string;
-  author?: {
+  is_pinned: boolean | null;
+  comments_enabled: boolean | null;
+  status: string | null;
+  tsv: unknown;
+  post_count?: number;
+  author: {
     full_name: string;
   };
-  post_count?: number;
+  profiles: {
+    full_name: string;
+  };
 }
 
 interface ForumPost {

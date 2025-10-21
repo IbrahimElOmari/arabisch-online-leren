@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { supabase } from '@/integrations/supabase/client';
 
-interface UserSession {
+export interface UserSession {
   id: string;
   user_id: string;
   session_start: string;
-  session_end?: string;
-  duration_seconds?: number;
+  session_end: string | null;
+  duration_seconds: number | null;
 }
 
 interface AnalyticsData {
