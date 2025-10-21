@@ -76,7 +76,7 @@ const FormItem = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
   const id = React.useId()
-  const { getTextAlign, isRTL } = useRTLLayout()
+  const { isRTL } = useRTLLayout()
 
   return (
     <FormItemContext.Provider value={{ id }}>

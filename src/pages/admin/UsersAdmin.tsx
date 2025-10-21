@@ -12,9 +12,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { moderationService } from '@/services/moderationService';
 import { Search, UserCog, Shield, GraduationCap, User } from 'lucide-react';
-import { APP_ROLES, AppRole } from '@/types/roles';
+import { AppRole } from '@/types/roles';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
-import { useTranslation } from '@/contexts/TranslationContext';
 
 interface UserProfile {
   id: string;
@@ -44,8 +43,7 @@ export default function UsersAdmin() {
   const [changeRoleUserId, setChangeRoleUserId] = useState<string | null>(null);
   const [newRole, setNewRole] = useState<AppRole>('leerling');
   const [reason, setReason] = useState('');
-  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
-  const { t } = useTranslation();
+  const { isRTL, getFlexDirection } = useRTLLayout();
   
   const { toast } = useToast();
   const queryClient = useQueryClient();

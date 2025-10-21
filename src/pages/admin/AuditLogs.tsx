@@ -43,7 +43,7 @@ export default function AuditLogs() {
   const { data: auditLogs, isLoading } = useQuery({
     queryKey: ['audit-logs'],
     queryFn: async () => {
-      const result = await adminOpsService.getAuditLogs(200, 0);
+      const result = await adminOpsService.getAuditLogs();
       return result.data;
     },
   });

@@ -16,8 +16,7 @@ import { useTranslation } from '@/contexts/TranslationContext';
 export default function PrivacyTools() {
   const [deleteReason, setDeleteReason] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const { isRTL, getFlexDirection } = useRTLLayout();
-  const { language } = useTranslation();
+  const { isRTL, getFlexDirection, getIconSpacing } = useRTLLayout();
   
   const { toast } = useToast();
 

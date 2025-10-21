@@ -3,13 +3,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { validatePassword } from '@/utils/validation';
-import { useRTLLayout } from '@/hooks/useRTLLayout';
-import { useAccessibilityRTL } from '@/hooks/useAccessibilityRTL';
 import { useTranslation } from '@/contexts/TranslationContext';
 
 const ResetPassword = () => {
@@ -174,9 +171,9 @@ const ResetPassword = () => {
             backgroundSize: '200px 200px'
           }}
         />
-        <Card className="w-full max-w-md relative z-10 bg-card/95 backdrop-blur-sm shadow-xl" {...getDialogAttributes('reset-password')}>
+        <Card className="w-full max-w-md relative z-10 bg-card/95 backdrop-blur-sm shadow-xl">
           <CardContent className="flex items-center justify-center p-6">
-            <div className={`${getTextAlign('center')}`}>
+            <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
               <p className="text-muted-foreground">{t('resetPassword.validating') || 'Reset-link valideren...'}</p>
             </div>
@@ -242,9 +239,11 @@ const ResetPassword = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ResponsiveForm layout="single" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password">Nieuw wachtwoord</Label>
+              <label htmlFor="password" className="text-sm font-medium">
+                Nieuw wachtwoord
+              </label>
               <div className="relative">
                 <Input
                   id="password"
@@ -280,7 +279,9 @@ const ResetPassword = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Bevestig wachtwoord</Label>
+              <label htmlFor="confirmPassword" className="text-sm font-medium">
+                Bevestig wachtwoord
+              </label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -317,7 +318,7 @@ const ResetPassword = () => {
             >
               {isLoading ? 'Bezig...' : 'Wachtwoord bijwerken'}
             </Button>
-          </ResponsiveForm>
+          </form>
         </CardContent>
       </Card>
     </div>

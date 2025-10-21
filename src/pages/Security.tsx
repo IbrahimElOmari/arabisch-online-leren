@@ -13,7 +13,7 @@ import { useUserRole } from '@/hooks/useUserRole';
 const Security = () => {
   const { user, profile, loading } = useAuth();
   const { isAdmin, isTeacher, isLoading: roleLoading } = useUserRole();
-  const { getFlexDirection, getTextAlign, getIconSpacing, isRTL } = useRTLLayout();
+  const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
   const { t } = useTranslation();
 
   if (loading || roleLoading) {
