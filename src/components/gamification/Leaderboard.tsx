@@ -1,9 +1,7 @@
-import { useState } from 'react';
-import { Trophy, Medal, Crown, TrendingUp, Users } from 'lucide-react';
+import { Trophy, Medal, Crown, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { type LeaderboardEntry } from '@/services/gamificationService';

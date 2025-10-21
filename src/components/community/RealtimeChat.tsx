@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -44,12 +43,10 @@ export const RealtimeChat = ({
   channels, 
   currentChannel, 
   messages, 
-  currentUser, 
   onSendMessage, 
   onJoinChannel 
 }: RealtimeChatProps) => {
   const [newMessage, setNewMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const currentChannelData = channels.find(c => c.id === currentChannel);

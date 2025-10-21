@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,13 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 
 interface Question {
   id: string;
   niveau_id: string;
   vraag: string;
-  audio_url?: string;
+  audio_url?: string | null;
   correct_antwoord?: string;
   created_at: string;
 }
@@ -24,7 +24,7 @@ interface Task {
   level_id: string;
   author_id: string;
   title: string;
-  description?: string;
+  description?: string | null;
   required_submission_type: 'text' | 'file';
   grading_scale: number;
   created_at: string;

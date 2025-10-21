@@ -11,7 +11,6 @@ import { TeacherGradingPanel } from '@/components/teacher/TeacherGradingPanel';
 import { BulkGradingModal } from '@/components/teacher/BulkGradingModal';
 import { GradingAnalytics } from '@/components/teacher/GradingAnalytics';
 import { AutoGradingSystem } from '@/components/teacher/AutoGradingSystem';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { TeachingModal } from '@/components/teaching/TeachingModal';
 import { AttendanceModal } from '@/components/teaching/AttendanceModal';
 import { PerformanceModal } from '@/components/teaching/PerformanceModal';
@@ -25,7 +24,6 @@ import {
   Calendar,
   FileText,
   BarChart3,
-  Clock,
   Plus,
   AlertTriangle,
   CheckSquare,
@@ -44,9 +42,7 @@ const TeacherDashboard = () => {
   const { 
     isRTL, 
     getFlexDirection, 
-    getTextAlign, 
-    getMarginStart, 
-    getMarginEnd 
+    getTextAlign
   } = useRTLLayout();
   
   const [classes, setClasses] = useState<Class[]>([]);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Trophy, Star, Target, Zap, Crown, Award, Medal, Sparkles } from 'lucide-react';
+import { Trophy, Star, Target, Zap, Crown, Medal, Sparkles } from 'lucide-react';
 import { useAgeTheme } from '@/contexts/AgeThemeContext';
 import { cn } from '@/lib/utils';
 import { useEnhancedProgress, type AwardedBadge, type EnhancedStudentProgress } from '@/hooks/useEnhancedProgress';
@@ -29,9 +29,6 @@ export const EnhancedBadgeSystem = ({
   const relevantProgress = showOnlyCurrentLevel && niveauId 
     ? progress.filter(p => p.niveau_id === niveauId)
     : progress;
-
-  // Get all earned badges across all levels
-  const allEarnedBadges = relevantProgress.flatMap(p => p.earned_badges || []);
   
   // Generate potential badges for current progress
   const generatePotentialBadges = (progressData: EnhancedStudentProgress[]) => {

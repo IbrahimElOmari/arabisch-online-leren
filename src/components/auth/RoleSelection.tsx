@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
-import { useTranslation } from '@/contexts/TranslationContext';
 
 export interface RoleOption {
   role: string;

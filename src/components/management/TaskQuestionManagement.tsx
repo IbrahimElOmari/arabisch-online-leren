@@ -212,7 +212,7 @@ export const TaskQuestionManagement = () => {
     }
   };
 
-  const viewQuestionAnswers = async (questionId: string, questionText: string) => {
+  const viewQuestionAnswers = async (questionId: string) => {
     try {
       const { data: answers, error } = await supabase
         .from('antwoorden')
@@ -411,7 +411,7 @@ export const TaskQuestionManagement = () => {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => viewQuestionAnswers(question.id, question.vraag_tekst)}
+                    onClick={() => viewQuestionAnswers(question.id)}
                       className="flex-1"
                     >
                       <Eye className="w-4 h-4 me-2" />
@@ -420,7 +420,7 @@ export const TaskQuestionManagement = () => {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => viewQuestionAnswers(question.id, question.vraag_tekst)}
+                      onClick={() => viewQuestionAnswers(question.id)}
                     >
                       <Users className="w-4 h-4 me-2" />
                       Leerlingen

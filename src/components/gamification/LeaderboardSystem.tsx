@@ -24,15 +24,12 @@ interface LeaderboardSystemProps {
   currentUserId: string;
 }
 
-export const LeaderboardSystem: React.FC<LeaderboardSystemProps> = ({ 
-  classId, 
-  currentUserId 
-}) => {
+export const LeaderboardSystem: React.FC<LeaderboardSystemProps> = ({ currentUserId }) => {
   const { themeAge } = useAgeTheme();
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'all'>('week');
 
   // Mock data - replace with real data from Supabase
-  const generateMockLeaderboard = (period: string): LeaderboardEntry[] => {
+  const generateMockLeaderboard = (): LeaderboardEntry[] => {
     const baseEntries = [
       { id: '1', name: 'Sarah Ahmed', points: 2500, level: 3, badges: 8, streak: 7 },
       { id: '2', name: 'Mohammed Ali', points: 2200, level: 3, badges: 6, streak: 5 },
@@ -51,7 +48,7 @@ export const LeaderboardSystem: React.FC<LeaderboardSystemProps> = ({
       .sort((a, b) => b.points - a.points);
   };
 
-  const leaderboard = generateMockLeaderboard(selectedPeriod);
+  const leaderboard = generateMockLeaderboard();
   const currentUser = leaderboard.find(entry => entry.id === currentUserId);
   const topThree = leaderboard.slice(0, 3);
 

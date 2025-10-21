@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { ArrowLeft, Users, User, Phone, VideoIcon, MoreVertical } from 'lucide-react';
+import { ArrowLeft, User, Phone, VideoIcon, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
