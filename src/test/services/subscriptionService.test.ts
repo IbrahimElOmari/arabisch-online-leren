@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getMySubscriptions, hasActiveSubscription } from '@/services/subscriptionService';
-import { FEATURE_FLAGS } from '@/config/featureFlags';
+import { getMySubscriptions, hasActiveSubscription, type Subscription } from '@/services/subscriptionService';
 
 // Mock feature flags
 vi.mock('@/config/featureFlags', () => ({
@@ -31,7 +30,7 @@ describe('subscriptionService', () => {
 
   describe('hasActiveSubscription', () => {
     it('should return false when payments are disabled', () => {
-      const subscriptions = [];
+      const subscriptions: Subscription[] = [];
       const result = hasActiveSubscription(subscriptions);
 
       expect(result).toBe(false);

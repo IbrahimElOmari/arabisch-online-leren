@@ -12,7 +12,6 @@ import { Settings, Database, AlertTriangle, Download, CheckCircle, XCircle, Cloc
 import { format } from 'date-fns';
 import { nl } from 'date-fns/locale';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
-import { useTranslation } from '@/contexts/TranslationContext';
 
 const statusIcons = {
   queued: Clock,

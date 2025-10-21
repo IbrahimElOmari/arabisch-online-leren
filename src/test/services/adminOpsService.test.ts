@@ -65,10 +65,10 @@ describe('adminOpsService', () => {
       const mockResponse = { data: mockLogs, error: null };
       (supabase.functions.invoke as any).mockResolvedValue(mockResponse);
 
-      const result = await adminOpsService.getAuditLogs(10);
+      const result = await adminOpsService.getAuditLogs();
 
       expect(supabase.functions.invoke).toHaveBeenCalledWith('admin-ops', {
-        body: { action: 'get_audit_logs', limit: 10 }
+        body: { action: 'get_audit_logs' }
       });
       expect(result).toEqual(mockLogs);
     });

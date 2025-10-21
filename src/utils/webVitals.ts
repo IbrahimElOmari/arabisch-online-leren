@@ -1,4 +1,4 @@
-import { getCLS, getLCP, getFID, getFCP, getTTFB } from 'web-vitals';
+import { onCLS, onLCP, onINP, onFCP, onTTFB } from 'web-vitals';
 import { supabase } from '@/integrations/supabase/client';
 import { useState, useEffect } from 'react';
 
@@ -83,11 +83,11 @@ async function sendToAnalytics(metric: Metric): Promise<void> {
 }
 
 export function initWebVitals(): void {
-  getCLS(sendToAnalytics);
-  getLCP(sendToAnalytics);
-  getFID(sendToAnalytics);
-  getFCP(sendToAnalytics);
-  getTTFB(sendToAnalytics);
+  onCLS(sendToAnalytics);
+  onLCP(sendToAnalytics);
+  onINP(sendToAnalytics);
+  onFCP(sendToAnalytics);
+  onTTFB(sendToAnalytics);
 }
 
 export function useWebVitals() {
@@ -115,11 +115,11 @@ export function useWebVitals() {
       });
     };
 
-    getCLS(handleMetric);
-    getLCP(handleMetric);
-    getFID(handleMetric);
-    getFCP(handleMetric);
-    getTTFB(handleMetric);
+    onCLS(handleMetric);
+    onLCP(handleMetric);
+    onINP(handleMetric);
+    onFCP(handleMetric);
+    onTTFB(handleMetric);
   }, []);
 
   const getPoorVitals = () => vitals.filter(v => v.rating === 'poor');
@@ -132,9 +132,9 @@ export async function getWebVitalsReport(days = 7): Promise<{
   trends: Array<{ date: string; metric: string; avgValue: number }>;
 }> {
   try {
-    const { data, error } = await supabase.rpc('get_web_vitals_summary', { days_ago: days });
+    const { data, error } = await supabase.rpc('get_web_vitals_summary' as any, { days_ago: days });
     if (error) throw error;
-    return data || { metrics: [], trends: [] };
+    return (data as any) || { metrics: [], trends: [] };
   } catch (error) {
     console.error('[WebVitals] Failed to fetch report:', error);
     return { metrics: [], trends: [] };

@@ -10,7 +10,7 @@
  * Reference: https://www.supermemo.com/en/archives1990-2015/english/ol/sm2
  */
 
-import type { Grade, ReviewInput, ReviewResult, ReviewState, NowProvider } from './index';
+import type { ReviewInput, ReviewResult, ReviewState, NowProvider } from './index';
 
 const MIN_EF = 1.3;
 

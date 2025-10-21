@@ -33,7 +33,7 @@ class SecurityLogger {
       }
 
       const securityEvent = {
-        user_id: userId || null, // Allow null for system events
+        user_id: userId || '00000000-0000-0000-0000-000000000000',
         actie: event.action,
         severity: event.severity,
         details: {

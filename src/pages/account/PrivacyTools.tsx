@@ -11,7 +11,6 @@ import { gdprService } from '@/services/gdprService';
 import { FEATURE_FLAGS } from '@/config/featureFlags';
 import { Download, Trash2, Shield, AlertTriangle, FileText } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
-import { useTranslation } from '@/contexts/TranslationContext';
 
 export default function PrivacyTools() {
   const [deleteReason, setDeleteReason] = useState('');

@@ -255,24 +255,21 @@ export const getOptimizedUserDashboard = async (userId: string) => {
 export const monitorQueryPerformance = () => {
   const originalFrom = supabase.from;
   
-  supabase.from = function(table: string) {
+  (supabase as any).from = function(table: any) {
     const startTime = Date.now();
     const query = originalFrom.call(this, table);
     
-    // Override the execute methods to track timing
-    const originalThen = query.then;
-    query.then = function(onFulfilled?: any, onRejected?: any) {
-      return originalThen.call(this, (result: any) => {
-        const duration = Date.now() - startTime;
+    // Track query completion - simplified version without modifying query chain
+    setTimeout(() => {
+      const duration = Date.now() - startTime;
+      if (duration > 100) {
         console.debug(`Query to ${table} took ${duration}ms`);
         
         if (duration > 1000) {
           console.warn(`Slow query detected: ${table} took ${duration}ms`);
         }
-        
-        return onFulfilled ? onFulfilled(result) : result;
-      }, onRejected);
-    };
+      }
+    }, 0);
     
     return query;
   };

@@ -15,7 +15,7 @@ export interface SearchResult {
 export interface SearchOptions {
   limit?: number;
   offset?: number;
-  classId?: string;
+  classId?: string | null;
   entityType?: SearchResult['entity_type'];
 }
 
@@ -24,7 +24,7 @@ const searchSchema = z.object({
   query: z.string().min(1, 'Zoekterm mag niet leeg zijn').max(100, 'Zoekterm te lang'),
   limit: z.number().min(1).max(50).optional(),
   offset: z.number().min(0).optional(),
-  classId: z.string().uuid().optional(),
+  classId: z.string().uuid().nullable().optional(),
 });
 
 export class SearchService {
@@ -47,10 +47,10 @@ export class SearchService {
       // Use the RPC function for full-text search
       const { data, error } = await supabase.rpc('search_global', {
         p_query: validated.query,
-        p_limit: limit + 1, // Get one extra to check for more results
+        p_limit: limit + 1,
         p_offset: offset,
-        p_class_id: options.classId || null
-      });
+        p_class_id: options.classId ?? null
+      } as any);
 
       if (error) throw error;
 
@@ -157,7 +157,7 @@ export class SearchService {
           'forum_thread', 'forum_post', 'lesson', 'task', 'profile'
         ];
         
-        response.value.data.forEach(item => {
+        response.value.data.forEach((item: any) => {
           let result: SearchResult;
           
           switch (entityTypes[index]) {
@@ -165,9 +165,9 @@ export class SearchService {
               result = {
                 entity_type: 'forum_thread',
                 entity_id: item.id,
-                title: item.title,
+                title: item.title || '',
                 body: item.body || '',
-                class_id: item.class_id,
+                class_id: item.class_id || undefined,
                 created_at: item.created_at,
                 rank: 0.5
               };
@@ -177,9 +177,9 @@ export class SearchService {
               result = {
                 entity_type: 'forum_post',
                 entity_id: item.id,
-                title: item.titel,
+                title: item.titel || item.title || '',
                 body: item.body || '',
-                class_id: item.class_id,
+                class_id: item.class_id || undefined,
                 created_at: item.created_at,
                 rank: 0.5
               };
@@ -189,9 +189,9 @@ export class SearchService {
               result = {
                 entity_type: 'lesson',
                 entity_id: item.id,
-                title: item.title,
+                title: item.title || '',
                 body: '',
-                class_id: item.class_id,
+                class_id: item.class_id || undefined,
                 created_at: item.created_at,
                 rank: 0.5
               };
@@ -201,9 +201,9 @@ export class SearchService {
               result = {
                 entity_type: 'task',
                 entity_id: item.id,
-                title: item.title,
+                title: item.title || '',
                 body: item.description || '',
-                class_id: null, // Would need to join with niveaus for class_id
+                class_id: null,
                 created_at: item.created_at,
                 rank: 0.5
               };
@@ -213,7 +213,7 @@ export class SearchService {
               result = {
                 entity_type: 'profile',
                 entity_id: item.id,
-                title: item.full_name,
+                title: item.full_name || '',
                 body: '',
                 class_id: null,
                 created_at: item.created_at,
@@ -253,7 +253,7 @@ export class SearchService {
         .ilike('title', `%${partial}%`)
         .limit(10);
 
-      return suggestions?.map(s => s.title).filter(Boolean) || [];
+      return suggestions?.map(s => s.title).filter((title): title is string => title !== null && title !== undefined) || [];
     } catch (error) {
       console.error('Error fetching suggestions:', error);
       return [];

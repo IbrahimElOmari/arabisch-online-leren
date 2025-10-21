@@ -23,7 +23,7 @@ vi.mock('@/hooks/useRTLLayout', () => ({
 
 vi.mock('@/contexts/TranslationContext', () => ({
   useTranslation: () => ({
-    t: (key: string, fallback: string) => fallback
+    t: (_key: string, fallback: string) => fallback
   })
 }));
 

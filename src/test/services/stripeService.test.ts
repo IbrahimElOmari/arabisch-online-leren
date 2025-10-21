@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createCheckoutSession, createPortalSession, ensureCustomer } from '@/services/stripeService';
-import { FEATURE_FLAGS } from '@/config/featureFlags';
 
 // Mock feature flags
 vi.mock('@/config/featureFlags', () => ({
