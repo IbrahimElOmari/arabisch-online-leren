@@ -167,7 +167,7 @@ export class SearchService {
                 entity_id: item.id,
                 title: item.title || '',
                 body: item.body || '',
-                class_id: item.class_id || undefined,
+                class_id: item.class_id || null,
                 created_at: item.created_at,
                 rank: 0.5
               };
@@ -179,7 +179,7 @@ export class SearchService {
                 entity_id: item.id,
                 title: item.titel || item.title || '',
                 body: item.body || '',
-                class_id: item.class_id || undefined,
+                class_id: item.class_id || null,
                 created_at: item.created_at,
                 rank: 0.5
               };
@@ -191,7 +191,7 @@ export class SearchService {
                 entity_id: item.id,
                 title: item.title || '',
                 body: '',
-                class_id: item.class_id || undefined,
+                class_id: item.class_id || null,
                 created_at: item.created_at,
                 rank: 0.5
               };
