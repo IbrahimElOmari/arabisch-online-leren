@@ -55,64 +55,20 @@ export const RealtimeChat: React.FC<RealtimeChatProps> = ({
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Mock data - replace with real Supabase realtime
+  // Initialize with empty data - real Supabase realtime should be implemented
   useEffect(() => {
-    const mockMessages: Message[] = [
-      {
-        id: '1',
-        sender_id: 'teacher1',
-        sender_name: 'Mevrouw Sarah',
-        content: 'Goedemorgen allemaal! Vandaag gaan we werken aan les 3.',
-        timestamp: new Date(Date.now() - 3600000).toISOString(),
-        type: 'text'
-      },
-      {
-        id: '2',
-        sender_id: 'student1',
-        sender_name: 'Ahmed',
-        content: 'Goedemorgen mevrouw! Ik heb de voorbereiding gedaan.',
-        timestamp: new Date(Date.now() - 3300000).toISOString(),
-        type: 'text'
-      },
-      {
-        id: '3',
-        sender_id: user?.id || 'current',
-        sender_name: profile?.full_name || 'Jij',
-        content: 'Ik heb een vraag over de grammatica van gisteren.',
-        timestamp: new Date(Date.now() - 1800000).toISOString(),
-        type: 'text'
-      }
-    ];
-
-    const mockUsers: ChatUser[] = [
-      {
-        id: 'teacher1',
-        name: 'Mevrouw Sarah',
-        role: 'leerkracht',
-        online: true
-      },
-      {
-        id: 'student1',
-        name: 'Ahmed',
-        role: 'leerling',
-        online: true
-      },
-      {
-        id: 'student2',
-        name: 'Fatima',
-        role: 'leerling',
-        online: false
-      },
-      {
-        id: user?.id || 'current',
-        name: profile?.full_name || 'Jij',
-        role: 'leerling',
-        online: true
-      }
-    ];
-
-    setMessages(mockMessages);
-    setOnlineUsers(mockUsers);
+    // TODO: Implement real Supabase realtime subscription
+    // const channel = supabase.channel('chat:' + roomId)
+    //   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, handleNewMessage)
+    //   .subscribe();
+    
+    // For now, initialize with empty state
+    setMessages([]);
+    setOnlineUsers([]);
+    
+    // return () => {
+    //   supabase.removeChannel(channel);
+    // };
   }, [user?.id, profile?.full_name]);
 
   useEffect(() => {

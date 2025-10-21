@@ -125,8 +125,8 @@ const { data: studentsData, error: studentsError } = await supabase
       const performance: ClassPerformance[] = classesData?.map(klas => ({
         className: klas.name,
         studentCount: klas.inschrijvingen?.filter(i => i.payment_status === 'paid').length || 0,
-        averageProgress: Math.floor(Math.random() * 40) + 60, // Mock progress
-        completionRate: Math.floor(Math.random() * 30) + 70, // Mock completion rate
+        averageProgress: 0, // Real progress calculation needs implementation
+        completionRate: 0, // Real completion rate needs implementation
         lastActivity: new Date().toLocaleDateString('nl-NL')
       })) || [];
 
@@ -137,7 +137,6 @@ const { data: studentsData, error: studentsError } = await supabase
   };
 
   const exportReport = () => {
-    // Mock export functionality
     const reportData = {
       generatedAt: new Date().toISOString(),
       dateRange,
