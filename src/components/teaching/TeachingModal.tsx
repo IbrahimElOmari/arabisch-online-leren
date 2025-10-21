@@ -6,12 +6,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
-import { useToast } from '@/hooks/use-toast';
+import { toast as sonnerToast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { Video, FileQuestion, Calendar, Upload, Plus, UserCheck, ClipboardList } from 'lucide-react';
 import { AttendanceModal } from './AttendanceModal';
 import { PerformanceModal } from './PerformanceModal';
-import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useTranslation } from '@/contexts/TranslationContext';
 
 interface TeachingModalProps {
@@ -55,8 +53,6 @@ export function TeachingModal({
     live_lesson_url: '',
     preparation_deadline: ''
   });
-  const { toast } = useToast();
-  const { getFlexDirection, getTextAlign, isRTL } = useRTLLayout();
   const { t } = useTranslation();
 
   // Determine which open/close pattern to use
@@ -87,7 +83,6 @@ export function TeachingModal({
           onOpenChange={setAttendanceOpen}
           classId={selectedClass || ''}
           className="Geselecteerde Klas"
-          levelId={niveauId}
         />
       </>
     );
@@ -110,7 +105,6 @@ export function TeachingModal({
           onOpenChange={setPerformanceOpen}
           classId={selectedClass || ''}
           className="Geselecteerde Klas"
-          levelId={niveauId}
         />
       </>
     );
@@ -223,7 +217,7 @@ export function TeachingModal({
           throw new Error('Unsupported action type');
       }
 
-      const { data, error } = await supabase.functions.invoke(endpoint, {
+      const { error } = await supabase.functions.invoke(endpoint, {
         body: payload
       });
 
@@ -231,10 +225,7 @@ export function TeachingModal({
         throw error;
       }
 
-      toast({
-        title: t('common.success'),
-        description: getSuccessMessage(type)
-      });
+      sonnerToast.success(getSuccessMessage(type));
 
       setOpen(false);
       setFormData({
@@ -251,11 +242,7 @@ export function TeachingModal({
       });
 
     } catch (error: any) {
-      toast({
-        title: t('common.error'),
-        description: error.message || 'Er is een fout opgetreden',
-        variant: 'destructive'
-      });
+      sonnerToast.error(error.message || 'Er is een fout opgetreden');
     } finally {
       setLoading(false);
     }

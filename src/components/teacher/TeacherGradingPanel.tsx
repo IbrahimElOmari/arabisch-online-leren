@@ -68,11 +68,6 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
   const [questionAnswers, setQuestionAnswers] = useState<QuestionAnswer[]>([]);
   const [loading, setLoading] = useState(true);
   const [gradingMode, setGradingMode] = useState<'tasks' | 'questions'>('tasks');
-  const [bonusPointsModal, setBonusPointsModal] = useState<{
-    isOpen: boolean;
-    student?: { id: string; full_name: string };
-    niveau?: { id: string; naam: string };
-  }>({ isOpen: false });
 
   useEffect(() => {
     loadSubmissions();
@@ -115,6 +110,10 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
 
       const formattedSubmissions = data?.map(sub => ({
         ...sub,
+        submission_content: sub.submission_content ?? undefined,
+        submission_file_path: sub.submission_file_path ?? undefined,
+        feedback: sub.feedback ?? undefined,
+        grade: sub.grade ?? undefined,
         student: { full_name: sub.profiles?.full_name || 'Onbekend' },
         task: {
           title: sub.tasks?.title || 'Onbekende taak',
@@ -156,6 +155,9 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
 
       const formattedAnswers = data?.map(answer => ({
         ...answer,
+        is_correct: answer.is_correct ?? undefined,
+        punten: answer.punten ?? undefined,
+        feedback: answer.feedback ?? undefined,
         student: { full_name: answer.profiles?.full_name || 'Onbekend' },
         question: {
           vraag_tekst: answer.vragen?.vraag_tekst || 'Onbekende vraag',
@@ -309,22 +311,10 @@ export const TeacherGradingPanel = ({ classId, levelId }: TeacherGradingPanelPro
               <Button 
                 onClick={handleSubmit}
                 disabled={!grade || submitting}
-                className="flex-1"
+                className="w-full"
               >
                 <Star className="h-4 w-4 me-2" />
                 {submitting ? 'Bezig met beoordelen...' : 'Beoordeling Opslaan'}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setBonusPointsModal({
-                  isOpen: true,
-                  student: { id: submission.student_id, full_name: submission.student?.full_name || 'Onbekend' },
-                  niveau: { id: levelId || '', naam: 'Niveau' }
-                })}
-                disabled={submitting}
-              >
-                <Gift className="h-4 w-4 me-1" />
-                Bonus
               </Button>
             </div>
         </CardContent>

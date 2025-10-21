@@ -20,10 +20,9 @@ interface AttendanceModalProps {
   onOpenChange: (open: boolean) => void;
   classId: string;
   className: string;
-  levelId?: string;
 }
 
-export function AttendanceModal({ open, onOpenChange, classId, className, levelId }: AttendanceModalProps) {
+export function AttendanceModal({ open, onOpenChange, classId, className }: AttendanceModalProps) {
   const [students, setStudents] = useState<Student[]>([]);
   const [attendance, setAttendance] = useState<Record<string, 'present' | 'absent'>>({});
   const [loading, setLoading] = useState(false);

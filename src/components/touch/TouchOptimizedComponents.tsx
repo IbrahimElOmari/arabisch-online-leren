@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { useMobileRTL } from '@/hooks/useMobileRTL';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 
 // Touch-optimized button with haptic feedback simulation
 interface TouchButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

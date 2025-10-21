@@ -8,17 +8,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import { supabase } from '@/integrations/supabase/client';
 
 interface Question {
@@ -110,25 +99,29 @@ export const StudentTasksAndQuestions = ({ levelId, levelName }: StudentTasksAnd
 
       if (error) throw error;
 
-      const questionsWithAnswers = data?.map(question => ({
-        id: question.id,
-        niveau_id: question.niveau_id,
-        vraag: question.vraag_tekst || '',
-        audio_url: question.audio_url ?? undefined,
-        correct_antwoord: typeof question.correct_antwoord === 'string' 
-          ? question.correct_antwoord 
-          : JSON.stringify(question.correct_antwoord) || '',
-        created_at: question.created_at,
-        answer: question.antwoorden?.[0] ? {
-          ...question.antwoorden[0],
-          antwoord: typeof question.antwoorden[0].antwoord === 'string'
-            ? question.antwoorden[0].antwoord
-            : JSON.stringify(question.antwoorden[0].antwoord) || ''
-        } : undefined,
-        niveaus: question.niveaus
-      })) || [];
+        const questionsWithAnswers = data?.map(question => ({
+          id: question.id,
+          niveau_id: question.niveau_id,
+          vraag: question.vraag_tekst || '',
+          audio_url: question.audio_url ?? undefined,
+          correct_antwoord: typeof question.correct_antwoord === 'string' 
+            ? question.correct_antwoord 
+            : JSON.stringify(question.correct_antwoord) || '',
+          created_at: question.created_at,
+          answer: question.antwoorden?.[0] ? {
+            id: question.antwoorden[0].id,
+            antwoord: typeof question.antwoorden[0].antwoord === 'string'
+              ? question.antwoorden[0].antwoord
+              : JSON.stringify(question.antwoorden[0].antwoord) || '',
+            is_correct: question.antwoorden[0].is_correct ?? false,
+            punten: question.antwoorden[0].punten ?? 0,
+            feedback: question.antwoorden[0].feedback ?? '',
+            created_at: question.antwoorden[0].created_at
+          } : undefined,
+          niveaus: question.niveaus
+        })) || [];
 
-      setQuestions(questionsWithAnswers);
+        setQuestions(questionsWithAnswers);
     } catch (error: any) {
       console.error('Error fetching questions:', error);
     }

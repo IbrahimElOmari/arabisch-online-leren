@@ -151,7 +151,7 @@ export const StudentTaskNotifications: React.FC = () => {
                 task={{
                   id: task.id,
                   title: task.title,
-                  description: task.description,
+                  description: task.description ?? undefined,
                   required_submission_type: task.required_submission_type,
                   grading_scale: task.grading_scale,
                   created_at: task.created_at,

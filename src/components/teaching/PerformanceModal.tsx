@@ -26,10 +26,9 @@ interface PerformanceModalProps {
   onOpenChange: (open: boolean) => void;
   classId: string;
   className: string;
-  levelId?: string;
 }
 
-export function PerformanceModal({ open, onOpenChange, classId, className, levelId }: PerformanceModalProps) {
+export function PerformanceModal({ open, onOpenChange, classId, className }: PerformanceModalProps) {
   const [students, setStudents] = useState<StudentPerformance[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();

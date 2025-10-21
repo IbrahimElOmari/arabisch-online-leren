@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,12 +8,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { 
   BarChart3, 
   TrendingUp, 
-  Clock, 
-  Users, 
-  FileText, 
   CheckCircle,
-  AlertCircle,
-  Calendar
+  AlertCircle
 } from 'lucide-react';
 
 interface GradingStats {
@@ -118,10 +114,10 @@ export const GradingAnalytics = ({ classId, levelId }: GradingAnalyticsProps) =>
 
     if (data) {
       const totalSubmissions = data.length;
-      const gradedSubmissions = data.filter(s => s.grade !== null).length;
+      const gradedSubmissions = data.filter(s => s.grade !== null && s.grade !== undefined).length;
       const pendingCount = totalSubmissions - gradedSubmissions;
       
-      const grades = data.filter(s => s.grade !== null).map(s => s.grade);
+      const grades = data.filter(s => s.grade !== null && s.grade !== undefined).map(s => s.grade ?? 0);
       const avgGrade = grades.length > 0 ? grades.reduce((a, b) => a + b, 0) / grades.length : 0;
       
       // Calculate average grading time - simplified to 2 hours as default
@@ -133,7 +129,7 @@ export const GradingAnalytics = ({ classId, levelId }: GradingAnalyticsProps) =>
       const gradeRanges = ['0-5', '5-6', '6-7', '7-8', '8-9', '9-10'];
       const gradeDistribution = gradeRanges.map(range => {
         const [min, max] = range.split('-').map(Number);
-        const count = grades.filter(g => g >= min && g < max + 0.1).length;
+        const count = grades.filter(g => g !== null && g !== undefined && g >= min && g < max + 0.1).length;
         return { grade: range, count };
       });
 
@@ -184,9 +180,9 @@ export const GradingAnalytics = ({ classId, levelId }: GradingAnalyticsProps) =>
           n.tasks?.flatMap(t => t.task_submissions || []) || []
         ) || [];
         
-        const gradedSubmissions = allSubmissions.filter(s => s.grade !== null);
+        const gradedSubmissions = allSubmissions.filter(s => s.grade !== null && s.grade !== undefined);
         const avgGrade = gradedSubmissions.length > 0 ?
-          gradedSubmissions.reduce((acc, s) => acc + s.grade, 0) / gradedSubmissions.length : 0;
+          gradedSubmissions.reduce((acc, s) => acc + (s.grade ?? 0), 0) / gradedSubmissions.length : 0;
         
         const uniqueStudentsWithSubmissions = new Set(allSubmissions.map(s => s.student_id)).size;
         const completionRate = enrollmentCount > 0 ? (uniqueStudentsWithSubmissions / enrollmentCount) * 100 : 0;

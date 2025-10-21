@@ -136,11 +136,19 @@ export const GradingInterface = () => {
         profiles: studentsData?.find(s => s.id === answer.student_id) || { full_name: 'Onbekend' }
       })) || [];
 
-      setSubmissions(submissionsData || []);
+      const mappedSubmissions = submissionsData?.map(sub => ({
+        ...sub,
+        submission_content: sub.submission_content ?? undefined,
+        submission_file_path: sub.submission_file_path ?? undefined,
+        feedback: sub.feedback ?? undefined,
+        grade: sub.grade ?? undefined
+      })) || [];
+
+      setSubmissions(mappedSubmissions);
       setAnswers(answersWithProfiles as StudentAnswer[]);
     } catch (error) {
       console.error('Error fetching submissions and answers:', error);
-      toast.error('Fout bij het ophalen van inzendingen');
+      sonnerToast.error('Fout bij het ophalen van inzendingen');
     } finally {
       setLoading(false);
     }
@@ -152,7 +160,7 @@ export const GradingInterface = () => {
       const feedback = feedbacks[submissionId];
 
       if (grade === undefined) {
-        toast.error('Voer een cijfer in');
+        sonnerToast.error('Voer een cijfer in');
         return;
       }
 
@@ -174,7 +182,7 @@ export const GradingInterface = () => {
           });
       }
 
-      toast.success('Beoordeling opgeslagen!');
+      sonnerToast.success('Beoordeling opgeslagen!');
       fetchSubmissionsAndAnswers();
       
       // Clear form
@@ -182,7 +190,7 @@ export const GradingInterface = () => {
       setFeedbacks(prev => ({ ...prev, [submissionId]: '' }));
     } catch (error) {
       console.error('Error grading submission:', error);
-      toast.error('Fout bij het opslaan van de beoordeling');
+      sonnerToast.error('Fout bij het opslaan van de beoordeling');
     }
   };
 
@@ -213,14 +221,14 @@ export const GradingInterface = () => {
           });
       }
 
-      toast.success('Antwoord beoordeeld!');
+      sonnerToast.success('Antwoord beoordeeld!');
       fetchSubmissionsAndAnswers();
       
       // Clear feedback
       setFeedbacks(prev => ({ ...prev, [answerId]: '' }));
     } catch (error) {
       console.error('Error grading answer:', error);
-      toast.error('Fout bij het beoordelen van het antwoord');
+      sonnerToast.error('Fout bij het beoordelen van het antwoord');
     }
   };
 
@@ -242,7 +250,7 @@ export const GradingInterface = () => {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading file:', error);
-      toast.error('Fout bij het downloaden van het bestand');
+      sonnerToast.error('Fout bij het downloaden van het bestand');
     }
   };
 
