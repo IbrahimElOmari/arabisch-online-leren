@@ -85,6 +85,15 @@ export default [
       'jsx-a11y/no-redundant-roles': 'error',
       'jsx-a11y/alt-text': 'error',
       'jsx-a11y/anchor-is-valid': 'error',
+
+      // --- I18N STRICT: No hardcoded UI strings (A2) ---
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'JSXText[value=/[a-zA-Z]{2,}/]',
+          message: 'No hardcoded text in JSX. Use t() for translations.',
+        },
+      ],
     },
   },
 

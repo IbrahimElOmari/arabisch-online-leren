@@ -55,6 +55,7 @@ export const LanguageSelector = React.memo(() => {
           <DropdownMenuItem
             key={lang.code}
             onClick={() => handleLanguageChange(lang.code)}
+            data-testid={`language-option-${lang.code}`}
             className={`cursor-pointer ${
               i18n.language === lang.code ? 'bg-accent' : ''
             }`}

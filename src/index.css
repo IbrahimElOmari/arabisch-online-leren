@@ -6,6 +6,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* RTL Support - CSS Logical Properties (A3) */
+@import './styles/rtl.css';
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
