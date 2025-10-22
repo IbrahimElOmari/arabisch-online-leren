@@ -1,308 +1,0 @@
-{
-  "nav.home": "الرئيسية",
-  "nav.calendar": "التقويم",
-  "nav.vision": "الرؤية",
-  "nav.dashboard": "لوحة التحكم",
-  "nav.forum": "المنتدى",
-  "nav.forum_moderation": "إدارة المنتدى",
-  "nav.security": "الأمان",
-  "nav.navigation": "التنقل",
-  "nav.platform": "منصة التعلم",
-  "nav.management": "الإدارة",
-  "nav.login": "تسجيل الدخول",
-  "nav.register": "التسجيل",
-  "nav.search": "البحث...",
-  "nav.search_placeholder": "ابحث عن الصفحات والوظائف...",
-  "nav.switch_to_dutch": "التبديل إلى الهولندية",
-  "nav.switch_to_arabic": "التبديل إلى العربية",
-  "nav.switching_language": "جارٍ تغيير اللغة...",
-  
-  "welcome.title": "أهلاً وسهلاً بعودتك",
-  "welcome.greeting": "أهلاً وسهلاً بعودتك",
-  "dashboard.overview": "نظرة عامة",
-  "dashboard.progress": "التقدم",
-  "dashboard.recent_activity": "النشاط الأخير",
-  "dashboard.statistics": "الإحصائيات",
-  
-  "actions.quick_actions": "الإجراءات السريعة",
-  "actions.continue_learning": "متابعة التعلم",
-  "actions.continue_learning_desc": "تابع من حيث توقفت",
-  "actions.watch_video": "مشاهدة الفيديو",
-  "actions.watch_video_desc": "شاهد آخر درس",
-  "actions.forum": "المنتدى",
-  "actions.forum_desc": "اطرح سؤالاً",
-  "actions.schedule": "الجدولة",
-  "actions.schedule_desc": "اعرض جدولك",
-  "actions.assignments": "المهام",
-  "actions.assignments_desc": "اعرض المهام المعلقة",
-  "actions.library": "المكتبة",
-  "actions.library_desc": "اعرض جميع المواد",
-  
-  "learning.lessons": "الدروس",
-  "learning.completed": "مكتمل",
-  "learning.in_progress": "قيد التقدم",
-  "learning.not_started": "لم يبدأ",
-  "learning.level": "المستوى",
-  "learning.points": "النقاط",
-  "learning.streak": "السلسلة",
-  "learning.achievements": "الإنجازات",
-  
-  "tasks.title": "المهام",
-  "tasks.new_task": "مهمة جديدة",
-  "tasks.submit": "إرسال",
-  "tasks.submitted": "تم الإرسال",
-  "tasks.graded": "تم التقييم",
-  "tasks.feedback": "التعليقات",
-  "tasks.grade": "الدرجة",
-  "tasks.due_date": "تاريخ الاستحقاق",
-  "tasks.no_tasks": "لا توجد مهام متاحة",
-  
-  "forum.new_post": "منشور جديد",
-  "forum.reply": "رد",
-  "forum.edit": "تعديل",
-  "forum.delete": "حذف",
-  "forum.latest_posts": "أحدث المنشورات",
-  "forum.popular_topics": "المواضيع الشائعة",
-  
-  "user.profile": "الملف الشخصي",
-  "user.settings": "الإعدادات",
-  "user.logout": "تسجيل الخروج",
-  "user.change_password": "تغيير كلمة المرور",
-  "user.full_name": "الاسم الكامل",
-  "user.email": "البريد الإلكتروني",
-  "user.role": "الدور",
-  "user.last_login": "آخر تسجيل دخول",
-  
-  "auth.login": "تسجيل الدخول",
-  "auth.register": "التسجيل",
-  "auth.password": "كلمة المرور",
-  "auth.confirm_password": "تأكيد كلمة المرور",
-  "auth.forgot_password": "نسيت كلمة المرور؟",
-  "auth.reset_password": "إعادة تعيين كلمة المرور",
-  "auth.invalid_credentials": "بيانات اعتماد غير صحيحة",
-  "auth.account_created": "تم إنشاء الحساب بنجاح",
-  
-  "error.required_field": "هذا الحقل مطلوب",
-  "error.invalid_email": "عنوان بريد إلكتروني غير صحيح",
-  "error.password_mismatch": "كلمات المرور غير متطابقة",
-  "error.min_length": "مطلوب حد أدنى {count} أحرف",
-  "error.network_error": "خطأ في الشبكة. حاول مرة أخرى.",
-  "error.server_error": "خطأ في الخادم. اتصل بالدعم الفني.",
-  "error.unauthorized": "لا يوجد إذن للوصول إلى هذا المورد",
-  "error.not_found": "الصفحة غير موجودة",
-  "error.unknown_role": "دور مستخدم غير معروف",
-  
-  "status.loading": "جارٍ التحميل...",
-  "status.saving": "جارٍ الحفظ...",
-  "status.saved": "تم الحفظ",
-  "status.online": "متصل",
-  "status.offline": "غير متصل",
-  "status.pending": "قيد الانتظار",
-  "status.approved": "تمت الموافقة",
-  "status.rejected": "مرفوض",
-  "status.switching_language": "جارٍ تغيير اللغة...",
-  "status.please_wait": "يرجى الانتظار...",
-  
-  "badges.level": "المستوى",
-  "badges.earned": "الشارات المكتسبة",
-  "badges.available": "الشارات المتاحة",
-  "badges.xp_to_next": "نقاط الخبرة للمستوى التالي",
-  
-  "form.title": "العنوان",
-  "form.description": "الوصف",
-  "form.save": "حفظ",
-  "form.cancel": "إلغاء",
-  "form.close": "إغلاق",
-  "form.loading": "جارٍ التحميل...",
-  "form.submit": "إرسال",
-  "form.edit": "تعديل",
-  "form.delete": "حذف",
-  "form.confirm": "تأكيد",
-  
-  "time.today": "اليوم",
-  "time.yesterday": "أمس",
-  "time.tomorrow": "غداً",
-  "time.this_week": "هذا الأسبوع",
-  "time.last_week": "الأسبوع الماضي",
-  "time.this_month": "هذا الشهر",
-  "time.minutes_ago": "منذ {count} دقائق",
-  "time.hours_ago": "منذ {count} ساعات",
-  "time.days_ago": "منذ {count} أيام",
-  
-  "dashboard.profile_loading": "أهلاً وسهلاً! يتم تحميل ملفك الشخصي...",
-  "dashboard.profile_loading_title": "يتم تحميل الملف الشخصي",
-  "dashboard.profile_loading_desc": "لوحة التحكم تعمل بالوظائف الأساسية أثناء تحميل ملفك الشخصي.",
-  "dashboard.force_profile": "فرض تحميل الملف الشخصي",
-  "dashboard.full_loading_desc": "سيتم تحميل لوحة التحكم بالكامل بمجرد توفر ملفك الشخصي.",
-  "dashboard.current_role": "نعمل حالياً بالدور",
-  "dashboard.navigation_desc": "يمكنك التنقل إلى صفحات أخرى عبر الشريط الجانبي.",
-  
-  "task.completed": "مكتمل",
-  "task.pending": "في الانتظار",
-  "task.inProgress": "قيد التنفيذ",
-  "task.overdue": "متأخر",
-  "task.noTasks": "لا توجد مهام متاحة",
-  "task.loadingTasks": "جاري تحميل المهام...",
-  "task.errorLoadingTasks": "فشل في تحميل المهام",
-  "task.createNew": "إنشاء مهمة جديدة",
-  "task.editTask": "تعديل المهمة",
-  "task.deleteTask": "حذف المهمة",
-  "task.taskDetails": "تفاصيل المهمة",
-  "task.dueDate": "تاريخ الاستحقاق",
-  "task.priority": "الأولوية",
-  "task.status": "الحالة",
-  "task.assignedTo": "مُعيَّن إلى",
-  
-  "rtl.testSuite": "مجموعة اختبارات RTL",
-  "rtl.testing": "جاري الاختبار...",
-  "rtl.runTests": "تشغيل اختبارات RTL",
-  "rtl.performanceMonitor": "مراقب الأداء",
-  "rtl.crossBrowser": "اختبار متعدد المتصفحات",
-  "rtl.accessibility": "تدقيق إمكانية الوصول",
-  "rtl.mobileTest": "اختبار RTL للجوال",
-  
-  "common.retry": "إعادة المحاولة",
-  "common.pages": "الصفحات",
-  "common.no_results": "لم يتم العثور على نتائج.",
-  "common.success": "نجح!",
-  "common.error": "خطأ",
-  "common.warning": "تحذير",
-  "common.info": "معلومات",
-  "common.confirm_action": "هل أنت متأكد؟",
-  "common.yes": "نعم",
-  "common.no": "لا",
-  "common.maybe": "ربما",
-  "common.all": "الكل",
-  "common.none": "لا شيء",
-  "common.other": "آخر",
-  "common.progress": "التقدم",
-  "common.current": "الصفحة الحالية",
-  
-  "stats.progress": "التقدم",
-  "stats.averageScore": "المتوسط",
-  "stats.studyTime": "وقت الدراسة",
-  "stats.streak": "السلسلة",
-  "stats.completed": "مكتمل",
-  "stats.thisWeek": "هذا الأسبوع",
-  "stats.onStreak": "🔥 على التوالي!",
-  "stats.students": "الطلاب",
-  "stats.activeClasses": "الفصول النشطة",
-  "stats.lessonProgress": "تقدم الدرس",
-  "stats.engagement": "المشاركة",
-  "stats.active": "نشط",
-  "stats.thisSemester": "هذا الفصل",
-  "stats.average": "متوسط",
-  
-  "forum.noMessages": "لا توجد رسائل حتى الآن",
-  "forum.beFirst": "كن أول من ينشر رسالة!",
-  "forum.mustLogin": "(يجب تسجيل الدخول)",
-  "forum.writePlaceholder": "اكتب ردك...",
-  "forum.loginPlaceholder": "سجل الدخول لكتابة رد",
-  "forum.posting": "جاري النشر...",
-  "forum.postReply": "نشر الرد",
-  "forum.writeReply": "اكتب ردك...",
-  "forum.cancel": "إلغاء",
-  "forum.send": "إرسال",
-  "forum.replyCount": "رد",
-  "forum.repliesCount": "ود",
-  "forum.deleted": "تم حذف هذه الرسالة",
-  "forum.confirmDelete": "هل أنت متأكد من حذف هذه الرسالة؟",
-  "forum.reported": "تم الإبلاغ",
-  "forum.reportSuccess": "تم الإبلاغ عن هذه الرسالة للمشرفين",
-  "forum.newTopic": "موضوع جديد",
-  "forum.topicTitle": "عنوان الموضوع",
-  "forum.topicDescription": "اوصف موضوعك...",
-  "forum.postTopic": "نشر الموضوع",
-  
-  "rtl.test": "اختبار RTL",
-  "rtl.performance": "أداء RTL",
-  "rtl.dashboard": "لوحة RTL",
-  
-  "maintenance.title": "صيانة",
-  "maintenance.description": "التطبيق غير متاح حالياً بسبب نقص في الإعدادات.",
-  "maintenance.contact": "تواصل مع المسؤول.",
-  
-  "hero.topPlatform": "المنصة الأولى لتعلم اللغة العربية",
-  "hero.learnArabic": "تعلم اللغة العربية",
-  "hero.description": "اكتشف جمال اللغة العربية مع طرق تعليمية تفاعلية مبتكرة. من المبتدئ إلى المتقدم - نحن نوجهك في رحلتك لإتقان اللغة العربية.",
-  "hero.startJourney": "ابدأ رحلتك",
-  
-  "roles.admin": "المدير",
-  "roles.teacher": "المعلم",
-  "roles.student": "الطالب",
-  "roles.unknown": "مستخدم",
-  
-  "user.view_profile": "عرض الملف الشخصي",
-  
-  "dashboard.welcome_back": "مرحباً بعودتك إلى رحلة تعلم اللغة العربية",
-  "dashboard.no_enrollments": "لم يتم العثور على تسجيلات",
-  "dashboard.not_enrolled": "أنت لست مسجلاً في أي فصل حتى الآن",
-  "dashboard.current_level": "المستوى الحالي",
-  "dashboard.select_class": "اختر فصلاً",
-  "dashboard.select_level": "المستويات في",
-  "dashboard.tasks_questions": "المهام والأسئلة",
-  "dashboard.level_progress": "تقدم المستوى",
-  "dashboard.badges_rankings": "الشارات والتصنيفات",
-  "dashboard.recent_notifications": "الإشعارات الأخيرة",
-  "dashboard.view_all_notifications": "عرض جميع الإشعارات",
-  "dashboard.your_level_progress": "تقدم مستواك",
-  "dashboard.class_level_selection": "اختيار الفصل والمستوى",
-  "dashboard.student_role": "طالب",
-  
-  "nav.home_dashboard": "لوحة التحكم",
-  "nav.admin": "الإدارة",
-  "search.placeholder": "بحث... (Cmd+K)",
-  
-  "teacher.my_classes": "فصولي",
-  "teacher.welcome": "أهلاً وسهلاً",
-  "teacher.overview_description": "هنا تجد نظرة عامة على فصولك ومواد التدريس",
-  "teacher.could_not_load_classes": "تعذر تحميل الفصول",
-  "teacher.try_again_later": "لم نتمكن من جلب الفصول. حاول مرة أخرى لاحقاً أو انقر على \"إعادة المحاولة\"",
-  "teacher.no_classes": "لا توجد فصول متاحة",
-  "teacher.connection_problem": "مشكلة في الاتصال",
-  "teacher.create_tasks": "إنشاء",
-  "teacher.grading": "التقييم",
-  "teacher.teaching": "التدريس",
-  "teacher.attendance": "الحضور",
-  "teacher.performance": "الأداء",
-  "teacher.analytics": "التحليلات",
-  "teacher.chat": "الدردشة",
-  "teacher.task_management": "إدارة المهام والأسئلة",
-  "teacher.task_management_desc": "أنشئ مهام وأسئلة جديدة لطلابك",
-  "teacher.grading_feedback": "التقييم والملاحظات",
-  "teacher.grading_feedback_desc": "اعرض وقيّم تقديمات طلابك",
-  "teacher.individual": "فردي",
-  "teacher.bulk": "مجمّع",
-  "teacher.auto": "تلقائي",
-  "teacher.bulk_grading_desc": "قيّم عدة تقديمات بنفس الدرجة والتعليقات",
-  "teacher.open_bulk_grading": "فتح التقييم المجمع",
-  "teacher.new_lesson": "درس جديد",
-  
-  "admin.dashboard": "لوحة الإدارة",
-  "admin.welcome_back": "أهلاً بعودتك",
-  "admin.total_users": "إجمالي المستخدمين",
-  "admin.active_classes": "الفصول النشطة",
-  "admin.forum_posts": "منشورات المنتدى",
-  "admin.growth_rate": "معدل النمو",
-  "admin.from_last_month": "من الشهر السابق",
-  "admin.new_this_week": "جديدة هذا الأسبوع",
-  "admin.today": "اليوم",
-  "admin.this_month": "هذا الشهر",
-  "admin.class_management": "إدارة الفصول",
-  "admin.tasks_questions": "المهام والأسئلة",
-  "admin.users": "المستخدمون",
-  "admin.overview": "نظرة عامة",
-  "admin.tasks_questions_desc": "كمدير لديك صلاحية الوصول إلى جميع المهام والأسئلة في جميع الفصول",
-  "admin.user_management": "إدارة المستخدمين",
-  "admin.user_management_coming": "وظائف إدارة المستخدمين ستكون متاحة قريباً...",
-  "admin.quick_actions": "إجراءات سريعة",
-  "admin.create_new_class": "إنشاء فصل جديد",
-  "admin.system_settings": "إعدادات النظام",
-  "admin.recent_activity": "النشاط الأخير",
-  "admin.new_user_registered": "مستخدم جديد مسجل: أحمد محمد",
-  "admin.class_updated": "فصل \"العربية الأساسية\" محدث",
-  "admin.forum_post_moderated": "منشور منتدى خاضع للإشراف",
-  "admin.system_backup": "نسخ احتياطي للنظام مكتمل",
-  "admin.access_denied": "الوصول مرفوض",
-  "admin.no_access": "ليس لديك صلاحية للوصول إلى لوحة الإدارة"
-}

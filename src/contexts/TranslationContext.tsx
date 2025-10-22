@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { I18nextProvider, useTranslation as useI18NextTranslation } from 'react-i18next';
-import i18n from '@/lib/i18n';
+import i18n from '@/i18n/config';
 
 interface TranslationContextProps {
   language: 'nl' | 'en' | 'ar';

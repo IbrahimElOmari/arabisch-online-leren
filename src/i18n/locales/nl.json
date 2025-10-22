@@ -1,0 +1,101 @@
+{
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "leerstof": "Leerstof",
+    "taken": "Taken",
+    "forum": "Forum",
+    "profile": "Profiel",
+    "admin": "Beheer",
+    "management": "Beheer",
+    "logout": "Uitloggen",
+    "pricing": "Prijzen",
+    "vision": "Visie"
+  },
+  "roles": {
+    "admin": "Beheerder",
+    "leerkracht": "Leerkracht",
+    "leerling": "Leerling",
+    "unknown": "Gebruiker"
+  },
+  "user": {
+    "view_profile": "Profiel bekijken",
+    "change_password": "Wachtwoord wijzigen",
+    "settings": "Instellingen",
+    "logout": "Uitloggen"
+  },
+  "search": {
+    "placeholder": "Zoeken... (Cmd+K)",
+    "no_results": "Geen resultaten gevonden"
+  },
+  "dashboard": {
+    "welcome": "Welkom {{name}}",
+    "welcome_back": "Welkom terug bij je Arabisch leertraject",
+    "no_enrollments": "Geen inschrijvingen gevonden",
+    "not_enrolled": "Je bent nog niet ingeschreven voor een klas",
+    "select_class": "Selecteer een klas",
+    "select_level": "Kies je niveau",
+    "levels_in_class": "Niveaus in {{className}}",
+    "tasks_questions": "Taken & Vragen",
+    "tasks": "Taken",
+    "level_progress": "Level Voortgang",
+    "badges_rankings": "Badges & Rankings",
+    "recent_notifications": "Recente Meldingen",
+    "view_all_notifications": "Bekijk alle meldingen",
+    "no_notifications": "Geen nieuwe meldingen",
+    "class_level_selection": "Klas & Level Selectie",
+    "your_classes": "Jouw Klassen",
+    "enrolled_in": "Je bent ingeschreven voor {{count}} klas",
+    "enrolled_in_plural": "Je bent ingeschreven voor {{count}} klassen",
+    "teacher": {
+      "title": "Docent Dashboard",
+      "my_classes": "Mijn Klassen",
+      "quick_actions": "Snelle Acties",
+      "recent_submissions": "Recente Inzendingen",
+      "class_overview": "Klasoverzicht",
+      "student_progress": "Studentvoortgang"
+    },
+    "admin": {
+      "title": "Beheerder Dashboard",
+      "user_management": "Gebruikersbeheer",
+      "system_health": "Systeemgezondheid",
+      "analytics": "Analytics",
+      "pending_approvals": "Wachtende Goedkeuringen"
+    }
+  },
+  "auth": {
+    "login": "Inloggen",
+    "register": "Registreren",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "forgot_password": "Wachtwoord vergeten?",
+    "sign_in": "Aanmelden",
+    "sign_up": "Registreren",
+    "sign_out": "Uitloggen"
+  },
+  "common": {
+    "loading": "Laden...",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "close": "Sluiten",
+    "submit": "Verzenden",
+    "back": "Terug",
+    "next": "Volgende",
+    "previous": "Vorige",
+    "search": "Zoeken",
+    "filter": "Filter",
+    "sort": "Sorteren",
+    "view": "Bekijken",
+    "download": "Downloaden",
+    "upload": "Uploaden"
+  },
+  "errors": {
+    "generic": "Er is iets misgegaan",
+    "network": "Netwerkfout",
+    "not_found": "Niet gevonden",
+    "unauthorized": "Niet geautoriseerd",
+    "forbidden": "Geen toegang"
+  }
+}

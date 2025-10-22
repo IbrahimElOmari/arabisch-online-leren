@@ -1,0 +1,101 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "dashboard": "لوحة التحكم",
+    "leerstof": "المواد التعليمية",
+    "taken": "المهام",
+    "forum": "المنتدى",
+    "profile": "الملف الشخصي",
+    "admin": "الإدارة",
+    "management": "الإدارة",
+    "logout": "تسجيل الخروج",
+    "pricing": "الأسعار",
+    "vision": "الرؤية"
+  },
+  "roles": {
+    "admin": "مدير",
+    "leerkracht": "معلم",
+    "leerling": "طالب",
+    "unknown": "مستخدم"
+  },
+  "user": {
+    "view_profile": "عرض الملف الشخصي",
+    "change_password": "تغيير كلمة المرور",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج"
+  },
+  "search": {
+    "placeholder": "بحث... (Cmd+K)",
+    "no_results": "لم يتم العثور على نتائج"
+  },
+  "dashboard": {
+    "welcome": "مرحباً {{name}}",
+    "welcome_back": "مرحباً بعودتك إلى رحلة تعلم اللغة العربية",
+    "no_enrollments": "لم يتم العثور على تسجيلات",
+    "not_enrolled": "أنت لست مسجلاً في أي فصل حتى الآن",
+    "select_class": "اختر فصلاً",
+    "select_level": "اختر مستواك",
+    "levels_in_class": "المستويات في {{className}}",
+    "tasks_questions": "المهام والأسئلة",
+    "tasks": "المهام",
+    "level_progress": "تقدم المستوى",
+    "badges_rankings": "الشارات والتصنيفات",
+    "recent_notifications": "الإشعارات الأخيرة",
+    "view_all_notifications": "عرض جميع الإشعارات",
+    "no_notifications": "لا توجد إشعارات جديدة",
+    "class_level_selection": "اختيار الفصل والمستوى",
+    "your_classes": "فصولك",
+    "enrolled_in": "أنت مسجل في {{count}} فصل",
+    "enrolled_in_plural": "أنت مسجل في {{count}} فصول",
+    "teacher": {
+      "title": "لوحة تحكم المعلم",
+      "my_classes": "فصولي",
+      "quick_actions": "إجراءات سريعة",
+      "recent_submissions": "التقديمات الأخيرة",
+      "class_overview": "نظرة عامة على الفصل",
+      "student_progress": "تقدم الطلاب"
+    },
+    "admin": {
+      "title": "لوحة تحكم المدير",
+      "user_management": "إدارة المستخدمين",
+      "system_health": "صحة النظام",
+      "analytics": "التحليلات",
+      "pending_approvals": "الموافقات المعلقة"
+    }
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "register": "التسجيل",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "forgot_password": "هل نسيت كلمة المرور؟",
+    "sign_in": "تسجيل الدخول",
+    "sign_up": "إنشاء حساب",
+    "sign_out": "تسجيل الخروج"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "close": "إغلاق",
+    "submit": "إرسال",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "search": "بحث",
+    "filter": "تصفية",
+    "sort": "ترتيب",
+    "view": "عرض",
+    "download": "تنزيل",
+    "upload": "رفع"
+  },
+  "errors": {
+    "generic": "حدث خطأ ما",
+    "network": "خطأ في الشبكة",
+    "not_found": "غير موجود",
+    "unauthorized": "غير مصرح",
+    "forbidden": "محظور"
+  }
+}

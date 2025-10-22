@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import i18n from '@/lib/i18n';
+import i18n from '@/i18n/config';
 
 describe('i18n Configuration', () => {
   beforeEach(() => {
