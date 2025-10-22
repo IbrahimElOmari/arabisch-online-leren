@@ -45,7 +45,7 @@ interface EnrolledClass {
 const StudentDashboard = () => {
   const { user, profile } = useAuth();
   const { t } = useTranslation();
-  const { isRTL, getFlexDirection, getTextAlign } = useRTLLayout();
+  const { isRTL } = useRTLLayout();
   const [enrolledClasses, setEnrolledClasses] = useState<EnrolledClass[]>([]);
   const [selectedClass, setSelectedClass] = useState<EnrolledClass | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<NiveauItem | null>(null);
