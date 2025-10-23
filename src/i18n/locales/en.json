@@ -1,4 +1,17 @@
 {
+  "security": {
+    "session": {
+      "warningTitle": "Session Expiring Soon",
+      "warningMessage": "Your session will expire in {minutes, plural, one {# minute} other {# minutes}} due to inactivity.",
+      "warningExplanation": "Click 'Extend Session' to stay logged in, or 'Logout Now' to safely sign out.",
+      "logoutNow": "Logout Now",
+      "extendSession": "Extend Session",
+      "timedOutTitle": "Session Expired",
+      "timedOutMessage": "You have been logged out due to inactivity. Please log in again to continue.",
+      "extendedTitle": "Session Extended",
+      "extendedMessage": "Your session has been extended. You will remain logged in."
+    }
+  },
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",

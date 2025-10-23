@@ -1,4 +1,17 @@
 {
+  "security": {
+    "session": {
+      "warningTitle": "Sessie verloopt binnenkort",
+      "warningMessage": "Je sessie verloopt over {minutes, plural, one {# minuut} other {# minuten}} door inactiviteit.",
+      "warningExplanation": "Klik op 'Sessie verlengen' om ingelogd te blijven, of 'Nu uitloggen' om veilig af te sluiten.",
+      "logoutNow": "Nu uitloggen",
+      "extendSession": "Sessie verlengen",
+      "timedOutTitle": "Sessie verlopen",
+      "timedOutMessage": "Je bent uitgelogd wegens inactiviteit. Log opnieuw in om door te gaan.",
+      "extendedTitle": "Sessie verlengd",
+      "extendedMessage": "Je sessie is verlengd. Je blijft nu ingelogd."
+    }
+  },
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",

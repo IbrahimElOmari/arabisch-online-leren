@@ -9,6 +9,7 @@ import { AgeThemeProvider } from '@/contexts/AgeThemeContext';
 import { AuthProviderQuery } from '@/components/auth/AuthProviderQuery';
 import { AppGate } from '@/components/auth/AppGate';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { SessionMonitor } from '@/components/security/SessionMonitor';
 
 // Lazy load RTLProvider to avoid static/dynamic import conflicts
 const EnhancedRTLProvider = lazy(() => import('@/components/rtl/RTLProvider').then(m => ({ default: m.EnhancedRTLProvider })));
@@ -70,6 +71,7 @@ function App() {
             <TranslationProvider>
             <AuthProviderQuery>
               <AgeThemeProvider>
+                <SessionMonitor />
             <Router>
               <div className="min-h-screen bg-background">
                 <Routes>

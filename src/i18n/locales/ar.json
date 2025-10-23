@@ -1,4 +1,17 @@
 {
+  "security": {
+    "session": {
+      "warningTitle": "ستنتهي الجلسة قريباً",
+      "warningMessage": "ستنتهي جلستك خلال {minutes, plural, one {دقيقة واحدة} other {# دقائق}} بسبب عدم النشاط.",
+      "warningExplanation": "انقر على 'تمديد الجلسة' للبقاء متصلاً، أو 'تسجيل الخروج الآن' للخروج بأمان.",
+      "logoutNow": "تسجيل الخروج الآن",
+      "extendSession": "تمديد الجلسة",
+      "timedOutTitle": "انتهت الجلسة",
+      "timedOutMessage": "تم تسجيل خروجك بسبب عدم النشاط. يرجى تسجيل الدخول مرة أخرى للمتابعة.",
+      "extendedTitle": "تم تمديد الجلسة",
+      "extendedMessage": "تم تمديد جلستك. ستبقى متصلاً."
+    }
+  },
   "nav": {
     "home": "الرئيسية",
     "dashboard": "لوحة التحكم",
