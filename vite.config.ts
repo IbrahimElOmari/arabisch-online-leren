@@ -3,11 +3,13 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { fileURLToPath, URL } from 'node:url';
 import { componentTagger } from "lovable-tagger";
+import { bundleBudgetPlugin } from './vite-plugin-bundle-budget';
 
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === 'development' && componentTagger(),
+    mode === 'production' && bundleBudgetPlugin({ main: 250, chunk: 100 }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico','apple-touch-icon.png','masked-icon.svg'],

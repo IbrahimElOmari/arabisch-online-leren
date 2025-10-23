@@ -8,10 +8,12 @@
     <meta name="description" content="Online Arabic Learning Platform - Arabisch Leerplatform" />
     <meta name="author" content="Lovable" />
     
-    <!-- Arabic & Dutch Fonts -->
+    <!-- Arabic & Dutch Fonts - Optimized -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Sans+Arabic:wght@100..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Subset fonts: Arabic only for Amiri/Noto Sans Arabic, Latin for Inter -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap&subset=arabic,latin">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap&subset=arabic,latin" rel="stylesheet">
 
     <meta property="og:title" content="arabisch-online-lernen-platform" />
     <meta property="og:description" content="Lovable Generated Project" />

@@ -1,23 +1,23 @@
-import { onCLS, onLCP, onINP, onFCP, onTTFB } from 'web-vitals';
+import { onCLS, onLCP, onINP, onFCP, onTTFB, type Metric } from 'web-vitals';
 import { supabase } from '@/integrations/supabase/client';
 import { useState, useEffect } from 'react';
 
-type Rating = 'good' | 'needs-improvement' | 'poor';
+export type Rating = 'good' | 'needs-improvement' | 'poor';
 
-const THRESHOLDS: Record<string, [number, number]> = {
-  CLS: [0.1, 0.25],        // Cumulative Layout Shift
-  FID: [100, 300],         // First Input Delay (ms)
-  LCP: [2500, 4000],       // Largest Contentful Paint (ms)
-  FCP: [1800, 3000],       // First Contentful Paint (ms)
-  TTFB: [800, 1800],       // Time to First Byte (ms)
-  INP: [200, 500],         // Interaction to Next Paint (ms)
+const THRESHOLDS = {
+  CLS: { good: 0.1, poor: 0.25 },
+  LCP: { good: 2500, poor: 4000 },
+  FCP: { good: 1800, poor: 3000 },
+  TTFB: { good: 800, poor: 1800 },
+  INP: { good: 200, poor: 500 },
 };
 
 function getRating(name: string, value: number): Rating {
-  const [good, poor] = THRESHOLDS[name] || [0, 0];
-  if (value <= good) return 'good';
-  if (value >= poor) return 'poor';
-  return 'needs-improvement';
+  const threshold = THRESHOLDS[name as keyof typeof THRESHOLDS];
+  if (!threshold) return 'good';
+  if (value <= threshold.good) return 'good';
+  if (value <= threshold.poor) return 'needs-improvement';
+  return 'poor';
 }
 
 export interface WebVital {
@@ -26,13 +26,7 @@ export interface WebVital {
   delta: number;
   id: string;
   rating: Rating;
-}
-
-interface Metric {
-  name: string;
-  delta: number;
-  id: string;
-  value: number;
+  navigationType?: string;
 }
 
 async function sendToAnalytics(metric: Metric): Promise<void> {

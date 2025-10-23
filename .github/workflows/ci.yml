@@ -72,16 +72,51 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: pnpm run build:prod
 
-      - name: Check bundle size
+      - name: Check bundle size and budget
         if: github.ref == 'refs/heads/main'
         run: |
-          BUNDLE_SIZE=$(du -sb dist/assets/*.js | awk '{sum+=$1} END {print sum}')
-          echo "Bundle size: $BUNDLE_SIZE bytes"
-          if [ $BUNDLE_SIZE -gt 1048576 ]; then
-            echo "❌ Bundle size exceeds 1MB limit"
+          echo "📊 Bundle Budget Check"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          # Note: Budget check is done during build via vite-plugin-bundle-budget
+          # This step provides additional reporting
+          
+          TOTAL_SIZE=$(du -sb dist/assets/*.js 2>/dev/null | awk '{sum+=$1} END {print sum}')
+          TOTAL_SIZE_KB=$((TOTAL_SIZE / 1024))
+          
+          echo "Total bundle size: ${TOTAL_SIZE_KB} KB"
+          
+          # List individual chunks
+          echo ""
+          echo "Individual chunks:"
+          for file in dist/assets/*.js; do
+            if [ -f "$file" ]; then
+              SIZE=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+              SIZE_KB=$((SIZE / 1024))
+              echo "  $(basename "$file"): ${SIZE_KB} KB"
+            fi
+          done
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          # Hard limit: 1MB total (as fallback if plugin didn't fail)
+          if [ $TOTAL_SIZE -gt 1048576 ]; then
+            echo "❌ Total bundle size exceeds 1MB hard limit"
             exit 1
           fi
-          echo "✅ Bundle size within limits"
+          
+          echo "✅ Bundle size checks passed"
+        
+      - name: Upload bundle analysis
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis
+          path: |
+            dist/assets/
+            dist/**/*.js
+            dist/**/*.js.map
+          retention-days: 30
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps

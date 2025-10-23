@@ -7,6 +7,7 @@ import { initializeCriticalCSS } from "./utils/criticalCSS";
 import { initializeCrossBrowserRTL } from "./utils/crossBrowserRTL";
 import { GlobalErrorBoundary } from "./components/system/GlobalErrorBoundary";
 import { initMonitoring } from "./lib/monitoring";
+import { initWebVitals } from "./utils/webVitals";
 
 // Initialize optimizations
 if (import.meta.env.PROD) {
@@ -18,6 +19,9 @@ initializeCriticalCSS();
 
 // Initialize cross-browser RTL fixes
 initializeCrossBrowserRTL();
+
+// Initialize Web Vitals tracking
+initWebVitals();
 
 // Service worker is handled by VitePWA plugin
 
