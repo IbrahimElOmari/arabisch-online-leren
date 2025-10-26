@@ -60,7 +60,7 @@ export const useSecurityAlerts = () => {
           if (newAlert.severity === 'critical') {
             toast({
               title: t('security.alerts.critical'),
-              description: t(`security.alerts.types.${newAlert.type}`),
+              description: t(`security.alerts.types.${newAlert.actie}`),
               variant: 'destructive'
             });
           }
@@ -100,15 +100,15 @@ export const useSecurityAlerts = () => {
   }, [t, toast]);
 
   const triggerAlert = useCallback(async (
-    type: SecurityAlert['type'],
-    severity: SecurityAlert['severity'],
+    actie: string,
+    severity: string | null,
     details: Record<string, any>
   ) => {
     try {
       await supabase.functions.invoke('security-monitoring', {
         body: {
           action: 'log_security_event',
-          type,
+          actie,
           severity,
           details,
           ip_address: undefined, // Let server get IP
