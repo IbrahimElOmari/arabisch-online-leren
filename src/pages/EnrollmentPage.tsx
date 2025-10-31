@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { moduleService } from '@/services/modules/moduleService';
 import { enrollmentService } from '@/services/modules/enrollmentService';
-import { paymentService } from '@/services/modules/paymentService';
+import { supabase } from '@/integrations/supabase/client';
 import { EnrollmentForm } from '@/components/modules/EnrollmentForm';
 import { useAuthSession } from '@/hooks/useAuthSession';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -42,21 +42,33 @@ const EnrollmentPage = () => {
         ? module.price_one_time_cents
         : (module.installment_monthly_cents || 0);
 
-      // Create checkout session
-      const { url } = await paymentService.createCheckoutSession(
-        enrollment.id,
-        moduleId,
-        amountCents,
-        formData.paymentType
-      );
-
-      logger.info('Enrollment created, redirecting to payment', {
+      logger.info('Enrollment created, calling checkout', {
         enrollmentId: enrollment.id,
-        paymentType: formData.paymentType
+        paymentType: formData.paymentType,
+        amountCents
       });
 
-      // Redirect to payment
-      navigate(url);
+      // Call edge function for stub checkout
+      const { data, error } = await supabase.functions.invoke('payment-checkout-test', {
+        body: {
+          enrollment_id: enrollment.id,
+          module_id: moduleId,
+          payment_type: formData.paymentType
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data?.url) {
+        throw new Error('No checkout URL received');
+      }
+
+      logger.info('Redirecting to payment', { url: data.url });
+
+      // Redirect to stub payment page
+      navigate(data.url);
     } catch (error) {
       logger.error('Enrollment failed', { moduleId }, error as Error);
       throw error;

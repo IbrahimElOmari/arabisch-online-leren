@@ -45,6 +45,12 @@ const UsersAdmin = lazy(() => import('@/pages/admin/UsersAdmin'));
 const Operations = lazy(() => import('@/pages/admin/Operations'));
 const AuditLogs = lazy(() => import('@/pages/admin/AuditLogs'));
 const PrivacyTools = lazy(() => import('@/pages/account/PrivacyTools'));
+
+// PR3: Module enrollment pages
+const ModuleCatalogPage = lazy(() => import('@/pages/ModuleCatalogPage'));
+const EnrollmentPage = lazy(() => import('@/pages/EnrollmentPage'));
+const PaymentReturnTestPage = lazy(() => import('@/pages/PaymentReturnTestPage'));
+const PlacementTestPage = lazy(() => import('@/pages/PlacementTestPage'));
 import { ENV_CONFIG } from '@/config/environment';
 import Maintenance from '@/pages/Maintenance';
 
@@ -106,6 +112,13 @@ function App() {
                     <Route path="profile" element={<AppGate><Profile /></AppGate>} />
                     <Route path="courses/:id" element={<AppGate><CourseDetail /></AppGate>} />
                     <Route path="enroll/:classId" element={<AppGate><EnrollConfirm /></AppGate>} />
+                    
+                    {/* PR3: Module enrollment routes */}
+                    <Route path="modules" element={<ModuleCatalogPage />} />
+                    <Route path="enroll/module/:moduleId" element={<AppGate><EnrollmentPage /></AppGate>} />
+                    <Route path="payment/test-checkout" element={<AppGate><PaymentReturnTestPage /></AppGate>} />
+                    <Route path="placement-test" element={<AppGate><PlacementTestPage /></AppGate>} />
+                    
                     <Route path="pricing" element={<Pricing />} />
                     <Route path="billing" element={<AppGate><Billing /></AppGate>} />
                     <Route path="billing/coming-soon" element={<BillingComingSoon />} />
