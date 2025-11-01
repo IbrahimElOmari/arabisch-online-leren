@@ -1,0 +1,59 @@
+{
+  "enrollment": {
+    "title": "Inschrijven voor",
+    "description": "Vul onderstaand formulier in om je in te schrijven",
+    "testMode": "TESTMODUS",
+    "testModeDescription": "Het betalingssysteem staat in testmodus. Er worden geen echte betalingen verwerkt.",
+    "personalInfo": "Persoonlijke informatie",
+    "dateOfBirth": "Geboortedatum",
+    "isMinor": "Ik ben jonger dan 18 jaar",
+    "parentInfo": "Ouder/Voogd informatie",
+    "parentName": "Naam ouder/voogd",
+    "parentEmail": "E-mail ouder/voogd",
+    "parentPhone": "Telefoon ouder/voogd",
+    "emergencyContact": "Noodcontact",
+    "emergencyContactName": "Naam",
+    "emergencyContactPhone": "Telefoon",
+    "emergencyContactRelationship": "Relatie",
+    "relationshipPlaceholder": "bijv. Ouder, Broer/Zus, Vriend",
+    "paymentOptions": "Betaalopties",
+    "oneTimePayment": "Eenmalige betaling",
+    "oneTimeDescription": "Betaal één keer en krijg direct volledige toegang",
+    "installmentPayment": "Maandelijkse termijnen",
+    "installmentDescription": "{{months}} maandelijkse betalingen",
+    "month": "maand",
+    "totalAmount": "Totaal",
+    "consent": "Ik ga akkoord met de algemene voorwaarden",
+    "consentDescription": "Door dit vakje aan te vinken, ga je akkoord met onze servicevoorwaarden en privacybeleid.",
+    "processing": "Verwerken...",
+    "proceed": "Verder naar betaling",
+    "error": {
+      "generic": "Inschrijving mislukt. Probeer het opnieuw.",
+      "missingParams": "Ontbrekende betalingsparameters"
+    }
+  },
+  "payment": {
+    "processing": {
+      "title": "Betaling verwerken",
+      "description": "Een moment geduld terwijl we je betaling verwerken..."
+    },
+    "success": {
+      "title": "Betaling geslaagd",
+      "description": "Je betaling is succesvol verwerkt.",
+      "nextStep": "Je wordt over enkele seconden doorgestuurd naar de niveaubepalingstest...",
+      "continue": "Verder naar niveaubepalingstest"
+    },
+    "failed": {
+      "title": "Betaling mislukt",
+      "description": "We konden je betaling niet verwerken.",
+      "back": "Terug naar modules",
+      "retry": "Opnieuw proberen"
+    },
+    "error": {
+      "title": "Betalingsfout",
+      "description": "Er is een fout opgetreden tijdens het verwerken van de betaling.",
+      "processing": "Betaling verwerken mislukt"
+    },
+    "testMode": "Dit is een gesimuleerde betaling. Er zijn geen echte kosten in rekening gebracht."
+  }
+}

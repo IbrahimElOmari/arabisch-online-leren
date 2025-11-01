@@ -34,17 +34,23 @@ export interface ModuleLevel {
   created_at: string | null;
 }
 
+export interface EmergencyContact {
+  name: string;
+  phone: string;
+  relationship: string;
+}
+
 export interface StudentProfile {
   id: string;
   user_id: string;
   date_of_birth: string | null;
-  is_minor: boolean | null;
+  is_minor: boolean;
   parent_name: string | null;
   parent_email: string | null;
   parent_phone: string | null;
-  emergency_contact: string | null;
-  consent_given: boolean | null;
-  created_at: string | null;
+  emergency_contact: EmergencyContact | Record<string, any>;
+  consent_given: boolean;
+  created_at: string;
 }
 
 export interface Enrollment {
@@ -94,23 +100,12 @@ export interface PlacementResult {
 }
 
 export interface EnrollmentFormData {
-  // Student info
-  fullName: string;
-  email: string;
   dateOfBirth: string;
   isMinor: boolean;
-  
-  // Parent info (if minor)
   parentName?: string;
   parentEmail?: string;
   parentPhone?: string;
-  
-  // Emergency contact
-  emergencyContact: string;
-  
-  // Consent
+  emergencyContact: EmergencyContact;
   consentGiven: boolean;
-  
-  // Payment choice
   paymentType: 'one_time' | 'installment';
 }

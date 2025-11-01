@@ -1,0 +1,59 @@
+{
+  "enrollment": {
+    "title": "التسجيل في",
+    "description": "أكمل النموذج أدناه للتسجيل",
+    "testMode": "وضع الاختبار",
+    "testModeDescription": "نظام الدفع في وضع الاختبار. لن يتم إجراء رسوم حقيقية.",
+    "personalInfo": "المعلومات الشخصية",
+    "dateOfBirth": "تاريخ الميلاد",
+    "isMinor": "أنا أقل من 18 عامًا",
+    "parentInfo": "معلومات ولي الأمر",
+    "parentName": "اسم ولي الأمر",
+    "parentEmail": "بريد ولي الأمر الإلكتروني",
+    "parentPhone": "هاتف ولي الأمر",
+    "emergencyContact": "جهة الاتصال في حالات الطوارئ",
+    "emergencyContactName": "الاسم",
+    "emergencyContactPhone": "الهاتف",
+    "emergencyContactRelationship": "العلاقة",
+    "relationshipPlaceholder": "مثلا، والد، أخ، صديق",
+    "paymentOptions": "خيارات الدفع",
+    "oneTimePayment": "دفعة واحدة",
+    "oneTimeDescription": "ادفع مرة واحدة واحصل على وصول كامل فورًا",
+    "installmentPayment": "أقساط شهرية",
+    "installmentDescription": "{{months}} دفعات شهرية",
+    "month": "شهر",
+    "totalAmount": "الإجمالي",
+    "consent": "أوافق على الشروط والأحكام",
+    "consentDescription": "بتحديد هذا المربع، فإنك توافق على شروط الخدمة وسياسة الخصوصية الخاصة بنا.",
+    "processing": "جارٍ المعالجة...",
+    "proceed": "المتابعة إلى الدفع",
+    "error": {
+      "generic": "فشل معالجة التسجيل. يرجى المحاولة مرة أخرى.",
+      "missingParams": "معاملات الدفع مفقودة"
+    }
+  },
+  "payment": {
+    "processing": {
+      "title": "معالجة الدفع",
+      "description": "يرجى الانتظار بينما نقوم بمعالجة دفعتك..."
+    },
+    "success": {
+      "title": "نجح الدفع",
+      "description": "تمت معالجة دفعتك بنجاح.",
+      "nextStep": "سيتم توجيهك إلى اختبار تحديد المستوى في غضون ثوانٍ قليلة...",
+      "continue": "المتابعة إلى اختبار تحديد المستوى"
+    },
+    "failed": {
+      "title": "فشل الدفع",
+      "description": "لم نتمكن من معالجة دفعتك.",
+      "back": "العودة إلى الوحدات",
+      "retry": "حاول مرة أخرى"
+    },
+    "error": {
+      "title": "خطأ في الدفع",
+      "description": "حدث خطأ أثناء معالجة الدفع.",
+      "processing": "فشلت معالجة الدفع"
+    },
+    "testMode": "هذا دفع محاكى. لم يتم تحصيل أي رسوم حقيقية."
+  }
+}

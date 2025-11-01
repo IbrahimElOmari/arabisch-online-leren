@@ -5,26 +5,31 @@ import type { Enrollment, StudentProfile, EnrollmentFormData } from '@/types/mod
 export const enrollmentService = {
   async createStudentProfile(userId: string, formData: EnrollmentFormData): Promise<StudentProfile> {
     try {
-      const profile: Omit<StudentProfile, 'id' | 'created_at'> = {
+      const profile = {
         user_id: userId,
         date_of_birth: formData.dateOfBirth || null,
         is_minor: formData.isMinor,
         parent_name: formData.parentName || null,
         parent_email: formData.parentEmail || null,
         parent_phone: formData.parentPhone || null,
-        emergency_contact: formData.emergencyContact,
+        emergency_contact: formData.emergencyContact as any, // JSONB field
         consent_given: formData.consentGiven
       };
 
       const { data, error } = await supabase
         .from('student_profiles')
-        .insert(profile)
+        .insert([profile])
         .select()
         .single();
 
       if (error) throw error;
       logger.info('Student profile created', { userId });
-      return data;
+      
+      return {
+        ...data,
+        is_minor: data.is_minor ?? false,
+        emergency_contact: data.emergency_contact as any
+      } as StudentProfile;
     } catch (error) {
       logger.error('Failed to create student profile', { userId }, error as Error);
       throw error;

@@ -1,0 +1,59 @@
+{
+  "enrollment": {
+    "title": "Enroll in",
+    "description": "Complete the form below to enroll",
+    "testMode": "TEST MODE",
+    "testModeDescription": "Payment system is in test mode. No real charges will be made.",
+    "personalInfo": "Personal Information",
+    "dateOfBirth": "Date of Birth",
+    "isMinor": "I am under 18 years old",
+    "parentInfo": "Parent/Guardian Information",
+    "parentName": "Parent/Guardian Name",
+    "parentEmail": "Parent/Guardian Email",
+    "parentPhone": "Parent/Guardian Phone",
+    "emergencyContact": "Emergency Contact",
+    "emergencyContactName": "Name",
+    "emergencyContactPhone": "Phone",
+    "emergencyContactRelationship": "Relationship",
+    "relationshipPlaceholder": "e.g., Parent, Sibling, Friend",
+    "paymentOptions": "Payment Options",
+    "oneTimePayment": "One-time Payment",
+    "oneTimeDescription": "Pay once and get full access immediately",
+    "installmentPayment": "Monthly Installments",
+    "installmentDescription": "{{months}} monthly payments",
+    "month": "month",
+    "totalAmount": "Total",
+    "consent": "I agree to the terms and conditions",
+    "consentDescription": "By checking this box, you agree to our terms of service and privacy policy.",
+    "processing": "Processing...",
+    "proceed": "Proceed to Payment",
+    "error": {
+      "generic": "Failed to process enrollment. Please try again.",
+      "missingParams": "Missing payment parameters"
+    }
+  },
+  "payment": {
+    "processing": {
+      "title": "Processing Payment",
+      "description": "Please wait while we process your payment..."
+    },
+    "success": {
+      "title": "Payment Successful",
+      "description": "Your payment has been processed successfully.",
+      "nextStep": "You will be redirected to the placement test in a few seconds...",
+      "continue": "Continue to Placement Test"
+    },
+    "failed": {
+      "title": "Payment Failed",
+      "description": "We could not process your payment.",
+      "back": "Back to Modules",
+      "retry": "Try Again"
+    },
+    "error": {
+      "title": "Payment Error",
+      "description": "An error occurred during payment processing.",
+      "processing": "Payment processing failed"
+    },
+    "testMode": "This is a simulated payment. No real charges have been made."
+  }
+}

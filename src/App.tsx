@@ -117,6 +117,7 @@ function App() {
                     <Route path="modules" element={<ModuleCatalogPage />} />
                     <Route path="enroll/module/:moduleId" element={<AppGate><EnrollmentPage /></AppGate>} />
                     <Route path="payment/test-checkout" element={<AppGate><PaymentReturnTestPage /></AppGate>} />
+                    <Route path="payment/return" element={<AppGate><PaymentReturnTestPage /></AppGate>} />
                     <Route path="placement-test" element={<AppGate><PlacementTestPage /></AppGate>} />
                     
                     <Route path="pricing" element={<Pricing />} />
