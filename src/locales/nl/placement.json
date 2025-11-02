@@ -1,0 +1,22 @@
+{
+  "noEnrollment": "Geen inschrijvings-ID opgegeven",
+  "wrongStatus": "Verkeerde Status",
+  "wrongStatusDesc": "Deze inschrijving wacht niet op plaatsingstest",
+  "loadFailed": "Kon plaatsingstest niet laden",
+  "incomplete": "Onvolledige Test",
+  "incompleteDesc": "Beantwoord alstublieft vraag {{number}}",
+  "success": "Test Voltooid",
+  "successDesc": "Je plaatsingstest is beoordeeld",
+  "submitFailed": "Kon test niet indienen",
+  "notFound": "Plaatsingstest niet gevonden",
+  "completed": "Test Voltooid",
+  "completedDesc": "Je plaatsingstest resultaten",
+  "yourScore": "Je Score",
+  "assigned": "Je bent toegewezen aan een klas!",
+  "waiting": "Geen beschikbare klassen. Je bent toegevoegd aan de wachtlijst.",
+  "gotoDashboard": "Ga naar Dashboard",
+  "previous": "Vorige",
+  "next": "Volgende",
+  "submit": "Test Indienen",
+  "submitting": "Indienen..."
+}

@@ -2376,27 +2376,33 @@ export type Database = {
           assigned_level_id: string | null
           completed_at: string | null
           id: string
+          metadata: Json | null
           placement_test_id: string
           score: number
           student_id: string
+          test_name: string | null
         }
         Insert: {
           answers: Json
           assigned_level_id?: string | null
           completed_at?: string | null
           id?: string
+          metadata?: Json | null
           placement_test_id: string
           score: number
           student_id: string
+          test_name?: string | null
         }
         Update: {
           answers?: Json
           assigned_level_id?: string | null
           completed_at?: string | null
           id?: string
+          metadata?: Json | null
           placement_test_id?: string
           score?: number
           student_id?: string
+          test_name?: string | null
         }
         Relationships: [
           {

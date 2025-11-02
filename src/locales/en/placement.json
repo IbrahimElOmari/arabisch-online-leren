@@ -1,0 +1,22 @@
+{
+  "noEnrollment": "No enrollment ID provided",
+  "wrongStatus": "Wrong Status",
+  "wrongStatusDesc": "This enrollment is not pending placement test",
+  "loadFailed": "Failed to load placement test",
+  "incomplete": "Incomplete Test",
+  "incompleteDesc": "Please answer question {{number}}",
+  "success": "Test Completed",
+  "successDesc": "Your placement test has been graded",
+  "submitFailed": "Failed to submit test",
+  "notFound": "Placement test not found",
+  "completed": "Test Completed",
+  "completedDesc": "Your placement test results",
+  "yourScore": "Your Score",
+  "assigned": "You have been assigned to a class!",
+  "waiting": "No available classes. You have been added to the waiting list.",
+  "gotoDashboard": "Go to Dashboard",
+  "previous": "Previous",
+  "next": "Next",
+  "submit": "Submit Test",
+  "submitting": "Submitting..."
+}
