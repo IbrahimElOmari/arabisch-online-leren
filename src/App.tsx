@@ -51,6 +51,7 @@ const ModuleCatalogPage = lazy(() => import('@/pages/ModuleCatalogPage'));
 const EnrollmentPage = lazy(() => import('@/pages/EnrollmentPage'));
 const PaymentReturnTestPage = lazy(() => import('@/pages/PaymentReturnTestPage'));
 const PlacementTestPage = lazy(() => import('@/pages/PlacementTestPage'));
+const StudentDashboard = lazy(() => import('@/pages/StudentDashboard'));
 import { ENV_CONFIG } from '@/config/environment';
 import Maintenance from '@/pages/Maintenance';
 
@@ -119,6 +120,7 @@ function App() {
                     <Route path="payment/test-checkout" element={<AppGate><PaymentReturnTestPage /></AppGate>} />
                     <Route path="payment/return" element={<AppGate><PaymentReturnTestPage /></AppGate>} />
                     <Route path="placement-test" element={<AppGate><PlacementTestPage /></AppGate>} />
+                    <Route path="student-dashboard" element={<AppGate><StudentDashboard /></AppGate>} />
                     
                     <Route path="pricing" element={<Pricing />} />
                     <Route path="billing" element={<AppGate><Billing /></AppGate>} />
