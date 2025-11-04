@@ -698,6 +698,71 @@ export type Database = {
           },
         ]
       }
+      content_library: {
+        Row: {
+          content_data: Json
+          content_type: string
+          created_at: string
+          created_by: string | null
+          id: string
+          level_id: string | null
+          metadata: Json | null
+          module_id: string | null
+          parent_version_id: string | null
+          published_at: string | null
+          status: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          updated_by: string | null
+          version: number
+        }
+        Insert: {
+          content_data?: Json
+          content_type: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          level_id?: string | null
+          metadata?: Json | null
+          module_id?: string | null
+          parent_version_id?: string | null
+          published_at?: string | null
+          status?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+          version?: number
+        }
+        Update: {
+          content_data?: Json
+          content_type?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          level_id?: string | null
+          metadata?: Json | null
+          module_id?: string | null
+          parent_version_id?: string | null
+          published_at?: string | null
+          status?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_library_parent_version_id_fkey"
+            columns: ["parent_version_id"]
+            isOneToOne: false
+            referencedRelation: "content_library"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_moderation: {
         Row: {
           automated: boolean | null
@@ -1855,6 +1920,7 @@ export type Database = {
       live_lessons: {
         Row: {
           class_id: string
+          content_id: string | null
           created_at: string | null
           created_by: string | null
           duration_minutes: number
@@ -1869,6 +1935,7 @@ export type Database = {
         }
         Insert: {
           class_id: string
+          content_id?: string | null
           created_at?: string | null
           created_by?: string | null
           duration_minutes: number
@@ -1883,6 +1950,7 @@ export type Database = {
         }
         Update: {
           class_id?: string
+          content_id?: string | null
           created_at?: string | null
           created_by?: string | null
           duration_minutes?: number
@@ -1901,6 +1969,13 @@ export type Database = {
             columns: ["class_id"]
             isOneToOne: false
             referencedRelation: "module_classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "live_lessons_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content_library"
             referencedColumns: ["id"]
           },
           {
@@ -2509,6 +2584,7 @@ export type Database = {
       }
       prep_lessons: {
         Row: {
+          content_id: string | null
           created_at: string | null
           created_by: string | null
           id: string
@@ -2520,6 +2596,7 @@ export type Database = {
           module_id: string
         }
         Insert: {
+          content_id?: string | null
           created_at?: string | null
           created_by?: string | null
           id?: string
@@ -2531,6 +2608,7 @@ export type Database = {
           module_id: string
         }
         Update: {
+          content_id?: string | null
           created_at?: string | null
           created_by?: string | null
           id?: string
@@ -2542,6 +2620,13 @@ export type Database = {
           module_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "prep_lessons_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content_library"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "prep_lessons_created_by_fkey"
             columns: ["created_by"]

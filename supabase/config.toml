@@ -2,3 +2,27 @@ project_id = "xugosdedyukizseveahx"
 
 [functions.security-config-manager]
 verify_jwt = false
+
+[functions.placement-grade]
+verify_jwt = true
+
+[functions.placement-assign-class]
+verify_jwt = true
+
+[functions.lessons-prep]
+verify_jwt = true
+
+[functions.lessons-live]
+verify_jwt = true
+
+[functions.media-upload]
+verify_jwt = true
+
+[functions.media-list]
+verify_jwt = true
+
+[functions.content-save]
+verify_jwt = true
+
+[functions.content-publish]
+verify_jwt = true
