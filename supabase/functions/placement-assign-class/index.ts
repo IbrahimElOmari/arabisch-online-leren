@@ -192,6 +192,20 @@ serve(async (req) => {
       }
     }
 
+    // Audit logging
+    await supabase.from('audit_log').insert({
+      user_id: user.id,
+      actie: 'CLASS_ASSIGNED',
+      resource_type: 'enrollment',
+      resource_id: enrollment_id,
+      severity: 'info',
+      details: { 
+        enrollment_id, 
+        class_id: assignedClass.id, 
+        class_name: assignedClass.class_name 
+      }
+    });
+
     console.log(`[ASSIGN] Assigned enrollment ${enrollment_id} to class ${assignedClass.id}`);
 
     return new Response(

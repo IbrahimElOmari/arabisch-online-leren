@@ -708,6 +708,7 @@ export type Database = {
           level_id: string | null
           metadata: Json | null
           module_id: string | null
+          owner_id: string | null
           parent_version_id: string | null
           published_at: string | null
           status: string
@@ -726,6 +727,7 @@ export type Database = {
           level_id?: string | null
           metadata?: Json | null
           module_id?: string | null
+          owner_id?: string | null
           parent_version_id?: string | null
           published_at?: string | null
           status?: string
@@ -744,6 +746,7 @@ export type Database = {
           level_id?: string | null
           metadata?: Json | null
           module_id?: string | null
+          owner_id?: string | null
           parent_version_id?: string | null
           published_at?: string | null
           status?: string
@@ -820,6 +823,7 @@ export type Database = {
           created_by: string | null
           id: string
           is_public: boolean | null
+          owner_id: string | null
           template_data: Json
           template_name: string
           template_type: string
@@ -830,6 +834,7 @@ export type Database = {
           created_by?: string | null
           id?: string
           is_public?: boolean | null
+          owner_id?: string | null
           template_data: Json
           template_name: string
           template_type: string
@@ -840,6 +845,7 @@ export type Database = {
           created_by?: string | null
           id?: string
           is_public?: boolean | null
+          owner_id?: string | null
           template_data?: Json
           template_name?: string
           template_type?: string
@@ -1214,6 +1220,35 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_post_views: {
+        Row: {
+          id: string
+          post_id: string
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          post_id: string
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          post_id?: string
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_post_views_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "forum_posts"
             referencedColumns: ["id"]
           },
         ]
@@ -2169,6 +2204,32 @@ export type Database = {
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      module_class_teachers: {
+        Row: {
+          assigned_at: string | null
+          class_id: string
+          teacher_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          class_id: string
+          teacher_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          class_id?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "module_class_teachers_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "module_classes"
             referencedColumns: ["id"]
           },
         ]
@@ -3827,42 +3888,41 @@ export type Database = {
       }
       waiting_list: {
         Row: {
-          added_at: string | null
           enrollment_id: string
+          expires_at: string | null
           id: string
-          module_class_id: string
-          notified: boolean | null
-          position: number
+          notes: string | null
+          notified_at: string | null
+          priority: number | null
+          requested_at: string
+          status: string
         }
         Insert: {
-          added_at?: string | null
           enrollment_id: string
+          expires_at?: string | null
           id?: string
-          module_class_id: string
-          notified?: boolean | null
-          position: number
+          notes?: string | null
+          notified_at?: string | null
+          priority?: number | null
+          requested_at?: string
+          status?: string
         }
         Update: {
-          added_at?: string | null
           enrollment_id?: string
+          expires_at?: string | null
           id?: string
-          module_class_id?: string
-          notified?: boolean | null
-          position?: number
+          notes?: string | null
+          notified_at?: string | null
+          priority?: number | null
+          requested_at?: string
+          status?: string
         }
         Relationships: [
           {
             foreignKeyName: "waiting_list_enrollment_id_fkey"
             columns: ["enrollment_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "enrollments"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "waiting_list_module_class_id_fkey"
-            columns: ["module_class_id"]
-            isOneToOne: false
-            referencedRelation: "module_classes"
             referencedColumns: ["id"]
           },
         ]
@@ -3953,6 +4013,7 @@ export type Database = {
         Args: { _class: string; _user: string }
         Returns: boolean
       }
+      is_service_role: { Args: never; Returns: boolean }
       is_teacher_of_class: {
         Args: { _class: string; _user: string }
         Returns: boolean

@@ -255,6 +255,21 @@ serve(async (req) => {
       throw new Error('Failed to update enrollment status');
     }
 
+    // Audit logging
+    await supabase.from('audit_log').insert({
+      user_id: user.id,
+      actie: 'PLACEMENT_GRADED',
+      resource_type: 'placement_result',
+      resource_id: result.id,
+      severity: 'info',
+      details: { 
+        test_id: placement_test_id, 
+        score, 
+        enrollment_id, 
+        assigned_level_id: assignedLevelId 
+      }
+    });
+
     console.log(`[PLACEMENT] Graded test for enrollment ${enrollment_id}: score ${score}, level ${assignedLevelId}`);
 
     return new Response(
