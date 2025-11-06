@@ -1,95 +1,49 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useTranslation } from 'react-i18next';
-import { QuestionRenderer } from '@/components/placement/QuestionRenderer';
-import { placementService } from '@/services/modules/placementService';
-import { supabase } from '@/integrations/supabase/client';
+import { placementService } from '@/services/placementService';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { Loader2, CheckCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import type { PlacementTest, PlacementQuestion } from '@/types/placement';
 
-interface Question {
-  id: string;
-  question_text: string;
-  question_type: 'multiple_choice' | 'drag_drop' | 'fill_blank' | 'audio' | 'voice' | 'sequence';
-  options?: string[];
-  pairs?: any[];
-  items?: string[];
-  audio_url?: string;
-}
-
-interface PlacementTest {
-  id: string;
-  test_name: string;
-  questions: Question[];
-}
-
-const PlacementTestPage = () => {
+export const PlacementTestPage = () => {
   const { t } = useTranslation();
+  const { moduleId } = useParams<{ moduleId: string }>();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const { toast } = useToast();
-  
-  const enrollmentId = searchParams.get('enrollment_id');
-  
+
   const [test, setTest] = useState<PlacementTest | null>(null);
-  const [answers, setAnswers] = useState<any[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<Record<number, any>>({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [completed, setCompleted] = useState(false);
 
   useEffect(() => {
     loadTest();
-  }, [enrollmentId]);
+  }, [moduleId]);
 
   const loadTest = async () => {
-    if (!enrollmentId) {
-      toast({
-        title: t('error', 'Error'),
-        description: t('placement.noEnrollment', 'No enrollment ID provided'),
-        variant: 'destructive'
-      });
-      navigate('/modules');
-      return;
-    }
-
+    if (!moduleId) return;
+    
     try {
       setLoading(true);
-      
-      // Get enrollment to find module_id
-      const { data: enrollment, error: enrollError } = await supabase
-        .from('enrollments')
-        .select('module_id, status')
-        .eq('id', enrollmentId)
-        .single();
-
-      if (enrollError || !enrollment) {
-        throw new Error('Enrollment not found');
-      }
-
-      if (enrollment.status !== 'pending_placement') {
+      const testData = await placementService.getPlacementTest(moduleId);
+      if (testData) {
+        setTest(testData);
+      } else {
         toast({
-          title: t('placement.wrongStatus', 'Wrong Status'),
-          description: t('placement.wrongStatusDesc', 'This enrollment is not pending placement test'),
+          title: t('error', 'Error'),
+          description: t('placement.noTest', 'No placement test available'),
           variant: 'destructive'
         });
-        navigate('/dashboard');
-        return;
+        navigate(-1);
       }
-
-      // Get active placement test for module
-      const testData = await placementService.getPlacementTest(enrollment.module_id);
-      
-      if (!testData) {
-        throw new Error('No active placement test found for this module');
-      }
-
-      setTest(testData);
-      setAnswers(new Array(testData.questions.length).fill(null));
     } catch (error) {
       console.error('Failed to load test:', error);
       toast({
@@ -102,70 +56,36 @@ const PlacementTestPage = () => {
     }
   };
 
-  const handleAnswerChange = (questionIndex: number, answer: any) => {
-    const newAnswers = [...answers];
-    newAnswers[questionIndex] = answer;
-    setAnswers(newAnswers);
+  const handleAnswer = (questionIndex: number, answer: any) => {
+    setAnswers(prev => ({ ...prev, [questionIndex]: answer }));
   };
 
   const handleNext = () => {
-    if (currentQuestion < (test?.questions.length || 0) - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+    if (!test) return;
+    if (currentQuestion < test.questions.length - 1) {
+      setCurrentQuestion(prev => prev + 1);
     }
   };
 
   const handlePrevious = () => {
     if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
+      setCurrentQuestion(prev => prev - 1);
     }
   };
 
   const handleSubmit = async () => {
-    if (!test || !enrollmentId) return;
+    if (!test) return;
 
-    // Check all answers are provided
-    const unanswered = answers.findIndex(a => a === null || a === undefined || a === '');
-    if (unanswered !== -1) {
-      toast({
-        title: t('placement.incomplete', 'Incomplete Test'),
-        description: t('placement.incompleteDesc', `Please answer question ${unanswered + 1}`),
-        variant: 'destructive'
-      });
-      setCurrentQuestion(unanswered);
-      return;
-    }
-
+    const answersArray = test.questions.map((_, idx) => answers[idx] || null);
+    
     try {
       setSubmitting(true);
-
-      // Call placement-grade edge function
-      const { data, error } = await supabase.functions.invoke('placement-grade', {
-        body: {
-          enrollment_id: enrollmentId,
-          placement_test_id: test.id,
-          answers
-        }
-      });
-
-      if (error) throw error;
-
-      setResult(data);
-      
-      // Automatically trigger class assignment
-      const { error: assignError } = await supabase.functions.invoke('placement-assign-class', {
-        body: { enrollment_id: enrollmentId }
-      });
-
-      if (assignError) {
-        console.error('Class assignment error:', assignError);
-        // Don't throw - let user see result and try assignment manually
-      }
-
+      await placementService.submitPlacementTest(test.id, answersArray);
+      setCompleted(true);
       toast({
-        title: t('placement.success', 'Test Completed'),
-        description: t('placement.successDesc', 'Your placement test has been graded'),
+        title: t('success', 'Success'),
+        description: t('placement.submitted', 'Test submitted successfully')
       });
-
     } catch (error) {
       console.error('Failed to submit test:', error);
       toast({
@@ -180,88 +100,77 @@ const PlacementTestPage = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-12 flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
-  if (!test) {
+  if (completed) {
     return (
-      <div className="container mx-auto py-12">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            {t('placement.notFound', 'Placement test not found')}
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
-
-  if (result) {
-    return (
-      <div className="container mx-auto py-12">
-        <Card className="max-w-2xl mx-auto">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-6 w-6 text-primary" />
-              {t('placement.completed', 'Test Completed')}
-            </CardTitle>
+      <div className="container max-w-2xl mx-auto py-8">
+        <Card>
+          <CardHeader className="text-center">
+            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+            <CardTitle>{t('placement.completed', 'Test Completed')}</CardTitle>
             <CardDescription>
-              {t('placement.completedDesc', 'Your placement test results')}
+              {t('placement.completedDesc', 'Your results are being processed. You will be assigned to an appropriate class soon.')}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-6 bg-secondary rounded-lg text-center">
-              <p className="text-sm text-muted-foreground mb-2">
-                {t('placement.yourScore', 'Your Score')}
-              </p>
-              <p className="text-4xl font-bold text-primary">{result.score}%</p>
-            </div>
-            
-            <Alert>
-              <AlertDescription>
-                {result.status === 'active' ? (
-                  <p>{t('placement.assigned', 'You have been assigned to a class!')}</p>
-                ) : (
-                  <p>{t('placement.waiting', 'No available classes. You have been added to the waiting list.')}</p>
-                )}
-              </AlertDescription>
-            </Alert>
-
-            <Button onClick={() => navigate('/dashboard')} className="w-full">
-              {t('placement.gotoDashboard', 'Go to Dashboard')}
-            </Button>
+          <CardContent className="text-center">
+            <Button onClick={() => navigate('/')}>{t('placement.backHome', 'Back to Home')}</Button>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  const question = test.questions[currentQuestion];
+  if (!test) return null;
+
+  const question = test.questions[currentQuestion] as PlacementQuestion;
   const progress = ((currentQuestion + 1) / test.questions.length) * 100;
+  const isLastQuestion = currentQuestion === test.questions.length - 1;
+  const canSubmit = Object.keys(answers).length === test.questions.length;
 
   return (
-    <div className="container mx-auto py-12">
-      <Card className="max-w-3xl mx-auto">
+    <div className="container max-w-3xl mx-auto py-8">
+      <Card>
         <CardHeader>
-          <div className="flex items-center justify-between mb-4">
-            <CardTitle>{test.test_name}</CardTitle>
-            <span className="text-sm text-muted-foreground">
-              {currentQuestion + 1} / {test.questions.length}
-            </span>
-          </div>
-          <Progress value={progress} className="h-2" />
+          <CardTitle>{test.title}</CardTitle>
+          <CardDescription>
+            {t('placement.question', 'Question')} {currentQuestion + 1} {t('placement.of', 'of')} {test.questions.length}
+          </CardDescription>
+          <Progress value={progress} className="mt-2" />
         </CardHeader>
         <CardContent className="space-y-6">
-          <QuestionRenderer
-            question={question}
-            answer={answers[currentQuestion]}
-            onChange={(answer) => handleAnswerChange(currentQuestion, answer)}
-          />
+          <div>
+            <h3 className="text-lg font-semibold mb-4">{question.question_text}</h3>
+            
+            {question.question_type === 'multiple_choice' && (
+              <RadioGroup
+                value={answers[currentQuestion]}
+                onValueChange={(value) => handleAnswer(currentQuestion, value)}
+              >
+                {question.options?.map((option: string, idx: number) => (
+                  <div key={idx} className="flex items-center space-x-2">
+                    <RadioGroupItem value={option} id={`option-${idx}`} />
+                    <Label htmlFor={`option-${idx}`}>{option}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            )}
 
-          <div className="flex justify-between pt-4">
+            {question.question_type === 'text' && (
+              <textarea
+                className="w-full min-h-[100px] p-3 border rounded-md"
+                value={answers[currentQuestion] || ''}
+                onChange={(e) => handleAnswer(currentQuestion, e.target.value)}
+                placeholder={t('placement.yourAnswer', 'Your answer...')}
+              />
+            )}
+          </div>
+
+          <div className="flex justify-between">
             <Button
               variant="outline"
               onClick={handlePrevious}
@@ -269,11 +178,11 @@ const PlacementTestPage = () => {
             >
               {t('placement.previous', 'Previous')}
             </Button>
-            
-            {currentQuestion === test.questions.length - 1 ? (
+
+            {isLastQuestion ? (
               <Button
                 onClick={handleSubmit}
-                disabled={submitting}
+                disabled={!canSubmit || submitting}
               >
                 {submitting ? (
                   <>
@@ -295,5 +204,3 @@ const PlacementTestPage = () => {
     </div>
   );
 };
-
-export default PlacementTestPage;

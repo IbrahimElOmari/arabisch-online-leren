@@ -96,9 +96,13 @@ export const contentLibraryService = {
   },
 
   async createTemplate(template: Partial<ContentTemplate>): Promise<ContentTemplate> {
+    if (!template.template_data || !template.template_name || !template.template_type) {
+      throw new Error('Missing required template fields');
+    }
+
     const { data, error } = await supabase
       .from('content_templates')
-      .insert([template])
+      .insert([template as any])
       .select()
       .single();
 
