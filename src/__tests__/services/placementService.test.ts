@@ -53,7 +53,7 @@ describe('placementService', () => {
         error: null
       });
 
-      const result = await placementService.submitPlacementTest(testId, answers);
+      const result = await placementService.submitPlacementTest('enrollment-1', testId, answers);
       
       expect(result).toEqual(mockResult);
       expect(supabase.functions.invoke).toHaveBeenCalledWith('placement-grade', {
@@ -65,22 +65,20 @@ describe('placementService', () => {
     });
   });
 
-  describe('assignToClass', () => {
-    it('should assign student to class based on placement result', async () => {
-      const resultId = 'result-1';
-      const classId = 'class-1';
+  describe('assignClass', () => {
+    it('should assign student to class based on enrollment', async () => {
+      const enrollmentId = 'enrollment-1';
 
       vi.mocked(supabase.functions.invoke).mockResolvedValue({
         data: { success: true },
         error: null
       });
 
-      await placementService.assignToClass(resultId, classId);
+      await placementService.assignClass(enrollmentId);
       
       expect(supabase.functions.invoke).toHaveBeenCalledWith('placement-assign-class', {
         body: {
-          placement_result_id: resultId,
-          class_id: classId
+          enrollment_id: enrollmentId
         }
       });
     });

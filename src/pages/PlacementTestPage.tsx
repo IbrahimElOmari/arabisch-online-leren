@@ -11,7 +11,7 @@ import { Loader2, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { PlacementTest, PlacementQuestion } from '@/types/placement';
 
-export const PlacementTestPage = () => {
+const PlacementTestPage = () => {
   const { t } = useTranslation();
   const { moduleId } = useParams<{ moduleId: string }>();
   const navigate = useNavigate();
@@ -76,11 +76,11 @@ export const PlacementTestPage = () => {
   const handleSubmit = async () => {
     if (!test) return;
 
-    const answersArray = test.questions.map((_, idx) => answers[idx] || null);
+    const answersArray = test.questions.map((_q: any, idx: number) => answers[idx] || null);
     
     try {
       setSubmitting(true);
-      await placementService.submitPlacementTest(test.id, answersArray);
+      await placementService.submitPlacementTest('enrollment-id', test.id, answersArray);
       setCompleted(true);
       toast({
         title: t('success', 'Success'),
@@ -136,7 +136,7 @@ export const PlacementTestPage = () => {
     <div className="container max-w-3xl mx-auto py-8">
       <Card>
         <CardHeader>
-          <CardTitle>{test.title}</CardTitle>
+          <CardTitle>{test.test_name}</CardTitle>
           <CardDescription>
             {t('placement.question', 'Question')} {currentQuestion + 1} {t('placement.of', 'of')} {test.questions.length}
           </CardDescription>
@@ -204,3 +204,5 @@ export const PlacementTestPage = () => {
     </div>
   );
 };
+
+export default PlacementTestPage;

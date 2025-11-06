@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { forumService } from '@/services/forumServiceEdge';
+import { forumServiceEdge as forumService } from '@/services/forumServiceEdge';
 import { supabase } from '@/integrations/supabase/client';
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -26,7 +26,7 @@ describe('forumService', () => {
         error: null
       });
 
-      const result = await forumService.listPosts({ class_id: 'class-1' });
+      const result = await forumService.listPosts('class-1');
       
       expect(result).toEqual(mockPosts);
       expect(supabase.functions.invoke).toHaveBeenCalledWith('forum-posts-list', {
@@ -39,8 +39,9 @@ describe('forumService', () => {
     it('should create a new forum post', async () => {
       const newPost = {
         class_id: 'class-1',
-        title: 'New Post',
-        content: 'Post content'
+        titel: 'New Post',
+        inhoud: 'Post content',
+        author_id: 'user-1'
       };
 
       const mockCreated = { id: 'post-1', ...newPost };
@@ -70,7 +71,7 @@ describe('forumService', () => {
         error: null
       });
 
-      const result = await forumService.updatePost(postId, updates);
+      const result = await forumService.updatePost(postId, 'Updated content');
       
       expect(result).toEqual(mockUpdated);
       expect(supabase.functions.invoke).toHaveBeenCalledWith('forum-posts-update', {

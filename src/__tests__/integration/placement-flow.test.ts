@@ -52,7 +52,7 @@ describe('Placement Flow Integration', () => {
       error: null
     });
 
-    const result = await placementService.submitPlacementTest(testId, answers);
+    const result = await placementService.submitPlacementTest('enrollment-1', testId, answers);
     expect(result.score).toBe(80);
     expect(result.assigned_level_id).toBe('level-2');
 
@@ -62,7 +62,7 @@ describe('Placement Flow Integration', () => {
       error: null
     });
 
-    await placementService.assignToClass(result.id, 'class-1');
+    await placementService.assignClass('enrollment-1');
     
     expect(supabase.functions.invoke).toHaveBeenCalledTimes(3);
   });

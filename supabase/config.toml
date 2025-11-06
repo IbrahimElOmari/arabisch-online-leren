@@ -38,3 +38,12 @@ verify_jwt = true
 
 [functions.forum-posts-delete]
 verify_jwt = true
+
+[functions.admin-metrics-get]
+verify_jwt = true
+
+[functions.admin-activity-list]
+verify_jwt = true
+
+[functions.admin-feature-flags]
+verify_jwt = true

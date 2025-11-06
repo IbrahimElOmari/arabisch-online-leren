@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { forumService } from '@/services/forumServiceEdge';
+import { forumServiceEdge } from '@/services/forumServiceEdge';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, MessageSquare, Plus, ThumbsUp, Flag } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -31,8 +31,8 @@ export const ClassForumPage = () => {
 
     try {
       setLoading(true);
-      const data = await forumService.listPosts({ class_id: classId });
-      setPosts(data);
+      const data = await forumServiceEdge.listPosts(classId);
+      setPosts(data.posts);
     } catch (error) {
       console.error('Failed to load forum posts:', error);
       toast({
@@ -57,10 +57,11 @@ export const ClassForumPage = () => {
 
     try {
       setCreating(true);
-      await forumService.createPost({
+      await forumServiceEdge.createPost({
         class_id: classId,
-        title: newPost.title,
-        content: newPost.content
+        titel: newPost.title,
+        inhoud: newPost.content,
+        author_id: ''
       });
       
       toast({
@@ -85,9 +86,7 @@ export const ClassForumPage = () => {
 
   const handleLikePost = async (postId: string) => {
     try {
-      await forumService.updatePost(postId, {
-        likes_count: (posts.find(p => p.id === postId)?.likes_count || 0) + 1
-      });
+      await forumServiceEdge.toggleLike(postId, true);
       loadPosts();
     } catch (error) {
       console.error('Failed to like post:', error);
@@ -96,7 +95,7 @@ export const ClassForumPage = () => {
 
   const handleReportPost = async (postId: string) => {
     try {
-      await forumService.updatePost(postId, { is_reported: true });
+      await forumServiceEdge.reportPost(postId);
       toast({
         title: t('success', 'Success'),
         description: t('forum.reported', 'Post reported successfully')
