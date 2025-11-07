@@ -68,10 +68,16 @@ export const forumServiceEdge = {
 
     const { data: { user } } = await supabase.auth.getUser();
 
+    interface ForumLike {
+      is_like: boolean;
+      user_id: string;
+    }
+
     const posts = data?.map(post => {
-      const likes = post.forum_likes?.filter((l: any) => l.is_like).length || 0;
-      const dislikes = post.forum_likes?.filter((l: any) => !l.is_like).length || 0;
-      const userLiked = post.forum_likes?.find((l: any) => l.user_id === user?.id)?.is_like;
+      const forumLikes = (post.forum_likes || []) as ForumLike[];
+      const likes = forumLikes.filter(l => l.is_like).length || 0;
+      const dislikes = forumLikes.filter(l => !l.is_like).length || 0;
+      const userLiked = forumLikes.find(l => l.user_id === user?.id)?.is_like;
       
       return {
         ...post,
@@ -101,8 +107,7 @@ export const forumServiceEdge = {
     const { data, error } = await supabase.functions.invoke('forum-posts-update', {
       body: {
         post_id: postId,
-        inhoud: content,
-        body: content
+        inhoud: content
       }
     });
 

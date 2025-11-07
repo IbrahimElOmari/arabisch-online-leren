@@ -5,7 +5,6 @@ export interface ForumPost {
   author_id: string;
   titel: string;
   inhoud: string;
-  body: string;
   media_url?: string | null;
   media_type?: string | null;
   thread_id?: string | null;
@@ -28,7 +27,6 @@ export interface ForumThread {
   author_id: string;
   title: string;
   content: string;
-  body: string;
   created_at: string;
   status: string;
   is_pinned: boolean;
@@ -40,7 +38,6 @@ export interface CreatePostData {
   niveau_id?: string;
   titel: string;
   inhoud: string;
-  body?: string;
   media_url?: string;
   media_type?: string;
   thread_id?: string;
