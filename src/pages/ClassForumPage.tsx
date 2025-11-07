@@ -60,8 +60,7 @@ export const ClassForumPage = () => {
       await forumServiceEdge.createPost({
         class_id: classId,
         titel: newPost.title,
-        inhoud: newPost.content,
-        author_id: ''
+        inhoud: newPost.content
       });
       
       toast({
@@ -173,13 +172,13 @@ export const ClassForumPage = () => {
           posts.map((post) => (
             <Card key={post.id}>
               <CardHeader>
-                <CardTitle>{post.title}</CardTitle>
+                <CardTitle>{post.titel}</CardTitle>
                 <CardDescription>
-                  {t('forum.postedBy', 'Posted by')} {post.author_name || t('forum.anonymous', 'Anonymous')} • {new Date(post.created_at).toLocaleDateString()}
+                  {t('forum.postedBy', 'Posted by')} {post.profiles?.full_name || t('forum.anonymous', 'Anonymous')} • {new Date(post.created_at).toLocaleDateString()}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="mb-4">{post.content}</p>
+                <p className="mb-4">{post.inhoud}</p>
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
@@ -199,7 +198,7 @@ export const ClassForumPage = () => {
                   </Button>
                   <Button variant="ghost" size="sm">
                     <MessageSquare className="mr-2 h-4 w-4" />
-                    {post.replies_count || 0} {t('forum.replies', 'replies')}
+                    {t('forum.replies', 'replies')}
                   </Button>
                 </div>
               </CardContent>

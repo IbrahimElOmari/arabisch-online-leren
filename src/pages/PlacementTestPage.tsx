@@ -160,7 +160,7 @@ const PlacementTestPage = () => {
               </RadioGroup>
             )}
 
-            {question.question_type === 'text' && (
+            {question.question_type === 'fill_blank' && (
               <textarea
                 className="w-full min-h-[100px] p-3 border rounded-md"
                 value={answers[currentQuestion] || ''}
