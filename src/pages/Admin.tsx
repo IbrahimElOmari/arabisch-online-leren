@@ -1,8 +1,10 @@
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Navigate } from 'react-router-dom';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
-import { Card, CardContent } from '@/components/ui/card';
 import { useUserRole } from '@/hooks/useUserRole';
+import { AdminDashboard } from '@/components/admin/AdminDashboard';
+import { FeatureFlagsPanel } from '@/components/admin/FeatureFlagsPanel';
+import { AuditViewer } from '@/components/admin/AuditViewer';
 
 const Admin = () => {
   const { user, authReady, loading: authLoading } = useAuth();
@@ -30,15 +32,17 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
-        <Card className="@container">
-          <CardContent className="p-6">
-            <p className="text-muted-foreground">
-              De admin dashboard wordt binnenkort beschikbaar gesteld.
-            </p>
-          </CardContent>
-        </Card>
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+        </div>
+        
+        <AdminDashboard />
+        
+        <div className="grid gap-6 md:grid-cols-2">
+          <FeatureFlagsPanel />
+          <AuditViewer />
+        </div>
       </div>
     </div>
   );
