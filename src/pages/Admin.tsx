@@ -5,6 +5,8 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
 import { FeatureFlagsPanel } from '@/components/admin/FeatureFlagsPanel';
 import { AuditViewer } from '@/components/admin/AuditViewer';
+import { NotificationsPanel } from '@/components/admin/NotificationsPanel';
+import { SystemHealthIndicator } from '@/components/admin/SystemHealthIndicator';
 
 const Admin = () => {
   const { user, authReady, loading: authLoading } = useAuth();
@@ -34,7 +36,14 @@ const Admin = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <div>
+            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+            <p className="text-muted-foreground mt-1">System monitoring & management</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <SystemHealthIndicator />
+            <NotificationsPanel />
+          </div>
         </div>
         
         <AdminDashboard />

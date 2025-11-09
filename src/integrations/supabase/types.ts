@@ -2208,6 +2208,42 @@ export type Database = {
           },
         ]
       }
+      metric_thresholds: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          critical_threshold: number
+          evaluation_window_minutes: number
+          id: string
+          metric_type: string
+          notification_enabled: boolean | null
+          updated_at: string
+          warning_threshold: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          critical_threshold: number
+          evaluation_window_minutes?: number
+          id?: string
+          metric_type: string
+          notification_enabled?: boolean | null
+          updated_at?: string
+          warning_threshold: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          critical_threshold?: number
+          evaluation_window_minutes?: number
+          id?: string
+          metric_type?: string
+          notification_enabled?: boolean | null
+          updated_at?: string
+          warning_threshold?: number
+        }
+        Relationships: []
+      }
       module_class_teachers: {
         Row: {
           assigned_at: string | null
@@ -3315,6 +3351,39 @@ export type Database = {
           },
         ]
       }
+      system_health_checks: {
+        Row: {
+          check_timestamp: string
+          check_type: string
+          created_at: string
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          response_time_ms: number
+          status: string
+        }
+        Insert: {
+          check_timestamp?: string
+          check_type: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          response_time_ms: number
+          status: string
+        }
+        Update: {
+          check_timestamp?: string
+          check_type?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          response_time_ms?: number
+          status?: string
+        }
+        Relationships: []
+      }
       system_metrics: {
         Row: {
           id: string
@@ -3950,6 +4019,10 @@ export type Database = {
           target_user_id: string
         }
         Returns: Json
+      }
+      check_metric_threshold: {
+        Args: { p_metric_type: string; p_metric_value: number }
+        Returns: undefined
       }
       check_rate_limit: {
         Args: {
