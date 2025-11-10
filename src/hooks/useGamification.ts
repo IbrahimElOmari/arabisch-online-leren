@@ -8,51 +8,53 @@ import { toast } from 'sonner';
 export const useGamification = (studentId: string) => {
   const queryClient = useQueryClient();
 
-  // Placeholder queries - will be activated after PR9 DB migration
+  // Get student game profile
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['game-profile', studentId],
     queryFn: async () => {
-      // TODO: Uncomment after PR9 migration
-      // const { data, error } = await supabase
-      //   .from('student_game_profiles')
-      //   .select('*')
-      //   .eq('student_id', studentId)
-      //   .single();
-      // if (error) throw error;
-      // return data;
-      return null;
+      const { data, error } = await supabase
+        .from('student_game_profiles')
+        .select('*')
+        .eq('student_id', studentId)
+        .single();
+      
+      if (error) {
+        // Return null if not found (profile will be created on first XP award)
+        if (error.code === 'PGRST116') return null;
+        throw error;
+      }
+      return data;
     },
-    enabled: false // Disabled until tables exist
+    enabled: !!studentId
   });
 
   const { data: challenges = [] } = useQuery({
-    queryKey: ['challenges'],
+    queryKey: ['challenges', profile?.game_mode],
     queryFn: async () => {
-      // TODO: Uncomment after PR9 migration
-      // const { data, error } = await supabase
-      //   .from('challenges')
-      //   .select('*')
-      //   .eq('is_active', true);
-      // if (error) throw error;
-      // return data;
-      return [];
+      const { data, error } = await supabase
+        .from('challenges')
+        .select('*')
+        .eq('is_active', true)
+        .or(`game_mode.eq.${profile?.game_mode},game_mode.eq.BOTH`);
+      
+      if (error) throw error;
+      return data;
     },
-    enabled: false
+    enabled: !!profile?.game_mode
   });
 
   const { data: studentChallenges = [] } = useQuery({
     queryKey: ['student-challenges', studentId],
     queryFn: async () => {
-      // TODO: Uncomment after PR9 migration
-      // const { data, error } = await supabase
-      //   .from('student_challenges')
-      //   .select('*, challenges (*)')
-      //   .eq('student_id', studentId);
-      // if (error) throw error;
-      // return data;
-      return [];
+      const { data, error } = await supabase
+        .from('student_challenges')
+        .select('*, challenges (*)')
+        .eq('student_id', studentId);
+      
+      if (error) throw error;
+      return data;
     },
-    enabled: false
+    enabled: !!studentId
   });
 
   // Award XP mutation (will call edge function after PR9)

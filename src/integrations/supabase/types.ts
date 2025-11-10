@@ -492,6 +492,45 @@ export type Database = {
           },
         ]
       }
+      badges: {
+        Row: {
+          badge_description: string
+          badge_icon: string
+          badge_key: string
+          badge_name: string
+          badge_tier: string
+          created_at: string
+          game_mode: string
+          id: string
+          unlock_criteria: Json
+          xp_requirement: number
+        }
+        Insert: {
+          badge_description: string
+          badge_icon: string
+          badge_key: string
+          badge_name: string
+          badge_tier: string
+          created_at?: string
+          game_mode: string
+          id?: string
+          unlock_criteria?: Json
+          xp_requirement?: number
+        }
+        Update: {
+          badge_description?: string
+          badge_icon?: string
+          badge_key?: string
+          badge_name?: string
+          badge_tier?: string
+          created_at?: string
+          game_mode?: string
+          id?: string
+          unlock_criteria?: Json
+          xp_requirement?: number
+        }
+        Relationships: []
+      }
       bonus_points: {
         Row: {
           awarded_by: string
@@ -650,6 +689,51 @@ export type Database = {
           verification_method?: string | null
           verified_at?: string | null
           verifier_ip?: unknown
+        }
+        Relationships: []
+      }
+      challenges: {
+        Row: {
+          challenge_type: string
+          completion_criteria: Json
+          created_at: string
+          description: string
+          game_mode: string
+          id: string
+          is_active: boolean
+          title: string
+          updated_at: string
+          valid_from: string
+          valid_until: string
+          xp_reward: number
+        }
+        Insert: {
+          challenge_type: string
+          completion_criteria?: Json
+          created_at?: string
+          description: string
+          game_mode: string
+          id?: string
+          is_active?: boolean
+          title: string
+          updated_at?: string
+          valid_from: string
+          valid_until: string
+          xp_reward?: number
+        }
+        Update: {
+          challenge_type?: string
+          completion_criteria?: Json
+          created_at?: string
+          description?: string
+          game_mode?: string
+          id?: string
+          is_active?: boolean
+          title?: string
+          updated_at?: string
+          valid_from?: string
+          valid_until?: string
+          xp_reward?: number
         }
         Relationships: []
       }
@@ -1786,6 +1870,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      leaderboard_rankings: {
+        Row: {
+          calculated_at: string
+          id: string
+          leaderboard_type: string
+          period: string
+          rank: number
+          scope_id: string | null
+          student_id: string
+          xp_points: number
+        }
+        Insert: {
+          calculated_at?: string
+          id?: string
+          leaderboard_type: string
+          period: string
+          rank: number
+          scope_id?: string | null
+          student_id: string
+          xp_points?: number
+        }
+        Update: {
+          calculated_at?: string
+          id?: string
+          leaderboard_type?: string
+          period?: string
+          rank?: number
+          scope_id?: string | null
+          student_id?: string
+          xp_points?: number
+        }
+        Relationships: []
       }
       learning_analytics: {
         Row: {
@@ -2944,6 +3061,82 @@ export type Database = {
           },
         ]
       }
+      student_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string
+          id: string
+          is_showcased: boolean
+          student_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string
+          id?: string
+          is_showcased?: boolean
+          student_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string
+          id?: string
+          is_showcased?: boolean
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_challenges: {
+        Row: {
+          challenge_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          is_completed: boolean
+          progress: Json
+          student_id: string
+          updated_at: string
+          xp_earned: number
+        }
+        Insert: {
+          challenge_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          is_completed?: boolean
+          progress?: Json
+          student_id: string
+          updated_at?: string
+          xp_earned?: number
+        }
+        Update: {
+          challenge_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          is_completed?: boolean
+          progress?: Json
+          student_id?: string
+          updated_at?: string
+          xp_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_challenges_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       student_connections: {
         Row: {
           connected_at: string | null
@@ -2979,6 +3172,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      student_game_profiles: {
+        Row: {
+          avatar_id: string | null
+          created_at: string
+          game_mode: string
+          id: string
+          last_activity_date: string | null
+          level: number
+          streak_days: number
+          student_id: string
+          title: string | null
+          updated_at: string
+          xp_points: number
+        }
+        Insert: {
+          avatar_id?: string | null
+          created_at?: string
+          game_mode: string
+          id?: string
+          last_activity_date?: string | null
+          level?: number
+          streak_days?: number
+          student_id: string
+          title?: string | null
+          updated_at?: string
+          xp_points?: number
+        }
+        Update: {
+          avatar_id?: string | null
+          created_at?: string
+          game_mode?: string
+          id?: string
+          last_activity_date?: string | null
+          level?: number
+          streak_days?: number
+          student_id?: string
+          title?: string | null
+          updated_at?: string
+          xp_points?: number
+        }
+        Relationships: []
       }
       student_inventory: {
         Row: {
@@ -3995,6 +4230,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      xp_activities: {
+        Row: {
+          activity_type: string
+          context: Json
+          created_at: string
+          id: string
+          student_id: string
+          xp_earned: number
+        }
+        Insert: {
+          activity_type: string
+          context?: Json
+          created_at?: string
+          id?: string
+          student_id: string
+          xp_earned: number
+        }
+        Update: {
+          activity_type?: string
+          context?: Json
+          created_at?: string
+          id?: string
+          student_id?: string
+          xp_earned?: number
+        }
+        Relationships: []
       }
     }
     Views: {
