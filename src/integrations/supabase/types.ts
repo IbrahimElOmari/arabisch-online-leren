@@ -4296,7 +4296,36 @@ export type Database = {
         Returns: boolean
       }
       cleanup_expired_sessions: { Args: never; Returns: undefined }
+      create_grading_rubric: {
+        Args: {
+          p_criteria: Json
+          p_is_template?: boolean
+          p_rubric_name: string
+          p_rubric_type: string
+          p_total_points: number
+        }
+        Returns: Json
+      }
+      create_teacher_note: {
+        Args: {
+          p_content: string
+          p_is_flagged?: boolean
+          p_student_id: string
+        }
+        Returns: Json
+      }
+      delete_teacher_note: { Args: { p_note_id: string }; Returns: boolean }
       export_user_data: { Args: { p_user_id: string }; Returns: Json }
+      fetch_grading_rubrics: {
+        Args: { p_teacher_id?: string }
+        Returns: Json[]
+      }
+      fetch_message_templates: {
+        Args: { p_teacher_id?: string }
+        Returns: Json[]
+      }
+      fetch_teacher_notes: { Args: { p_student_id: string }; Returns: Json[] }
+      fetch_teacher_rewards: { Args: { p_student_id: string }; Returns: Json[] }
       get_conversation_messages: {
         Args: { user1_id: string; user2_id: string }
         Returns: {
@@ -4390,6 +4419,10 @@ export type Database = {
           sender_id: string
         }
         Returns: string
+      }
+      update_teacher_note: {
+        Args: { p_content?: string; p_is_flagged?: boolean; p_note_id: string }
+        Returns: Json
       }
     }
     Enums: {
