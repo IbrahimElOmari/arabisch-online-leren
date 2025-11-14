@@ -1,5 +1,4 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { TeacherAnalyticsCache, GradingRubric, MessageTemplate, ScheduledMessage, TeacherReward } from '@/types/teacher';
 
 /**
  * Teacher Service Layer
@@ -75,24 +74,18 @@ export async function fetchStudentSubmissions(studentId: string, levelId?: strin
   return data;
 }
 
+// Teacher notes use RPC functions (tables are being created)
 export async function createTeacherNote(noteData: {
   studentId: string;
   content: string;
   isFlagged?: boolean;
 }) {
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-  if (userError || !user) throw new Error('Not authenticated');
-
   const { data, error } = await supabase
-    .from('teacher_notes')
-    .insert({
-      teacher_id: user.id,
-      student_id: noteData.studentId,
-      content: noteData.content,
-      is_flagged: noteData.isFlagged || false,
-    })
-    .select()
-    .single();
+    .rpc('create_teacher_note', {
+      p_student_id: noteData.studentId,
+      p_content: noteData.content,
+      p_is_flagged: noteData.isFlagged || false,
+    });
   
   if (error) throw error;
   return data;
@@ -100,10 +93,9 @@ export async function createTeacherNote(noteData: {
 
 export async function fetchTeacherNotes(studentId: string) {
   const { data, error } = await supabase
-    .from('teacher_notes')
-    .select('*')
-    .eq('student_id', studentId)
-    .order('created_at', { ascending: false });
+    .rpc('fetch_teacher_notes', {
+      p_student_id: studentId,
+    });
   
   if (error) throw error;
   return data;
@@ -114,14 +106,11 @@ export async function updateTeacherNote(noteId: string, updates: {
   isFlagged?: boolean;
 }) {
   const { data, error } = await supabase
-    .from('teacher_notes')
-    .update({
-      content: updates.content,
-      is_flagged: updates.isFlagged,
-    })
-    .eq('id', noteId)
-    .select()
-    .single();
+    .rpc('update_teacher_note', {
+      p_note_id: noteId,
+      p_content: updates.content,
+      p_is_flagged: updates.isFlagged,
+    });
   
   if (error) throw error;
   return data;
@@ -129,9 +118,9 @@ export async function updateTeacherNote(noteId: string, updates: {
 
 export async function deleteTeacherNote(noteId: string) {
   const { error } = await supabase
-    .from('teacher_notes')
-    .delete()
-    .eq('id', noteId);
+    .rpc('delete_teacher_note', {
+      p_note_id: noteId,
+    });
   
   if (error) throw error;
 }
