@@ -19,4 +19,11 @@ export const queryKeys = {
   
   // Health checks
   backendHealth: () => ['backend-health'] as const,
+  
+  // Teacher related
+  teacherClasses: (teacherId?: string) => ['teacher-classes', teacherId] as const,
+  classStudents: (classId: string) => ['class-students', classId] as const,
+  studentProgress: (studentId: string) => ['student-progress', studentId] as const,
+  studentStats: (studentId: string) => ['student-stats', studentId] as const,
+  teacherNotes: (studentId: string) => ['teacher-notes', studentId] as const,
 } as const;
