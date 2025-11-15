@@ -76,6 +76,47 @@
       "pending_approvals": "Pending Approvals"
     }
   },
+  "teacher": {
+    "dashboard": {
+      "title": "Teacher Dashboard",
+      "subtitle": "Manage your classes and students"
+    },
+    "stats": {
+      "totalClasses": "Total Classes",
+      "totalStudents": "Total Students",
+      "pendingTasks": "Pending Tasks",
+      "rewardsGiven": "Rewards Given"
+    },
+    "myClasses": "My Classes",
+    "noClasses": "No classes yet",
+    "newClass": "New Class",
+    "students": "Students",
+    "tasks": "Tasks",
+    "progress": "Progress",
+    "rewards": "Rewards",
+    "classDetails": "Class Details",
+    "studentList": "Student List",
+    "viewSubmissions": "View Submissions",
+    "awardRewards": "Award Rewards",
+    "sendMessage": "Send Message",
+    "addNote": "Add Note",
+    "editStudent": "Edit Student",
+    "removeStudent": "Remove Student",
+    "studentStatus": {
+      "active": "Active",
+      "pending": "Pending"
+    },
+    "notes": {
+      "title": "Teacher Notes",
+      "add": "Add Note",
+      "edit": "Edit Note",
+      "delete": "Delete Note",
+      "content": "Content",
+      "flagged": "Flagged",
+      "created": "Created",
+      "updated": "Updated"
+    }
+  },
   "auth": {
     "login": "Login",
     "register": "Register",

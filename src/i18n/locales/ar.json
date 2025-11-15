@@ -76,6 +76,47 @@
       "pending_approvals": "الموافقات المعلقة"
     }
   },
+  "teacher": {
+    "dashboard": {
+      "title": "لوحة التحكم للمعلم",
+      "subtitle": "إدارة الفصول والطلاب"
+    },
+    "stats": {
+      "totalClasses": "إجمالي الفصول",
+      "totalStudents": "إجمالي الطلاب",
+      "pendingTasks": "المهام المعلقة",
+      "rewardsGiven": "المكافآت الممنوحة"
+    },
+    "myClasses": "فصولي",
+    "noClasses": "لا توجد فصول بعد",
+    "newClass": "فصل جديد",
+    "students": "الطلاب",
+    "tasks": "المهام",
+    "progress": "التقدم",
+    "rewards": "المكافآت",
+    "classDetails": "تفاصيل الفصل",
+    "studentList": "قائمة الطلاب",
+    "viewSubmissions": "عرض التقديمات",
+    "awardRewards": "منح المكافآت",
+    "sendMessage": "إرسال رسالة",
+    "addNote": "إضافة ملاحظة",
+    "editStudent": "تعديل الطالب",
+    "removeStudent": "إزالة الطالب",
+    "studentStatus": {
+      "active": "نشط",
+      "pending": "قيد الانتظار"
+    },
+    "notes": {
+      "title": "ملاحظات المعلم",
+      "add": "إضافة ملاحظة",
+      "edit": "تعديل الملاحظة",
+      "delete": "حذف الملاحظة",
+      "content": "المحتوى",
+      "flagged": "مميز",
+      "created": "تم الإنشاء",
+      "updated": "تم التحديث"
+    }
+  },
   "auth": {
     "login": "تسجيل الدخول",
     "register": "التسجيل",
