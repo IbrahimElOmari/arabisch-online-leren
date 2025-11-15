@@ -76,6 +76,47 @@
       "pending_approvals": "Wachtende Goedkeuringen"
     }
   },
+  "teacher": {
+    "dashboard": {
+      "title": "Leerkracht Dashboard",
+      "subtitle": "Beheer uw klassen en leerlingen"
+    },
+    "stats": {
+      "totalClasses": "Totaal Klassen",
+      "totalStudents": "Totaal Leerlingen",
+      "pendingTasks": "Openstaande Taken",
+      "rewardsGiven": "Beloningen Uitgereikt"
+    },
+    "myClasses": "Mijn Klassen",
+    "noClasses": "Nog geen klassen",
+    "newClass": "Nieuwe Klas",
+    "students": "Leerlingen",
+    "tasks": "Taken",
+    "progress": "Voortgang",
+    "rewards": "Beloningen",
+    "classDetails": "Klasdetails",
+    "studentList": "Leerlingenlijst",
+    "viewSubmissions": "Bekijk Inzendingen",
+    "awardRewards": "Geef Beloningen",
+    "sendMessage": "Stuur Bericht",
+    "addNote": "Notitie Toevoegen",
+    "editStudent": "Bewerk Leerling",
+    "removeStudent": "Verwijder Leerling",
+    "studentStatus": {
+      "active": "Actief",
+      "pending": "In behandeling"
+    },
+    "notes": {
+      "title": "Leerkracht Notities",
+      "add": "Notitie Toevoegen",
+      "edit": "Notitie Bewerken",
+      "delete": "Notitie Verwijderen",
+      "content": "Inhoud",
+      "flagged": "Gemarkeerd",
+      "created": "Aangemaakt",
+      "updated": "Bijgewerkt"
+    }
+  },
   "auth": {
     "login": "Inloggen",
     "register": "Registreren",

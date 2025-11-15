@@ -52,6 +52,11 @@ const EnrollmentPage = lazy(() => import('@/pages/EnrollmentPage'));
 const PaymentReturnTestPage = lazy(() => import('@/pages/PaymentReturnTestPage'));
 const PlacementTestPage = lazy(() => import('@/pages/PlacementTestPage'));
 const StudentDashboard = lazy(() => import('@/pages/StudentDashboard'));
+
+// PR10: Teacher Tools pages
+const TeacherDashboard = lazy(() => import('@/pages/TeacherDashboard'));
+const ClassDetailsPage = lazy(() => import('@/pages/ClassDetailsPage'));
+
 import { ENV_CONFIG } from '@/config/environment';
 import Maintenance from '@/pages/Maintenance';
 
@@ -121,6 +126,11 @@ function App() {
                     <Route path="payment/return" element={<AppGate><PaymentReturnTestPage /></AppGate>} />
                     <Route path="placement-test" element={<AppGate><PlacementTestPage /></AppGate>} />
                     <Route path="student-dashboard" element={<AppGate><StudentDashboard /></AppGate>} />
+                    
+                    {/* PR10: Teacher Tools routes */}
+                    <Route path="teacher" element={<AppGate><TeacherDashboard /></AppGate>} />
+                    <Route path="teacher/dashboard" element={<AppGate><TeacherDashboard /></AppGate>} />
+                    <Route path="teacher/classes/:classId" element={<AppGate><ClassDetailsPage /></AppGate>} />
                     
                     <Route path="pricing" element={<Pricing />} />
                     <Route path="billing" element={<AppGate><Billing /></AppGate>} />
