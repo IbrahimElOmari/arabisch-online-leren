@@ -94,6 +94,48 @@ Dit project gebruikt environment variables voor configuratie. **Commit nooit een
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
+## PR10 – Teacher Tools & Class Management
+
+### Overzicht
+PR10 voegt uitgebreide leerkracht tools en klassenbeheer functionaliteit toe aan het platform. Leerkrachten kunnen nu hun klassen beheren, leerlingen volgen, notities bijhouden en beloningen toekennen.
+
+### Features
+- **Teacher Dashboard**: Overzicht van klassen, leerlingen en statistieken
+- **Class Management**: Gedetailleerd klassenbeheer met studentenlijsten, taken, voortgang en beloningen
+- **Student Notes**: Private notities per leerling (alleen zichtbaar voor leerkracht en admin)
+- **Manual Rewards**: Handmatig XP of badges toekennen aan leerlingen
+- **Progress Tracking**: Voortgang volgen per leerling en klas
+- **Multi-language**: Volledig vertaald in NL/EN/AR met RTL-ondersteuning
+
+### Installatie & Setup
+Alle benodigde database tabellen en RLS policies worden automatisch aangemaakt via migrations. Edge functions worden automatisch gedeployed.
+
+### API & Edge Functions
+- `award-manual-xp`: Ken handmatig XP of badges toe aan leerlingen
+- `fetch-student-stats`: Haal statistieken op voor een specifieke leerling
+- `assign-task`: Wijs taken toe aan klassen of leerlingen
+
+**Volledige documentatie**: Zie `docs/PR10-TEACHER-TOOLS-IMPLEMENTATION-REPORT.md`, `docs/PR10-API-DOCUMENTATION.md` en `docs/PR10-TEACHER-USER-GUIDE.md`
+
+### Testing
+```sh
+# Run PR10-specific tests
+pnpm test -- teacherTools
+pnpm test:e2e -- teacher
+
+# Full test suite
+pnpm test:coverage
+```
+
+### Routes
+- `/teacher` of `/teacher/dashboard` - Teacher Dashboard (alleen voor leerkrachten/admins)
+- `/teacher/classes/:classId` - Class Details pagina met tabs voor studenten, taken, voortgang en beloningen
+
+### Security
+Alle teacher routes en functies zijn beveiligd met role-based access control (RLS policies). Alleen gebruikers met rol `teacher` of `admin` hebben toegang.
+
+---
+
 ## Tests en CI/CD
 
 This project includes comprehensive testing infrastructure with automated CI/CD pipelines.
