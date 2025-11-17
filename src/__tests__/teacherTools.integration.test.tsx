@@ -97,7 +97,8 @@ describe('Teacher Tools Integration Tests', () => {
 
       render(<TeacherDashboard />, { wrapper: createWrapper() });
 
-      await waitFor(() => {
+      // Wait for the component to render
+      await vi.waitFor(() => {
         expect(teacherService.fetchTeacherClasses).toHaveBeenCalled();
       });
 
@@ -114,7 +115,7 @@ describe('Teacher Tools Integration Tests', () => {
       render(<TeacherDashboard />, { wrapper: createWrapper() });
 
       // Component should handle error gracefully
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(teacherService.fetchTeacherClasses).toHaveBeenCalled();
       });
       
@@ -160,7 +161,7 @@ describe('Teacher Tools Integration Tests', () => {
 
       render(<ClassDetailsPage />, { wrapper: createWrapper() });
 
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(classService.fetchClassById).toHaveBeenCalledWith('class-123');
       });
 
@@ -181,7 +182,7 @@ describe('Teacher Tools Integration Tests', () => {
 
       render(<ClassDetailsPage />, { wrapper: createWrapper() });
 
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(classService.fetchClassById).toHaveBeenCalledWith('class-123');
       });
       
