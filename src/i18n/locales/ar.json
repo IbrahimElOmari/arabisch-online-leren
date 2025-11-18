@@ -37,6 +37,32 @@
     "settings": "الإعدادات",
     "logout": "تسجيل الخروج"
   },
+  "profile": {
+    "overview": "نظرة عامة",
+    "badges": "الشارات",
+    "achievements": "الإنجازات",
+    "timeline": "الجدول الزمني",
+    "settings": "الإعدادات"
+  },
+  "theme": {
+    "title": "نمط الواجهة",
+    "description": "اختر كيف تريد رؤية الواجهة. يقوم النمط بتعديل الألوان والأشكال والجو العام للتطبيق.",
+    "auto": "تلقائي",
+    "playful": "مرح",
+    "professional": "احترافي",
+    "autoDescriptionYoung": "تلقائي: نمط مرح (بناءً على عمرك)",
+    "autoDescriptionOld": "تلقائي: نمط احترافي (بناءً على عمرك)",
+    "autoDescriptionRole": "تلقائي: احترافي (بناءً على دورك)",
+    "playfulDescription": "ألوان زاهية، رسوم متحركة ممتعة ومظهر مرح. مثالي للمستخدمين الأصغر سناً.",
+    "professionalDescription": "ألوان هادئة، خطوط نظيفة ومظهر جاد. مثالي للمستخدمين الأكبر سناً والبالغين.",
+    "currentTheme": "النمط النشط حالياً:",
+    "playfulActive": "النمط المرح",
+    "professionalActive": "النمط الاحترافي",
+    "updated": "تم تحديث النمط",
+    "updateSuccess": "تم حفظ تفضيلات النمط بنجاح.",
+    "updateError": "خطأ في الحفظ",
+    "updateErrorMessage": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+  },
   "search": {
     "placeholder": "بحث... (Cmd+K)",
     "no_results": "لم يتم العثور على نتائج"

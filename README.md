@@ -94,6 +94,92 @@ Dit project gebruikt environment variables voor configuratie. **Commit nooit een
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
+## PR11 – UI Theming System (Age-Based Design)
+
+### Overzicht
+PR11 voegt een geavanceerd leeftijdsgebaseerd themasysteem toe dat de interface automatisch aanpast op basis van de leeftijd en rol van de gebruiker. Het platform biedt nu twee visueel onderscheiden thema's voor optimale gebruikerservaring per leeftijdsgroep.
+
+### Features
+- **Automatische Thema Detectie**: Interface past zich aan op basis van gebruikersleeftijd
+  - **Speels Thema** (< 16 jaar): Vrolijke kleuren, leuke animaties en een speelse uitstraling
+  - **Professioneel Thema** (≥ 16 jaar + ouders/leerkrachten): Rustige kleuren, strakke lijnen en serieuze uitstraling
+- **Handmatige Overschakeling**: Gebruikers kunnen hun voorkeur aanpassen in profielinstellingen
+- **Rol-gebaseerde Overrides**: Leerkrachten, ouders en beheerders krijgen altijd het professionele thema
+- **Volledige Toegankelijkheid**: WCAG 2.1 AA compliant met juiste contrast ratios
+- **Dark Mode Compatibel**: Beide thema's werken in light en dark mode
+
+### Technische Details
+
+**Thema Selectie Logica:**
+- Gebruikers < 16 jaar → Speels thema (tenzij handmatig overschreven)
+- Gebruikers ≥ 16 jaar → Professioneel thema
+- Rollen `leerkracht`, `admin`, `ouder` → Altijd professioneel
+- Handmatige voorkeur (`theme_preference` in database) heeft prioriteit
+
+**Design Tokens:**
+```css
+/* Playful Theme - Kinderen onder 16 */
+--primary: 280 100% 70% (vibrant purple)
+--secondary: 45 100% 85% (golden)
+--accent: 195 100% 85% (sky blue)
+--radius: 1rem (rounded buttons/cards)
+
+/* Professional Theme - 16+ en volwassenen */
+--primary: 220 25% 25% (dark blue-gray)
+--secondary: 220 13% 95% (light gray)
+--accent: 160 60% 45% (muted green)
+--radius: 0.5rem (subtle corners)
+```
+
+**API Usage:**
+```typescript
+// In React components
+import { useAgeTheme } from '@/contexts/AgeThemeContext';
+
+const { themeAge, updateThemePreference } = useAgeTheme();
+// themeAge: 'playful' | 'professional'
+
+// Update user preference
+await updateThemePreference('auto' | 'playful' | 'professional');
+```
+
+**Database Schema:**
+```sql
+-- profiles table
+theme_preference TEXT CHECK (theme_preference IN ('auto', 'playful', 'professional'))
+-- 'auto' = age-based detection (default)
+-- 'playful' / 'professional' = manual override
+```
+
+### Testing
+```bash
+# Run theme context unit tests (14 tests)
+pnpm test src/contexts/__tests__/AgeThemeContext.test.tsx
+
+# Manual testing checklist:
+# 1. Login als gebruiker < 16 → Speels thema
+# 2. Login als gebruiker ≥ 16 → Professioneel thema  
+# 3. Login als leerkracht → Professioneel thema (ongeacht leeftijd)
+# 4. Wijzig themavoorkeur in profielinstellingen → Live update
+# 5. Herlaad pagina → Thema blijft behouden
+```
+
+### Documentatie
+- **Implementation Report**: `docs/PR11-UI-THEMING-COMPLETION-REPORT.md`
+- **Implementation Checklist**: `docs/PR11-IMPLEMENTATION-CHECKLIST.md`
+- **Design Guidelines**: Zie implementation report voor volledige design rationale
+
+### Gebruikershandleiding
+Gebruikers kunnen hun themavoorkeur aanpassen via:
+1. Navigeer naar Profiel → Instellingen tab
+2. Selecteer "Interface Thema" sectie
+3. Kies tussen:
+   - **Automatisch**: Thema wordt bepaald op basis van leeftijd
+   - **Speels**: Vrolijke interface (aanbevolen voor kinderen)
+   - **Professioneel**: Zakelijke interface (aanbevolen voor volwassenen)
+
+---
+
 ## PR10 – Teacher Tools & Class Management
 
 ### Overzicht
