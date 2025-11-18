@@ -41,12 +41,12 @@ const Profile = () => {
 
   // Mock badges system
   const availableBadges = [
-    { id: 'first_level', name: 'Eerste Level', description: 'Voltooi je eerste level', icon: '🎯', earned: completedLevels >= 1 },
-    { id: 'points_master', name: 'Punten Meester', description: '1000+ punten behaald', icon: '⭐', earned: totalPoints >= 1000 },
-    { id: 'task_champion', name: 'Taak Kampioen', description: '50+ taken voltooid', icon: '🏆', earned: totalTasks >= 50 },
-    { id: 'question_expert', name: 'Vraag Expert', description: '100+ vragen beantwoord', icon: '🤓', earned: totalQuestions >= 100 },
-    { id: 'streak_master', name: 'Streak Meester', description: '7 dagen achtereen actief', icon: '🔥', earned: false },
-    { id: 'perfectionist', name: 'Perfectionist', description: '95%+ nauwkeurigheid', icon: '💎', earned: false },
+    { id: 'first_level', name: t('profile.first_level_badge'), description: t('profile.first_level_desc'), icon: '🎯', earned: completedLevels >= 1 },
+    { id: 'points_master', name: t('profile.points_master_badge'), description: t('profile.points_master_desc'), icon: '⭐', earned: totalPoints >= 1000 },
+    { id: 'task_champion', name: t('profile.task_champion_badge'), description: t('profile.task_champion_desc'), icon: '🏆', earned: totalTasks >= 50 },
+    { id: 'question_expert', name: t('profile.question_expert_badge'), description: t('profile.question_expert_desc'), icon: '🤓', earned: totalQuestions >= 100 },
+    { id: 'streak_master', name: t('profile.streak_master_badge'), description: t('profile.streak_master_desc'), icon: '🔥', earned: false },
+    { id: 'perfectionist', name: t('profile.perfectionist_badge'), description: t('profile.perfectionist_desc'), icon: '💎', earned: false },
   ];
 
   const earnedBadges = availableBadges.filter(b => b.earned);
@@ -101,20 +101,20 @@ const Profile = () => {
                   "font-bold mb-2",
                   themeAge === 'playful' ? 'text-3xl' : 'text-2xl'
                 )}>
-                  {profile?.full_name || 'Gebruiker'}
+                  {profile?.full_name || t('profile.user')}
                 </h1>
                 <div className="flex items-center gap-4 text-muted-foreground">
                   <Badge variant="secondary" className="gap-2">
                     <User className="h-4 w-4" />
-                    {role === 'leerling' ? 'Leerling' : role}
+                    {role === 'leerling' ? t('profile.student') : role}
                   </Badge>
                   <span className="flex items-center gap-1">
                     <Trophy className="h-4 w-4" />
-                    {totalPoints} punten
+                    {totalPoints} {t('profile.points')}
                   </span>
                   <span className="flex items-center gap-1">
                     <Award className="h-4 w-4" />
-                    {earnedBadges.length} badges
+                    {earnedBadges.length} {t('profile.badges_count')}
                   </span>
                 </div>
               </div>
@@ -127,7 +127,7 @@ const Profile = () => {
                   {completedLevels}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Levels voltooid
+                  {t('profile.levels_completed')}
                 </div>
               </div>
             </div>
@@ -137,11 +137,11 @@ const Profile = () => {
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="overview">{t('profile.overview', 'Overzicht')}</TabsTrigger>
-            <TabsTrigger value="badges">{t('profile.badges', 'Badges')}</TabsTrigger>
-            <TabsTrigger value="statistics">Statistieken</TabsTrigger>
-            <TabsTrigger value="history">Geschiedenis</TabsTrigger>
-            <TabsTrigger value="settings">{t('profile.settings', 'Instellingen')}</TabsTrigger>
+            <TabsTrigger value="overview">{t('profile.overview')}</TabsTrigger>
+            <TabsTrigger value="badges">{t('profile.badges')}</TabsTrigger>
+            <TabsTrigger value="statistics">{t('profile.statistics')}</TabsTrigger>
+            <TabsTrigger value="history">{t('profile.history')}</TabsTrigger>
+            <TabsTrigger value="settings">{t('profile.settings')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
@@ -151,24 +151,24 @@ const Profile = () => {
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5 text-primary" />
-                    Snelle Statistieken
+                    {t('profile.quick_stats')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Totale Punten</span>
+                    <span className="text-muted-foreground">{t('profile.total_points')}</span>
                     <span className="font-semibold">{totalPoints}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Taken Voltooid</span>
+                    <span className="text-muted-foreground">{t('profile.tasks_completed')}</span>
                     <span className="font-semibold">{totalTasks}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Vragen Beantwoord</span>
+                    <span className="text-muted-foreground">{t('profile.questions_answered')}</span>
                     <span className="font-semibold">{totalQuestions}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Badges Verdiend</span>
+                    <span className="text-muted-foreground">{t('profile.badges_earned')}</span>
                     <span className="font-semibold">{earnedBadges.length}/{availableBadges.length}</span>
                   </div>
                 </CardContent>
@@ -179,7 +179,7 @@ const Profile = () => {
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5 text-primary" />
-                    Huidige Voortgang
+                    {t('profile.current_progress')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -197,7 +197,7 @@ const Profile = () => {
                     </div>
                   ) : (
                     <p className="text-muted-foreground text-center py-4">
-                      Nog geen voortgang om te tonen
+                      {t('profile.no_progress')}
                     </p>
                   )}
                 </CardContent>
@@ -208,7 +208,7 @@ const Profile = () => {
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2">
                     <Award className="h-5 w-5 text-primary" />
-                    Recente Badges
+                    {t('profile.recent_badges')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -226,7 +226,7 @@ const Profile = () => {
                     ))}
                     {earnedBadges.length === 0 && (
                       <p className="text-muted-foreground text-center py-4">
-                        Nog geen badges verdiend
+                        {t('profile.no_badges_earned')}
                       </p>
                     )}
                   </div>
@@ -242,7 +242,7 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Trophy className="h-5 w-5 text-success" />
-                    Verdiende Badges ({earnedBadges.length})
+                    {t('profile.earned_badges')} ({earnedBadges.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -271,7 +271,7 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5 text-muted-foreground" />
-                    Beschikbare Badges ({unearnedBadges.length})
+                    {t('profile.available_badges')} ({unearnedBadges.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -301,22 +301,22 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <BookOpen className="h-5 w-5 text-primary" />
-                    Leerstatistieken
+                    {t('profile.learning_stats')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
-                    <span>Gemiddeld per Level</span>
+                    <span>{t('profile.average_per_level')}</span>
                     <span className="font-semibold">
-                      {progressData.length > 0 ? Math.round(totalPoints / Math.max(progressData.length, 1)) : 0} punten
+                      {progressData.length > 0 ? Math.round(totalPoints / Math.max(progressData.length, 1)) : 0} {t('profile.points')}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Succespercentage</span>
+                    <span>{t('profile.success_rate')}</span>
                     <span className="font-semibold">95%</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Gemiddelde Score</span>
+                    <span>{t('profile.average_score')}</span>
                     <span className="font-semibold">8.5/10</span>
                   </div>
                 </CardContent>
@@ -327,24 +327,24 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-primary" />
-                    Activiteit
+                    {t('profile.activity')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
-                    <span>Studietijd (geschat)</span>
-                    <span className="font-semibold">24 uur</span>
+                    <span>{t('profile.study_time')}</span>
+                    <span className="font-semibold">24 {t('profile.hours')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Huidige Streak</span>
+                    <span>{t('profile.current_streak')}</span>
                     <span className="font-semibold flex items-center gap-1">
                       <Flame className="h-4 w-4 text-orange-500" />
-                      3 dagen
+                      3 {t('profile.days')}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Langste Streak</span>
-                    <span className="font-semibold">7 dagen</span>
+                    <span>{t('profile.longest_streak')}</span>
+                    <span className="font-semibold">7 {t('profile.days')}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -354,21 +354,21 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5 text-primary" />
-                    Voortgang Overzicht
+                    {t('profile.progress_overview')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span>Totale Voortgang</span>
+                        <span>{t('profile.total_progress')}</span>
                         <span>{Math.round((completedLevels / Math.max(progressData.length, 1)) * 100)}%</span>
                       </div>
                       <Progress value={(completedLevels / Math.max(progressData.length, 1)) * 100} />
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span>Badges Voortgang</span>
+                        <span>{t('profile.badges_progress')}</span>
                         <span>{Math.round((earnedBadges.length / availableBadges.length) * 100)}%</span>
                       </div>
                       <Progress value={(earnedBadges.length / availableBadges.length) * 100} />
@@ -384,7 +384,7 @@ const Profile = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-primary" />
-                  Leergeschiedenis
+                  {t('profile.learning_history')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -411,7 +411,7 @@ const Profile = () => {
                       </div>
                       {entry.points > 0 && (
                         <Badge variant="secondary">
-                          +{entry.points} punten
+                          +{entry.points} {t('profile.points')}
                         </Badge>
                       )}
                     </div>
