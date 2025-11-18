@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Palette, Sparkles, Briefcase, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 /**
  * PR11: Theme Selector Component
@@ -15,6 +16,7 @@ export const ThemeSelector = () => {
   const { profile } = useAuth();
   const { themeAge, updateThemePreference, isUpdating } = useAgeTheme();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const currentPreference = profile?.theme_preference || 'auto';
 
@@ -22,13 +24,13 @@ export const ThemeSelector = () => {
     try {
       await updateThemePreference(value as 'auto' | 'playful' | 'professional');
       toast({
-        title: 'Thema bijgewerkt',
-        description: 'Je thema-voorkeur is succesvol opgeslagen.',
+        title: t('theme.updated'),
+        description: t('theme.updateSuccess'),
       });
     } catch (error) {
       toast({
-        title: 'Fout bij opslaan',
-        description: 'Er ging iets mis. Probeer het opnieuw.',
+        title: t('theme.updateError'),
+        description: t('theme.updateErrorMessage'),
         variant: 'destructive',
       });
     }
@@ -39,12 +41,12 @@ export const ThemeSelector = () => {
     const role = profile?.role;
 
     if (role && ['leerkracht', 'admin', 'ouder'].includes(role)) {
-      return 'Automatisch: Professioneel (op basis van je rol)';
+      return t('theme.autoDescriptionRole');
     }
 
     return age < 16
-      ? 'Automatisch: Speels thema (op basis van je leeftijd)'
-      : 'Automatisch: Professioneel thema (op basis van je leeftijd)';
+      ? t('theme.autoDescriptionYoung')
+      : t('theme.autoDescriptionOld');
   };
 
   return (
@@ -55,10 +57,10 @@ export const ThemeSelector = () => {
       <CardHeader>
         <div className="flex items-center gap-2">
           <Palette className="h-5 w-5 text-primary" />
-          <CardTitle>Interface Thema</CardTitle>
+          <CardTitle>{t('theme.title')}</CardTitle>
         </div>
         <CardDescription>
-          Kies hoe je de interface wilt zien. Het thema past de kleuren, vormen en sfeer van de applicatie aan.
+          {t('theme.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -77,7 +79,7 @@ export const ThemeSelector = () => {
                 className="flex items-center gap-2 font-medium cursor-pointer"
               >
                 <Wand2 className="h-4 w-4" />
-                Automatisch
+                {t('theme.auto')}
               </Label>
               <p className="text-sm text-muted-foreground mt-1">
                 {getThemeDescription()}
@@ -94,10 +96,10 @@ export const ThemeSelector = () => {
                 className="flex items-center gap-2 font-medium cursor-pointer"
               >
                 <Sparkles className="h-4 w-4 text-purple-500" />
-                Speels
+                {t('theme.playful')}
               </Label>
               <p className="text-sm text-muted-foreground mt-1">
-                Vrolijke kleuren, leuke animaties en een speelse uitstraling. Perfect voor jongere gebruikers.
+                {t('theme.playfulDescription')}
               </p>
             </div>
           </div>
@@ -111,10 +113,10 @@ export const ThemeSelector = () => {
                 className="flex items-center gap-2 font-medium cursor-pointer"
               >
                 <Briefcase className="h-4 w-4 text-blue-600" />
-                Professioneel
+                {t('theme.professional')}
               </Label>
               <p className="text-sm text-muted-foreground mt-1">
-                Rustige kleuren, strakke lijnen en een serieuze uitstraling. Ideaal voor oudere gebruikers en volwassenen.
+                {t('theme.professionalDescription')}
               </p>
             </div>
           </div>
@@ -122,7 +124,7 @@ export const ThemeSelector = () => {
 
         {/* Current Theme Preview */}
         <div className="pt-4 border-t">
-          <p className="text-sm text-muted-foreground mb-2">Huidig actief thema:</p>
+          <p className="text-sm text-muted-foreground mb-2">{t('theme.currentTheme')}</p>
           <div className={cn(
             "p-3 rounded-lg border-2 font-medium",
             themeAge === 'playful'
@@ -132,12 +134,12 @@ export const ThemeSelector = () => {
             {themeAge === 'playful' ? (
               <span className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4" />
-                Speels Thema
+                {t('theme.playfulActive')}
               </span>
             ) : (
               <span className="flex items-center gap-2">
                 <Briefcase className="h-4 w-4" />
-                Professioneel Thema
+                {t('theme.professionalActive')}
               </span>
             )}
           </div>

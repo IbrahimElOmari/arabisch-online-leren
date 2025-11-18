@@ -37,6 +37,32 @@
     "settings": "Instellingen",
     "logout": "Uitloggen"
   },
+  "profile": {
+    "overview": "Overzicht",
+    "badges": "Badges",
+    "achievements": "Prestaties",
+    "timeline": "Tijdlijn",
+    "settings": "Instellingen"
+  },
+  "theme": {
+    "title": "Interface Thema",
+    "description": "Kies hoe je de interface wilt zien. Het thema past de kleuren, vormen en sfeer van de applicatie aan.",
+    "auto": "Automatisch",
+    "playful": "Speels",
+    "professional": "Professioneel",
+    "autoDescriptionYoung": "Automatisch: Speels thema (op basis van je leeftijd)",
+    "autoDescriptionOld": "Automatisch: Professioneel thema (op basis van je leeftijd)",
+    "autoDescriptionRole": "Automatisch: Professioneel (op basis van je rol)",
+    "playfulDescription": "Vrolijke kleuren, leuke animaties en een speelse uitstraling. Perfect voor jongere gebruikers.",
+    "professionalDescription": "Rustige kleuren, strakke lijnen en een serieuze uitstraling. Ideaal voor oudere gebruikers en volwassenen.",
+    "currentTheme": "Huidig actief thema:",
+    "playfulActive": "Speels Thema",
+    "professionalActive": "Professioneel Thema",
+    "updated": "Thema bijgewerkt",
+    "updateSuccess": "Je thema-voorkeur is succesvol opgeslagen.",
+    "updateError": "Fout bij opslaan",
+    "updateErrorMessage": "Er ging iets mis. Probeer het opnieuw."
+  },
   "search": {
     "placeholder": "Zoeken... (Cmd+K)",
     "no_results": "Geen resultaten gevonden"

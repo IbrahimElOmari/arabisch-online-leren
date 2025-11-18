@@ -22,12 +22,15 @@ import { useStudentProgress } from '@/hooks/useStudentProgress';
 import { useAgeTheme } from '@/contexts/AgeThemeContext';
 import { cn } from '@/lib/utils';
 import { useUserRole } from '@/hooks/useUserRole';
+import { ThemeSelector } from '@/components/profile/ThemeSelector';
+import { useTranslation } from 'react-i18next';
 
 const Profile = () => {
   const { user, profile } = useAuth();
   const { role } = useUserRole();
   const { progress: progressData } = useStudentProgress(user?.id);
   const { themeAge } = useAgeTheme();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
 
   // Calculate statistics
@@ -133,11 +136,12 @@ const Profile = () => {
 
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overzicht</TabsTrigger>
-            <TabsTrigger value="badges">Badges</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="overview">{t('profile.overview', 'Overzicht')}</TabsTrigger>
+            <TabsTrigger value="badges">{t('profile.badges', 'Badges')}</TabsTrigger>
             <TabsTrigger value="statistics">Statistieken</TabsTrigger>
             <TabsTrigger value="history">Geschiedenis</TabsTrigger>
+            <TabsTrigger value="settings">{t('profile.settings', 'Instellingen')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
@@ -415,6 +419,11 @@ const Profile = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Settings Tab */}
+          <TabsContent value="settings" className="mt-6">
+            <ThemeSelector />
           </TabsContent>
         </Tabs>
       </div>

@@ -82,44 +82,90 @@ All colors MUST be HSL.
     --font-size-4xl: 2.25rem;  /* 36px */
   }
 
-  /* Playful Theme - Under 16 years */
+  /* Playful Theme - Under 16 years 
+   * Vibrant colors, rounded elements, fun animations
+   * Target: Children and young teens
+   */
   .theme-playful {
+    /* Vibrant primary color (purple) */
     --primary: 280 100% 70%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 45 100% 85%;
-    --secondary-foreground: 280 100% 25%;
-    --accent: 195 100% 85%;
-    --accent-foreground: 195 100% 25%;
-    --success: 120 100% 40%;
+    --primary-glow: 280 100% 80%;
+    
+    /* Golden secondary for playful accents */
+    --secondary: 45 100% 65%;
+    --secondary-foreground: 45 100% 10%;
+    
+    /* Sky blue accent */
+    --accent: 195 100% 65%;
+    --accent-foreground: 195 100% 10%;
+    
+    /* Success green - bright and cheerful */
+    --success: 120 80% 45%;
     --success-foreground: 0 0% 100%;
-    --border: 280 20% 90%;
+    
+    /* Softer borders for friendly feel */
+    --border: 280 20% 85%;
     --ring: 280 100% 70%;
+    
+    /* Increased border radius for rounded, playful look */
+    --radius: 1rem;
+    
+    /* Playful shadows with glow effect */
+    --shadow-playful: 0 4px 20px hsl(280 100% 70% / 0.25);
+    --shadow-hover: 0 8px 30px hsl(280 100% 70% / 0.35);
   }
 
-  /* Clean Theme - 16-21 years (default) */
+  /* Clean Theme - Legacy (backwards compatibility) 
+   * Maps to professional theme
+   */
   .theme-clean {
-    --primary: 142 76% 36%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 44 87% 94%;
-    --secondary-foreground: 142 76% 36%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --success: 142 76% 36%;
-    --success-foreground: 210 40% 98%;
-  }
-
-  /* Professional Theme - 21+ years */
-  .theme-professional {
     --primary: 220 25% 25%;
     --primary-foreground: 0 0% 100%;
+    --primary-glow: 220 25% 35%;
     --secondary: 220 13% 95%;
     --secondary-foreground: 220 25% 25%;
-    --accent: 220 13% 91%;
-    --accent-foreground: 220 25% 15%;
-    --success: 142 76% 30%;
+    --accent: 160 60% 45%;
+    --accent-foreground: 0 0% 100%;
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
-    --border: 220 13% 87%;
+    --border: 220 13% 90%;
     --ring: 220 25% 25%;
+    --radius: 0.5rem;
+  }
+
+  /* Professional Theme - 16+ years, teachers, parents, admins
+   * Muted colors, clean lines, professional appearance
+   * Target: Older teens, adults, teachers, parents
+   */
+  .theme-professional {
+    /* Dark blue-gray for trust and professionalism */
+    --primary: 220 25% 25%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 220 25% 35%;
+    
+    /* Light gray secondary */
+    --secondary: 220 13% 95%;
+    --secondary-foreground: 220 25% 25%;
+    
+    /* Muted green accent for success/growth */
+    --accent: 160 60% 45%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Professional success green */
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    
+    /* Subtle borders */
+    --border: 220 13% 90%;
+    --ring: 220 25% 25%;
+    
+    /* Subtle border radius for professional look */
+    --radius: 0.5rem;
+    
+    /* Professional shadows - subtle and clean */
+    --shadow-professional: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
 
     /* Strengthened sidebar background for better readability */

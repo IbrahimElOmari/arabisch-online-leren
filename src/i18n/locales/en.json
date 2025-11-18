@@ -37,6 +37,32 @@
     "settings": "Settings",
     "logout": "Logout"
   },
+  "profile": {
+    "overview": "Overview",
+    "badges": "Badges",
+    "achievements": "Achievements",
+    "timeline": "Timeline",
+    "settings": "Settings"
+  },
+  "theme": {
+    "title": "Interface Theme",
+    "description": "Choose how you want to see the interface. The theme adjusts the colors, shapes and atmosphere of the application.",
+    "auto": "Automatic",
+    "playful": "Playful",
+    "professional": "Professional",
+    "autoDescriptionYoung": "Automatic: Playful theme (based on your age)",
+    "autoDescriptionOld": "Automatic: Professional theme (based on your age)",
+    "autoDescriptionRole": "Automatic: Professional (based on your role)",
+    "playfulDescription": "Cheerful colors, fun animations and a playful look. Perfect for younger users.",
+    "professionalDescription": "Calm colors, clean lines and a serious look. Ideal for older users and adults.",
+    "currentTheme": "Currently active theme:",
+    "playfulActive": "Playful Theme",
+    "professionalActive": "Professional Theme",
+    "updated": "Theme updated",
+    "updateSuccess": "Your theme preference has been saved successfully.",
+    "updateError": "Error saving",
+    "updateErrorMessage": "Something went wrong. Please try again."
+  },
   "search": {
     "placeholder": "Search... (Cmd+K)",
     "no_results": "No results found"
