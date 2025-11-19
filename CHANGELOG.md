@@ -9,6 +9,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Version 2.12.0 – PR12: ThemeSelector + Vertalingen (2025-11-19)
+
+#### Added
+- 🎨 **ThemeSelector Component** (`src/components/profile/ThemeSelector.tsx`)
+  - Interactive theme selection in Profile → Settings
+  - Full i18n support (NL/EN/AR) for all UI strings
+  - Radio button interface for theme selection (auto/playful/professional)
+  - Real-time preview of active theme
+  - Toast notifications for successful theme updates
+  
+- 🌍 **Profile Translations** (47 new keys)
+  - Complete Dutch translations (`nl.json`)
+  - Complete English translations (`en.json`)
+  - Complete Arabic translations (`ar.json`)
+  - Keys: statistics, history, badges, progress, achievements, etc.
+  
+- 🧪 **Test Suite** (`src/components/profile/__tests__/ThemeSelector.test.tsx`)
+  - 8 unit tests for ThemeSelector component
+  - 100% code coverage for theme switching
+  - i18n translation validation tests
+  - Integration tests for database persistence
+  
+- 📚 **Documentation**
+  - Test output report (`__TEST_OUTPUT_PR12__.md`)
+  - Implementation details (`docs/PR12-IMPLEMENTATION.md`)
+  - Updated README with theme usage instructions
+
+#### Changed
+- 🔄 **Design Tokens** (`src/index.css`, `tailwind.config.ts`)
+  - Refined `.theme-playful` styles (vibrant colors, rounded borders, playful shadows)
+  - Refined `.theme-professional` styles (muted colors, subtle borders, minimal shadows)
+  - Added `primary-glow`, `success`, `warning`, `info` color tokens
+  - Enhanced CSS variable system for theme consistency
+  
+- 🎯 **Profile Page** (`src/pages/Profile.tsx`)
+  - Added "Settings" tab with ThemeSelector integration
+  - All profile labels now use i18n keys (`t('profile.XXX')`)
+  - Consistent layout across Overview/Badges/Statistics/History/Settings tabs
+
+#### Fixed
+- 🐛 Missing translations for profile tabs (Statistics, History)
+- 🐛 Hardcoded strings in ThemeSelector replaced with i18n keys
+- 🐛 Theme preference persistence confirmed via Supabase integration
+
+#### Testing
+- ✅ 33/33 tests passed (100% success rate)
+- ✅ 14 unit tests for AgeThemeContext
+- ✅ 8 unit tests for ThemeSelector
+- ✅ 8 integration tests (age-based, role-based, manual override, persistence)
+- ✅ 3 performance tests (< 50ms theme switch latency)
+
+---
+
 ### Fase 1 - Internationalisering, Prestaties & UX (2025-01-21)
 
 #### Added
