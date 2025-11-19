@@ -314,6 +314,7 @@ export const teacherAnalyticsService = {
     }> = {};
 
     (sessions || []).forEach(session => {
+      if (!session.started_at) return;
       const date = new Date(session.started_at).toISOString().split('T')[0];
       
       if (!trendsByDate[date]) {
@@ -342,7 +343,7 @@ export const teacherAnalyticsService = {
   /**
    * Exports analytics data as CSV
    */
-  async exportAnalytics(classId: string): Promise<string> {
+  async exportAnalytics(classId: string): Promise<Blob> {
     const students = await this.getStudentPerformance(classId);
     
     const headers = [
@@ -373,6 +374,6 @@ export const teacherAnalyticsService = {
       .map(row => row.map(cell => `"${cell}"`).join(','))
       .join('\n');
 
-    return csv;
+    return new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   },
 };

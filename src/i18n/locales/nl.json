@@ -109,7 +109,38 @@
     "updated": "Thema bijgewerkt",
     "updateSuccess": "Je thema-voorkeur is succesvol opgeslagen.",
     "updateError": "Fout bij opslaan",
-    "updateErrorMessage": "Er ging iets mis. Probeer het opnieuw."
+    "updateErrorMessage": "Er ging iets mis. Probeer het opnieuw.",
+    "auto_desc": "Detecteert thema op basis van leeftijd of rol",
+    "playful_desc": "Vrolijke kleuren en afgeronde hoeken",
+    "professional_desc": "Kalm en minimalistisch thema",
+    "label": "Kies een thema",
+    "saved": "Thema opgeslagen"
+  },
+  "teacher": {
+    "analytics": {
+      "total_students": "Totaal Leerlingen",
+      "average_progress": "Gemiddelde Voortgang",
+      "attendance_rate": "Aanwezigheidspercentage",
+      "badges_earned": "Badges Verdiend",
+      "total_badges": "Totaal Badges",
+      "export": "Exporteer naar CSV",
+      "export_success": "Analytics succesvol geëxporteerd",
+      "export_failed": "Export mislukt",
+      "load_failed": "Laden van analytics mislukt",
+      "performance": "Prestaties",
+      "heatmap": "Heatmap",
+      "trends": "Trends",
+      "student_performance": "Leerling Prestaties",
+      "performance_description": "Overzicht van punten en voortgang per leerling",
+      "points": "Punten",
+      "progress": "Voortgang",
+      "performance_heatmap": "Prestatie Heatmap",
+      "heatmap_description": "Wekelijkse activiteit per leerling",
+      "activity_trends": "Activiteits Trends",
+      "trends_description": "Historische trends van inzendingen en aanwezigheid",
+      "submissions": "Inzendingen",
+      "attendance": "Aanwezigheid"
+    }
   },
   "search": {
     "placeholder": "Zoeken... (Cmd+K)",
