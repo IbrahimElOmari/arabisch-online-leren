@@ -1233,6 +1233,51 @@ export type Database = {
           },
         ]
       }
+      file_scans: {
+        Row: {
+          created_at: string
+          file_path: string
+          file_size: number
+          file_type: string
+          id: string
+          quarantined: boolean | null
+          scan_result: Json | null
+          scan_status: string
+          scanned_at: string | null
+          storage_bucket: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          file_path: string
+          file_size: number
+          file_type: string
+          id?: string
+          quarantined?: boolean | null
+          scan_result?: Json | null
+          scan_status?: string
+          scanned_at?: string | null
+          storage_bucket: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string
+          file_size?: number
+          file_type?: string
+          id?: string
+          quarantined?: boolean | null
+          scan_result?: Json | null
+          scan_status?: string
+          scanned_at?: string | null
+          storage_bucket?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: []
+      }
       forum_likes: {
         Row: {
           created_at: string
