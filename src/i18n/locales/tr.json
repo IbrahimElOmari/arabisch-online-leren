@@ -1,0 +1,108 @@
+{
+  "security": {
+    "sessionWarning": "Oturumunuz yakında sona erecek",
+    "sessionExpired": "Oturum süresi doldu. Lütfen tekrar giriş yapın.",
+    "extendSession": "Oturumu uzat"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "dashboard": "Kontrol Paneli",
+    "tasks": "Görevler",
+    "lessons": "Dersler",
+    "forum": "Forum",
+    "profile": "Profil",
+    "admin": "Yönetici",
+    "teacher": "Öğretmen"
+  },
+  "roles": {
+    "admin": "Yönetici",
+    "teacher": "Öğretmen",
+    "student": "Öğrenci"
+  },
+  "profile": {
+    "title": "Profil",
+    "badges": "Rozetler",
+    "achievements": "Başarılar",
+    "stats": "İstatistikler",
+    "editProfile": "Profili Düzenle"
+  },
+  "stats": {
+    "totalXP": "Toplam XP",
+    "level": "Seviye",
+    "streak": "Seri",
+    "completedLessons": "Tamamlanan Dersler",
+    "averageScore": "Ortalama Puan",
+    "studyTime": "Çalışma Süresi"
+  },
+  "theme": {
+    "title": "Tema",
+    "auto": "Otomatik",
+    "playful": "Eğlenceli",
+    "professional": "Profesyonel",
+    "autoDescription": "Rolünüze ve yaşınıza uyum sağlar",
+    "playfulDescription": "Canlı ve eğlenceli renkler",
+    "professionalDescription": "Zarif ve minimalist",
+    "applied": "Tema uygulandı",
+    "switchedTo": "{theme} temasına geçildi"
+  },
+  "search": {
+    "placeholder": "Ara...",
+    "noResults": "Sonuç bulunamadı"
+  },
+  "dashboard": {
+    "welcome": "Hoş Geldiniz",
+    "selectClass": "Sınıf Seç",
+    "selectLevel": "Seviye Seç",
+    "teacher": {
+      "overview": "Genel Bakış",
+      "students": "Öğrenciler",
+      "analytics": "Analizler"
+    },
+    "admin": {
+      "users": "Kullanıcılar",
+      "system": "Sistem",
+      "reports": "Raporlar"
+    }
+  },
+  "teacher": {
+    "dashboard": "Öğretmen Paneli",
+    "myClasses": "Sınıflarım",
+    "studentProgress": "Öğrenci İlerlemesi",
+    "createLesson": "Ders Oluştur",
+    "gradeAssignments": "Ödevleri Notlandır",
+    "classAnalytics": "Sınıf Analizleri",
+    "studentDetails": "Öğrenci Detayları",
+    "notes": "Notlar",
+    "addNote": "Not Ekle"
+  },
+  "auth": {
+    "login": "Giriş",
+    "register": "Kayıt Ol",
+    "email": "E-posta",
+    "password": "Şifre",
+    "forgotPassword": "Şifremi Unuttum?",
+    "signIn": "Giriş Yap",
+    "signUp": "Kayıt Ol"
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "back": "Geri",
+    "next": "İleri",
+    "submit": "Gönder",
+    "close": "Kapat",
+    "confirm": "Onayla",
+    "yes": "Evet",
+    "no": "Hayır"
+  },
+  "errors": {
+    "generic": "Bir hata oluştu",
+    "network": "Ağ hatası",
+    "notFound": "Bulunamadı",
+    "unauthorized": "Yetkisiz",
+    "serverError": "Sunucu hatası"
+  }
+}

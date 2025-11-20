@@ -3,7 +3,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 
 export interface PushSubscription {
   endpoint: string;
@@ -46,7 +45,7 @@ export function usePushNotifications() {
       
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: vapidKey as Uint8Array
+        applicationServerKey: new Uint8Array(vapidKey).buffer as ArrayBuffer
       });
 
       // TODO: Save subscription to backend when push_subscriptions table exists
@@ -125,15 +124,3 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   return outputArray;
 }
 
-/**
- * Helper: Convert ArrayBuffer to base64
- */
-function arrayBufferToBase64(buffer: ArrayBuffer | null): string {
-  if (!buffer) return '';
-  const bytes = new Uint8Array(buffer);
-  let binary = '';
-  for (let i = 0; i < bytes.byteLength; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return window.btoa(binary);
-}

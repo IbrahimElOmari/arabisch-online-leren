@@ -1,0 +1,108 @@
+{
+  "security": {
+    "sessionWarning": "Votre session expire bientôt",
+    "sessionExpired": "Session expirée. Veuillez vous reconnecter.",
+    "extendSession": "Prolonger la session"
+  },
+  "nav": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord",
+    "tasks": "Tâches",
+    "lessons": "Leçons",
+    "forum": "Forum",
+    "profile": "Profil",
+    "admin": "Admin",
+    "teacher": "Enseignant"
+  },
+  "roles": {
+    "admin": "Administrateur",
+    "teacher": "Enseignant",
+    "student": "Étudiant"
+  },
+  "profile": {
+    "title": "Profil",
+    "badges": "Badges",
+    "achievements": "Réalisations",
+    "stats": "Statistiques",
+    "editProfile": "Modifier le profil"
+  },
+  "stats": {
+    "totalXP": "XP Total",
+    "level": "Niveau",
+    "streak": "Série",
+    "completedLessons": "Leçons terminées",
+    "averageScore": "Score moyen",
+    "studyTime": "Temps d'étude"
+  },
+  "theme": {
+    "title": "Thème",
+    "auto": "Automatique",
+    "playful": "Ludique",
+    "professional": "Professionnel",
+    "autoDescription": "S'adapte à votre rôle et âge",
+    "playfulDescription": "Couleurs vives et amusantes",
+    "professionalDescription": "Élégant et minimaliste",
+    "applied": "Thème appliqué",
+    "switchedTo": "Basculé vers le thème {theme}"
+  },
+  "search": {
+    "placeholder": "Rechercher...",
+    "noResults": "Aucun résultat trouvé"
+  },
+  "dashboard": {
+    "welcome": "Bienvenue",
+    "selectClass": "Sélectionnez une classe",
+    "selectLevel": "Sélectionnez un niveau",
+    "teacher": {
+      "overview": "Vue d'ensemble",
+      "students": "Étudiants",
+      "analytics": "Analyses"
+    },
+    "admin": {
+      "users": "Utilisateurs",
+      "system": "Système",
+      "reports": "Rapports"
+    }
+  },
+  "teacher": {
+    "dashboard": "Tableau de bord enseignant",
+    "myClasses": "Mes classes",
+    "studentProgress": "Progression des étudiants",
+    "createLesson": "Créer une leçon",
+    "gradeAssignments": "Noter les devoirs",
+    "classAnalytics": "Analyses de classe",
+    "studentDetails": "Détails de l'étudiant",
+    "notes": "Notes",
+    "addNote": "Ajouter une note"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "email": "Email",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié?",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "errors": {
+    "generic": "Une erreur s'est produite",
+    "network": "Erreur réseau",
+    "notFound": "Non trouvé",
+    "unauthorized": "Non autorisé",
+    "serverError": "Erreur du serveur"
+  }
+}

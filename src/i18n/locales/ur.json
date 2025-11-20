@@ -1,0 +1,108 @@
+{
+  "security": {
+    "sessionWarning": "آپ کا سیشن جلد ختم ہونے والا ہے",
+    "sessionExpired": "سیشن ختم ہو گیا۔ براہ کرم دوبارہ لاگ ان کریں۔",
+    "extendSession": "سیشن بڑھائیں"
+  },
+  "nav": {
+    "home": "ہوم",
+    "dashboard": "ڈیش بورڈ",
+    "tasks": "کام",
+    "lessons": "اسباق",
+    "forum": "فورم",
+    "profile": "پروفائل",
+    "admin": "ایڈمن",
+    "teacher": "استاد"
+  },
+  "roles": {
+    "admin": "منتظم",
+    "teacher": "استاد",
+    "student": "طالب علم"
+  },
+  "profile": {
+    "title": "پروفائل",
+    "badges": "بیجز",
+    "achievements": "کامیابیاں",
+    "stats": "اعدادوشمار",
+    "editProfile": "پروفائل میں ترمیم کریں"
+  },
+  "stats": {
+    "totalXP": "کل XP",
+    "level": "سطح",
+    "streak": "سلسلہ",
+    "completedLessons": "مکمل شدہ اسباق",
+    "averageScore": "اوسط سکور",
+    "studyTime": "مطالعہ کا وقت"
+  },
+  "theme": {
+    "title": "تھیم",
+    "auto": "خودکار",
+    "playful": "تفریحی",
+    "professional": "پیشہ ورانہ",
+    "autoDescription": "آپ کے کردار اور عمر کے مطابق",
+    "playfulDescription": "روشن اور تفریحی رنگ",
+    "professionalDescription": "خوبصورت اور کم سے کم",
+    "applied": "تھیم لاگو ہو گئی",
+    "switchedTo": "{theme} تھیم پر سوئچ کیا"
+  },
+  "search": {
+    "placeholder": "تلاش کریں...",
+    "noResults": "کوئی نتیجہ نہیں ملا"
+  },
+  "dashboard": {
+    "welcome": "خوش آمدید",
+    "selectClass": "کلاس منتخب کریں",
+    "selectLevel": "سطح منتخب کریں",
+    "teacher": {
+      "overview": "جائزہ",
+      "students": "طلباء",
+      "analytics": "تجزیات"
+    },
+    "admin": {
+      "users": "صارفین",
+      "system": "نظام",
+      "reports": "رپورٹیں"
+    }
+  },
+  "teacher": {
+    "dashboard": "استاد کا ڈیش بورڈ",
+    "myClasses": "میری کلاسیں",
+    "studentProgress": "طالب علم کی ترقی",
+    "createLesson": "سبق بنائیں",
+    "gradeAssignments": "اسائنمنٹس کی درجہ بندی کریں",
+    "classAnalytics": "کلاس کے تجزیات",
+    "studentDetails": "طالب علم کی تفصیلات",
+    "notes": "نوٹس",
+    "addNote": "نوٹ شامل کریں"
+  },
+  "auth": {
+    "login": "لاگ ان",
+    "register": "رجسٹر کریں",
+    "email": "ای میل",
+    "password": "پاس ورڈ",
+    "forgotPassword": "پاس ورڈ بھول گئے؟",
+    "signIn": "سائن ان کریں",
+    "signUp": "سائن اپ کریں"
+  },
+  "common": {
+    "loading": "لوڈ ہو رہا ہے...",
+    "save": "محفوظ کریں",
+    "cancel": "منسوخ کریں",
+    "delete": "حذف کریں",
+    "edit": "ترمیم کریں",
+    "back": "واپس",
+    "next": "اگلا",
+    "submit": "جمع کرائیں",
+    "close": "بند کریں",
+    "confirm": "تصدیق کریں",
+    "yes": "ہاں",
+    "no": "نہیں"
+  },
+  "errors": {
+    "generic": "ایک خرابی پیش آئی",
+    "network": "نیٹ ورک کی خرابی",
+    "notFound": "نہیں ملا",
+    "unauthorized": "غیر مجاز",
+    "serverError": "سرور کی خرابی"
+  }
+}
