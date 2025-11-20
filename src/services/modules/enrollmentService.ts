@@ -142,17 +142,17 @@ export const enrollmentService = {
       const { data, error } = await supabase
         .from('enrollments')
         .update({
-          class_id: classId,
-          level_id: levelId,
+          class_id: validated.classId,
+          level_id: validated.levelId,
           status: 'active',
           activated_at: new Date().toISOString()
         })
-        .eq('id', enrollmentId)
+        .eq('id', validated.enrollmentId)
         .select()
         .single();
 
       if (error) throw error;
-      logger.info('Class and level assigned', { enrollmentId, classId, levelId });
+      logger.info('Class and level assigned', { enrollmentId: validated.enrollmentId, classId: validated.classId, levelId: validated.levelId });
       return data;
     } catch (error) {
       logger.error('Failed to assign class and level', { enrollmentId }, error as Error);

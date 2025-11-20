@@ -141,11 +141,11 @@ export const adaptiveLearningService = {
     let query = supabase
       .from('vragen')
       .select('*')
-      .eq('niveau_id', niveauId)
-      .limit(count);
+      .eq('niveau_id', validated.niveauId)
+      .limit(validated.count);
 
     // If weak areas exist, prioritize questions on those topics
-    if (weakAreas.length > 0) {
+    if (validated.weakAreas.length > 0) {
       // In a real implementation, you'd have a topic field to filter on
       // For now, we'll just fetch random questions
       query = query.order('created_at', { ascending: false });
@@ -156,7 +156,7 @@ export const adaptiveLearningService = {
 
     return (data || []).map(q => ({
       id: q.id,
-      difficulty: difficulty,
+      difficulty: validated.difficulty,
       topic: 'General',
       question_text: q.vraag_tekst || '',
       question_type: q.vraag_type || 'multiple_choice',
