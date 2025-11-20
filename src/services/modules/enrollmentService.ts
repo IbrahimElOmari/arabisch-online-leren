@@ -1,10 +1,41 @@
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/utils/logger';
 import type { Enrollment, StudentProfile, EnrollmentFormData } from '@/types/modules';
+import { z } from 'zod';
+
+// Validation schemas
+export const enrollmentFormSchema = z.object({
+  dateOfBirth: z.string().optional(),
+  isMinor: z.boolean(),
+  parentName: z.string().max(255).optional(),
+  parentEmail: z.string().email().optional(),
+  parentPhone: z.string().max(50).optional(),
+  emergencyContact: z.object({
+    name: z.string(),
+    phone: z.string(),
+    relationship: z.string(),
+  }).optional(),
+  consentGiven: z.boolean(),
+});
+
+export const createEnrollmentSchema = z.object({
+  studentId: z.string().uuid('Invalid student ID'),
+  moduleId: z.string().uuid('Invalid module ID'),
+  paymentType: z.enum(['one_time', 'installment']),
+});
+
+export const assignClassLevelSchema = z.object({
+  enrollmentId: z.string().uuid('Invalid enrollment ID'),
+  classId: z.string().uuid('Invalid class ID'),
+  levelId: z.string().uuid('Invalid level ID'),
+});
 
 export const enrollmentService = {
   async createStudentProfile(userId: string, formData: EnrollmentFormData): Promise<StudentProfile> {
     try {
+      // Validate inputs
+      enrollmentFormSchema.parse(formData);
+      z.string().uuid().parse(userId);
       const profile = {
         user_id: userId,
         date_of_birth: formData.dateOfBirth || null,
@@ -38,9 +69,11 @@ export const enrollmentService = {
 
   async createEnrollment(studentId: string, moduleId: string, paymentType: 'one_time' | 'installment'): Promise<Enrollment> {
     try {
+      // Validate inputs
+      const validated = createEnrollmentSchema.parse({ studentId, moduleId, paymentType });
       const enrollment: Omit<Enrollment, 'id' | 'enrolled_at' | 'activated_at' | 'last_activity'> = {
-        student_id: studentId,
-        module_id: moduleId,
+        student_id: validated.studentId,
+        module_id: validated.moduleId,
         class_id: null,
         level_id: null,
         payment_type: paymentType,
@@ -104,6 +137,8 @@ export const enrollmentService = {
 
   async assignClassAndLevel(enrollmentId: string, classId: string, levelId: string): Promise<Enrollment> {
     try {
+      // Validate inputs
+      const validated = assignClassLevelSchema.parse({ enrollmentId, classId, levelId });
       const { data, error } = await supabase
         .from('enrollments')
         .update({

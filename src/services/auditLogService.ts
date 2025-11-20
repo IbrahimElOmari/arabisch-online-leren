@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { z } from 'zod';
 
 /**
  * Unified Audit Log Service
@@ -24,11 +25,42 @@ export interface AuditLogEntry {
   created_at?: string;
 }
 
+// Validation schemas
+export const auditLogEntrySchema = z.object({
+  user_id: z.string().uuid('Invalid user ID'),
+  action: z.string().min(1).max(100),
+  resource_type: z.string().min(1).max(100),
+  resource_id: z.string().optional(),
+  entity_type: z.string().optional(),
+  entity_id: z.string().optional(),
+  details: z.record(z.any()).optional(),
+  meta: z.record(z.any()).optional(),
+  old_values: z.record(z.any()).optional(),
+  new_values: z.record(z.any()).optional(),
+  severity: z.enum(['info', 'warning', 'error', 'critical']).optional(),
+  ip_address: z.string().optional(),
+  user_agent: z.string().optional(),
+  session_id: z.string().optional(),
+});
+
+export const auditLogQuerySchema = z.object({
+  user_id: z.string().uuid().optional(),
+  action: z.string().optional(),
+  entity_type: z.string().optional(),
+  entity_id: z.string().optional(),
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+  limit: z.number().min(1).max(1000).optional(),
+});
+
 export const auditLogService = {
   /**
    * Log action to unified audit_logs table
    */
   async log(entry: AuditLogEntry): Promise<void> {
+    // Validate input
+    auditLogEntrySchema.parse(entry);
+    
     const { error } = await supabase.from('audit_logs').insert([{
       actor_id: entry.user_id || null,
       action: entry.action,
@@ -63,6 +95,8 @@ export const auditLogService = {
     end_date?: string;
     limit?: number;
   }): Promise<AuditLogEntry[]> {
+    // Validate inputs
+    auditLogQuerySchema.parse(filters);
     let query = supabase
       .from('audit_logs')
       .select('*')

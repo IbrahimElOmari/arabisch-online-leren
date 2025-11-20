@@ -1,6 +1,17 @@
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/utils/logger';
 import type { Payment } from '@/types/modules';
+import { z } from 'zod';
+
+// Validation schemas
+export const createCheckoutSchema = z.object({
+  enrollmentId: z.string().uuid('Invalid enrollment ID'),
+  moduleId: z.string().uuid('Invalid module ID'),
+  amountCents: z.number().min(0).max(1000000),
+  paymentType: z.enum(['one_time', 'installment']),
+});
+
+export const paymentIdSchema = z.string().uuid('Invalid payment ID');
 
 /**
  * Payment Service (STUB MODE)
@@ -19,11 +30,13 @@ export const paymentService = {
    */
   async createCheckoutSession(enrollmentId: string, moduleId: string, amountCents: number, paymentType: 'one_time' | 'installment'): Promise<{ url: string; payment_id: string }> {
     try {
+      // Validate inputs
+      const validated = createCheckoutSchema.parse({ enrollmentId, moduleId, amountCents, paymentType });
       // Create payment record
       const payment: Omit<Payment, 'id' | 'created_at' | 'completed_at'> = {
-        enrollment_id: enrollmentId,
-        amount_cents: amountCents,
-        payment_type: paymentType,
+        enrollment_id: validated.enrollmentId,
+        amount_cents: validated.amountCents,
+        payment_type: validated.paymentType,
         payment_method: 'stub',
         payment_status: 'pending',
         transaction_id: `stub_${Date.now()}`,
@@ -59,6 +72,8 @@ export const paymentService = {
    */
   async simulatePaymentSuccess(paymentId: string): Promise<Payment> {
     try {
+      // Validate input
+      paymentIdSchema.parse(paymentId);
       const { data, error } = await supabase
         .from('payments')
         .update({
@@ -97,6 +112,8 @@ export const paymentService = {
    */
   async simulatePaymentFailure(paymentId: string): Promise<Payment> {
     try {
+      // Validate input
+      paymentIdSchema.parse(paymentId);
       const { data, error } = await supabase
         .from('payments')
         .update({
@@ -124,6 +141,8 @@ export const paymentService = {
 
   async getPaymentsByEnrollment(enrollmentId: string): Promise<Payment[]> {
     try {
+      // Validate input
+      z.string().uuid().parse(enrollmentId);
       const { data, error } = await supabase
         .from('payments')
         .select('*')
