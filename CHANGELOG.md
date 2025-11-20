@@ -9,6 +9,69 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Version 2.14.0 – PR13: Security Hardening Phase 1 & 2 (2025-01-20)
+
+#### Added - Fase 1 Stap 5: Virus Scanning & File Upload Security
+- 🛡️ **file_scans Table**
+  - Track all file uploads and scan results
+  - RLS policies: users see own scans, admins see all
+  - Comprehensive metadata tracking (size, type, status, results)
+  
+- 🔍 **scan-upload Edge Function**
+  - Malware detection via pattern matching
+  - File size validation (>100MB flagged)
+  - Automatic quarantine for infected files
+  - Detection patterns: XSS, code injection, PHP backdoors
+  - Service role only access for security
+  
+- 📝 **File Scan Audit Logging**
+  - All scans logged in audit_log table
+  - Events: FILE_SCAN_INITIATED, FILE_SCAN_COMPLETED, FILE_SCAN_THREAT_DETECTED
+  - Critical severity for detected threats
+  - Comprehensive scan result details
+
+#### Added - Fase 2 Stap 7: Automated Database Backups
+- 🔄 **GitHub Actions Backup Workflow**
+  - Daily automated backups at 2 AM UTC
+  - PostgreSQL custom format with gzip compression
+  - 30-day retention on GitHub Artifacts
+  - Automatic cleanup of old backups
+  - Manual trigger option
+  
+- 📊 **Backup Logging**
+  - Status tracking in backup_jobs table
+  - Success/failure notifications
+  - Artifact URL recording
+  
+- 📚 **Comprehensive Documentation**
+  - Backup procedures and schedules
+  - Restore instructions for full/partial recovery
+  - Disaster recovery plan (RTO <1h, RPO <24h)
+  - Troubleshooting guide
+
+#### Changed
+- 🔐 Enhanced security triggers and audit functions
+- 📦 Updated Supabase config for scan-upload function
+
+#### Documentation
+- 📄 `docs/security/PR13-STAP5-VIRUS-SCANNING.md` - Complete virus scanning docs
+- 📄 `docs/backup/AUTOMATED-BACKUPS.md` - Backup automation guide
+- 📄 `.github/workflows/backup-database.yml` - Workflow configuration
+
+#### Security Improvements
+- Automatic threat detection and quarantine
+- Comprehensive audit trail for file operations
+- Service role enforcement for sensitive operations
+- Encrypted backup storage
+
+#### Future Enhancements
+- 🔮 ClamAV integration for real-time scanning
+- 🔮 VirusTotal API for comprehensive threat detection
+- 🔮 Point-in-time recovery for backups
+- 🔮 Automated restore testing
+
+---
+
 ### Version 2.12.0 – PR12: ThemeSelector + Vertalingen (2025-11-19)
 
 #### Added
