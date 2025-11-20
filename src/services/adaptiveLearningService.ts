@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { PracticeSession } from '@/types/learning';
+import { z } from 'zod';
 
 interface DifficultyRecommendation {
   recommended_difficulty: 'easy' | 'medium' | 'hard';
@@ -18,6 +19,32 @@ interface AdaptiveQuestion {
   options?: any;
 }
 
+// Validation schemas
+export const difficultyRequestSchema = z.object({
+  studentId: z.string().uuid('Invalid student ID'),
+  moduleId: z.string().uuid('Invalid module ID'),
+});
+
+export const adaptiveQuestionsSchema = z.object({
+  niveauId: z.string().uuid('Invalid niveau ID'),
+  difficulty: z.enum(['easy', 'medium', 'hard']),
+  weakAreas: z.array(z.string()).default([]),
+  count: z.number().min(1).max(50).default(10),
+});
+
+export const submitAnswerSchema = z.object({
+  sessionId: z.string().uuid('Invalid session ID'),
+  questionId: z.string().uuid('Invalid question ID'),
+  answer: z.any(),
+  timeSpent: z.number().min(0),
+});
+
+export const practiceSessionSchema = z.object({
+  studentId: z.string().uuid('Invalid student ID'),
+  moduleId: z.string().uuid('Invalid module ID'),
+  difficulty: z.enum(['easy', 'medium', 'hard']),
+});
+
 export const adaptiveLearningService = {
   /**
    * Analyzes student performance and recommends next difficulty level
@@ -27,12 +54,14 @@ export const adaptiveLearningService = {
     studentId: string,
     moduleId: string
   ): Promise<DifficultyRecommendation> {
+    // Validate inputs
+    const validated = difficultyRequestSchema.parse({ studentId, moduleId });
     // Fetch learning analytics
     const { data: analytics, error } = await supabase
       .from('learning_analytics')
       .select('*')
-      .eq('student_id', studentId)
-      .eq('module_id', moduleId)
+      .eq('student_id', validated.studentId)
+      .eq('module_id', validated.moduleId)
       .order('last_updated', { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -107,6 +136,8 @@ export const adaptiveLearningService = {
     weakAreas: string[],
     count: number = 10
   ): Promise<AdaptiveQuestion[]> {
+    // Validate inputs
+    const validated = adaptiveQuestionsSchema.parse({ niveauId, difficulty, weakAreas, count });
     let query = supabase
       .from('vragen')
       .select('*')

@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { z } from 'zod';
 
 export interface BackupJob {
   id: string;
@@ -24,10 +25,22 @@ export interface AuditLog {
   };
 }
 
+// Validation schemas
+export const maintenanceModeSchema = z.object({
+  enabled: z.boolean(),
+});
+
+export const backupJobSchema = z.object({
+  note: z.string().max(500).optional(),
+});
+
 export const adminOpsService = {
   async toggleMaintenance(enabled: boolean): Promise<{ success: boolean; enabled: boolean }> {
+    // Validate input
+    const validated = maintenanceModeSchema.parse({ enabled });
+    
     const { data, error } = await supabase.functions.invoke('admin-ops', {
-      body: { enabled },
+      body: { enabled: validated.enabled },
       headers: {
         'Content-Type': 'application/json'
       }
@@ -38,8 +51,11 @@ export const adminOpsService = {
   },
 
   async createBackupJob(note?: string): Promise<{ success: boolean; job: BackupJob }> {
+    // Validate input
+    const validated = backupJobSchema.parse({ note });
+    
     const { data, error } = await supabase.functions.invoke('admin-ops', {
-      body: { note: note || '' },
+      body: { note: validated.note || '' },
       headers: {
         'Content-Type': 'application/json'
       }
