@@ -82,6 +82,7 @@
     "i18next-icu": "^2.4.1",
     "input-otp": "^1.4.2",
     "intl-messageformat": "^10.7.18",
+    "jest-axe": "^10.0.0",
     "lucide-react": "^0.468.0",
     "next-themes": "^0.4.6",
     "react": "^18.3.1",
@@ -101,12 +102,12 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
-    "@playwright/test": "^1.49.1",
+    "@playwright/test": "^1.56.1",
     "@sentry/react": "^10.18.0",
     "@size-limit/file": "^11.2.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
-    "@testing-library/user-event": "^14.5.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.10.5",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
