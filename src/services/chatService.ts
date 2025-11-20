@@ -297,11 +297,40 @@ export class ChatService {
     const fileExt = file.name.split('.').pop();
     const fileName = `${userId}/${conversationId}/${Date.now()}.${fileExt}`;
 
+    // Upload file to storage
     const { data, error } = await supabase.storage
       .from('chat_attachments')
       .upload(fileName, file);
 
     if (error) throw error;
+
+    // Trigger virus scan
+    try {
+      const { data: scanResult, error: scanError } = await supabase.functions.invoke('scan-upload', {
+        body: {
+          filePath: data.path,
+          fileSize: file.size,
+          fileType: file.type,
+          uploadedBy: userId,
+          storageBucket: 'chat_attachments'
+        }
+      });
+
+      if (scanError) {
+        console.error('Virus scan failed:', scanError);
+        // Don't block upload on scan failure, but log it
+      }
+
+      if (scanResult && !scanResult.success) {
+        // File is infected, it's already deleted by scan-upload
+        throw new Error('File upload blocked: security threat detected');
+      }
+    } catch (scanError) {
+      console.error('Virus scan error:', scanError);
+      // If scan fails completely, delete the file to be safe
+      await supabase.storage.from('chat_attachments').remove([data.path]);
+      throw new Error('File upload failed security check');
+    }
 
     const { data: { publicUrl } } = supabase.storage
       .from('chat_attachments')
