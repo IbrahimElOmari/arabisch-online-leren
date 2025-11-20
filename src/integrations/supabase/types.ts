@@ -531,6 +531,48 @@ export type Database = {
         }
         Relationships: []
       }
+      ban_history: {
+        Row: {
+          ban_type: string
+          banned_by: string
+          banned_until: string | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          lift_reason: string | null
+          lifted_at: string | null
+          lifted_by: string | null
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          ban_type: string
+          banned_by: string
+          banned_until?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          lift_reason?: string | null
+          lifted_at?: string | null
+          lifted_by?: string | null
+          reason: string
+          user_id: string
+        }
+        Update: {
+          ban_type?: string
+          banned_by?: string
+          banned_until?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          lift_reason?: string | null
+          lifted_at?: string | null
+          lifted_by?: string | null
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       bonus_points: {
         Row: {
           awarded_by: string
@@ -582,6 +624,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      bulk_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          recipients_count: number | null
+          scheduled_for: string | null
+          sender_id: string
+          sent_at: string | null
+          status: string
+          subject: string
+          target_audience: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          recipients_count?: number | null
+          scheduled_for?: string | null
+          sender_id: string
+          sent_at?: string | null
+          status?: string
+          subject: string
+          target_audience?: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          recipients_count?: number | null
+          scheduled_for?: string | null
+          sender_id?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          target_audience?: Json
+        }
+        Relationships: []
       }
       calendar_events: {
         Row: {
@@ -1874,6 +1955,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      knowledge_base_articles: {
+        Row: {
+          author_id: string
+          category: string
+          content: string
+          created_at: string
+          excerpt: string | null
+          helpful_count: number | null
+          id: string
+          not_helpful_count: number | null
+          published_at: string | null
+          search_vector: unknown
+          slug: string
+          status: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          views_count: number | null
+        }
+        Insert: {
+          author_id: string
+          category: string
+          content: string
+          created_at?: string
+          excerpt?: string | null
+          helpful_count?: number | null
+          id?: string
+          not_helpful_count?: number | null
+          published_at?: string | null
+          search_vector?: unknown
+          slug: string
+          status?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          views_count?: number | null
+        }
+        Update: {
+          author_id?: string
+          category?: string
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          helpful_count?: number | null
+          id?: string
+          not_helpful_count?: number | null
+          published_at?: string | null
+          search_vector?: unknown
+          slug?: string
+          status?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          views_count?: number | null
+        }
+        Relationships: []
       }
       leaderboard_entries: {
         Row: {
@@ -3584,6 +3722,98 @@ export type Database = {
           },
         ]
       }
+      support_messages: {
+        Row: {
+          attachments: Json | null
+          created_at: string
+          id: string
+          is_internal: boolean | null
+          message: string
+          sender_id: string
+          ticket_id: string
+        }
+        Insert: {
+          attachments?: Json | null
+          created_at?: string
+          id?: string
+          is_internal?: boolean | null
+          message: string
+          sender_id: string
+          ticket_id: string
+        }
+        Update: {
+          attachments?: Json | null
+          created_at?: string
+          id?: string
+          is_internal?: boolean | null
+          message?: string
+          sender_id?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          assigned_to: string | null
+          category: string
+          closed_at: string | null
+          created_at: string
+          description: string
+          id: string
+          priority: string
+          resolved_at: string | null
+          satisfaction_rating: number | null
+          sla_deadline: string | null
+          status: string
+          subject: string
+          ticket_number: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          category: string
+          closed_at?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          priority?: string
+          resolved_at?: string | null
+          satisfaction_rating?: number | null
+          sla_deadline?: string | null
+          status?: string
+          subject: string
+          ticket_number: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: string
+          closed_at?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          priority?: string
+          resolved_at?: string | null
+          satisfaction_rating?: number | null
+          sla_deadline?: string | null
+          status?: string
+          subject?: string
+          ticket_number?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       system_announcements: {
         Row: {
           announcement_content: string
@@ -4076,6 +4306,36 @@ export type Database = {
           },
         ]
       }
+      user_reputation: {
+        Row: {
+          accepted_answers: number | null
+          bans_count: number | null
+          helpful_posts: number | null
+          last_updated: string | null
+          reputation_score: number | null
+          user_id: string
+          warnings_count: number | null
+        }
+        Insert: {
+          accepted_answers?: number | null
+          bans_count?: number | null
+          helpful_posts?: number | null
+          last_updated?: string | null
+          reputation_score?: number | null
+          user_id: string
+          warnings_count?: number | null
+        }
+        Update: {
+          accepted_answers?: number | null
+          bans_count?: number | null
+          helpful_posts?: number | null
+          last_updated?: string | null
+          reputation_score?: number | null
+          user_id?: string
+          warnings_count?: number | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -4172,6 +4432,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_warnings: {
+        Row: {
+          acknowledged: boolean | null
+          acknowledged_at: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          issued_by: string
+          reason: string
+          severity: string
+          user_id: string
+        }
+        Insert: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          issued_by: string
+          reason: string
+          severity: string
+          user_id: string
+        }
+        Update: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          issued_by?: string
+          reason?: string
+          severity?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       vragen: {
         Row: {
@@ -4319,6 +4615,10 @@ export type Database = {
       }
     }
     Functions: {
+      calculate_sla_deadline: {
+        Args: { priority_level: string }
+        Returns: string
+      }
       change_user_role: {
         Args: {
           new_role: Database["public"]["Enums"]["app_role"]
@@ -4371,6 +4671,7 @@ export type Database = {
       }
       fetch_teacher_notes: { Args: { p_student_id: string }; Returns: Json[] }
       fetch_teacher_rewards: { Args: { p_student_id: string }; Returns: Json[] }
+      generate_ticket_number: { Args: never; Returns: string }
       get_conversation_messages: {
         Args: { user1_id: string; user2_id: string }
         Returns: {
