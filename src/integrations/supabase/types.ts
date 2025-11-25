@@ -2410,6 +2410,13 @@ export type Database = {
             foreignKeyName: "message_reads_message_id_fkey"
             columns: ["message_id"]
             isOneToOne: false
+            referencedRelation: "conversation_last_messages"
+            referencedColumns: ["message_id"]
+          },
+          {
+            foreignKeyName: "message_reads_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
             referencedRelation: "messages"
             referencedColumns: ["id"]
           },
@@ -4601,6 +4608,55 @@ export type Database = {
       }
     }
     Views: {
+      conversation_last_messages: {
+        Row: {
+          content: string | null
+          conversation_id: string | null
+          created_at: string | null
+          message_id: string | null
+          sender_id: string | null
+          sender_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_unread_counts: {
+        Row: {
+          conversation_id: string | null
+          unread_count: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       global_search_index: {
         Row: {
           body: string | null
@@ -4610,6 +4666,53 @@ export type Database = {
           entity_type: string | null
           title: string | null
           tsv: unknown
+        }
+        Relationships: []
+      }
+      student_analytics_summary: {
+        Row: {
+          all_strong_areas: string[] | null
+          all_weak_areas: string[] | null
+          avg_accuracy: number | null
+          last_activity: string | null
+          module_id: string | null
+          niveau_id: string | null
+          student_id: string | null
+          topics_covered: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_analytics_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_analytics_niveau_id_fkey"
+            columns: ["niveau_id"]
+            isOneToOne: false
+            referencedRelation: "niveaus"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_analytics_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_ticket_stats: {
+        Row: {
+          assigned_to: string | null
+          avg_resolution_hours: number | null
+          avg_satisfaction: number | null
+          priority: string | null
+          sla_breaches: number | null
+          status: string | null
+          ticket_count: number | null
         }
         Relationships: []
       }
