@@ -499,6 +499,10 @@ export class CurriculumService {
     // Get progress per pillar
     const pillarsProgress = await Promise.all(
       LEARNING_PILLARS.map(async (pillar) => {
+        if (!enrollment.level_id) {
+          return { pillar: pillar.key, percentage: 0 };
+        }
+        
         // Count completed content per pillar
         const { count: total } = await supabase
           .from('content_library')
