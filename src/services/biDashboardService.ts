@@ -142,23 +142,26 @@ export class BiDashboardService {
 
     return {
       total_revenue: totalRevenue,
-      revenue_by_module: Object.entries(revenueByModule).map(([module_name, amount]) => ({
+      paying_students: new Set((data || []).map((row: any) => row.student_id)).size,
+      average_revenue_per_student: totalRevenue / Math.max(1, new Set((data || []).map((row: any) => row.student_id)).size),
+      conversion_rate: 0, // Would need enrollment data
+      revenue_by_module: Object.entries(revenueByModule).map(([module_name, total_revenue]) => ({
         module_name,
-        amount,
+        total_revenue,
       })),
-      revenue_by_level: Object.entries(revenueByLevel).map(([level_name, amount]) => ({
+      revenue_by_level: Object.entries(revenueByLevel).map(([level_name, total_revenue]) => ({
         level_name,
-        amount,
+        total_revenue,
       })),
       revenue_by_class: [], // Not implemented yet
-      revenue_trend: Object.entries(revenueTrend).map(([date, amount]) => ({
+      revenue_trend: Object.entries(revenueTrend).map(([date, total_revenue]) => ({
         date,
-        amount,
+        total_revenue,
       })).sort((a, b) => a.date.localeCompare(b.date)),
       payment_methods: [], // Would need payment_method field
-      currency_breakdown: Object.entries(currencyBreakdown).map(([currency, amount]) => ({
+      currency_breakdown: Object.entries(currencyBreakdown).map(([currency, count]) => ({
         currency,
-        amount,
+        count,
       })),
     };
   }
@@ -211,39 +214,56 @@ export class BiDashboardService {
       });
     });
 
-    // Get detailed student progress
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('id, full_name')
-      .in('id', (data || []).map(row => row.student_id));
+    // Group by level for student progress
+    const levelProgress: Record<string, { count: number; totalPoints: number }> = {};
+    (data || []).forEach((row: any) => {
+      const levelName = 'Level ' + (row.niveau_id || 'Unknown');
+      if (!levelProgress[levelName]) {
+        levelProgress[levelName] = { count: 0, totalPoints: 0 };
+      }
+      levelProgress[levelName].count++;
+      levelProgress[levelName].totalPoints += (row.total_points || 0);
+    });
 
-    const studentProgress = await Promise.all(
-      (data || []).slice(0, 100).map(async (row: any) => {
-        const profile = (profiles || []).find(p => p.id === row.student_id);
-        
-        // Get practice sessions count as proxy
-        const { count: practiceCount } = await supabase
-          .from('practice_sessions')
-          .select('*', { count: 'exact', head: true })
-          .eq('student_id', row.student_id);
+    const studentProgress = Object.entries(levelProgress).map(([level_name, data]) => ({
+      level_name,
+      student_count: data.count,
+      avg_points: data.count > 0 ? data.totalPoints / data.count : 0,
+    }));
 
-        return {
-          student_id: row.student_id,
-          student_name: profile?.full_name || 'Unknown',
-          niveau: 'N/A',
-          accuracy: row.accuracy_rate || 0,
-          lessons_completed: practiceCount || 0,
-          time_spent_hours: 0,
-        };
-      })
-    );
+    // Module popularity
+    const modulePopularity: Record<string, number> = {};
+    (data || []).forEach((row: any) => {
+      const moduleName = row.module_id || 'Unknown';
+      modulePopularity[moduleName] = (modulePopularity[moduleName] || 0) + 1;
+    });
+
+    // Engagement trend (last 7 days)
+    const engagementTrend: Record<string, { sessions: number; totalTime: number }> = {};
+    (data || []).forEach((row: any) => {
+      const date = new Date(row.last_updated).toISOString().split('T')[0];
+      if (!engagementTrend[date]) {
+        engagementTrend[date] = { sessions: 0, totalTime: 0 };
+      }
+      engagementTrend[date].sessions++;
+    });
 
     return {
       total_students: totalStudents,
       active_students: activeStudents,
-      avg_accuracy_rate: avgAccuracy,
+      avg_accuracy: avgAccuracy,
       completion_rate: 0, // Would need more complex calculation
+      avg_session_minutes: 0, // Would need session duration data
       student_progress: studentProgress,
+      module_popularity: Object.entries(modulePopularity).map(([module_name, enrollment_count]) => ({
+        module_name,
+        enrollment_count,
+      })).slice(0, 10),
+      engagement_trend: Object.entries(engagementTrend).map(([date, data]) => ({
+        date,
+        avg_session_minutes: 0, // Would need session duration data
+        total_sessions: data.sessions,
+      })).sort((a, b) => a.date.localeCompare(b.date)),
       theory_vs_skills: {
         avg_theory_score: avgAccuracy * 100, // Simplified
         avg_skills_score: avgAccuracy * 95, // Simplified (typically slightly lower)
