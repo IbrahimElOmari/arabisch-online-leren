@@ -33,25 +33,25 @@ export const FinancialDashboard = () => {
   const stats = [
     {
       title: t('dashboard.total_revenue', 'Totale Omzet'),
-      value: `€${(financial.totalRevenue / 100).toFixed(2)}`,
+      value: `€${(financial.total_revenue / 100).toFixed(2)}`,
       icon: DollarSign,
       trend: '+12.5%',
     },
     {
       title: t('dashboard.paying_students', 'Betalende Studenten'),
-      value: financial.payingStudents,
+      value: financial.paying_students,
       icon: Users,
       trend: '+8.2%',
     },
     {
       title: t('dashboard.avg_revenue_per_student', 'Gem. Omzet per Student'),
-      value: `€${(financial.averageRevenuePerStudent / 100).toFixed(2)}`,
+      value: `€${(financial.average_revenue_per_student / 100).toFixed(2)}`,
       icon: TrendingUp,
       trend: '+4.1%',
     },
     {
       title: t('dashboard.conversion_rate', 'Conversie Ratio'),
-      value: `${financial.conversionRate.toFixed(1)}%`,
+      value: `${financial.conversion_rate.toFixed(1)}%`,
       icon: CreditCard,
       trend: '+2.3%',
     },
@@ -92,7 +92,7 @@ export const FinancialDashboard = () => {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={financial.revenueByModule}>
+              <BarChart data={financial.revenue_by_module}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="module_name" />
                 <YAxis tickFormatter={(value) => `€${(value / 100).toFixed(0)}`} />
@@ -113,7 +113,7 @@ export const FinancialDashboard = () => {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={financial.revenueByLevel}
+                  data={financial.revenue_by_level}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -122,7 +122,7 @@ export const FinancialDashboard = () => {
                   fill="#8884d8"
                   dataKey="total_revenue"
                 >
-                  {financial.revenueByLevel.map((_: any, index: number) => (
+                  {financial.revenue_by_level.map((_: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -143,7 +143,7 @@ export const FinancialDashboard = () => {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={financial.revenueTrend}>
+              <LineChart data={financial.revenue_trend}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="date" 
@@ -169,7 +169,7 @@ export const FinancialDashboard = () => {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={financial.currencyBreakdown}>
+              <BarChart data={financial.currency_breakdown}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="currency" />
                 <YAxis tickFormatter={(value) => `${value}`} />
@@ -191,7 +191,7 @@ export const FinancialDashboard = () => {
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
-                data={financial.paymentMethods}
+                data={financial.payment_methods}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
@@ -200,7 +200,7 @@ export const FinancialDashboard = () => {
                 fill="#8884d8"
                 dataKey="count"
               >
-                {financial.paymentMethods.map((_: any, index: number) => (
+                {financial.payment_methods.map((_: any, index: number) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>

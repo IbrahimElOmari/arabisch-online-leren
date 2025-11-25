@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, LineChart, Line, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, LineChart, Line, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { BookOpen, Target, TrendingUp, Award } from 'lucide-react';
 import { BiDashboardService } from '@/services/biDashboardService';
 import { useTranslation } from '@/contexts/TranslationContext';
@@ -31,25 +31,25 @@ export const EducationalDashboard = () => {
   const stats = [
     {
       title: t('dashboard.active_students', 'Actieve Studenten'),
-      value: educational.activeStudents,
+      value: educational.active_students,
       icon: BookOpen,
       trend: '+15.3%',
     },
     {
       title: t('dashboard.avg_accuracy', 'Gem. Nauwkeurigheid'),
-      value: `${educational.avgAccuracy.toFixed(1)}%`,
+      value: `${educational.avg_accuracy.toFixed(1)}%`,
       icon: Target,
       trend: '+3.2%',
     },
     {
       title: t('dashboard.completion_rate', 'Voltooiingspercentage'),
-      value: `${educational.completionRate.toFixed(1)}%`,
+      value: `${educational.completion_rate.toFixed(1)}%`,
       icon: Award,
       trend: '+5.7%',
     },
     {
       title: t('dashboard.avg_session_time', 'Gem. Sessie Tijd'),
-      value: `${educational.avgSessionTime}min`,
+      value: `${educational.avg_session_minutes}min`,
       icon: TrendingUp,
       trend: '+8.1%',
     },
@@ -57,8 +57,8 @@ export const EducationalDashboard = () => {
 
   // Prepare data for weak/strong topics chart
   const topicsData = [
-    ...educational.weakTopics.map((t: any) => ({ topic: t.topic, count: -t.student_count, type: 'Zwak' })),
-    ...educational.strongTopics.map((t: any) => ({ topic: t.topic, count: t.student_count, type: 'Sterk' })),
+    ...educational.weak_topics.map((t: any) => ({ topic: t.topic, count: -t.student_count, type: 'Zwak' })),
+    ...educational.strong_topics.map((t: any) => ({ topic: t.topic, count: t.student_count, type: 'Sterk' })),
   ];
 
   return (
@@ -96,7 +96,7 @@ export const EducationalDashboard = () => {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={educational.studentProgress}>
+              <BarChart data={educational.student_progress}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="level_name" />
                 <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
@@ -118,7 +118,7 @@ export const EducationalDashboard = () => {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={educational.modulePopularity} layout="vertical">
+              <BarChart data={educational.module_popularity} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" />
                 <YAxis dataKey="module_name" type="category" width={100} />
@@ -164,7 +164,7 @@ export const EducationalDashboard = () => {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={educational.engagementTrend}>
+              <LineChart data={educational.engagement_trend}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="date" 
@@ -192,11 +192,11 @@ export const EducationalDashboard = () => {
         <CardContent>
           <ResponsiveContainer width="100%" height={400}>
             <RadarChart data={[
-              { skill: 'Lezen', accuracy: educational.avgAccuracy },
-              { skill: 'Schrijven', accuracy: educational.avgAccuracy * 0.9 },
-              { skill: 'Spelling', accuracy: educational.avgAccuracy * 0.85 },
-              { skill: 'Vormleer', accuracy: educational.avgAccuracy * 0.8 },
-              { skill: 'Grammatica', accuracy: educational.avgAccuracy * 0.75 },
+              { skill: 'Lezen', accuracy: educational.avg_accuracy },
+              { skill: 'Schrijven', accuracy: educational.avg_accuracy * 0.9 },
+              { skill: 'Spelling', accuracy: educational.avg_accuracy * 0.85 },
+              { skill: 'Vormleer', accuracy: educational.avg_accuracy * 0.8 },
+              { skill: 'Grammatica', accuracy: educational.avg_accuracy * 0.75 },
             ]}>
               <PolarGrid />
               <PolarAngleAxis dataKey="skill" />

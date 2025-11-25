@@ -24,26 +24,36 @@ export const dashboardFiltersSchema = z.object({
 // Types
 export interface FinancialMetrics {
   total_revenue: number;
-  revenue_by_module: Array<{ module_name: string; amount: number }>;
-  revenue_by_level: Array<{ level_name: string; amount: number }>;
+  paying_students: number;
+  average_revenue_per_student: number;
+  conversion_rate: number;
+  revenue_by_module: Array<{ module_name: string; total_revenue: number }>;
+  revenue_by_level: Array<{ level_name: string; total_revenue: number }>;
   revenue_by_class: Array<{ class_name: string; amount: number }>;
-  revenue_trend: Array<{ date: string; amount: number }>;
-  payment_methods: Array<{ method: string; count: number; amount: number }>;
-  currency_breakdown: Array<{ currency: string; amount: number }>;
+  revenue_trend: Array<{ date: string; total_revenue: number }>;
+  payment_methods: Array<{ payment_method: string; count: number; amount: number }>;
+  currency_breakdown: Array<{ currency: string; count: number }>;
 }
 
 export interface EducationalMetrics {
   total_students: number;
   active_students: number;
-  avg_accuracy_rate: number;
+  avg_accuracy: number;
   completion_rate: number;
+  avg_session_minutes: number;
   student_progress: Array<{
-    student_id: string;
-    student_name: string;
-    niveau: string;
-    accuracy: number;
-    lessons_completed: number;
-    time_spent_hours: number;
+    level_name: string;
+    student_count: number;
+    avg_points: number;
+  }>;
+  module_popularity: Array<{
+    module_name: string;
+    enrollment_count: number;
+  }>;
+  engagement_trend: Array<{
+    date: string;
+    avg_session_minutes: number;
+    total_sessions: number;
   }>;
   theory_vs_skills: {
     avg_theory_score: number;
