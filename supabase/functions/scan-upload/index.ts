@@ -1,5 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.5'
 import { corsHeaders } from '../_shared/cors.ts'
+import { ClamAVScanner } from './clamav-integration.ts'
+import { VirusTotalScanner } from './virustotal-integration.ts'
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -118,8 +120,10 @@ Deno.serve(async (req) => {
 })
 
 /**
- * Performs virus scanning on uploaded files
- * In production, integrate with ClamAV, VirusTotal, or similar services
+ * Performs virus scanning on uploaded files with cascade fallback:
+ * 1. VirusTotal API (if key available)
+ * 2. ClamAV (if host configured)
+ * 3. Pattern matching (fallback)
  */
 async function performVirusScan(
   filePath: string,
@@ -140,32 +144,99 @@ async function performVirusScan(
       }
     }
 
-    // Basic file size check (files over 100MB are suspicious)
     const fileBuffer = await fileData.arrayBuffer()
     const fileSizeInMB = fileBuffer.byteLength / (1024 * 1024)
     
+    // File size check (files over 100MB are rejected)
     if (fileSizeInMB > 100) {
-      console.warn(`⚠️ Suspicious file size: ${fileSizeInMB}MB`)
+      console.warn(`⚠️ File too large: ${fileSizeInMB}MB`)
+      return {
+        status: 'infected',
+        details: {
+          reason: 'file_too_large',
+          size: fileSizeInMB,
+          scanner: 'size-check',
+          timestamp: new Date().toISOString()
+        }
+      }
     }
 
-    // Check for known malicious patterns in file content
+    const fileName = filePath.split('/').pop() || 'unknown'
+
+    // TIER 1: Try VirusTotal API (best coverage, cloud-based)
+    const virusTotalKey = Deno.env.get('VIRUSTOTAL_API_KEY')
+    if (virusTotalKey) {
+      try {
+        console.log('🔍 Scanning with VirusTotal API...')
+        const vtScanner = new VirusTotalScanner(virusTotalKey)
+        const vtResult = await vtScanner.scanFile(fileBuffer, fileName)
+        
+        if (vtResult.status !== 'error') {
+          console.log(`✅ VirusTotal scan complete: ${vtResult.status}`)
+          return vtResult
+        }
+        
+        console.warn('⚠️ VirusTotal scan failed, falling back to ClamAV')
+      } catch (vtError) {
+        console.error('VirusTotal error:', vtError)
+        console.log('Falling back to ClamAV...')
+      }
+    }
+
+    // TIER 2: Try ClamAV (local/container-based scanning)
+    const clamavHost = Deno.env.get('CLAMAV_HOST')
+    const clamavPort = Deno.env.get('CLAMAV_PORT')
+    
+    if (clamavHost) {
+      try {
+        console.log('🔍 Scanning with ClamAV...')
+        const clamScanner = new ClamAVScanner({
+          host: clamavHost,
+          port: clamavPort ? parseInt(clamavPort) : 3310
+        })
+        
+        const clamResult = await clamScanner.scanFile(fileBuffer)
+        
+        if (clamResult.status !== 'error') {
+          console.log(`✅ ClamAV scan complete: ${clamResult.status}`)
+          return clamResult
+        }
+        
+        console.warn('⚠️ ClamAV scan failed, falling back to pattern matching')
+      } catch (clamError) {
+        console.error('ClamAV error:', clamError)
+        console.log('Falling back to pattern matching...')
+      }
+    }
+
+    // TIER 3: Pattern matching fallback (basic protection)
+    console.log('🔍 Using pattern matching (fallback mode)...')
+    
     const textDecoder = new TextDecoder('utf-8', { fatal: false })
     const textContent = textDecoder.decode(fileBuffer).toLowerCase()
     
     // Common malicious patterns
     const maliciousPatterns = [
       '<script>alert(',
+      '<script>prompt(',
+      '<script>confirm(',
       'eval(',
       'document.write(',
       'window.location',
       'onerror=',
       'onload=',
+      'onclick=',
       'javascript:',
       'data:text/html',
       '<?php',
       'exec(',
       'system(',
-      'shell_exec('
+      'shell_exec(',
+      'passthru(',
+      'base64_decode(',
+      'gzinflate(',
+      'str_rot13(',
+      'eval(base64_decode'
     ]
 
     for (const pattern of maliciousPatterns) {
@@ -175,27 +246,23 @@ async function performVirusScan(
           status: 'infected',
           details: {
             detectedPattern: pattern,
-            scanner: 'pattern-matching',
-            timestamp: new Date().toISOString()
+            scanner: 'pattern-matching-fallback',
+            timestamp: new Date().toISOString(),
+            warning: 'Basic pattern matching only - consider enabling ClamAV or VirusTotal'
           }
         }
       }
     }
 
-    // ✅ ClamAV & VirusTotal integratie beschikbaar:
-    // 1. Importeer: import { ClamAVScanner } from './clamav-integration.ts'
-    // 2. Of: import { VirusTotalScanner } from './virustotal-integration.ts'
-    // 3. Vervang performVirusScan met scanner.scanFile(fileBuffer, fileName)
-    // Zie docs/security/VIRUS-SCANNING-SETUP.md voor installatie-instructies
-
-    console.log(`✅ File passed basic security checks: ${filePath}`)
+    console.log(`✅ File passed security checks (pattern matching): ${filePath}`)
 
     return {
       status: 'clean',
       details: {
-        scanner: 'basic-pattern-matching',
+        scanner: 'pattern-matching-fallback',
         timestamp: new Date().toISOString(),
-        fileSize: fileBuffer.byteLength
+        fileSize: fileBuffer.byteLength,
+        warning: 'Using basic scanning - for production, enable VirusTotal or ClamAV'
       }
     }
 
