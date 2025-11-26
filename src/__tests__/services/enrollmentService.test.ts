@@ -138,10 +138,17 @@ describe('EnrollmentService', () => {
 
     it('should throw error when database insert fails', async () => {
       const userId = '423e4567-e89b-12d3-a456-426614174000';
-      const profileData = {
+      const profileData: EnrollmentFormData = {
+        dateOfBirth: '2000-01-01',
         isMinor: false,
+        emergencyContact: {
+          name: 'Jane Smith',
+          phone: '+31612345678',
+          relationship: 'Mother',
+        },
         consentGiven: true,
-      } as any;
+        paymentType: 'one_time',
+      };
 
       const mockInsert = vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
@@ -157,7 +164,7 @@ describe('EnrollmentService', () => {
       } as any);
 
       await expect(
-        enrollmentService.createStudentProfile(userId, formData)
+        enrollmentService.createStudentProfile(userId, profileData)
       ).rejects.toThrow();
     });
   });
@@ -507,8 +514,15 @@ describe('EnrollmentService', () => {
       // Step 1: Create student profile
       const userId = 'o23e4567-e89b-12d3-a456-426614174000';
       const profileData: EnrollmentFormData = {
+        dateOfBirth: '2000-05-15',
         isMinor: false,
+        emergencyContact: {
+          name: 'Emergency Contact',
+          phone: '+31698765432',
+          relationship: 'Sibling',
+        },
         consentGiven: true,
+        paymentType: 'installment',
       };
 
       const mockProfile = {
