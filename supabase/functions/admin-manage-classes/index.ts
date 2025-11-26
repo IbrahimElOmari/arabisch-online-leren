@@ -29,15 +29,16 @@ serve(async (req) => {
       throw new Error(`Authentication failed: ${userError?.message || 'No user found'}`);
     }
 
-    const { data: profile, error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+  // Verify admin role using secure RPC
+  const { data: isAdmin, error: roleError } = await supabaseAdmin
+    .rpc('has_role', {
+      _user_id: user.id,
+      _role: 'admin'
+    });
 
-    if (profileError || profile.role !== 'admin') {
-      throw new Error('Unauthorized: admin access required');
-    }
+  if (roleError || !isAdmin) {
+    throw new Error('Unauthorized: admin access required');
+  }
 
     const { action, ...actionData } = await req.json();
 
