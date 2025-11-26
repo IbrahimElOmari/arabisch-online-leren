@@ -34,29 +34,26 @@ serve(async (req) => {
       throw new Error('class_id is required');
     }
 
-    // Check if admin or allow self-enrollment for students
-    const { data: adminProfile } = await supabaseClient
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    // Check if admin or allow self-enrollment for students using secure RPC
+    const { data: userRole, error: roleError } = await supabaseClient
+      .rpc('get_user_role', {
+        user_id: user.id
+      });
+
+    if (roleError) {
+      throw new Error('Failed to verify user role');
+    }
 
     const targetStudentId = student_id || user.id;
 
-    if (adminProfile?.role === 'admin') {
+    if (userRole === 'admin') {
       // Admin can enroll any student
       if (!student_id) {
         throw new Error('student_id is required for admin enrollment');
       }
     } else {
       // Students can only enroll themselves
-      const { data: profile } = await supabaseClient
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (!profile || profile.role !== 'leerling') {
+      if (userRole !== 'leerling') {
         throw new Error('Only students can enroll in classes');
       }
     }
@@ -102,7 +99,7 @@ serve(async (req) => {
       .from('audit_log')
       .insert({
         user_id: user.id,
-        actie: adminProfile?.role === 'admin' ? 'admin_enrollment' : 'mock_enrollment',
+        actie: userRole === 'admin' ? 'admin_enrollment' : 'mock_enrollment',
         details: { 
           class_id,
           class_name: klas.name,

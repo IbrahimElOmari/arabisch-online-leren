@@ -29,22 +29,20 @@ serve(async (req) => {
       throw new Error(`Authentication failed: ${userError?.message || 'No user found'}`);
     }
 
-    const { data: profile, error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+  // Check user role for upload permissions using secure RPC
+  const { data: userRole, error: roleError } = await supabaseAdmin
+    .rpc('get_user_role', {
+      user_id: user.id
+    });
 
-    if (profileError) {
-      throw new Error(`Profile not found: ${profileError.message}`);
-    }
+  if (roleError) {
+    throw new Error(`Failed to verify user role: ${roleError.message}`);
+  }
 
-    const userRole = profile.role;
-
-    // Check authorization
-    if (userRole !== 'admin' && userRole !== 'leerkracht') {
-      throw new Error('Unauthorized: admin or teacher access required');
-    }
+  // Check authorization
+  if (userRole !== 'admin' && userRole !== 'leerkracht') {
+    throw new Error('Unauthorized: admin or teacher access required');
+  }
 
     const formData = await req.formData();
     const file = formData.get('file') as File;

@@ -61,20 +61,19 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    // Get user profile
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+  // Get user role using secure RPC
+  const { data: profile, error: profileError } = await supabase
+    .rpc('get_user_role', {
+      user_id: user.id
+    });
 
-    if (profileError) {
-      console.error('Profile error:', profileError);
-      return new Response(JSON.stringify({ error: 'User profile not found' }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+  if (profileError) {
+    console.error('Profile error:', profileError);
+    return new Response(JSON.stringify({ error: 'User profile not found' }), {
+      status: 404,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
 
     const body: TaskAction = await req.json();
     console.log('Task action:', body);
@@ -92,8 +91,13 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
-        // Check authorization (admin or teacher of the level's class)
-        if (profile.role !== 'admin') {
+      // Check authorization (admin or teacher of the level's class) using secure RPC
+      const { data: isAdmin } = await supabase.rpc('has_role', {
+        _user_id: user.id,
+        _role: 'admin'
+      });
+
+      if (!isAdmin) {
           const { data: levelCheck, error: levelError } = await supabase
             .from('niveaus')
             .select(`
@@ -107,9 +111,8 @@ const handler = async (req: Request): Promise<Response> => {
             return new Response(JSON.stringify({ error: 'Unauthorized to create tasks for this level' }), {
               status: 403,
               headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            });
-          }
         }
+      }
 
         const { data, error } = await supabase
           .from('tasks')
@@ -240,8 +243,13 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
-        // Check authorization (admin or teacher of the task's level's class)
-        if (profile.role !== 'admin') {
+      // Check authorization (admin or teacher of the task's level's class) using secure RPC
+      const { data: isAdmin } = await supabase.rpc('has_role', {
+        _user_id: user.id,
+        _role: 'admin'
+      });
+
+      if (!isAdmin) {
           const { data: submissionCheck, error: submissionError } = await supabase
             .from('task_submissions')
             .select(`
