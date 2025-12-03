@@ -111,8 +111,9 @@ const handler = async (req: Request): Promise<Response> => {
             return new Response(JSON.stringify({ error: 'Unauthorized to create tasks for this level' }), {
               status: 403,
               headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          }
         }
-      }
 
         const { data, error } = await supabase
           .from('tasks')
