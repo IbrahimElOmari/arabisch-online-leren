@@ -1,0 +1,221 @@
+{/* Design Tokens Documentation */}
+
+import { Meta, ColorPalette, ColorItem, Typeset } from '@storybook/blocks';
+
+<Meta title="Design System/Design Tokens" />
+
+# Design Tokens
+
+This documentation describes the design tokens used throughout the Arabisch Online Leren platform.
+All colors are defined in HSL format and can be customized via CSS variables.
+
+## Color Palette
+
+### Brand Colors
+
+<ColorPalette>
+  <ColorItem
+    title="Primary"
+    subtitle="--primary: 196 100% 35%"
+    colors={{ 
+      Primary: 'hsl(196, 100%, 35%)',
+      'Primary Glow': 'hsl(196, 100%, 45%)',
+      'Primary Foreground': 'hsl(0, 0%, 98%)'
+    }}
+  />
+  <ColorItem
+    title="Secondary"
+    subtitle="--secondary: 45 93% 47%"
+    colors={{ 
+      Secondary: 'hsl(45, 93%, 47%)',
+      'Secondary Foreground': 'hsl(0, 0%, 98%)'
+    }}
+  />
+  <ColorItem
+    title="Accent"
+    subtitle="--accent: 160 84% 39%"
+    colors={{ 
+      Accent: 'hsl(160, 84%, 39%)',
+      'Accent Foreground': 'hsl(0, 0%, 98%)'
+    }}
+  />
+</ColorPalette>
+
+### Semantic Colors
+
+<ColorPalette>
+  <ColorItem
+    title="Success"
+    subtitle="--success: 142 76% 36%"
+    colors={{ Success: 'hsl(142, 76%, 36%)' }}
+  />
+  <ColorItem
+    title="Warning"
+    subtitle="--warning: 38 92% 50%"
+    colors={{ Warning: 'hsl(38, 92%, 50%)' }}
+  />
+  <ColorItem
+    title="Destructive"
+    subtitle="--destructive: 0 84.2% 60.2%"
+    colors={{ Destructive: 'hsl(0, 84.2%, 60.2%)' }}
+  />
+  <ColorItem
+    title="Info"
+    subtitle="--info: 199 89% 48%"
+    colors={{ Info: 'hsl(199, 89%, 48%)' }}
+  />
+</ColorPalette>
+
+### Neutral Colors
+
+<ColorPalette>
+  <ColorItem
+    title="Background"
+    subtitle="--background"
+    colors={{ 
+      Light: 'hsl(0, 0%, 100%)',
+      Dark: 'hsl(215, 28%, 17%)'
+    }}
+  />
+  <ColorItem
+    title="Foreground"
+    subtitle="--foreground"
+    colors={{ 
+      Light: 'hsl(240, 10%, 3.9%)',
+      Dark: 'hsl(210, 40%, 98%)'
+    }}
+  />
+  <ColorItem
+    title="Muted"
+    subtitle="--muted"
+    colors={{ 
+      Muted: 'hsl(240, 4.8%, 95.9%)',
+      'Muted Foreground': 'hsl(240, 3.8%, 46.1%)'
+    }}
+  />
+  <ColorItem
+    title="Card"
+    subtitle="--card"
+    colors={{ 
+      Card: 'hsl(0, 0%, 100%)',
+      'Card Foreground': 'hsl(240, 10%, 3.9%)'
+    }}
+  />
+</ColorPalette>
+
+## Typography
+
+### Font Sizes
+
+| Token | Size | Usage |
+|-------|------|-------|
+| `--font-size-xs` | 0.75rem (12px) | Captions, labels |
+| `--font-size-sm` | 0.875rem (14px) | Secondary text |
+| `--font-size-base` | 1rem (16px) | Body text |
+| `--font-size-lg` | 1.125rem (18px) | Emphasized text |
+| `--font-size-xl` | 1.25rem (20px) | Subheadings |
+| `--font-size-2xl` | 1.5rem (24px) | Section headings |
+| `--font-size-3xl` | 1.875rem (30px) | Page headings |
+| `--font-size-4xl` | 2.25rem (36px) | Hero headings |
+
+## Spacing
+
+The spacing scale follows Tailwind CSS defaults:
+
+| Class | Value |
+|-------|-------|
+| `p-1` / `m-1` | 0.25rem (4px) |
+| `p-2` / `m-2` | 0.5rem (8px) |
+| `p-3` / `m-3` | 0.75rem (12px) |
+| `p-4` / `m-4` | 1rem (16px) |
+| `p-6` / `m-6` | 1.5rem (24px) |
+| `p-8` / `m-8` | 2rem (32px) |
+
+## Border Radius
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--radius` | 0.75rem | Default border radius |
+| `rounded-sm` | 0.125rem | Small elements |
+| `rounded-md` | 0.375rem | Medium elements |
+| `rounded-lg` | 0.5rem | Large elements |
+| `rounded-xl` | 0.75rem | Extra large elements |
+| `rounded-full` | 9999px | Circular elements |
+
+## Shadows
+
+```css
+--shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+--shadow-medium: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+--shadow-large: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+--shadow-glow: 0 0 20px hsl(var(--primary) / 0.3);
+```
+
+## Gradients
+
+```css
+--gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 100%);
+--gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--accent)) 100%);
+--gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--secondary)) 100%);
+--gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+```
+
+## Theme Variants
+
+### Playful Theme (Under 16 years)
+- Vibrant purple primary: `280 100% 70%`
+- Golden accents
+- Larger border radius: `1rem`
+- Fun animations and glow effects
+
+### Professional Theme (16+ years)
+- Muted blue-gray primary: `220 25% 25%`
+- Clean, subtle borders
+- Smaller border radius: `0.5rem`
+- Minimal, professional animations
+
+## Usage in Components
+
+### Using CSS Variables
+
+```tsx
+// In your component
+<div className="bg-primary text-primary-foreground">
+  Primary colored element
+</div>
+
+<div className="bg-destructive text-destructive-foreground">
+  Destructive action
+</div>
+
+<div className="text-muted-foreground">
+  Secondary text
+</div>
+```
+
+### Using Tailwind Classes
+
+```tsx
+// Semantic colors
+<Button variant="default">Primary Button</Button>
+<Button variant="destructive">Delete</Button>
+<Button variant="secondary">Secondary</Button>
+<Button variant="ghost">Ghost</Button>
+<Button variant="outline">Outline</Button>
+```
+
+## RTL Support
+
+All components support Right-to-Left (RTL) layout for Arabic text:
+
+```tsx
+<div dir="rtl">
+  <ArabicText>مرحبا بالعالم</ArabicText>
+</div>
+```
+
+Use logical properties for spacing:
+- `ms-4` instead of `ml-4` (margin-start)
+- `me-4` instead of `mr-4` (margin-end)
+- `ps-4` instead of `pl-4` (padding-start)
+- `pe-4` instead of `pr-4` (padding-end)
