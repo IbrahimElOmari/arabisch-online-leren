@@ -24,12 +24,12 @@ export const ResponsiveGrid = ({
 }: ResponsiveGridProps) => {
   const gapClasses = {
     sm: 'gap-3',
-    md: 'gap-4 @md:gap-6',
-    lg: 'gap-6 @lg:gap-8'
+    md: 'gap-4 md:gap-6',
+    lg: 'gap-6 lg:gap-8'
   };
 
   const gridClasses = cn(
-    'grid w-full',
+    'grid w-full max-w-full min-w-0',
     `grid-cols-${cols.default}`,
     cols.sm && `sm:grid-cols-${cols.sm}`,
     cols.md && `md:grid-cols-${cols.md}`,
@@ -37,9 +37,8 @@ export const ResponsiveGrid = ({
     cols.xl && `xl:grid-cols-${cols.xl}`,
     gapClasses[gap],
     {
-      '@container': container,
-      '@sm:grid-cols-2': container && cols.default === 1,
-      '@md:grid-cols-3': container && (cols.md || cols.default) >= 3,
+      'sm:grid-cols-2': container && cols.default === 1,
+      'md:grid-cols-3': container && (cols.md || cols.default) >= 3,
     },
     className
   );

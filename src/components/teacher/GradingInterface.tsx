@@ -260,7 +260,7 @@ export const GradingInterface = () => {
 
   return (
     <div className="space-y-6">
-      <Card className="@container">
+      <Card className="w-full max-w-full min-w-0">
         <CardContent className="p-6">
           <h2 className="text-2xl font-bold mb-6">Inzendingen Beoordelen</h2>
         

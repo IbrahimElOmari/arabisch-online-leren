@@ -203,19 +203,19 @@ const fetchClasses = async () => {
   const canAddEvents = userRole === 'admin' || userRole === 'leerkracht';
 
   return (
-    <div className="@container min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="w-full max-w-full min-w-0 min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="container mx-auto p-4 sm:p-6">
-        <div className={`flex flex-col @md:flex-row @md:items-center @md:justify-between gap-4 mb-6`}>
-          <h1 className={`text-xl @md:text-2xl font-bold ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('calendar.title')}</h1>
+        <div className={`flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6`}>
+          <h1 className={`text-xl md:text-2xl font-bold ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('calendar.title')}</h1>
           {canAddEvents && (
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="w-full @md:w-auto">
+                <Button className="w-full md:w-auto">
                   <Plus className="w-4 h-4 me-2" />
                   <span className={isRTL ? 'arabic-text' : ''}>{t('calendar.addEvent')}</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-full max-w-md @md:max-w-lg">
+              <DialogContent className="w-full max-w-md md:max-w-lg">
                 <DialogHeader>
                   <DialogTitle className={isRTL ? 'arabic-text' : ''}>{t('calendar.addNewEvent')}</DialogTitle>
                 </DialogHeader>
@@ -298,8 +298,8 @@ const fetchClasses = async () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 @lg:grid-cols-3 gap-4 @md:gap-6">
-          <Card className="@lg:col-span-2 @container">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+          <Card className="lg:col-span-2 w-full max-w-full min-w-0">
             <CardHeader>
               <CardTitle className={`flex items-center gap-2 ${isRTL ? 'arabic-text' : ''}`}>
                 <CalendarIcon className="w-5 h-5" />
@@ -322,9 +322,9 @@ const fetchClasses = async () => {
             </CardContent>
           </Card>
 
-          <Card className="@container">
+          <Card className="w-full max-w-full min-w-0">
             <CardHeader>
-              <CardTitle className="text-base @md:text-lg">
+              <CardTitle className="text-base md:text-lg">
                 {selectedDate ? format(selectedDate, 'dd MMMM yyyy') : 'Selecteer een datum'}
               </CardTitle>
             </CardHeader>
@@ -335,13 +335,13 @@ const fetchClasses = async () => {
                     getEventsForDate(selectedDate).map((event) => (
                       <div key={event.id} className="p-3 border rounded-lg">
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-sm @md:text-base">{event.title}</h4>
+                          <h4 className="font-medium text-sm md:text-base">{event.title}</h4>
                           <Badge variant={event.event_type === 'vacation' ? 'secondary' : 'default'}>
                             {event.event_type === 'vacation' ? 'Vakantie' : 'Evenement'}
                           </Badge>
                         </div>
                         {event.description && (
-                          <p className="text-xs @md:text-sm text-muted-foreground">{event.description}</p>
+                          <p className="text-xs md:text-sm text-muted-foreground">{event.description}</p>
                         )}
                         <p className="text-xs text-muted-foreground mt-2">
                           {format(parseISO(event.start_date), 'dd/MM/yyyy')} - {format(parseISO(event.end_date), 'dd/MM/yyyy')}
