@@ -214,3 +214,148 @@ test.describe('RTL Navigation Order', () => {
     expect(focusedElement?.withinViewport).toBe(true);
   });
 });
+
+/**
+ * Dashboard-specific RTL tests
+ * These tests verify the /dashboard route works correctly in RTL mode
+ */
+test.describe('Dashboard RTL Tests', () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+
+  test('Dashboard main content visible in Arabic RTL mode', async ({ page }) => {
+    // Set Arabic language
+    await page.evaluate(() => {
+      localStorage.setItem('language_preference', 'ar');
+    });
+    
+    // Navigate to dashboard (will redirect to login if not authenticated)
+    await page.goto('/dashboard');
+    await page.waitForLoadState('networkidle');
+    
+    // Check document direction is RTL
+    const dir = await page.evaluate(() => 
+      document.documentElement.getAttribute('dir')
+    );
+    expect(dir).toBe('rtl');
+    
+    // Check for no horizontal overflow
+    const hasOverflow = await page.evaluate(() => {
+      const html = document.documentElement;
+      return html.scrollWidth > window.innerWidth + 1;
+    });
+    expect(hasOverflow).toBe(false);
+    
+    // Main content should be visible
+    const mainVisible = await page.evaluate(() => {
+      const main = document.querySelector('main');
+      if (!main) return false;
+      const rect = main.getBoundingClientRect();
+      return rect.x >= -10 && rect.width > 100;
+    });
+    expect(mainVisible).toBe(true);
+  });
+
+  test('Dashboard measurements within acceptable bounds', async ({ page }) => {
+    await page.evaluate(() => {
+      localStorage.setItem('language_preference', 'ar');
+    });
+    await page.goto('/dashboard');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500); // Wait for layout to settle
+    
+    const measurements = await page.evaluate(() => {
+      const html = document.documentElement;
+      const main = document.querySelector('main');
+      const mainRect = main?.getBoundingClientRect();
+      
+      return {
+        scrollWidth: html.scrollWidth,
+        clientWidth: html.clientWidth,
+        innerWidth: window.innerWidth,
+        mainX: mainRect?.x ?? 0,
+        mainWidth: mainRect?.width ?? 0,
+        mainLeft: mainRect?.left ?? 0,
+        mainRight: mainRect?.right ?? 0,
+      };
+    });
+    
+    // scrollWidth should not exceed viewport
+    expect(measurements.scrollWidth).toBeLessThanOrEqual(measurements.innerWidth + 1);
+    
+    // Main content should be visible within viewport
+    expect(measurements.mainX).toBeGreaterThanOrEqual(-10);
+    expect(measurements.mainWidth).toBeGreaterThan(100);
+  });
+
+  test('Language switch on dashboard maintains layout stability', async ({ page }) => {
+    await page.goto('/dashboard');
+    await page.waitForLoadState('networkidle');
+    
+    // Switch to Arabic
+    await page.evaluate(() => {
+      localStorage.setItem('language_preference', 'ar');
+      document.documentElement.dir = 'rtl';
+      document.documentElement.lang = 'ar';
+    });
+    await page.waitForTimeout(300);
+    
+    // Check no horizontal scroll appeared
+    const scrollLeft = await page.evaluate(() => 
+      document.scrollingElement?.scrollLeft || 0
+    );
+    expect(scrollLeft).toBe(0);
+    
+    // Check scrollWidth
+    const scrollWidth = await page.evaluate(() => 
+      document.documentElement.scrollWidth
+    );
+    const innerWidth = await page.evaluate(() => window.innerWidth);
+    expect(scrollWidth).toBeLessThanOrEqual(innerWidth + 1);
+    
+    // Switch back to Dutch
+    await page.evaluate(() => {
+      localStorage.setItem('language_preference', 'nl');
+      document.documentElement.dir = 'ltr';
+      document.documentElement.lang = 'nl';
+    });
+    await page.waitForTimeout(300);
+    
+    // Verify layout still stable
+    const finalScrollWidth = await page.evaluate(() => 
+      document.documentElement.scrollWidth
+    );
+    expect(finalScrollWidth).toBeLessThanOrEqual(innerWidth + 1);
+  });
+
+  test('No overlay blocking main content after drawer interaction', async ({ page }) => {
+    await page.evaluate(() => {
+      localStorage.setItem('language_preference', 'ar');
+    });
+    await page.goto('/dashboard');
+    await page.waitForLoadState('networkidle');
+    
+    // Try to open and close drawer if trigger exists
+    const sidebarTrigger = page.locator('[data-sidebar="trigger"]').first();
+    if (await sidebarTrigger.isVisible()) {
+      await sidebarTrigger.click();
+      await page.waitForTimeout(300);
+      
+      // Press Escape to close
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(300);
+      
+      // Check main content is still accessible
+      const mainAccessible = await page.evaluate(() => {
+        const main = document.querySelector('main');
+        if (!main) return false;
+        const rect = main.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const elementAtCenter = document.elementFromPoint(centerX, centerY);
+        return main.contains(elementAtCenter) || elementAtCenter === main;
+      });
+      
+      expect(mainAccessible).toBe(true);
+    }
+  });
+});

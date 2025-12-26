@@ -1,6 +1,7 @@
 /**
  * AppLayout - Main application layout
  * FIX 5: Simplified mobile layout - sidebar via drawer, not flex-child
+ * FIX: Added ErrorBoundary around Outlet for catching runtime errors
  */
 
 import { Outlet } from 'react-router-dom';
@@ -12,6 +13,7 @@ import { useAccessibilityRTL } from '@/hooks/useAccessibilityRTL';
 import EnhancedNotificationSystem from '@/components/notifications/EnhancedNotificationSystem';
 import { EnhancedMobileBottomNav } from '@/components/mobile/EnhancedMobileNavigation';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { DashboardErrorBoundary } from '@/components/layout/DashboardErrorBoundary';
 
 export const AppLayout = () => {
   const { isRTL } = useRTL();
@@ -58,7 +60,9 @@ export const AppLayout = () => {
               role="main" 
               aria-label="Main content"
             >
-              <Outlet />
+              <DashboardErrorBoundary>
+                <Outlet />
+              </DashboardErrorBoundary>
             </main>
           </div>
         </div>
