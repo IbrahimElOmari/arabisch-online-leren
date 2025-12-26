@@ -15,7 +15,7 @@ export const AppGate = ({ children }: AppGateProps) => {
     // Show force unlock button after 2 seconds if still loading
     const timer = setTimeout(() => {
       if (loading && !isUnlocked) {
-        console.debug('⚠️ AppGate: Showing force unlock after 2s timeout');
+        if (import.meta.env.DEV) console.debug('⚠️ AppGate: Showing force unlock after 2s timeout');
         setShowForceUnlock(true);
       }
     }, 2000);
@@ -24,19 +24,19 @@ export const AppGate = ({ children }: AppGateProps) => {
   }, [loading, isUnlocked]);
 
   useEffect(() => {
-    // Auto-unlock after 3 seconds maximum
+    // Auto-unlock after 5 seconds maximum (increased for security)
     const maxTimer = setTimeout(() => {
       if (loading && !isUnlocked) {
-        console.debug('🔓 AppGate: Force unlocking after 3s maximum wait');
+        if (import.meta.env.DEV) console.debug('🔓 AppGate: Force unlocking after 5s maximum wait');
         setIsUnlocked(true);
       }
-    }, 3000);
+    }, 5000);
 
     return () => clearTimeout(maxTimer);
   }, [loading, isUnlocked]);
 
   if (loading && !isUnlocked) {
-    console.debug('⏳ AppGate: Loading state, showing global loader');
+    if (import.meta.env.DEV) console.debug('⏳ AppGate: Loading state, showing global loader');
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">
         <div className="text-lg mb-4">Laden...</div>
@@ -44,7 +44,7 @@ export const AppGate = ({ children }: AppGateProps) => {
         {showForceUnlock && (
           <button
             onClick={() => {
-              console.debug('🔓 AppGate: Force unlock clicked');
+              if (import.meta.env.DEV) console.debug('🔓 AppGate: Force unlock clicked');
               setIsUnlocked(true);
             }}
             className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
@@ -56,6 +56,6 @@ export const AppGate = ({ children }: AppGateProps) => {
     );
   }
 
-  console.debug('✅ AppGate: Rendering app content');
+  if (import.meta.env.DEV) console.debug('✅ AppGate: Rendering app content');
   return <>{children}</>;
 };
