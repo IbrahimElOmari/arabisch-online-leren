@@ -8,6 +8,7 @@ import { initializeCrossBrowserRTL } from "./utils/crossBrowserRTL";
 import { GlobalErrorBoundary } from "./components/system/GlobalErrorBoundary";
 import { initMonitoring } from "./lib/monitoring";
 import { initWebVitals } from "./utils/webVitals";
+import { initContainerQueryFallback } from "./utils/containerQueryFallback";
 
 // Initialize optimizations
 if (import.meta.env.PROD) {
@@ -19,6 +20,9 @@ initializeCriticalCSS();
 
 // Initialize cross-browser RTL fixes
 initializeCrossBrowserRTL();
+
+// Initialize container query fallback detection
+initContainerQueryFallback();
 
 // Initialize Web Vitals tracking
 initWebVitals();

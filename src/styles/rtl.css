@@ -514,6 +514,7 @@ html {
 
     /* ===== CRITICAL: MOBILE RTL VISIBILITY SAFEGUARD ===== */
     /* Ensures main content is ALWAYS visible in RTL mobile mode */
+    /* FIX: Removed display: block !important - was breaking flexbox layouts */
     [dir="rtl"] main,
     [dir="rtl"] .main-content,
     [dir="rtl"] #root > div,
@@ -527,28 +528,7 @@ html {
       opacity: 1 !important;
       width: 100% !important;
       max-width: 100vw !important;
-      display: block !important;
-    }
-
-    /* ===== CRITICAL: CONTAINER QUERIES MOBILE RTL FIX ===== */
-    /* Container queries must explicitly render their content in RTL mode */
-    [dir="rtl"] .\@container,
-    .rtl .\@container {
-      container-type: inline-size !important;
-      width: 100% !important;
-      min-width: 0 !important;
-      max-width: 100vw !important;
-      display: block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-    }
-
-    /* Ensure all child elements inside containers are visible */
-    [dir="rtl"] .\@container > *,
-    .rtl .\@container > * {
-      visibility: visible !important;
-      opacity: 1 !important;
-      display: block;
+      /* display: inherit - respect component's display type */
     }
 
     /* Space-y utility fix for RTL containers */
