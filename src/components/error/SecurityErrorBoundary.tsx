@@ -63,7 +63,9 @@ export class SecurityErrorBoundary extends Component<Props, State> {
         });
       }
     } catch (logError) {
-      console.error('Failed to log security error (preventing infinite loop):', logError);
+      if (import.meta.env.DEV) {
+        console.error('Failed to log security error (preventing infinite loop):', logError);
+      }
     }
 
     // Auto-retry for recoverable errors

@@ -64,7 +64,9 @@ export const useAnalyticsStore = create<AnalyticsState>((set, get) => ({
       
       set({ currentSessionId: data.id });
     } catch (error: any) {
-      console.error('Start session error:', error);
+      if (import.meta.env.DEV) {
+        console.error('Start session error:', error);
+      }
       set({ error: error.message });
     }
   },
@@ -96,7 +98,9 @@ export const useAnalyticsStore = create<AnalyticsState>((set, get) => ({
 
       set({ currentSessionId: null });
     } catch (error: any) {
-      console.error('End session error:', error);
+      if (import.meta.env.DEV) {
+        console.error('End session error:', error);
+      }
       set({ error: error.message });
     }
   },

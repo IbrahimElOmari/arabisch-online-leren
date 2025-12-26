@@ -21,7 +21,9 @@ const createFallbackProfile = (userId: string, userData?: User): UserProfile => 
  * @returns Promise resolving to UserProfile
  */
 const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
-  console.debug('🔍 fetchUserProfile: Fetching for user:', userId);
+  if (import.meta.env.DEV) {
+    console.debug('🔍 fetchUserProfile: Fetching for user:', userId);
+  }
   
   try {
     const controller = new AbortController();
@@ -37,7 +39,9 @@ const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
     clearTimeout(timeout);
 
     if (error) {
-      console.warn('⚠️ fetchUserProfile: Database error, using fallback');
+      if (import.meta.env.DEV) {
+        console.warn('⚠️ fetchUserProfile: Database error, using fallback');
+      }
       const { data: userData } = await supabase.auth.getUser();
       return createFallbackProfile(userId, userData.user || undefined);
     }
@@ -45,7 +49,9 @@ const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
     return data as UserProfile;
     
   } catch (error) {
-    console.warn('⚠️ fetchUserProfile: Exception, using fallback:', error);
+    if (import.meta.env.DEV) {
+      console.warn('⚠️ fetchUserProfile: Exception, using fallback:', error);
+    }
     const { data: userData } = await supabase.auth.getUser();
     return createFallbackProfile(userId, userData.user || undefined);
   }
@@ -73,7 +79,9 @@ export const useUserProfileQuery = (user: User | null) => {
       });
     },
     onError: (error) => {
-      console.error('❌ useUserProfileQuery: Refresh failed:', error);
+      if (import.meta.env.DEV) {
+        console.error('❌ useUserProfileQuery: Refresh failed:', error);
+      }
       toast({
         title: "Profiel bijwerken mislukt",
         description: "Er ging iets mis bij het bijwerken van je profiel",

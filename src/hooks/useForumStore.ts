@@ -132,7 +132,9 @@ export const useForumStore = create<ForumState>((set, get) => ({
 
       set({ posts: organizedPosts as any, loading: false });
     } catch (error: any) {
-      console.error('[useForumStore.fetchPosts] Error:', error);
+      if (import.meta.env.DEV) {
+        console.error('[useForumStore.fetchPosts] Error:', error);
+      }
       set({ error: error.message, loading: false });
     }
   },
@@ -158,7 +160,9 @@ export const useForumStore = create<ForumState>((set, get) => ({
       });
 
       if (error) {
-        console.warn('[useForumStore.createPost] Edge function error, fallback to direct insert:', error);
+        if (import.meta.env.DEV) {
+          console.warn('[useForumStore.createPost] Edge function error, fallback to direct insert:', error);
+        }
 
         const { data: userData, error: userErr } = await supabase.auth.getUser();
         if (userErr) throw userErr;
@@ -197,7 +201,9 @@ export const useForumStore = create<ForumState>((set, get) => ({
       set({ loading: false });
       return true;
     } catch (error: any) {
-      console.error('[useForumStore.createPost] Error:', error);
+      if (import.meta.env.DEV) {
+        console.error('[useForumStore.createPost] Error:', error);
+      }
       set({ error: error.message, loading: false });
       return false;
     }

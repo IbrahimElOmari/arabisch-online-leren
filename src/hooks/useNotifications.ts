@@ -31,7 +31,9 @@ export const useNotifications = () => {
       setNotifications(data || []);
       setUnreadCount(data?.filter(n => !n.is_read).length || 0);
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching notifications:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -51,7 +53,9 @@ export const useNotifications = () => {
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error marking notification as read:', error);
+      }
     }
   };
 
@@ -70,7 +74,9 @@ export const useNotifications = () => {
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
       setUnreadCount(0);
     } catch (error) {
-      console.error('Error marking all notifications as read:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error marking all notifications as read:', error);
+      }
     }
   };
 
@@ -82,7 +88,9 @@ export const useNotifications = () => {
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error creating notification:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error creating notification:', error);
+      }
     }
   };
 

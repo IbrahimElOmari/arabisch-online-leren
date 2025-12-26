@@ -23,7 +23,9 @@ interface EnrolledClass {
  * @returns Promise resolving to EnrolledClass array
  */
 const fetchUserClasses = async (userId: string, role: string): Promise<EnrolledClass[]> => {
-  console.debug('🔄 fetchUserClasses: Fetching classes for role:', role);
+  if (import.meta.env.DEV) {
+    console.debug('🔄 fetchUserClasses: Fetching classes for role:', role);
+  }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 4000);
