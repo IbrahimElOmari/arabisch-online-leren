@@ -4,6 +4,7 @@
  * FIX: Added ErrorBoundary around Outlet for catching runtime errors
  */
 
+import { useEffect, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/ui/AppSidebar';
@@ -15,49 +16,115 @@ import { EnhancedMobileBottomNav } from '@/components/mobile/EnhancedMobileNavig
 import { useIsMobile } from '@/hooks/use-mobile';
 import { DashboardErrorBoundary } from '@/components/layout/DashboardErrorBoundary';
 
+type RTLDebugFlags = {
+  rtlDebug: boolean;
+  noSidebar: boolean;
+  noBottomNav: boolean;
+  noHeader: boolean;
+};
+
+const getDebugFlags = (): RTLDebugFlags => {
+  if (typeof window === 'undefined') {
+    return { rtlDebug: false, noSidebar: false, noBottomNav: false, noHeader: false };
+  }
+
+  const sp = new URLSearchParams(window.location.search);
+  return {
+    rtlDebug: sp.get('rtlDebug') === '1',
+    noSidebar: sp.get('noSidebar') === '1',
+    noBottomNav: sp.get('noBottomNav') === '1',
+    noHeader: sp.get('noHeader') === '1',
+  };
+};
+
 export const AppLayout = () => {
   const { isRTL } = useRTL();
   const { getNavigationAttributes } = useAccessibilityRTL();
   const isMobile = useIsMobile();
 
+  // Debug flags to isolate which layout component hides main content on RTL mobile.
+  // Usage (DEV): add query params e.g.
+  //   ?rtlDebug=1&noSidebar=1&noBottomNav=1&noHeader=1
+  const debug = useMemo(() => getDebugFlags(), []);
+
+  useEffect(() => {
+    if (!import.meta.env.DEV || !debug.rtlDebug) return;
+
+    let cancelled = false;
+
+    (async () => {
+      // Dynamic import so this never impacts production bundles.
+      const rtl = await import('@/utils/rtlDebugger');
+      if (cancelled) return;
+
+      rtl.logRTLDebugInfo?.();
+
+      const mainCheck = rtl.checkMainContentVisibility?.();
+      const overlay = rtl.detectOverlayOverMain?.();
+
+      const main = document.querySelector('main');
+      const rect = main?.getBoundingClientRect();
+      const cs = main ? window.getComputedStyle(main) : null;
+
+      console.group('[RTL Debug] AppLayout probe');
+      console.log({
+        route: window.location.pathname,
+        debug,
+        dir: document.documentElement.getAttribute('dir'),
+        lang: document.documentElement.getAttribute('lang'),
+        isRTL,
+        isMobile,
+        mainCheck,
+        overlay,
+        mainRect: rect,
+        mainStyle: cs
+          ? {
+              display: cs.display,
+              visibility: cs.visibility,
+              opacity: cs.opacity,
+              transform: cs.transform,
+              overflowX: cs.overflowX,
+              position: cs.position,
+              zIndex: cs.zIndex,
+            }
+          : null,
+      });
+      console.groupEnd();
+
+      // Also run the helper from containerQueryFallback if present
+      (window as any).checkRTLContentVisibility?.();
+    })().catch((e) => console.error('[RTL Debug] probe failed', e));
+
+    return () => {
+      cancelled = true;
+    };
+  }, [debug, isRTL, isMobile]);
+
   return (
     <SidebarProvider defaultOpen={false}>
-      {/* 
-        FIX 4: Anti-overflow contract on root container
-        - max-w-[100vw] prevents exceeding viewport
-        - overflow-x-clip clips overflow without affecting scrolling
-      */}
-      <div 
+      <div
         className="min-h-screen bg-background w-full max-w-[100vw] overflow-x-clip"
         dir={isRTL ? 'rtl' : 'ltr'}
-        style={{ minWidth: 0 }} // FIX 4: Prevents flex items from overflowing
+        style={{ minWidth: 0 }}
       >
-        <div 
-          className="flex min-h-screen w-full max-w-[100vw]" 
+        <div
+          className="flex min-h-screen w-full max-w-[100vw]"
           style={{ minWidth: 0 }}
           {...getNavigationAttributes()}
         >
-          {/* 
-            FIX 5: On mobile, sidebar is rendered but hidden via CSS
-            It appears as a drawer overlay, not affecting main content flow
-          */}
-          {!isMobile && <AppSidebar />}
-          
-          {/* 
-            Main content container - always full width on mobile
-            FIX 4: min-w-0 prevents flex child from exceeding parent
-          */}
-          <div 
+          {!isMobile && !debug.noSidebar && <AppSidebar />}
+
+          <div
             className="flex-1 flex flex-col w-full max-w-[100vw] overflow-x-clip"
             style={{ minWidth: 0 }}
           >
-            <Navigation />
+            {!debug.noHeader && <Navigation />}
             <EnhancedNotificationSystem />
-            
-            <main 
-              className="flex-1 p-4 w-full max-w-[100vw] overflow-x-clip" 
+
+            <main
+              className="flex-1 p-4 w-full max-w-[100vw] overflow-x-clip"
               style={{ minWidth: 0 }}
-              role="main" 
+              role="main"
               aria-label="Main content"
             >
               <DashboardErrorBoundary>
@@ -67,14 +134,10 @@ export const AppLayout = () => {
           </div>
         </div>
 
-        {/* 
-          FIX 5: Mobile navigation as portal/overlay
-          Doesn't affect main content layout 
-        */}
         {isMobile && (
           <>
-            <AppSidebar /> {/* Renders as drawer on mobile */}
-            <EnhancedMobileBottomNav />
+            {!debug.noSidebar && <AppSidebar />}
+            {!debug.noBottomNav && <EnhancedMobileBottomNav />}
           </>
         )}
       </div>
