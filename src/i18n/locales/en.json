@@ -14,6 +14,7 @@
   },
   "nav": {
     "home": "Home",
+    "home_dashboard": "Home",
     "dashboard": "Dashboard",
     "leerstof": "Learning Materials",
     "taken": "Tasks",
@@ -23,7 +24,13 @@
     "management": "Management",
     "logout": "Logout",
     "pricing": "Pricing",
-    "vision": "Vision"
+    "vision": "Vision",
+    "calendar": "Calendar",
+    "main": "Main",
+    "learning": "Learning",
+    "security": "Security",
+    "menu": "Menu",
+    "guest": "Guest"
   },
   "roles": {
     "admin": "Administrator",
@@ -32,7 +39,10 @@
     "unknown": "User"
   },
   "user": {
+    "profile": "My Profile",
     "view_profile": "View Profile",
+    "profile_updated": "Profile successfully updated",
+    "profile_description": "View and edit your profile information",
     "change_password": "Change Password",
     "settings": "Settings",
     "logout": "Logout"
