@@ -1,12 +1,21 @@
+/**
+ * RTL Context - Single Source of Truth
+ * FIX 1: RTL is now derived directly from i18n.language
+ * FIX 3: Removed transition: all on <html> to prevent layout flicker
+ */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import i18n from '@/i18n/config';
+
+// RTL languages list
+const RTL_LANGUAGES = ['ar', 'ur', 'he', 'fa', 'ps', 'sd'];
 
 interface RTLContextType {
   isRTL: boolean;
   toggleRTL: () => void;
   setRTL: (isRTL: boolean) => void;
   isLoading: boolean;
+  currentLanguage: string;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
@@ -23,81 +32,108 @@ interface RTLProviderProps {
   children: React.ReactNode;
 }
 
-// Constants for localStorage
-const RTL_STORAGE_KEY = 'leer-arabisch-rtl-preference';
+/**
+ * Determines if a language is RTL
+ */
+const isRTLLanguage = (lang: string): boolean => {
+  return RTL_LANGUAGES.includes(lang.split('-')[0].toLowerCase());
+};
 
 export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
-  const [isRTL, setIsRTLState] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-// RTL styles are now bundled statically via index.css (@import './styles/rtl.css')
+  // FIX 1: Derive RTL state directly from current language
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'nl');
+  const [isLoading, setIsLoading] = useState(false);
 
+  // RTL is computed from language - single source of truth
+  const isRTL = isRTLLanguage(currentLanguage);
 
-  // Load RTL preference from localStorage on mount
-  useEffect(() => {
-    const savedPreference = localStorage.getItem(RTL_STORAGE_KEY);
-    if (savedPreference !== null) {
-      setIsRTLState(savedPreference === 'true');
+  // Reset horizontal scroll position when direction changes
+  const resetHorizontalScroll = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      const currentTop = window.scrollY;
+      window.scrollTo({ left: 0, top: currentTop, behavior: 'instant' });
+      if (document.scrollingElement) {
+        document.scrollingElement.scrollLeft = 0;
+      }
     }
-    setIsLoading(false);
   }, []);
 
-  // Persist RTL preference to localStorage
-  useEffect(() => {
-    if (!isLoading) {
-      localStorage.setItem(RTL_STORAGE_KEY, isRTL.toString());
-    }
-  }, [isRTL, isLoading]);
-
-  const toggleRTL = () => {
-    setIsLoading(true);
-    // Small delay for smooth transition
-    setTimeout(() => {
-      const newRTLState = !isRTL;
-      setIsRTLState(newRTLState);
-      setIsLoading(false);
-    }, 150);
-  };
-
-  const setRTL = (newIsRTL: boolean) => {
-    if (newIsRTL !== isRTL) {
-      setIsLoading(true);
-      setTimeout(() => {
-        setIsRTLState(newIsRTL);
-        setIsLoading(false);
-      }, 150);
-    }
-  };
-
-  // Apply direction to document element with smooth transition
+  // Apply direction to document element
   useEffect(() => {
     const html = document.documentElement;
+    const newDir = isRTL ? 'rtl' : 'ltr';
+    const newLang = currentLanguage;
+
+    // FIX 3: NO transition on html element - prevents layout flicker
+    // Only apply minimal opacity transition for smooth visual
+    html.style.transition = 'opacity 0.15s ease';
+    html.style.opacity = '0.98';
+
+    // Apply attributes
+    html.dir = newDir;
+    html.lang = newLang;
     
-    // Add transition class for smooth direction change
-    html.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+    // Update classes
+    html.classList.remove('rtl-mode', 'ltr-mode');
+    html.classList.add(isRTL ? 'rtl-mode' : 'ltr-mode');
+
+    // Reset scroll and restore opacity
+    requestAnimationFrame(() => {
+      resetHorizontalScroll();
+      html.style.opacity = '1';
+      
+      // Clean up transition after change
+      setTimeout(() => {
+        html.style.transition = '';
+      }, 150);
+    });
+  }, [isRTL, currentLanguage, resetHorizontalScroll]);
+
+  // Listen to i18n language changes
+  useEffect(() => {
+    const handleLanguageChange = (lng: string) => {
+      setCurrentLanguage(lng);
+    };
+
+    i18n.on('languageChanged', handleLanguageChange);
     
-    html.dir = isRTL ? 'rtl' : 'ltr';
-    // Use actual i18n language, not hardcoded nl
-    html.lang = i18n.language || 'nl';
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, []);
+
+  // Toggle between RTL and LTR by switching language
+  const toggleRTL = useCallback(() => {
+    setIsLoading(true);
+    const newLang = isRTL ? 'nl' : 'ar';
     
-    // Add/remove RTL class for additional styling
-    if (isRTL) {
-      html.classList.add('rtl-mode');
-      html.classList.remove('ltr-mode');
-    } else {
-      html.classList.add('ltr-mode');
-      html.classList.remove('rtl-mode');
+    i18n.changeLanguage(newLang).then(() => {
+      localStorage.setItem('language_preference', newLang);
+      setIsLoading(false);
+    });
+  }, [isRTL]);
+
+  // Explicitly set RTL state (switches to appropriate language)
+  const setRTL = useCallback((newIsRTL: boolean) => {
+    if (newIsRTL !== isRTL) {
+      setIsLoading(true);
+      const newLang = newIsRTL ? 'ar' : 'nl';
+      
+      i18n.changeLanguage(newLang).then(() => {
+        localStorage.setItem('language_preference', newLang);
+        setIsLoading(false);
+      });
     }
-
-    // Clean up transition after change
-    const timeoutId = setTimeout(() => {
-      html.style.transition = '';
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
   }, [isRTL]);
 
   return (
-    <RTLContext.Provider value={{ isRTL, toggleRTL, setRTL, isLoading }}>
+    <RTLContext.Provider value={{ 
+      isRTL, 
+      toggleRTL, 
+      setRTL, 
+      isLoading,
+      currentLanguage 
+    }}>
       {children}
     </RTLContext.Provider>
   );
