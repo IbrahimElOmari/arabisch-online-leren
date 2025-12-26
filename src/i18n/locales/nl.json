@@ -35,6 +35,7 @@
   },
   "nav": {
     "home": "Home",
+    "home_dashboard": "Startpagina",
     "dashboard": "Dashboard",
     "leerstof": "Leerstof",
     "taken": "Taken",
@@ -59,7 +60,10 @@
     "unknown": "Gebruiker"
   },
   "user": {
+    "profile": "Mijn Profiel",
     "view_profile": "Profiel bekijken",
+    "profile_updated": "Profiel succesvol bijgewerkt",
+    "profile_description": "Bekijk en bewerk je profielinformatie",
     "change_password": "Wachtwoord wijzigen",
     "settings": "Instellingen",
     "logout": "Uitloggen"

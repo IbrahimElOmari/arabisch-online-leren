@@ -28,6 +28,25 @@ body {
   min-width: 0 !important;
 }
 
+/* ===== FIX: CONTAINER QUERIES RTL COMPATIBILITY ===== */
+/* Ensure @container elements work correctly in RTL mode */
+.\@container {
+  container-type: inline-size;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* RTL container query fixes */
+[dir="rtl"] .\@container,
+.rtl .\@container {
+  container-type: inline-size;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  display: block;
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */

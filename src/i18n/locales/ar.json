@@ -35,6 +35,7 @@
   },
   "nav": {
     "home": "الرئيسية",
+    "home_dashboard": "الصفحة الرئيسية",
     "dashboard": "لوحة التحكم",
     "leerstof": "المواد التعليمية",
     "taken": "المهام",
@@ -59,9 +60,12 @@
     "unknown": "مستخدم"
   },
   "user": {
+    "profile": "الملف الشخصي",
     "view_profile": "عرض الملف الشخصي",
+    "profile_updated": "تم تحديث الملف الشخصي بنجاح",
+    "profile_description": "عرض وتعديل معلومات ملفك الشخصي",
     "change_password": "تغيير كلمة المرور",
-    "settings": "الإعدادات",
+    "settings": "الإعدارات",
     "logout": "تسجيل الخروج"
   },
   "profile": {
