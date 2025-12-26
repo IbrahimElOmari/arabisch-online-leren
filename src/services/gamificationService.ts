@@ -226,7 +226,9 @@ export class GamificationService {
       // Use simpler query since complex RPC is not available
       return this.getSimpleLeaderboard(limit);
     } catch (error) {
-      console.error('Leaderboard error:', error);
+      if (import.meta.env.DEV) {
+        console.error('Leaderboard error:', error);
+      }
       return this.getSimpleLeaderboard(limit);
     }
   }

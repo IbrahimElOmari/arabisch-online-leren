@@ -24,7 +24,9 @@ export async function initMonitoring(): Promise<void> {
   
   // Only initialize in production with valid DSN
   if (!sentryDsn || appEnv === 'development' || sentryInitialized) {
-    console.info('[Monitoring] Sentry disabled (no DSN, development mode, or already initialized)');
+    if (import.meta.env.DEV) {
+      console.info('[Monitoring] Sentry disabled (no DSN, development mode, or already initialized)');
+    }
     return;
   }
   
@@ -129,12 +131,16 @@ export async function initMonitoring(): Promise<void> {
     });
     
     sentryInitialized = true;
-    console.info('[Monitoring] Sentry initialized successfully', {
-      environment: appEnv,
-      tracesSampleRate: config.tracesSampleRate,
-    });
+    if (import.meta.env.DEV) {
+      console.info('[Monitoring] Sentry initialized successfully', {
+        environment: appEnv,
+        tracesSampleRate: config.tracesSampleRate,
+      });
+    }
   } catch (error) {
-    console.error('[Monitoring] Failed to initialize Sentry:', error);
+    if (import.meta.env.DEV) {
+      console.error('[Monitoring] Failed to initialize Sentry:', error);
+    }
   }
 }
 
@@ -150,7 +156,9 @@ export function isMonitoringEnabled(): boolean {
  */
 export async function captureException(error: Error, context?: Record<string, unknown>): Promise<void> {
   if (!sentryInitialized) {
-    console.error('[Monitoring] Exception captured (Sentry not initialized):', error, context);
+    if (import.meta.env.DEV) {
+      console.error('[Monitoring] Exception captured (Sentry not initialized):', error, context);
+    }
     return;
   }
   
@@ -160,7 +168,9 @@ export async function captureException(error: Error, context?: Record<string, un
       extra: context,
     });
   } catch (err) {
-    console.error('[Monitoring] Failed to capture exception:', err);
+    if (import.meta.env.DEV) {
+      console.error('[Monitoring] Failed to capture exception:', err);
+    }
   }
 }
 
@@ -169,7 +179,9 @@ export async function captureException(error: Error, context?: Record<string, un
  */
 export async function captureMessage(message: string, level: 'info' | 'warning' | 'error' = 'info'): Promise<void> {
   if (!sentryInitialized) {
-    console.log(`[Monitoring] Message captured (Sentry not initialized) [${level}]:`, message);
+    if (import.meta.env.DEV) {
+      console.log(`[Monitoring] Message captured (Sentry not initialized) [${level}]:`, message);
+    }
     return;
   }
   
@@ -177,7 +189,9 @@ export async function captureMessage(message: string, level: 'info' | 'warning' 
     const Sentry = await import('@sentry/react');
     Sentry.captureMessage(message, level);
   } catch (err) {
-    console.error('[Monitoring] Failed to capture message:', err);
+    if (import.meta.env.DEV) {
+      console.error('[Monitoring] Failed to capture message:', err);
+    }
   }
 }
 
@@ -203,7 +217,9 @@ export async function setUser(user: { id: string; email?: string; role?: string 
       Sentry.setUser(null);
     }
   } catch (err) {
-    console.error('[Monitoring] Failed to set user context:', err);
+    if (import.meta.env.DEV) {
+      console.error('[Monitoring] Failed to set user context:', err);
+    }
   }
 }
 
@@ -228,7 +244,9 @@ export async function addBreadcrumb(
       level: 'info',
     });
   } catch (err) {
-    console.error('[Monitoring] Failed to add breadcrumb:', err);
+    if (import.meta.env.DEV) {
+      console.error('[Monitoring] Failed to add breadcrumb:', err);
+    }
   }
 }
 
@@ -242,10 +260,14 @@ export async function startTransaction(name: string, op: string) {
   
   try {
     // Transaction tracking not available in current Sentry version
-    console.debug('[Monitoring] Transaction tracking:', name, op);
+    if (import.meta.env.DEV) {
+      console.debug('[Monitoring] Transaction tracking:', name, op);
+    }
     return null;
   } catch (err) {
-    console.error('[Monitoring] Failed to start transaction:', err);
+    if (import.meta.env.DEV) {
+      console.error('[Monitoring] Failed to start transaction:', err);
+    }
     return null;
   }
 }

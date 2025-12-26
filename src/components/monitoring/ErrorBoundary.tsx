@@ -61,8 +61,10 @@ class ErrorBoundary extends Component<Props, State> {
       errorId: this.state.errorId,
     };
 
-    // Console logging for development
-    console.error('Error Boundary caught an error:', errorData);
+    // Console logging for development only
+    if (import.meta.env.DEV) {
+      console.error('Error Boundary caught an error:', errorData);
+    }
 
     // Store in localStorage for debugging
     try {
@@ -72,7 +74,9 @@ class ErrorBoundary extends Component<Props, State> {
       const recentErrors = existingErrors.slice(-10);
       localStorage.setItem('error-logs', JSON.stringify(recentErrors));
     } catch (storageError) {
-      console.warn('Failed to store error log:', storageError);
+      if (import.meta.env.DEV) {
+        console.warn('Failed to store error log:', storageError);
+      }
     }
 
     // Report to monitoring service (placeholder)
@@ -107,7 +111,9 @@ class ErrorBoundary extends Component<Props, State> {
         // });
       }
     } catch (reportingError) {
-      console.warn('Failed to report error to monitoring service:', reportingError);
+      if (import.meta.env.DEV) {
+        console.warn('Failed to report error to monitoring service:', reportingError);
+      }
     }
   };
 
