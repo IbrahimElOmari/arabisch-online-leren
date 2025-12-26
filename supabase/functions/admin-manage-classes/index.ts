@@ -91,14 +91,14 @@ serve(async (req) => {
           throw new Error('Valid teacher_id is required');
         }
 
-        // Verify teacher exists and has correct role
-        const { data: teacher, error: teacherError } = await supabaseAdmin
-          .from('profiles')
-          .select('role')
-          .eq('id', actionData.teacher_id)
-          .single();
+      // Verify teacher exists and has correct role using secure RPC
+        const { data: isTeacher, error: teacherRoleError } = await supabaseAdmin
+          .rpc('has_role', {
+            _user_id: actionData.teacher_id,
+            _role: 'leerkracht'
+          });
 
-        if (teacherError || teacher.role !== 'leerkracht') {
+        if (teacherRoleError || !isTeacher) {
           throw new Error('Invalid teacher: user must have leerkracht role');
         }
 
