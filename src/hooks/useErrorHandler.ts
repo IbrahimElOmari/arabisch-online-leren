@@ -76,7 +76,7 @@ export const useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     const errorId = generateErrorId();
     const errorMessage = getErrorMessage(error);
     
-    console.error('🚨 Error handled:', error, 'Context:', context, 'ID:', errorId);
+    if (import.meta.env.DEV) console.error('🚨 Error handled:', error, 'Context:', context, 'ID:', errorId);
     
     setErrorState(prev => ({
       hasError: true,
@@ -123,7 +123,7 @@ export const useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
           user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown'
         });
       } catch (logError) {
-        console.warn('Failed to log error to security logger:', logError);
+        if (import.meta.env.DEV) console.warn('Failed to log error to security logger:', logError);
       }
     }
 
@@ -131,7 +131,7 @@ export const useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
       try {
         onError(error, errorId);
       } catch (callbackError) {
-        console.error('Error in onError callback:', callbackError);
+        if (import.meta.env.DEV) console.error('Error in onError callback:', callbackError);
       }
     }
   }, [onError, showToast, logToSecurity, toast, errorState.retryCount, maxRetries, retry]);

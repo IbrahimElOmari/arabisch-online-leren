@@ -31,7 +31,7 @@ export const ContentVersionHistory = ({ contentId, onRestore }: ContentVersionHi
       const data = await contentLibraryService.listVersions(contentId);
       setVersions(data);
     } catch (error) {
-      console.error('Failed to load versions:', error);
+      if (import.meta.env.DEV) console.error('Failed to load versions:', error);
       toast({
         title: t('error', 'Error'),
         description: t('versions.loadFailed', 'Failed to load version history'),
@@ -58,7 +58,7 @@ export const ContentVersionHistory = ({ contentId, onRestore }: ContentVersionHi
       
       loadVersions();
     } catch (error) {
-      console.error('Failed to restore version:', error);
+      if (import.meta.env.DEV) console.error('Failed to restore version:', error);
       toast({
         title: t('error', 'Error'),
         description: t('versions.restoreFailed', 'Failed to restore version'),

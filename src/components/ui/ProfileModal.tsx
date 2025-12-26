@@ -70,7 +70,7 @@ export const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
 
       setIsEditing(false);
     } catch (error: any) {
-      console.error('Error updating profile:', error);
+      if (import.meta.env.DEV) console.error('Error updating profile:', error);
       toast({
         title: t('common.error'),
         description: t('error.profile_update_failed', 'Er is een fout opgetreden bij het bijwerken van je profiel'),

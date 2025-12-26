@@ -122,7 +122,7 @@ export const AdvancedSearchModal: React.FC<AdvancedSearchModalProps> = ({
       // Save to recent searches
       saveRecentSearch(searchQuery);
     } catch (error) {
-      console.error('Search error:', error);
+      if (import.meta.env.DEV) console.error('Search error:', error);
     } finally {
       setIsSearching(false);
     }

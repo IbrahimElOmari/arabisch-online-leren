@@ -55,7 +55,7 @@ export const StudentEnrollmentModal = ({ isOpen, onClose, classId, className }: 
       const enrolledIds = new Set<string>(data?.map(enrollment => enrollment.student_id) || []);
       setEnrolledStudents(enrolledIds);
     } catch (error: any) {
-      console.error('Error fetching enrolled students:', error);
+      if (import.meta.env.DEV) console.error('Error fetching enrolled students:', error);
     }
   };
 
