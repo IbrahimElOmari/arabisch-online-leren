@@ -1,0 +1,59 @@
+{
+  "enrollment": {
+    "title": "Einschreibung für",
+    "description": "Füllen Sie das folgende Formular aus, um sich einzuschreiben",
+    "testMode": "TESTMODUS",
+    "testModeDescription": "Das Zahlungssystem befindet sich im Testmodus. Es werden keine echten Zahlungen verarbeitet.",
+    "personalInfo": "Persönliche Informationen",
+    "dateOfBirth": "Geburtsdatum",
+    "isMinor": "Ich bin unter 18 Jahre alt",
+    "parentInfo": "Eltern-/Erziehungsberechtigten-Informationen",
+    "parentName": "Name des Elternteils/Erziehungsberechtigten",
+    "parentEmail": "E-Mail des Elternteils/Erziehungsberechtigten",
+    "parentPhone": "Telefon des Elternteils/Erziehungsberechtigten",
+    "emergencyContact": "Notfallkontakt",
+    "emergencyContactName": "Name",
+    "emergencyContactPhone": "Telefon",
+    "emergencyContactRelationship": "Beziehung",
+    "relationshipPlaceholder": "z.B. Elternteil, Geschwister, Freund",
+    "paymentOptions": "Zahlungsoptionen",
+    "oneTimePayment": "Einmalzahlung",
+    "oneTimeDescription": "Einmal bezahlen und sofortigen vollen Zugang erhalten",
+    "installmentPayment": "Monatliche Raten",
+    "installmentDescription": "{{months}} monatliche Zahlungen",
+    "month": "Monat",
+    "totalAmount": "Gesamt",
+    "consent": "Ich stimme den Allgemeinen Geschäftsbedingungen zu",
+    "consentDescription": "Durch Ankreuzen dieses Kästchens stimmen Sie unseren Nutzungsbedingungen und Datenschutzrichtlinien zu.",
+    "processing": "Verarbeitung...",
+    "proceed": "Weiter zur Zahlung",
+    "error": {
+      "generic": "Einschreibung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "missingParams": "Fehlende Zahlungsparameter"
+    }
+  },
+  "payment": {
+    "processing": {
+      "title": "Zahlung wird verarbeitet",
+      "description": "Bitte warten Sie, während wir Ihre Zahlung verarbeiten..."
+    },
+    "success": {
+      "title": "Zahlung erfolgreich",
+      "description": "Ihre Zahlung wurde erfolgreich verarbeitet.",
+      "nextStep": "Sie werden in wenigen Sekunden zum Einstufungstest weitergeleitet...",
+      "continue": "Weiter zum Einstufungstest"
+    },
+    "failed": {
+      "title": "Zahlung fehlgeschlagen",
+      "description": "Wir konnten Ihre Zahlung nicht verarbeiten.",
+      "back": "Zurück zu den Modulen",
+      "retry": "Erneut versuchen"
+    },
+    "error": {
+      "title": "Zahlungsfehler",
+      "description": "Bei der Verarbeitung der Zahlung ist ein Fehler aufgetreten.",
+      "processing": "Zahlungsverarbeitung fehlgeschlagen"
+    },
+    "testMode": "Dies ist eine simulierte Zahlung. Es wurden keine echten Gebühren erhoben."
+  }
+}

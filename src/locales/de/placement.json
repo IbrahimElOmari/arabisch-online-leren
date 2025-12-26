@@ -1,0 +1,24 @@
+{
+  "placement": {
+    "title": "Einstufungstest",
+    "description": "Absolvieren Sie diesen Test, um Ihr Arabisch-Niveau zu bestimmen",
+    "startTest": "Test starten",
+    "question": "Frage",
+    "of": "von",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "submit": "Absenden",
+    "timeRemaining": "Verbleibende Zeit",
+    "completed": {
+      "title": "Test abgeschlossen",
+      "description": "Ihr Einstufungstest wurde eingereicht.",
+      "assignedLevel": "Ihr zugewiesenes Niveau",
+      "score": "Ihr Ergebnis",
+      "continue": "Weiter zum Dashboard"
+    },
+    "error": {
+      "loadFailed": "Einstufungstest konnte nicht geladen werden",
+      "submitFailed": "Test konnte nicht eingereicht werden"
+    }
+  }
+}
