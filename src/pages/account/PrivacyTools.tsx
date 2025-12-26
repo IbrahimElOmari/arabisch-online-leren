@@ -65,11 +65,11 @@ export default function PrivacyTools() {
 
   if (!FEATURE_FLAGS.gdprTools) {
     return (
-      <div className="@container min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="container mx-auto p-4 @md:p-6">
-          <Card className="@container">
+      <div className="w-full max-w-full min-w-0 min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="container mx-auto p-4 md:p-6">
+          <Card className="w-full max-w-full min-w-0">
             <CardContent className="py-8 text-center">
-              <h2 className={`text-lg @md:text-xl font-semibold mb-4 ${isRTL ? 'arabic-text font-amiri' : ''}`}>
+              <h2 className={`text-lg md:text-xl font-semibold mb-4 ${isRTL ? 'arabic-text font-amiri' : ''}`}>
                 Privacy tools uitgeschakeld
               </h2>
               <p className={`text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>
@@ -83,11 +83,11 @@ export default function PrivacyTools() {
   }
 
   return (
-    <div className="@container min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
-      <div className="container mx-auto p-4 @md:p-6">
-        <div className="mb-6 @md:mb-8">
-          <h1 className={`text-2xl @md:text-3xl font-bold flex items-center gap-2 ${isRTL ? 'arabic-text font-amiri' : ''} ${getFlexDirection()}`}>
-            <Shield className="h-6 @md:h-8 w-6 @md:w-8" />
+    <div className="w-full max-w-full min-w-0 min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="container mx-auto p-4 md:p-6">
+        <div className="mb-6 md:mb-8">
+          <h1 className={`text-2xl md:text-3xl font-bold flex items-center gap-2 ${isRTL ? 'arabic-text font-amiri' : ''} ${getFlexDirection()}`}>
+            <Shield className="h-6 md:h-8 w-6 md:w-8" />
             Privacy & GDPR Tools
           </h1>
           <p className={`text-muted-foreground mt-2 ${isRTL ? 'arabic-text' : ''}`}>
@@ -95,9 +95,9 @@ export default function PrivacyTools() {
           </p>
         </div>
 
-        <div className="grid gap-4 @md:gap-6 max-w-4xl">(
+        <div className="grid gap-4 md:gap-6 max-w-4xl w-full">
           {/* Data Export */}
-          <Card className="@container">
+          <Card className="w-full max-w-full min-w-0">
             <CardHeader>
               <CardTitle className={`flex items-center gap-2 ${getFlexDirection()} ${isRTL ? 'arabic-text font-amiri' : ''}`}>
                 <Download className="h-5 w-5" />
@@ -129,7 +129,7 @@ export default function PrivacyTools() {
               <Button 
                 onClick={handleExport}
                 disabled={exportMutation.isPending}
-                className="w-full @sm:w-auto"
+                className="w-full sm:w-auto"
               >
                 <Download className={`h-4 w-4 ${getIconSpacing('2')}`} />
                 <span className={isRTL ? 'arabic-text' : ''}>
@@ -140,7 +140,7 @@ export default function PrivacyTools() {
           </Card>
 
           {/* Account Deletion */}
-          <Card className="@container border-destructive/20">
+          <Card className="w-full max-w-full min-w-0 border-destructive/20">
             <CardHeader>
               <CardTitle className={`flex items-center gap-2 text-destructive ${getFlexDirection()} ${isRTL ? 'arabic-text font-amiri' : ''}`}>
                 <Trash2 className="h-5 w-5" />
@@ -163,12 +163,12 @@ export default function PrivacyTools() {
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="destructive" className="w-full @sm:w-auto">
+                  <Button variant="destructive" className="w-full sm:w-auto">
                     <Trash2 className={`h-4 w-4 ${getIconSpacing('2')}`} />
                     <span className={isRTL ? 'arabic-text' : ''}>Verwijderverzoek indienen</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="@container">
+                <DialogContent className="w-full max-w-full min-w-0">
                   <DialogHeader>
                     <DialogTitle className={`text-destructive ${isRTL ? 'arabic-text font-amiri' : ''}`}>
                       Account verwijderen
@@ -227,7 +227,7 @@ export default function PrivacyTools() {
           </Card>
 
           {/* Privacy Info */}
-          <Card className="@container">
+          <Card className="w-full max-w-full min-w-0">
             <CardHeader>
               <CardTitle className={isRTL ? 'arabic-text font-amiri' : ''}>Privacy informatie</CardTitle>
             </CardHeader>

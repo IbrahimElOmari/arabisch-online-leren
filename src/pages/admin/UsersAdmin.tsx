@@ -113,8 +113,8 @@ export default function UsersAdmin() {
   }
 
   return (
-    <div className="@container space-y-4 @md:space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
-      <Card className="@container">
+    <div className="w-full max-w-full min-w-0 space-y-4 md:space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <Card className="w-full max-w-full min-w-0">
         <CardHeader>
           <CardTitle className={`flex items-center gap-2 ${getFlexDirection()} ${isRTL ? 'arabic-text font-amiri' : ''}`}>
             <UserCog className="h-5 w-5" />
@@ -122,7 +122,7 @@ export default function UsersAdmin() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col @sm:flex-row gap-4 mb-4 @md:mb-6">
+          <div className="flex flex-col sm:flex-row gap-4 mb-4 md:mb-6">
             <div className="relative flex-1">
               <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-3 h-4 w-4 text-muted-foreground`} />
               <Input
@@ -134,7 +134,7 @@ export default function UsersAdmin() {
               />
             </div>
             <Select value={selectedRole} onValueChange={setSelectedRole}>
-              <SelectTrigger className="w-full @sm:w-48">
+              <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder="Filter op rol" />
               </SelectTrigger>
               <SelectContent>
@@ -152,7 +152,7 @@ export default function UsersAdmin() {
               return (
                 <div
                   key={user.id}
-                  className="flex flex-col @sm:flex-row @sm:items-center @sm:justify-between gap-4 p-4 border rounded-lg hover:bg-muted/50"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border rounded-lg hover:bg-muted/50"
                 >
                   <div className={`flex items-center gap-4 ${getFlexDirection()}`}>
                     <div className={`flex items-center gap-2 ${getFlexDirection()}`}>
@@ -175,12 +175,12 @@ export default function UsersAdmin() {
                         variant="outline" 
                         size="sm"
                         onClick={() => setChangeRoleUserId(user.id)}
-                        className="w-full @sm:w-auto"
+                        className="w-full sm:w-auto"
                       >
                         <span className={isRTL ? 'arabic-text' : ''}>Rol wijzigen</span>
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="@container">
+                    <DialogContent className="w-full max-w-full min-w-0">
                       <DialogHeader>
                         <DialogTitle className={isRTL ? 'arabic-text font-amiri' : ''}>
                           Rol wijzigen voor {user.full_name}

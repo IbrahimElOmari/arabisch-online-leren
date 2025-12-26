@@ -329,6 +329,12 @@
     "network": "Netwerkfout",
     "not_found": "Niet gevonden",
     "unauthorized": "Niet geautoriseerd",
-    "forbidden": "Geen toegang"
+    "forbidden": "Geen toegang",
+    "pageNotFound": "Pagina niet gevonden",
+    "pageNotFoundDescription": "Sorry, de pagina die je zoekt bestaat niet."
+  },
+  "navigation": {
+    "returnHome": "Terug naar home",
+    "goBack": "Ga terug"
   }
 }

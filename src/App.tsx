@@ -10,6 +10,7 @@ import { AuthProviderQuery } from '@/components/auth/AuthProviderQuery';
 import { AppGate } from '@/components/auth/AppGate';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { SessionMonitor } from '@/components/security/SessionMonitor';
+import { RTLDebugPanel } from '@/components/debug/RTLDebugPanel';
 
 // Lazy load RTLProvider to avoid static/dynamic import conflicts
 const EnhancedRTLProvider = lazy(() => import('@/components/rtl/RTLProvider').then(m => ({ default: m.EnhancedRTLProvider })));
@@ -146,6 +147,7 @@ function App() {
                 </Routes>
               </div>
               <Toaster />
+              <RTLDebugPanel />
             </Router>
               </AgeThemeProvider>
             </AuthProviderQuery>
