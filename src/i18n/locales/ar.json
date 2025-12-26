@@ -1,4 +1,25 @@
 {
+  "hero": {
+    "topPlatform": "#1 منصة لتعلم اللغة العربية",
+    "learnArabic": "تعلم العربية",
+    "welcome": "أهلاً وسهلاً",
+    "description": "اكتشف جمال اللغة العربية مع أساليبنا التعليمية التفاعلية المبتكرة. من المبتدئين إلى المتقدمين - نرافقك في رحلتك نحو إتقان العربية.",
+    "startJourney": "ابدأ رحلتك",
+    "watchDemo": "شاهد العرض التوضيحي",
+    "students": "طلاب",
+    "rating": "تقييم",
+    "freeTrialTitle": "درس تجريبي مجاني",
+    "freeTrialLive": "مباشر الآن",
+    "trialPoint1": "الأبجدية العربية في 30 دقيقة",
+    "trialPoint2": "تمارين النطق الأساسية",
+    "trialPoint3": "الكلمات والجمل الأولى",
+    "joinFree": "انضم مجاناً",
+    "noCommitment": "بدون التزامات • إلغاء في أي وقت",
+    "satisfiedStudents": "طلاب راضون",
+    "expertInstructors": "مدرسون خبراء",
+    "successRate": "معدل النجاح",
+    "onlineAccess": "الوصول عبر الإنترنت"
+  },
   "security": {
     "session": {
       "warningTitle": "ستنتهي الجلسة قريباً",
