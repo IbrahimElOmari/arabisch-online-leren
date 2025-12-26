@@ -81,7 +81,7 @@ export const BulkGradingModal = ({ isOpen, onClose, classId, levelId }: BulkGrad
 
       setSubmissions(formattedSubmissions);
     } catch (error) {
-      console.error('Error fetching submissions:', error);
+      if (import.meta.env.DEV) console.error('Error fetching submissions:', error);
       toast.error('Fout bij het ophalen van inzendingen');
     } finally {
       setFetching(false);
@@ -172,7 +172,7 @@ export const BulkGradingModal = ({ isOpen, onClose, classId, levelId }: BulkGrad
       await fetchUngraded();
       
     } catch (error) {
-      console.error('Error bulk grading:', error);
+      if (import.meta.env.DEV) console.error('Error bulk grading:', error);
       toast.error('Fout bij het bulksgewijs beoordelen');
     } finally {
       setLoading(false);

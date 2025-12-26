@@ -83,7 +83,7 @@ export const AdaptivePracticeSession: React.FC<AdaptivePracticeSessionProps> = (
         description: recommendation.reasoning,
       });
     } catch (error: any) {
-      console.error('Failed to initialize adaptive session:', error);
+      if (import.meta.env.DEV) console.error('Failed to initialize adaptive session:', error);
       toast({
         title: t('common.error', 'Error'),
         description: error.message || 'Failed to load adaptive session',
@@ -165,7 +165,7 @@ export const AdaptivePracticeSession: React.FC<AdaptivePracticeSessionProps> = (
 
       onComplete?.();
     } catch (error: any) {
-      console.error('Failed to complete session:', error);
+      if (import.meta.env.DEV) console.error('Failed to complete session:', error);
       toast({
         title: t('common.error', 'Error'),
         description: error.message,

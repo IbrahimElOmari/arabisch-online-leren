@@ -112,7 +112,7 @@ export const AudioVideoRecorder = ({
 
       toast.success(isRTL ? 'بدأ التسجيل' : 'Opname gestart');
     } catch (error) {
-      console.error('Error starting recording:', error);
+      if (import.meta.env.DEV) console.error('Error starting recording:', error);
       toast.error(isRTL ? 'خطأ في بدء التسجيل' : 'Fout bij starten opname');
     }
   };

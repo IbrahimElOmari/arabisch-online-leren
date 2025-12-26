@@ -66,7 +66,7 @@ const ForumModerationQueue = () => {
 
       setReportedPosts(formattedPosts);
     } catch (error) {
-      console.error('Error fetching reported posts:', error);
+      if (import.meta.env.DEV) console.error('Error fetching reported posts:', error);
       toast({
         title: "Fout",
         description: "Kon gerapporteerde berichten niet laden.",
@@ -98,7 +98,7 @@ const ForumModerationQueue = () => {
       // Refresh the list
       fetchReportedPosts();
     } catch (error: any) {
-      console.error('Error moderating post:', error);
+      if (import.meta.env.DEV) console.error('Error moderating post:', error);
       toast({
         title: "Fout",
         description: error.message || "Er is een fout opgetreden bij het modereren.",

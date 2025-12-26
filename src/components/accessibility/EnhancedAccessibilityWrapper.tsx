@@ -50,7 +50,7 @@ export const AccessibilityProvider = ({ children }: AccessibilityProviderProps) 
       try {
         setSettings({ ...defaultSettings, ...JSON.parse(savedSettings) });
       } catch (error) {
-        console.warn('Failed to load accessibility settings:', error);
+        if (import.meta.env.DEV) console.warn('Failed to load accessibility settings:', error);
       }
     }
 

@@ -48,7 +48,7 @@ export const EnhancedNavigationHeader = () => {
       await signOut();
       navigate('/auth');
     } catch (error) {
-      console.error('Sign out error:', error);
+      if (import.meta.env.DEV) console.error('Sign out error:', error);
     }
   };
 
