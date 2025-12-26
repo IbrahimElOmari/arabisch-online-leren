@@ -143,7 +143,9 @@ export const PushNotifications = () => {
       });
       
       // Send subscription to your backend
-      console.log('Push subscription:', subscription);
+      if (import.meta.env.DEV) {
+        console.log('Push subscription:', subscription);
+      }
       
       // Update settings
       const newSettings = { ...settings, enabled: true };

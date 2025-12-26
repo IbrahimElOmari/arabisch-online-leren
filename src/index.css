@@ -252,9 +252,25 @@ All colors MUST be HSL.
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   }
 
-  /* Mobile RTL optimizations */
+  /* Mobile RTL optimizations - CRITICAL FIX for content shifting */
   @media (max-width: 1024px) {
-    /* Use default positions from components; avoid forcing sidebar/drawer sides here */
+    /* Prevent RTL content from shifting off-screen */
+    [dir="rtl"] body,
+    [dir="rtl"] .min-h-screen,
+    [dir="rtl"] main {
+      width: 100% !important;
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+      box-sizing: border-box !important;
+    }
+    
+    /* Fix main content area in RTL */
+    [dir="rtl"] .flex-1 {
+      width: 100% !important;
+      min-width: 0 !important;
+      flex-shrink: 1 !important;
+    }
+    
     /* Mobile bottom navigation RTL */
     [dir="rtl"] .mobile-bottom-nav {
       direction: rtl;
@@ -270,12 +286,22 @@ All colors MUST be HSL.
     [dir="rtl"] .sidebar-trigger { transform: scaleX(-1); }
     [dir="ltr"] .sidebar-trigger { transform: scaleX(1); }
     
-    /* Force proper width calculations for mobile */
+    /* Force proper width calculations for mobile - CRITICAL */
     [dir="rtl"] .main-content,
-    [dir="ltr"] .main-content {
+    [dir="ltr"] .main-content,
+    .main-content {
       width: 100% !important;
       flex: 1 1 auto !important;
       min-width: 0 !important;
+      max-width: 100vw !important;
+    }
+    
+    /* Fix container overflow in RTL */
+    [dir="rtl"] .max-w-7xl,
+    [dir="rtl"] .container {
+      max-width: 100% !important;
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
     }
 
     /* Mobile navigation icon spacing */
@@ -289,6 +315,16 @@ All colors MUST be HSL.
     /* Touch feedback direction */
     [dir="rtl"] .touch-feedback { transform-origin: right center; }
     [dir="ltr"] .touch-feedback { transform-origin: left center; }
+    
+    /* Grid layout fixes for RTL mobile */
+    [dir="rtl"] .grid {
+      direction: rtl;
+    }
+    
+    /* Fix flex containers in RTL */
+    [dir="rtl"] .flex {
+      direction: inherit;
+    }
   }
 
   /* RTL Icon spacing fixes */

@@ -207,19 +207,50 @@
     font-family: 'Inter', 'Helvetica Neue', sans-serif;
   }
 
-  /* RTL Content Compression Fixes */
-  .rtl main {
+  /* RTL Content Compression Fixes - CRITICAL FOR MOBILE */
+  .rtl,
+  [dir="rtl"] {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .rtl main,
+  [dir="rtl"] main {
     min-width: 0;
-    overflow-x: auto;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
 
-  .rtl .flex-1 {
+  .rtl .flex-1,
+  [dir="rtl"] .flex-1 {
     min-width: 0;
     flex-shrink: 1;
+    width: 100%;
   }
 
   .rtl .sidebar-content {
     flex-shrink: 0;
+  }
+  
+  /* Prevent horizontal scrolling in RTL */
+  .rtl body,
+  [dir="rtl"] body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  /* Fix container widths in RTL */
+  .rtl .container,
+  .rtl .max-w-7xl,
+  .rtl .max-w-4xl,
+  [dir="rtl"] .container,
+  [dir="rtl"] .max-w-7xl,
+  [dir="rtl"] .max-w-4xl {
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   /* Arabic Text Styles */
