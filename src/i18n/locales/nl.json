@@ -302,7 +302,9 @@
     "forgot_password": "Wachtwoord vergeten?",
     "sign_in": "Aanmelden",
     "sign_up": "Registreren",
-    "sign_out": "Uitloggen"
+    "sign_out": "Uitloggen",
+    "loginAccount": "Log in op je account",
+    "createAccount": "Maak een account aan om te beginnen met leren"
   },
   "common": {
     "loading": "Laden...",
