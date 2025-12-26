@@ -257,6 +257,12 @@
     "network": "خطأ في الشبكة",
     "not_found": "غير موجود",
     "unauthorized": "غير مصرح",
-    "forbidden": "محظور"
+    "forbidden": "محظور",
+    "pageNotFound": "الصفحة غير موجودة",
+    "pageNotFoundDescription": "عذراً، الصفحة التي تبحث عنها غير موجودة."
+  },
+  "navigation": {
+    "returnHome": "العودة للرئيسية",
+    "goBack": "رجوع"
   }
 }

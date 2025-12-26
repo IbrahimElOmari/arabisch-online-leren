@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import containerQueries from "@tailwindcss/container-queries";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
@@ -195,7 +194,6 @@ const config: Config = {
   },
   plugins: [
     tailwindcssAnimate,
-    containerQueries,
   ],
 } satisfies Config;
 
