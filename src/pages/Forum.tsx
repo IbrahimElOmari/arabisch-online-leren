@@ -43,10 +43,10 @@ const Forum = () => {
   }
 
   return (
-    <div className="@container min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="w-full max-w-full min-w-0 min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="container mx-auto p-4 sm:p-6">
-        <div className={`flex flex-col @md:flex-row @md:items-center @md:justify-between gap-4 mb-6`}>
-          <h1 className={`text-xl @md:text-2xl font-bold ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('forum.title')}</h1>
+        <div className={`flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6`}>
+          <h1 className={`text-xl md:text-2xl font-bold ${isRTL ? 'arabic-text font-amiri' : ''}`}>{t('forum.title')}</h1>
           <BackendStatusBadge compact />
         </div>
 
@@ -90,12 +90,12 @@ const Forum = () => {
           </Alert>
         )}
 
-        <Card className="@container mb-6">
-          <CardContent className="p-4 @md:p-6 space-y-4 @md:space-y-6">
-            <div className="grid grid-cols-1 @sm:grid-cols-2 gap-3 @md:gap-4">
+        <Card className="w-full max-w-full min-w-0 mb-6">
+          <CardContent className="p-4 md:p-6 space-y-4 md:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full @sm:w-auto">
+                  <Button variant="outline" className="w-full sm:w-auto">
                     <span className={isRTL ? 'arabic-text' : ''}>{t('lessons.pastLessons')}</span>
                   </Button>
                 </DialogTrigger>
@@ -111,7 +111,7 @@ const Forum = () => {
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full @sm:w-auto">
+                  <Button variant="outline" className="w-full sm:w-auto">
                     <span className={isRTL ? 'arabic-text' : ''}>{t('submissions.myImprovements')}</span>
                   </Button>
                 </DialogTrigger>
@@ -153,7 +153,7 @@ const Forum = () => {
 
         {/* No classes fallback */}
         {enrolledClasses.length === 0 && !classesLoading && (
-          <Card className="@container mb-6">
+          <Card className="w-full max-w-full min-w-0 mb-6">
             <CardContent className="py-6">
               <h2 className="text-lg font-semibold mb-2">Geen klassen gevonden</h2>
               <p className="text-muted-foreground mb-4">
@@ -175,7 +175,7 @@ const Forum = () => {
         )}
 
         {/* Forum main component */}
-        <Card className="@container">
+        <Card className="w-full max-w-full min-w-0">
           <CardContent className="p-0">
             <ForumMain classId={selectedClass || ''} />
           </CardContent>

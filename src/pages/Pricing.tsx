@@ -73,13 +73,13 @@ export default function Pricing() {
   };
 
   return (
-    <div className="@container min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="w-full max-w-full min-w-0 min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="container mx-auto px-4 py-8">
         <div className={`text-center mb-12 ${getTextAlign('center')}`}>
-          <h1 className={`text-2xl @md:text-4xl font-bold mb-4 ${isRTL ? 'arabic-text font-amiri' : ''}`}>
+          <h1 className={`text-2xl md:text-4xl font-bold mb-4 ${isRTL ? 'arabic-text font-amiri' : ''}`}>
             {t('pricing.title') || 'Kies je plan'}
           </h1>
-          <p className={`text-lg @md:text-xl text-muted-foreground max-w-2xl mx-auto ${isRTL ? 'arabic-text' : ''}`}>
+          <p className={`text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto ${isRTL ? 'arabic-text' : ''}`}>
             {t('pricing.subtitle') || 'Begin je Arabische taalreis met het plan dat het beste bij je past'}
           </p>
           {!FEATURE_FLAGS.payments && (
@@ -95,20 +95,20 @@ export default function Pricing() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 @md:grid-cols-2 @lg:grid-cols-3 gap-6 @md:gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
           {plans.map((plan) => (
-            <Card key={plan.name} className={`@container relative ${plan.popular ? 'border-primary shadow-lg' : ''}`}>
+            <Card key={plan.name} className={`w-full max-w-full min-w-0 relative ${plan.popular ? 'border-primary shadow-lg' : ''}`}>
               {plan.popular && (
                 <Badge className={`absolute -top-3 ${isRTL ? 'right-1/2 translate-x-1/2' : 'left-1/2 -translate-x-1/2'}`}>
                   {t('pricing.popular') || 'Meest Populair'}
                 </Badge>
               )}
               <CardHeader>
-                <CardTitle className={`text-xl @md:text-2xl ${isRTL ? 'arabic-text font-amiri' : ''}`}>{plan.name}</CardTitle>
+                <CardTitle className={`text-xl md:text-2xl ${isRTL ? 'arabic-text font-amiri' : ''}`}>{plan.name}</CardTitle>
                 <CardDescription className={isRTL ? 'arabic-text' : ''}>{plan.description}</CardDescription>
                 <div className="mt-4">
                   <div className={`flex items-baseline gap-2 ${getFlexDirection()}`}>
-                    <span className={`text-2xl @md:text-3xl font-bold ${isRTL ? 'arabic-text' : ''}`}>{plan.price}</span>
+                    <span className={`text-2xl md:text-3xl font-bold ${isRTL ? 'arabic-text' : ''}`}>{plan.price}</span>
                     <span className={`text-muted-foreground ${isRTL ? 'arabic-text' : ''}`}>{plan.period}</span>
                   </div>
                   {plan.originalPrice && (

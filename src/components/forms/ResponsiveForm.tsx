@@ -51,7 +51,7 @@ export const ResponsiveFormField = ({
   const containerClasses = cn(
     'space-y-2',
     'w-full sm:max-w-md',
-    '@container'
+    'max-w-full min-w-0'
   );
 
   return (
@@ -129,21 +129,21 @@ export const ResponsiveForm = ({
   layout = 'auto'
 }: ResponsiveFormProps) => {
   const formClasses = cn(
-    '@container w-full space-y-4',
+    'w-full max-w-full min-w-0 space-y-4',
     {
       'max-w-md mx-auto': layout === 'single',
       'max-w-2xl mx-auto': layout === 'double',
       'max-w-full': layout === 'auto',
     },
-    '@md:space-y-6',
+    'md:space-y-6',
     className
   );
 
   const gridClasses = cn(
     {
       'grid grid-cols-1': layout === 'single',
-      'grid grid-cols-1 @md:grid-cols-2 gap-4 @md:gap-6': layout === 'double',
-      'grid grid-cols-1 @sm:grid-cols-2 @lg:grid-cols-3 gap-4 @md:gap-6': layout === 'auto',
+      'grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6': layout === 'double',
+      'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6': layout === 'auto',
     }
   );
 

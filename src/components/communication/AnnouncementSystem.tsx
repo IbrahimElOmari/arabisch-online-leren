@@ -215,7 +215,7 @@ const AnnouncementSystem = () => {
 
           {formData.target === 'class' && (
             <>
-              <div className="space-y-2 col-span-full @md:col-span-1">
+              <div className="space-y-2 col-span-full md:col-span-1">
                 <Label htmlFor="classId">Selecteer Klas</Label>
                 <Select
                   value={formData.classId || ''}

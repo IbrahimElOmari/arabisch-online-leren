@@ -21,8 +21,7 @@ export const ResponsiveCard = ({
   const { isRTL } = useRTLLayout();
 
   const cardClasses = cn(
-    '@container', // Enable container queries
-    'w-full',
+    'w-full max-w-full min-w-0', // Fallback for container queries
     {
       'min-h-[120px]': variant === 'compact',
       'min-h-[200px]': variant === 'default',
@@ -34,8 +33,8 @@ export const ResponsiveCard = ({
   const contentClasses = cn(
     'space-y-4',
     {
-      '@sm:space-y-2': variant === 'compact',
-      '@md:space-y-6': variant === 'default',
+      'sm:space-y-2': variant === 'compact',
+      'md:space-y-6': variant === 'default',
     }
   );
 
@@ -54,7 +53,7 @@ export const ResponsiveCard = ({
         <CardHeader className="pb-3">
           <div className={headerClasses}>
             <CardTitle className={cn(
-              'text-lg @md:text-xl font-semibold',
+              'text-lg md:text-xl font-semibold',
               isRTL ? 'arabic-text text-right' : 'text-left'
             )}>
               {title}

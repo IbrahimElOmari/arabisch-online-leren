@@ -99,9 +99,9 @@ export default function Operations() {
   };
 
   return (
-    <div className="@container space-y-4 @md:space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="w-full max-w-full min-w-0 space-y-4 md:space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Maintenance Mode */}
-      <Card className="@container">
+      <Card className="w-full max-w-full min-w-0">
         <CardHeader>
           <CardTitle className={`flex items-center gap-2 ${getFlexDirection()} ${isRTL ? 'arabic-text font-amiri' : ''}`}>
             <Settings className="h-5 w-5" />
@@ -109,7 +109,7 @@ export default function Operations() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex flex-col @sm:flex-row @sm:items-center @sm:justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="space-y-1">
               <Label htmlFor="maintenance-mode" className={isRTL ? 'arabic-text' : ''}>
                 Onderhoudsmodus inschakelen
@@ -138,14 +138,14 @@ export default function Operations() {
       </Card>
 
       {/* Backup Management */}
-      <Card className="@container">
+      <Card className="w-full max-w-full min-w-0">
         <CardHeader>
           <CardTitle className={`flex items-center gap-2 ${getFlexDirection()} ${isRTL ? 'arabic-text font-amiri' : ''}`}>
             <Database className="h-5 w-5" />
             Backup Beheer
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 @md:space-y-6">
+        <CardContent className="space-y-4 md:space-y-6">
           <div className="space-y-4">
             <div>
               <Label htmlFor="backup-note" className={isRTL ? 'arabic-text' : ''}>
@@ -163,7 +163,7 @@ export default function Operations() {
             <Button 
               onClick={handleCreateBackup}
               disabled={backupMutation.isPending}
-              className="w-full @sm:w-auto"
+              className="w-full sm:w-auto"
             >
               <Database className={`h-4 w-4 ${getIconSpacing('2')}`} />
               <span className={isRTL ? 'arabic-text' : ''}>
@@ -181,7 +181,7 @@ export default function Operations() {
                 {backupJobs?.slice(0, 5).map((job: BackupJob) => {
                   const StatusIcon = statusIcons[job.status];
                   return (
-                    <div key={job.id} className="flex flex-col @sm:flex-row @sm:items-center @sm:justify-between gap-3 p-3 border rounded-lg">
+                    <div key={job.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 border rounded-lg">
                       <div className={`flex items-center gap-3 ${getFlexDirection()}`}>
                         <StatusIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                         <div>
@@ -222,7 +222,7 @@ export default function Operations() {
       </Card>
 
       {/* GDPR Tools Info */}
-      <Card className="@container">
+      <Card className="w-full max-w-full min-w-0">
         <CardHeader>
           <CardTitle className={isRTL ? 'arabic-text font-amiri' : ''}>GDPR Tools</CardTitle>
         </CardHeader>
