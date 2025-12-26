@@ -48,7 +48,7 @@ export const useLazyRTLComponents = () => {
       const module = await import(`../components/rtl/${componentName}.tsx`);
       return module.default;
     } catch (error) {
-        console.warn(`RTL component ${componentName} not found`);
+      if (import.meta.env.DEV) console.warn(`RTL component ${componentName} not found`);
       return null;
     }
   };

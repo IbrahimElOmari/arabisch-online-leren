@@ -31,7 +31,7 @@ const ResetPassword = () => {
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
-          console.error('Session error:', error);
+          if (import.meta.env.DEV) console.error('Session error:', error);
           throw error;
         }
 
@@ -58,7 +58,7 @@ const ResetPassword = () => {
           });
           
           if (sessionError) {
-            console.error('Session setting error:', sessionError);
+            if (import.meta.env.DEV) console.error('Session setting error:', sessionError);
             throw sessionError;
           }
           
@@ -70,7 +70,7 @@ const ResetPassword = () => {
         throw new Error('No valid session or recovery link');
         
       } catch (error) {
-        console.error('Password reset validation failed:', error);
+        if (import.meta.env.DEV) console.error('Password reset validation failed:', error);
         toast({
           title: 'Ongeldige link',
           description: 'De reset-link is ongeldig of verlopen. Vraag een nieuwe aan.',
@@ -148,7 +148,7 @@ const ResetPassword = () => {
       }, 3000);
 
     } catch (error: any) {
-      console.error('Error updating password:', error);
+      if (import.meta.env.DEV) console.error('Error updating password:', error);
       toast({
         title: 'Fout',
         description: error.message || 'Er is een fout opgetreden bij het bijwerken van je wachtwoord',

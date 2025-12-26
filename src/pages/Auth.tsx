@@ -44,7 +44,7 @@ const Auth = () => {
   // Auto-redirect: als je al ingelogd bent, ga direct naar dashboard
   useEffect(() => {
     if (authReady && user) {
-      console.debug('🔁 Auth page: user already authenticated, redirecting to /dashboard');
+      if (import.meta.env.DEV) console.debug('🔁 Auth page: user already authenticated, redirecting to /dashboard');
       navigate('/dashboard', { replace: true });
     }
   }, [authReady, user, navigate]);

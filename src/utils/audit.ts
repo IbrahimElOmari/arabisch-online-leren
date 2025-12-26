@@ -22,10 +22,10 @@ export async function logAudit(
     });
 
     if (error) {
-      console.error('Failed to log audit event:', error);
+      if (import.meta.env.DEV) console.error('Failed to log audit event:', error);
     }
   } catch (err) {
-    console.error('Error logging audit event:', err);
+    if (import.meta.env.DEV) console.error('Error logging audit event:', err);
   }
 }
 

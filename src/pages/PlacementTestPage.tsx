@@ -45,7 +45,7 @@ const PlacementTestPage = () => {
         navigate(-1);
       }
     } catch (error) {
-      console.error('Failed to load test:', error);
+      if (import.meta.env.DEV) console.error('Failed to load test:', error);
       toast({
         title: t('error', 'Error'),
         description: t('placement.loadFailed', 'Failed to load placement test'),
@@ -87,7 +87,7 @@ const PlacementTestPage = () => {
         description: t('placement.submitted', 'Test submitted successfully')
       });
     } catch (error) {
-      console.error('Failed to submit test:', error);
+      if (import.meta.env.DEV) console.error('Failed to submit test:', error);
       toast({
         title: t('error', 'Error'),
         description: t('placement.submitFailed', 'Failed to submit test'),

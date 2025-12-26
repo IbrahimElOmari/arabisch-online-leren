@@ -92,7 +92,7 @@ const fetchEvents = async () => {
 
   const { data, error } = await query;
   if (error) {
-    console.error('Error fetching events:', error);
+    if (import.meta.env.DEV) console.error('Error fetching events:', error);
     return;
   }
   setEvents((data || []).map(event => ({

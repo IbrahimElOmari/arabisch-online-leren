@@ -262,7 +262,7 @@ export const monitorQueryPerformance = () => {
     // Track query completion - simplified version without modifying query chain
     setTimeout(() => {
       const duration = Date.now() - startTime;
-      if (duration > 100) {
+      if (duration > 100 && import.meta.env.DEV) {
         console.debug(`Query to ${table} took ${duration}ms`);
         
         if (duration > 1000) {
@@ -290,5 +290,5 @@ export const optimizeSupabaseConnection = () => {
    * 5. Cache frequently accessed data
    */
   
-  console.info('Supabase connection optimized with performance monitoring');
+  if (import.meta.env.DEV) console.info('Supabase connection optimized with performance monitoring');
 };

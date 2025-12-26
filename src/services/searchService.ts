@@ -68,7 +68,7 @@ export class SearchService {
         hasMore: hasMore && filteredResults.length === limit
       };
     } catch (error) {
-      console.error('Search error:', error);
+      if (import.meta.env.DEV) console.error('Search error:', error);
       
       // Fallback to simple ILIKE search if full-text search fails
       return this.fallbackSearch(validated.query, options);
@@ -255,7 +255,7 @@ export class SearchService {
 
       return suggestions?.map(s => s.title).filter((title): title is string => title !== null && title !== undefined) || [];
     } catch (error) {
-      console.error('Error fetching suggestions:', error);
+      if (import.meta.env.DEV) console.error('Error fetching suggestions:', error);
       return [];
     }
   }

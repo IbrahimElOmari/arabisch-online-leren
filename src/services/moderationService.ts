@@ -110,7 +110,7 @@ export const moderationService = {
 
       return { success: true, data: result };
     } catch (error) {
-      console.error('Error changing user role:', error);
+      if (import.meta.env.DEV) console.error('Error changing user role:', error);
       throw error;
     }
   }

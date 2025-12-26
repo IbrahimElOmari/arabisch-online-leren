@@ -108,7 +108,7 @@ const StudentDashboard = () => {
       }
 
     } catch (error) {
-      console.error('Failed to load dashboard:', error);
+      if (import.meta.env.DEV) console.error('Failed to load dashboard:', error);
       toast({
         title: t('error', 'Error'),
         description: t('dashboard.loadFailed', 'Failed to load dashboard'),

@@ -79,7 +79,7 @@ export const auditLogService = {
     }]);
 
     if (error) {
-      console.error('Failed to write audit log:', error);
+      if (import.meta.env.DEV) console.error('Failed to write audit log:', error);
     }
   },
 
@@ -113,7 +113,7 @@ export const auditLogService = {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Failed to query audit logs:', error);
+      if (import.meta.env.DEV) console.error('Failed to query audit logs:', error);
       return [];
     }
 
@@ -152,7 +152,7 @@ export const auditLogService = {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Failed to fetch critical events:', error);
+      if (import.meta.env.DEV) console.error('Failed to fetch critical events:', error);
       return [];
     }
 

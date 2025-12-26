@@ -34,7 +34,7 @@ export const ClassForumPage = () => {
       const data = await forumServiceEdge.listPosts(classId);
       setPosts(data.posts);
     } catch (error) {
-      console.error('Failed to load forum posts:', error);
+      if (import.meta.env.DEV) console.error('Failed to load forum posts:', error);
       toast({
         title: t('error', 'Error'),
         description: t('forum.loadFailed', 'Failed to load forum posts'),
@@ -72,7 +72,7 @@ export const ClassForumPage = () => {
       setDialogOpen(false);
       loadPosts();
     } catch (error) {
-      console.error('Failed to create post:', error);
+      if (import.meta.env.DEV) console.error('Failed to create post:', error);
       toast({
         title: t('error', 'Error'),
         description: t('forum.createFailed', 'Failed to create post'),
@@ -88,7 +88,7 @@ export const ClassForumPage = () => {
       await forumServiceEdge.toggleLike(postId, true);
       loadPosts();
     } catch (error) {
-      console.error('Failed to like post:', error);
+      if (import.meta.env.DEV) console.error('Failed to like post:', error);
     }
   };
 
@@ -101,7 +101,7 @@ export const ClassForumPage = () => {
       });
       loadPosts();
     } catch (error) {
-      console.error('Failed to report post:', error);
+      if (import.meta.env.DEV) console.error('Failed to report post:', error);
     }
   };
 
