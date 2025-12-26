@@ -208,19 +208,16 @@ const StudentDashboard = () => {
 
   return (
     <div 
-      className="min-h-screen bg-background p-4 sm:p-6"
+      className="min-h-screen bg-background p-4 sm:p-6 w-full"
       style={{ 
         minWidth: 0, 
-        maxWidth: '100%',
-        display: 'block',
-        visibility: 'visible',
-        opacity: 1
+        maxWidth: '100%'
       }}
     >
+      {/* FIX: Removed @container class - not supported on all mobile browsers */}
       <div 
-        className="@container space-y-4 md:space-y-6"
+        className="w-full space-y-4 md:space-y-6"
         style={{ 
-          containerType: 'inline-size',
           width: '100%',
           minWidth: 0
         }}
@@ -426,11 +423,11 @@ const StudentDashboard = () => {
               </Suspense>
             </TabsContent>
 
-            <TabsContent value="progress" className="mt-4 md:mt-6">
+              <TabsContent value="progress" className="mt-4 md:mt-6">
               <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
                 {/* Level Progress Cards */}
-                <div className="space-y-3 @md:space-y-4">
-                  <h3 className={cn("text-lg @md:text-xl font-semibold", isRTL && "arabic-text text-right")}>
+                <div className="space-y-3 md:space-y-4">
+                  <h3 className={cn("text-lg md:text-xl font-semibold", isRTL && "arabic-text text-right")}>
                     {t('dashboard.your_level_progress')}
                   </h3>
                   {selectedClass?.klassen.niveaus.map((niveau) => {
