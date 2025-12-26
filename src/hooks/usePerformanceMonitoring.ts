@@ -36,7 +36,9 @@ export const usePerformanceMonitoring = () => {
         setMetrics(performanceData);
         reportPerformanceMetrics(performanceData);
       } catch (error) {
-        console.warn('Failed to collect performance metrics:', error);
+        if (import.meta.env.DEV) {
+          console.warn('Failed to collect performance metrics:', error);
+        }
       }
     };
 
@@ -78,7 +80,9 @@ export const usePerformanceMonitoring = () => {
     } : null);
 
     // Log interaction for analytics
-    console.debug(`Interaction "${interactionType}" after ${interactionTime}ms`);
+    if (import.meta.env.DEV) {
+      console.debug(`Interaction "${interactionType}" after ${interactionTime}ms`);
+    }
   };
 
   const trackCustomMetric = (name: string, value: number, unit = 'ms') => {
@@ -98,10 +102,14 @@ export const usePerformanceMonitoring = () => {
       const recentMetrics = existingMetrics.slice(-50);
       localStorage.setItem('custom-metrics', JSON.stringify(recentMetrics));
     } catch (error) {
-      console.warn('Failed to store custom metric:', error);
+      if (import.meta.env.DEV) {
+        console.warn('Failed to store custom metric:', error);
+      }
     }
 
-    console.debug(`Custom metric: ${name} = ${value}${unit}`);
+    if (import.meta.env.DEV) {
+      console.debug(`Custom metric: ${name} = ${value}${unit}`);
+    }
   };
 
   return {
@@ -136,9 +144,10 @@ export const useQueryPerformance = () => {
       
       // Log slow queries
       if (duration > 2000) {
-        console.warn(`Slow query detected: ${queryKey} took ${duration}ms`);
+        if (import.meta.env.DEV) {
+          console.warn(`Slow query detected: ${queryKey} took ${duration}ms`);
+        }
       }
-      
       return updatedMetrics;
     });
   };

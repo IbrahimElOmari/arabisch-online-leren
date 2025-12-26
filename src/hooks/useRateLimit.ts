@@ -37,7 +37,9 @@ export const useRateLimit = ({ action, identifier }: UseRateLimitOptions) => {
       });
 
       if (error) {
-        console.error('Rate limit check error:', error);
+        if (import.meta.env.DEV) {
+          console.error('Rate limit check error:', error);
+        }
         return true; // Allow if service is down
       }
 
@@ -51,7 +53,9 @@ export const useRateLimit = ({ action, identifier }: UseRateLimitOptions) => {
       setRetryAfter(null);
       return true;
     } catch (error) {
-      console.error('Rate limit service error:', error);
+      if (import.meta.env.DEV) {
+        console.error('Rate limit service error:', error);
+      }
       return true; // Allow if service is unavailable
     }
   }, [action, identifier]);

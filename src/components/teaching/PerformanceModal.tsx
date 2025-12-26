@@ -42,8 +42,9 @@ export function PerformanceModal({ open, onOpenChange, classId, className }: Per
   const fetchPerformanceData = async () => {
     setLoading(true);
     try {
-      console.log('Fetching performance data for class:', classId);
-      
+      if (import.meta.env.DEV) {
+        console.log('Fetching performance data for class:', classId);
+      }
       // Get enrolled students with better error handling
       const { data: enrollments, error: enrollmentError } = await supabase
         .from('inschrijvingen')
@@ -58,11 +59,15 @@ export function PerformanceModal({ open, onOpenChange, classId, className }: Per
         .eq('payment_status', 'paid');
 
       if (enrollmentError) {
-        console.error('Enrollment fetch error:', enrollmentError);
+        if (import.meta.env.DEV) {
+          console.error('Enrollment fetch error:', enrollmentError);
+        }
         throw enrollmentError;
       }
 
-      console.log('Raw enrollments data:', enrollments);
+      if (import.meta.env.DEV) {
+        console.log('Raw enrollments data:', enrollments);
+      }
 
       // Filter out invalid enrollments and add null checks
       const validEnrollments = (enrollments || []).filter(enrollment => {
@@ -71,13 +76,17 @@ export function PerformanceModal({ open, onOpenChange, classId, className }: Per
                                enrollment.profiles.full_name;
         
         if (!hasValidProfile) {
-          console.warn('Invalid enrollment found:', enrollment);
+          if (import.meta.env.DEV) {
+            console.warn('Invalid enrollment found:', enrollment);
+          }
         }
         
         return hasValidProfile;
       });
 
-      console.log('Valid enrollments after filtering:', validEnrollments.length);
+      if (import.meta.env.DEV) {
+        console.log('Valid enrollments after filtering:', validEnrollments.length);
+      }
 
       // Get attendance data
       const { data: attendanceData, error: attendanceError } = await supabase
@@ -92,7 +101,9 @@ export function PerformanceModal({ open, onOpenChange, classId, className }: Per
         .eq('lessen.class_id', classId);
 
       if (attendanceError) {
-        console.error('Attendance fetch error:', attendanceError);
+        if (import.meta.env.DEV) {
+          console.error('Attendance fetch error:', attendanceError);
+        }
         throw attendanceError;
       }
 
@@ -103,7 +114,9 @@ export function PerformanceModal({ open, onOpenChange, classId, className }: Per
         .eq('class_id', classId);
 
       if (lessonsError) {
-        console.error('Lessons fetch error:', lessonsError);
+        if (import.meta.env.DEV) {
+          console.error('Lessons fetch error:', lessonsError);
+        }
         throw lessonsError;
       }
 
@@ -128,7 +141,9 @@ export function PerformanceModal({ open, onOpenChange, classId, className }: Per
         .order('submitted_at', { ascending: false });
 
       if (submissionsError) {
-        console.error('Submissions fetch error:', submissionsError);
+        if (import.meta.env.DEV) {
+          console.error('Submissions fetch error:', submissionsError);
+        }
         throw submissionsError;
       }
 
@@ -136,7 +151,9 @@ export function PerformanceModal({ open, onOpenChange, classId, className }: Per
       const performanceData: StudentPerformance[] = validEnrollments.map(enrollment => {
         // Double-check profile exists (should be guaranteed by filter above)
         if (!enrollment.profiles) {
-          console.error('Unexpected null profile in valid enrollments:', enrollment);
+          if (import.meta.env.DEV) {
+            console.error('Unexpected null profile in valid enrollments:', enrollment);
+          }
           return null;
         }
 
@@ -169,11 +186,15 @@ export function PerformanceModal({ open, onOpenChange, classId, className }: Per
         };
       }).filter(Boolean) as StudentPerformance[]; // Remove any null entries
 
-      console.log('Final performance data:', performanceData);
+      if (import.meta.env.DEV) {
+        console.log('Final performance data:', performanceData);
+      }
       setStudents(performanceData);
       
     } catch (error) {
-      console.error('Error fetching performance data:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching performance data:', error);
+      }
       toast({
         title: "Fout",
         description: "Kon prestatie gegevens niet laden",

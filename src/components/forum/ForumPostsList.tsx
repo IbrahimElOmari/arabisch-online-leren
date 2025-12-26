@@ -111,7 +111,9 @@ const ForumPostsList = ({ threadId }: ForumPostsListProps) => {
       
       setPosts(organized as any);
       } catch (error) {
-        console.error('Error fetching posts:', error);
+        if (import.meta.env.DEV) {
+          console.error('Error fetching posts:', error);
+        }
         toast({
           title: t('common.error'),
           description: "Kon berichten niet laden",
@@ -185,13 +187,17 @@ const ForumPostsList = ({ threadId }: ForumPostsListProps) => {
         }
 
         if (functionError) {
-          console.warn('Edge function failed, trying fallback...', functionError);
+          if (import.meta.env.DEV) {
+            console.warn('Edge function failed, trying fallback...', functionError);
+          }
           await createReplyFallback();
           return;
         }
 
         if (functionData?.error) {
-          console.warn('Edge function returned error, trying fallback...', functionData.error);
+          if (import.meta.env.DEV) {
+            console.warn('Edge function returned error, trying fallback...', functionData.error);
+          }
           await createReplyFallback();
           return;
         }
@@ -208,12 +214,16 @@ const ForumPostsList = ({ threadId }: ForumPostsListProps) => {
         });
 
       } catch (error) {
-        console.error('Error in createReply:', error);
+        if (import.meta.env.DEV) {
+          console.error('Error in createReply:', error);
+        }
         
         try {
           await createReplyFallback();
         } catch (fallbackError) {
-          console.error('Fallback also failed:', fallbackError);
+          if (import.meta.env.DEV) {
+            console.error('Fallback also failed:', fallbackError);
+          }
           toast({
             title: t('common.error'),
             description: `Kon reactie niet plaatsen: ${error instanceof Error ? error.message : 'Onbekende fout'}`,
@@ -286,7 +296,9 @@ const ForumPostsList = ({ threadId }: ForumPostsListProps) => {
         
         fetchPosts();
       } catch (error) {
-        console.error('Error liking post:', error);
+        if (import.meta.env.DEV) {
+          console.error('Error liking post:', error);
+        }
         toast({
           title: t('common.error'),
           description: "Kon waardering niet opslaan",
@@ -313,7 +325,9 @@ const ForumPostsList = ({ threadId }: ForumPostsListProps) => {
           description: "Bericht verwijderd"
         });
       } catch (error) {
-        console.error('Error deleting post:', error);
+        if (import.meta.env.DEV) {
+          console.error('Error deleting post:', error);
+        }
         toast({
           title: t('common.error'),
           description: "Kon bericht niet verwijderen",
