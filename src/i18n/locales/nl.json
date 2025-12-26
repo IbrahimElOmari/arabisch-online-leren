@@ -1,4 +1,25 @@
 {
+  "hero": {
+    "topPlatform": "#1 Platform voor Arabisch Leren",
+    "learnArabic": "Leer Arabisch",
+    "welcome": "Welkom",
+    "description": "Ontdek de schoonheid van de Arabische taal met onze innovatieve, interactieve lesmethoden. Van beginner tot gevorderd - wij begeleiden je reis naar vloeiend Arabisch.",
+    "startJourney": "Begin Je Reis",
+    "watchDemo": "Bekijk Demo",
+    "students": "studenten",
+    "rating": "sterren",
+    "freeTrialTitle": "Gratis Proefles",
+    "freeTrialLive": "Live Nu",
+    "trialPoint1": "Arabisch alfabet in 30 min",
+    "trialPoint2": "Basis uitspraak oefeningen",
+    "trialPoint3": "Eerste woorden & zinnen",
+    "joinFree": "Doe Gratis Mee",
+    "noCommitment": "Geen verplichtingen • Cancel op elk moment",
+    "satisfiedStudents": "Tevreden Studenten",
+    "expertInstructors": "Expert Instructeurs",
+    "successRate": "Slaagpercentage",
+    "onlineAccess": "Online Toegang"
+  },
   "security": {
     "session": {
       "warningTitle": "Sessie verloopt binnenkort",

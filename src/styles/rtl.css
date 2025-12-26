@@ -1,13 +1,11 @@
 /**
  * RTL Styles - Comprehensive fix for mobile layout issues
  * FIX 4: Anti-overflow contract implemented throughout
+ * NOTE: No @layer base wrapper - loaded after tailwind directives
  */
 
-@tailwind base;
-
-@layer base {
-  /* ===== FIX 4: ROOT ANTI-OVERFLOW CONTRACT ===== */
-  html {
+/* ===== FIX 4: ROOT ANTI-OVERFLOW CONTRACT ===== */
+html {
     overflow-x: clip !important;
     max-width: 100vw !important;
   }
@@ -531,10 +529,9 @@
     background: hsl(var(--muted-foreground) / 0.5);
   }
 
-  /* ===== PRINT STYLES ===== */
-  @media print {
-    [dir="rtl"] {
-      direction: rtl;
-    }
+/* ===== PRINT STYLES ===== */
+@media print {
+  [dir="rtl"] {
+    direction: rtl;
   }
 }
