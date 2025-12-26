@@ -58,7 +58,21 @@
     }
   }
 
-  /* RTL mobile optimizations (expanded selectors for plain CSS) */
+  /* RTL mobile optimizations - CRITICAL FIX FOR ARABIC */
+  [dir="rtl"] {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+  
+  [dir="rtl"] body,
+  [dir="rtl"] main,
+  [dir="rtl"] .min-h-screen {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+  
   [dir="rtl"] .swipe-indicator { transform: scaleX(-1); }
   [dir="rtl"] .mobile-slide-in { animation: rtl-mobile-slide-in 0.3s ease-out; }
   [dir="rtl"] .mobile-slide-out { animation: rtl-mobile-slide-out 0.3s ease-out; }

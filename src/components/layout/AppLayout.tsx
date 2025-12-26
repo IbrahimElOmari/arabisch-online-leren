@@ -15,16 +15,19 @@ export const AppLayout = () => {
 
   return (
     <SidebarProvider defaultOpen={false}>
-      <div className={`min-h-screen bg-background ${isRTL ? 'rtl' : 'ltr'}`}>
-        <div className="flex min-h-screen w-full" {...getNavigationAttributes()}>
+      <div 
+        className={`min-h-screen bg-background w-full max-w-full overflow-x-hidden ${isRTL ? 'rtl' : 'ltr'}`}
+        dir={isRTL ? 'rtl' : 'ltr'}
+      >
+        <div className="flex min-h-screen w-full max-w-full" {...getNavigationAttributes()}>
           <AppSidebar />
           
-          <div className="flex-1 min-w-0 flex flex-col">
+          <div className="flex-1 min-w-0 flex flex-col w-full max-w-full overflow-x-hidden">
             <Navigation />
             <EnhancedNotificationSystem />
             
             <main 
-              className="flex-1 p-4 overflow-x-hidden" 
+              className="flex-1 p-4 overflow-x-hidden w-full max-w-full" 
               role="main" 
               aria-label="Main content"
             >

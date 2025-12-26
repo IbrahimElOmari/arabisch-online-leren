@@ -64,11 +64,13 @@ export function monitorMemoryUsage() {
   if (!perfMemory) return;
 
   const logMemory = () => {
-    console.log('Memory Usage:', {
-      used: Math.round(perfMemory.usedJSHeapSize / 1048576) + ' MB',
-      total: Math.round(perfMemory.totalJSHeapSize / 1048576) + ' MB',
-      limit: Math.round(perfMemory.jsHeapSizeLimit / 1048576) + ' MB'
-    });
+    if (import.meta.env.DEV) {
+      console.log('Memory Usage:', {
+        used: Math.round(perfMemory.usedJSHeapSize / 1048576) + ' MB',
+        total: Math.round(perfMemory.totalJSHeapSize / 1048576) + ' MB',
+        limit: Math.round(perfMemory.jsHeapSizeLimit / 1048576) + ' MB'
+      });
+    }
   };
 
   // Log every 30 seconds in development
@@ -85,11 +87,13 @@ export function analyzeBundlePerformance() {
     for (const entry of list.getEntries()) {
       if (entry.entryType === 'navigation') {
         const navEntry = entry as PerformanceNavigationTiming;
-        console.log('Bundle Performance:', {
-          loadTime: navEntry.loadEventEnd - navEntry.loadEventStart,
-          domContentLoaded: navEntry.domContentLoadedEventEnd - navEntry.domContentLoadedEventStart,
-          totalTime: navEntry.loadEventEnd - navEntry.fetchStart
-        });
+        if (import.meta.env.DEV) {
+          console.log('Bundle Performance:', {
+            loadTime: navEntry.loadEventEnd - navEntry.loadEventStart,
+            domContentLoaded: navEntry.domContentLoadedEventEnd - navEntry.domContentLoadedEventStart,
+            totalTime: navEntry.loadEventEnd - navEntry.fetchStart
+          });
+        }
       }
     }
   });

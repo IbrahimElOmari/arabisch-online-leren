@@ -122,7 +122,9 @@ export const useSecurityMonitoring = () => {
         schema: 'public',
         table: 'audit_log'
       }, (payload) => {
-        console.log('Security event detected:', payload);
+        if (import.meta.env.DEV) {
+          console.log('Security event detected:', payload);
+        }
         // Could trigger additional security measures here
       })
       .subscribe();

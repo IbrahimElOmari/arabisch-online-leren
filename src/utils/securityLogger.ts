@@ -28,7 +28,9 @@ class SecurityLogger {
       
       // Only log to database if we have a valid user or it's a system event
       if (!userId && event.severity !== 'critical') {
-        console.log('SecurityLogger: Skipping non-critical event without user ID:', event.action);
+        if (import.meta.env.DEV) {
+          console.log('SecurityLogger: Skipping non-critical event without user ID:', event.action);
+        }
         return;
       }
 
