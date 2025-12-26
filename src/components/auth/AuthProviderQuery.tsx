@@ -29,7 +29,9 @@ export const AuthProviderQuery = ({ children }: { children: React.ReactNode }) =
   const { user, session, loading, authReady, signOut } = useAuthSession();
   const { profile, isLoading: profileLoading, refreshProfile, isRefreshing } = useUserProfileQuery(user);
 
-  console.debug('🔄 AuthProviderQuery: user:', !!user, 'profile:', !!profile, 'profileLoading:', profileLoading);
+  if (import.meta.env.DEV) {
+    console.debug('🔄 AuthProviderQuery: user:', !!user, 'profile:', !!profile, 'profileLoading:', profileLoading);
+  }
 
   return (
     <AuthContext.Provider value={{

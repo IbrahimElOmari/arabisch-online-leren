@@ -51,11 +51,15 @@ export function usePushNotifications() {
       // TODO: Save subscription to backend when push_subscriptions table exists
       // await supabase.from('push_subscriptions').upsert({...})
       
-      console.log('Push subscription created:', subscription.endpoint);
+      if (import.meta.env.DEV) {
+        console.log('Push subscription created:', subscription.endpoint);
+      }
 
       setIsSubscribed(true);
     } catch (error) {
-      console.error('Failed to subscribe to push notifications:', error);
+      if (import.meta.env.DEV) {
+        console.error('Failed to subscribe to push notifications:', error);
+      }
       throw error;
     } finally {
       setLoading(false);
@@ -71,12 +75,16 @@ export function usePushNotifications() {
       if (subscription) {
         await subscription.unsubscribe();
         // TODO: Remove from backend when push_subscriptions table exists
-        console.log('Push subscription removed');
+        if (import.meta.env.DEV) {
+          console.log('Push subscription removed');
+        }
       }
 
       setIsSubscribed(false);
     } catch (error) {
-      console.error('Failed to unsubscribe from push notifications:', error);
+      if (import.meta.env.DEV) {
+        console.error('Failed to unsubscribe from push notifications:', error);
+      }
       throw error;
     } finally {
       setLoading(false);

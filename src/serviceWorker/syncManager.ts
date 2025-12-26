@@ -71,8 +71,9 @@ export async function processSyncQueue(): Promise<void> {
     try {
       await syncTask(task);
     } catch (error) {
-      console.error(`Sync failed for task ${task.id}:`, error);
-      
+      if (import.meta.env.DEV) {
+        console.error(`Sync failed for task ${task.id}:`, error);
+      }
       if (task.retryCount < MAX_RETRIES) {
         failed.push({ ...task, retryCount: task.retryCount + 1 });
       }

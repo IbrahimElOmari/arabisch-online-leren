@@ -73,7 +73,9 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
       // For now, just set loading to false
       setLoadingSubmission(false);
     } catch (error) {
-      console.error('Error fetching submission:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching submission:', error);
+      }
       toast({
         title: "Fout",
         description: "Kon inzending niet laden",
@@ -155,7 +157,9 @@ export const TaskSubmissionModal: React.FC<TaskSubmissionModalProps> = ({ task, 
       setSubmissionContent('');
       setOpen(false);
     } catch (error: any) {
-      console.error('Error submitting task:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error submitting task:', error);
+      }
       toast({
         title: "Fout",
         description: error.message || "Kon inzending niet verzenden",

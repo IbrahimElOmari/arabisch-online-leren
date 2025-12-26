@@ -50,7 +50,9 @@ const fetchEnhancedStudentProgress = async (userId: string): Promise<EnhancedStu
     .order('created_at', { ascending: false });
 
   if (progressError) {
-    console.error('Error fetching student progress:', progressError);
+    if (import.meta.env.DEV) {
+      console.error('Error fetching student progress:', progressError);
+    }
     throw progressError;
   }
 
@@ -68,7 +70,9 @@ const fetchEnhancedStudentProgress = async (userId: string): Promise<EnhancedStu
     .in('id', niveauIds);
 
   if (niveauError) {
-    console.error('Error fetching niveau data:', niveauError);
+    if (import.meta.env.DEV) {
+      console.error('Error fetching niveau data:', niveauError);
+    }
     throw niveauError;
   }
 
@@ -139,7 +143,9 @@ export const useEnhancedProgress = (userId?: string) => {
       });
     },
     onError: (error) => {
-      console.error('Failed to refresh progress:', error);
+      if (import.meta.env.DEV) {
+        console.error('Failed to refresh progress:', error);
+      }
       toast({
         title: "Fout bij bijwerken voortgang",
         description: "Er ging iets mis bij het bijwerken van je voortgang",

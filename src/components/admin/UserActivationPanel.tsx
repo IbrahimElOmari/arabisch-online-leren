@@ -72,7 +72,9 @@ const UserActivationPanel = () => {
 
       setPendingUsers(pendingUsers);
     } catch (error) {
-      console.error('Error fetching pending users:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching pending users:', error);
+      }
       toast({
         title: "Fout",
         description: "Kon gebruikers niet laden",
@@ -101,7 +103,9 @@ const UserActivationPanel = () => {
       if (error) throw error;
       setClasses(data || []);
     } catch (error) {
-      console.error('Error fetching classes:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching classes:', error);
+      }
     }
   };
 
@@ -135,7 +139,9 @@ const UserActivationPanel = () => {
       }
 
       if (error) {
-        console.error('Supabase function error:', error);
+        if (import.meta.env.DEV) {
+          console.error('Supabase function error:', error);
+        }
         // Show more detailed error message
         throw new Error(error.message || error.toString());
       }
@@ -155,7 +161,9 @@ const UserActivationPanel = () => {
         return newData;
       });
     } catch (error: any) {
-      console.error('Error activating user:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error activating user:', error);
+      }
       toast({
         title: "Fout",
         description: error.message || "Kon gebruiker niet activeren",
