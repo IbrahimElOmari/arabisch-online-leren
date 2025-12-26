@@ -6,6 +6,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* RTL & Cross-browser styles */
+@import './styles/rtl.css';
+@import './styles/cross-browser.css';
+@import './styles/accessibility.css';
+
+/* ===== FIX 4: GLOBAL ANTI-OVERFLOW CONTRACT ===== */
+html {
+  overflow-x: clip;
+  max-width: 100vw;
+}
+
+body {
+  overflow-x: clip;
+  max-width: 100vw;
+  min-width: 0;
+}
+
+/* Ensure all main containers respect viewport width */
+#root {
+  overflow-x: clip;
+  max-width: 100vw;
+  min-width: 0;
+}
+
 /* RTL Support - CSS Logical Properties (A3) */
 @import './styles/rtl.css';
 

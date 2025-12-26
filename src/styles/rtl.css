@@ -1,7 +1,37 @@
-/* RTL-specific styles - loaded conditionally */
+/**
+ * RTL Styles - Comprehensive fix for mobile layout issues
+ * FIX 4: Anti-overflow contract implemented throughout
+ */
+
 @tailwind base;
+
 @layer base {
-  /* RTL Support */
+  /* ===== FIX 4: ROOT ANTI-OVERFLOW CONTRACT ===== */
+  html {
+    overflow-x: clip !important;
+    max-width: 100vw !important;
+  }
+
+  html[dir="rtl"],
+  html.rtl-mode {
+    direction: rtl;
+    overflow-x: clip !important;
+    max-width: 100vw !important;
+  }
+
+  body {
+    overflow-x: clip !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+  }
+
+  #root {
+    overflow-x: clip;
+    max-width: 100vw;
+    min-width: 0;
+  }
+
+  /* ===== BASE RTL CLASSES ===== */
   .rtl {
     direction: rtl;
   }
@@ -10,111 +40,102 @@
     direction: ltr;
   }
 
-  /* Arabic text styling - Enhanced */
+  /* ===== ARABIC TEXT STYLING ===== */
   .arabic-text {
     font-family: "Noto Sans Arabic", "Amiri", "Tahoma", "Arial Unicode MS", sans-serif;
-    line-height: 1.7;
+    line-height: 1.8;
     text-align: right;
     font-size: 1.05em;
     letter-spacing: normal;
     word-spacing: 0.05em;
     font-feature-settings: "liga" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* Fix Arabic rendering issues */
-  .rtl * {
-    font-family: inherit;
-    unicode-bidi: isolate;
+  .arabic-display {
+    font-family: 'Amiri', 'Times New Roman', serif;
+    line-height: 1.6;
+    font-weight: 700;
   }
 
-  /* RTL Safe Flex Classes */
+  .arabic-body {
+    font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+
+  /* Font family utilities */
+  .font-amiri {
+    font-family: 'Amiri', 'Times New Roman', serif;
+  }
+  
+  .font-noto-arabic {
+    font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
+  }
+
+  /* ===== CRITICAL: RTL CONTAINER FIXES ===== */
+  .rtl,
+  [dir="rtl"] {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+  
+  .rtl main,
+  [dir="rtl"] main {
+    min-width: 0 !important;
+    width: 100%;
+    max-width: 100vw !important;
+    overflow-x: clip !important;
+    box-sizing: border-box;
+  }
+
+  .rtl .flex-1,
+  [dir="rtl"] .flex-1 {
+    min-width: 0 !important;
+    flex-shrink: 1;
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  /* Fix container widths in RTL */
+  .rtl .container,
+  .rtl .max-w-7xl,
+  .rtl .max-w-6xl,
+  .rtl .max-w-5xl,
+  .rtl .max-w-4xl,
+  .rtl .max-w-3xl,
+  .rtl .max-w-2xl,
+  [dir="rtl"] .container,
+  [dir="rtl"] .max-w-7xl,
+  [dir="rtl"] .max-w-6xl,
+  [dir="rtl"] .max-w-5xl,
+  [dir="rtl"] .max-w-4xl,
+  [dir="rtl"] .max-w-3xl,
+  [dir="rtl"] .max-w-2xl {
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: clip;
+  }
+
+  /* Prevent flex children from causing overflow */
+  .rtl .flex > *,
+  [dir="rtl"] .flex > * {
+    min-width: 0;
+  }
+
+  /* ===== RTL FLEXBOX UTILITIES ===== */
   .rtl-safe-flex-row {
     display: flex;
     flex-direction: row;
   }
   
-  .rtl .rtl-safe-flex-row {
+  .rtl .rtl-safe-flex-row,
+  [dir="rtl"] .rtl-safe-flex-row {
     flex-direction: row-reverse;
   }
 
-  /* RTL Layout Container Fixes */
-  .rtl {
-    direction: rtl;
-  }
-
-  .ltr {
-    direction: ltr;
-  }
-
-  /* Fix sidebar positioning in RTL */
-  .rtl .app-sidebar {
-    order: 2;
-  }
-
-  .rtl .flex-1 {
-    order: 1;
-  }
-
-  /* RTL Mobile specific fixes */
-  .rtl .mobile-sidebar-content {
-    text-align: right;
-  }
-  
-  .rtl .mobile-nav-item {
-    justify-content: flex-end;
-  }
-
-  /* Prevent layout breaks in RTL */
-  .rtl .min-h-screen {
-    direction: rtl;
-  }
-
-  .rtl .flex {
-    direction: inherit;
-  }
-
-  /* Logical properties for RTL support */
-  .rtl .text-start {
-    text-align: right;
-  }
-
-  .rtl .text-end {
-    text-align: left;
-  }
-
-  .rtl .ms-auto {
-    margin-inline-end: auto;
-    margin-inline-start: unset;
-  }
-
-  .rtl .me-auto {
-    margin-inline-start: auto;
-    margin-inline-end: unset;
-  }
-
-  .rtl .ps-4 {
-    padding-inline-start: 1rem;
-  }
-
-  .rtl .pe-4 {
-    padding-inline-end: 1rem;
-  }
-
-  .rtl .border-s {
-    border-inline-start: 1px solid;
-  }
-
-  .rtl .border-r {
-    border-left: 1px solid;
-    border-right: unset;
-  }
-
-  /* Safe RTL spacing adjustments - no global flex overrides */
-  .rtl .space-x-2 > :not([hidden]) ~ :not([hidden]) {
-    --tw-space-x-reverse: 1;
-  }
-
-  /* RTL-specific utility classes for safe usage */
   .rtl-flex-row {
     flex-direction: row;
   }
@@ -139,180 +160,208 @@
     justify-content: flex-start;
   }
 
-  /* RTL Text Alignment */
-  .rtl .text-start {
+  .rtl-flex-start {
+    justify-content: flex-start;
+  }
+
+  [dir="rtl"] .rtl-flex-start {
+    justify-content: flex-end;
+  }
+
+  .rtl-flex-end {
+    justify-content: flex-end;
+  }
+
+  [dir="rtl"] .rtl-flex-end {
+    justify-content: flex-start;
+  }
+
+  /* ===== RTL TEXT ALIGNMENT ===== */
+  .rtl .text-start,
+  [dir="rtl"] .text-start {
     text-align: right;
   }
 
-  .rtl .text-end {
+  .rtl .text-end,
+  [dir="rtl"] .text-end {
     text-align: left;
   }
 
-  /* RTL Spacing Adjustments */
-  .rtl .space-x-reverse > :not([hidden]) ~ :not([hidden]) {
-    --tw-space-x-reverse: 1;
-    margin-right: calc(0.5rem * var(--tw-space-x-reverse));
-    margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+  /* ===== RTL SPACING ===== */
+  .rtl .ms-auto,
+  [dir="rtl"] .ms-auto {
+    margin-inline-end: auto;
+    margin-inline-start: unset;
   }
 
-  /* RTL Form Controls */
-  .rtl input, .rtl textarea, .rtl select {
+  .rtl .me-auto,
+  [dir="rtl"] .me-auto {
+    margin-inline-start: auto;
+    margin-inline-end: unset;
+  }
+
+  .rtl .space-x-2 > :not([hidden]) ~ :not([hidden]),
+  [dir="rtl"] .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 1;
+  }
+
+  .rtl .space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 1;
+  }
+
+  /* ===== RTL BORDERS ===== */
+  .rtl .border-r,
+  [dir="rtl"] .border-r {
+    border-left: 1px solid;
+    border-right: unset;
+  }
+
+  .rtl .border-l,
+  [dir="rtl"] .border-l {
+    border-right: 1px solid;
+    border-left: unset;
+  }
+
+  /* ===== RTL FORM CONTROLS ===== */
+  .rtl input,
+  .rtl textarea,
+  .rtl select,
+  [dir="rtl"] input,
+  [dir="rtl"] textarea,
+  [dir="rtl"] select {
     text-align: right;
     direction: rtl;
   }
 
-  .rtl input::placeholder, .rtl textarea::placeholder {
+  .rtl input::placeholder,
+  .rtl textarea::placeholder,
+  [dir="rtl"] input::placeholder,
+  [dir="rtl"] textarea::placeholder {
     text-align: right;
   }
 
-  /* RTL List Styling */
-  .rtl ul, .rtl ol {
+  /* LTR override for email/url/tel inputs */
+  .rtl input[type="email"],
+  .rtl input[type="url"],
+  .rtl input[type="tel"],
+  [dir="rtl"] input[type="email"],
+  [dir="rtl"] input[type="url"],
+  [dir="rtl"] input[type="tel"] {
+    direction: ltr;
+    text-align: left;
+  }
+
+  /* ===== RTL LISTS ===== */
+  .rtl ul,
+  .rtl ol,
+  [dir="rtl"] ul,
+  [dir="rtl"] ol {
     padding-right: 2rem;
     padding-left: 0;
   }
 
-  .rtl li {
+  .rtl li,
+  [dir="rtl"] li {
     text-align: right;
   }
 
-  /* RTL Layout Adjustments */
-  .rtl .container {
-    padding-right: 1rem;
-    padding-left: 1rem;
-  }
-
-  .rtl .max-w-md {
-    margin: 0 auto;
-  }
-
-  /* RTL Navigation */
-  .rtl nav {
+  /* ===== RTL NAVIGATION ===== */
+  .rtl nav,
+  [dir="rtl"] nav {
     direction: rtl;
   }
 
-  .rtl .breadcrumb-separator::before {
+  .rtl nav ul,
+  [dir="rtl"] nav ul {
+    padding-right: 0;
+  }
+
+  .rtl .breadcrumb-separator::before,
+  [dir="rtl"] .breadcrumb-separator::before {
     content: "\\";
   }
 
-  /* Enhanced Arabic Typography System */
-  .font-amiri {
-    font-family: 'Amiri', 'Times New Roman', serif;
-  }
-  
-  .font-noto-arabic {
-    font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
-  }
-  
-  .font-inter {
-    font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  /* ===== RTL ICONS ===== */
+  .rtl .rtl-flip,
+  .rtl .icon-flip,
+  [dir="rtl"] .rtl-flip,
+  [dir="rtl"] .icon-flip {
+    transform: scaleX(-1);
   }
 
-  /* RTL Content Compression Fixes - CRITICAL FOR MOBILE */
-  .rtl,
-  [dir="rtl"] {
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: hidden;
+  .rtl .chevron-left,
+  .rtl .chevron-right,
+  .rtl .arrow-left,
+  .rtl .arrow-right,
+  [dir="rtl"] .chevron-left,
+  [dir="rtl"] .chevron-right,
+  [dir="rtl"] .arrow-left,
+  [dir="rtl"] .arrow-right {
+    transform: scaleX(-1);
   }
-  
-  .rtl main,
-  [dir="rtl"] main {
+
+  /* ===== RTL SIDEBAR ===== */
+  .rtl .app-sidebar,
+  [dir="rtl"] .app-sidebar {
+    order: 2;
+  }
+
+  .rtl .app-sidebar ~ .flex-1,
+  [dir="rtl"] .app-sidebar ~ .flex-1 {
+    order: 1;
+  }
+
+  [dir="rtl"] [data-sidebar="sidebar"] {
+    border-left: 1px solid hsl(var(--border));
+    border-right: none;
+  }
+
+  /* ===== RTL GRID ===== */
+  .rtl .grid,
+  [dir="rtl"] .grid {
+    direction: rtl;
+  }
+
+  .rtl .grid > *,
+  [dir="rtl"] .grid > * {
     min-width: 0;
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: hidden;
-    box-sizing: border-box;
-  }
-
-  .rtl .flex-1,
-  [dir="rtl"] .flex-1 {
-    min-width: 0;
-    flex-shrink: 1;
-    width: 100%;
-  }
-
-  .rtl .sidebar-content {
-    flex-shrink: 0;
-  }
-  
-  /* Prevent horizontal scrolling in RTL */
-  .rtl body,
-  [dir="rtl"] body {
-    overflow-x: hidden;
-    width: 100%;
-  }
-  
-  /* Fix container widths in RTL */
-  .rtl .container,
-  .rtl .max-w-7xl,
-  .rtl .max-w-4xl,
-  [dir="rtl"] .container,
-  [dir="rtl"] .max-w-7xl,
-  [dir="rtl"] .max-w-4xl {
     max-width: 100%;
-    box-sizing: border-box;
   }
 
-  /* Arabic Text Styles */
-  .arabic-text {
-    font-family: 'Noto Sans Arabic', 'Amiri', 'Times New Roman', serif;
-    line-height: 1.8;
-    text-align: right;
-    font-size: 1.05em;
-    letter-spacing: 0.02em;
-    font-feature-settings: "liga" on, "calt" on, "kern" on;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  .rtl-grid-flow {
+    grid-auto-flow: row;
   }
 
-  .arabic-display {
-    font-family: 'Amiri', 'Times New Roman', serif;
-    line-height: 1.6;
-    font-weight: 700;
-    letter-spacing: 0.03em;
+  [dir="rtl"] .rtl-grid-flow {
+    grid-auto-flow: row dense;
   }
 
-  .arabic-body {
-    font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
-    line-height: 1.7;
-    font-weight: 400;
-  }
-
-  /* Arabic Typography Scales */
-  .arabic-text h1, .arabic-display.text-4xl { font-size: 2.5rem; line-height: 1.4; }
-  .arabic-text h2, .arabic-display.text-3xl { font-size: 2rem; line-height: 1.5; }
-  .arabic-text h3, .arabic-display.text-2xl { font-size: 1.75rem; line-height: 1.5; }
-  .arabic-text h4, .arabic-display.text-xl { font-size: 1.5rem; line-height: 1.6; }
-  .arabic-text h5, .arabic-display.text-lg { font-size: 1.25rem; line-height: 1.6; }
-  .arabic-text h6, .arabic-display.text-base { font-size: 1.1rem; line-height: 1.7; }
-
-  /* Arabic Number Formatting */
+  /* ===== RTL NUMBERS ===== */
   .arabic-numerals {
     font-feature-settings: 'tnum' 1;
     direction: ltr;
     unicode-bidi: embed;
-    font-variant-numeric: normal;
   }
 
-  /* RTL Animation Classes */
-  .rtl-slide-enter {
-    animation: rtl-slide-in 0.3s ease-out;
+  /* ===== RTL POPOVERS & DROPDOWNS ===== */
+  .rtl [data-side="left"],
+  [dir="rtl"] [data-side="left"] {
+    --radix-popper-transform-origin: right center;
   }
 
-  .rtl-slide-exit {
-    animation: rtl-slide-out 0.3s ease-out;
+  .rtl [data-side="right"],
+  [dir="rtl"] [data-side="right"] {
+    --radix-popper-transform-origin: left center;
   }
 
-  .rtl-fade-enter {
-    animation: fade-in-rtl 0.3s ease-out;
+  /* ===== RTL TOAST ===== */
+  .rtl [data-toast-viewport],
+  [dir="rtl"] [data-toast-viewport] {
+    left: auto;
+    right: 1rem;
   }
 
-  .rtl-scale-enter {
-    animation: scale-in-rtl 0.2s ease-out;
-  }
-
-  /* Enhanced RTL Animations */
+  /* ===== RTL ANIMATIONS ===== */
   @keyframes rtl-slide-in {
     from {
       transform: translateX(-100%);
@@ -332,6 +381,17 @@
     to {
       transform: translateX(-100%);
       opacity: 0;
+    }
+  }
+
+  @keyframes rtl-slide-in-right {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
     }
   }
 
@@ -357,204 +417,124 @@
     }
   }
 
-  @keyframes rtl-slide-in-right {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+  .rtl-slide-enter {
+    animation: rtl-slide-in 0.3s ease-out;
   }
 
-  @keyframes rtl-slide-in-left {
-    from {
-      transform: translateX(-100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+  .rtl-slide-exit {
+    animation: rtl-slide-out 0.3s ease-out;
   }
 
-  .rtl-slide-in {
+  .rtl-fade-enter {
+    animation: fade-in-rtl 0.3s ease-out;
+  }
+
+  .rtl-scale-enter {
+    animation: scale-in-rtl 0.2s ease-out;
+  }
+
+  [dir="rtl"] .rtl-slide-in,
+  .rtl .rtl-slide-in {
     animation: rtl-slide-in-right 0.3s ease-out;
   }
 
-  .ltr-slide-in {
-    animation: rtl-slide-in-left 0.3s ease-out;
-  }
+  /* ===== MOBILE RTL CRITICAL FIXES ===== */
+  @media (max-width: 768px) {
+    html,
+    html[dir="rtl"],
+    html.rtl-mode {
+      overflow-x: clip !important;
+      max-width: 100vw !important;
+    }
 
-  /* RTL Specific Browser Fixes */
-  @supports (-webkit-appearance: none) {
-    [dir="rtl"] .arabic-text {
-      font-feature-settings: "kern" 1;
+    body {
+      overflow-x: clip !important;
+      max-width: 100vw !important;
+      min-width: 0 !important;
+    }
+
+    #root {
+      overflow-x: clip !important;
+      max-width: 100vw !important;
+      min-width: 0 !important;
+    }
+
+    /* Force all containers to respect viewport */
+    .rtl .container,
+    .rtl main,
+    .rtl .main-content,
+    .rtl .flex-1,
+    [dir="rtl"] .container,
+    [dir="rtl"] main,
+    [dir="rtl"] .main-content,
+    [dir="rtl"] .flex-1 {
+      width: 100% !important;
+      max-width: 100vw !important;
+      overflow-x: clip !important;
+      min-width: 0 !important;
+    }
+
+    /* Mobile sidebar - position fixed, not in flex flow */
+    .rtl [data-sidebar="sidebar"],
+    [dir="rtl"] [data-sidebar="sidebar"] {
+      position: fixed !important;
+      left: auto !important;
+      right: 0 !important;
+      z-index: 50;
+    }
+
+    /* Mobile nav items */
+    .rtl .mobile-nav-item,
+    [dir="rtl"] .mobile-nav-item {
+      justify-content: flex-end;
+    }
+
+    /* Mobile drawer opens from right in RTL */
+    .rtl .mobile-drawer,
+    [dir="rtl"] .mobile-drawer {
+      left: auto;
+      right: 0;
+      transform-origin: right center;
+    }
+
+    /* Ensure flex children don't overflow */
+    .rtl .flex > *,
+    [dir="rtl"] .flex > * {
+      min-width: 0 !important;
+      max-width: 100% !important;
+    }
+
+    /* Grid items respect viewport */
+    .rtl .grid > *,
+    [dir="rtl"] .grid > * {
+      min-width: 0 !important;
+      max-width: 100% !important;
     }
   }
 
-  @media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
-    [dir="rtl"] .arabic-text {
-      font-display: swap;
-      text-rendering: optimizeLegibility;
+  /* ===== RTL SCROLLBAR ===== */
+  [dir="rtl"]::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  [dir="rtl"]::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 4px;
+  }
+
+  [dir="rtl"]::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 4px;
+  }
+
+  [dir="rtl"]::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* ===== PRINT STYLES ===== */
+  @media print {
+    [dir="rtl"] {
+      direction: rtl;
     }
-  }
-
-  .rtl .button {
-    text-align: center;
-  }
-
-  /* Grid RTL support */
-  .rtl .grid {
-    direction: rtl;
-  }
-
-  /* Icon transformations for RTL */
-  .rtl .rtl-flip {
-    transform: scaleX(-1);
-  }
-
-  /* Text Overflow RTL */
-  .rtl .truncate {
-    direction: rtl;
-    text-overflow: ellipsis;
-  }
-
-  .rtl .text-ellipsis {
-    text-align: right;
-    direction: rtl;
-  }
-
-  /* RTL Dropdown & Popover Positioning */
-  .rtl [data-side="left"] {
-    --radix-popper-anchor-width: var(--radix-popper-available-width);
-    --radix-popper-transform-origin: right center;
-  }
-
-  .rtl [data-side="right"] {
-    --radix-popper-anchor-width: var(--radix-popper-available-width);
-    --radix-popper-transform-origin: left center;
-  }
-
-  /* RTL Toast Positioning */
-  .rtl [data-toast-viewport] {
-    left: auto;
-    right: 1rem;
-  }
-
-  /* RTL Background Pattern Positioning */
-  .rtl-bg-pattern {
-    transform: scaleX(1);
-  }
-
-  [dir="rtl"] .rtl-bg-pattern {
-    transform: scaleX(-1);
-  }
-
-  /* RTL Form Error Positioning */
-  .rtl-form-error {
-    text-align: left;
-  }
-
-  [dir="rtl"] .rtl-form-error {
-    text-align: right;
-  }
-
-  /* RTL Navigation Breadcrumbs */
-  .rtl-breadcrumb::after {
-    content: "/";
-    margin: 0 0.5rem;
-  }
-
-  [dir="rtl"] .rtl-breadcrumb::after {
-    content: "\\";
-  }
-
-  /* RTL CSS Grid Fixes */
-  .rtl-grid-flow {
-    grid-auto-flow: row;
-  }
-
-  [dir="rtl"] .rtl-grid-flow {
-    grid-auto-flow: row dense;
-  }
-
-  /* RTL Flexbox Direction Utilities */
-  .rtl-flex-start {
-    justify-content: flex-start;
-  }
-
-  [dir="rtl"] .rtl-flex-start {
-    justify-content: flex-end;
-  }
-
-  .rtl-flex-end {
-    justify-content: flex-end;
-  }
-
-  [dir="rtl"] .rtl-flex-end {
-    justify-content: flex-start;
-  }
-
-  /* RTL Modal & Dialog Positioning */
-  .rtl [role="dialog"] {
-    text-align: left;
-  }
-
-  [dir="rtl"] [role="dialog"] {
-    text-align: right;
-  }
-
-  /* RTL Table Alignment */
-  .rtl table {
-    direction: ltr;
-  }
-
-  [dir="rtl"] table {
-    direction: rtl;
-  }
-
-  [dir="rtl"] th:first-child,
-  [dir="rtl"] td:first-child {
-    text-align: right;
-  }
-
-  [dir="rtl"] th:last-child,
-  [dir="rtl"] td:last-child {
-    text-align: left;
-  }
-
-  /* Enhanced RTL Mode specific styles */
-  .rtl-mode {
-    font-feature-settings: "liga" off;
-  }
-
-  .ltr-mode {
-    font-feature-settings: "liga" on;
-  }
-
-  /* RTL Container transitions */
-  .rtl-container {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .rtl-container.rtl {
-    direction: rtl;
-  }
-
-  .rtl-container.ltr {
-    direction: ltr;
-  }
-
-  /* Enhanced RTL form field transitions */
-  .rtl input, .rtl textarea, .rtl select {
-    text-align: right;
-    transition: all 0.2s ease-in-out;
-  }
-
-  .ltr input, .ltr textarea, .ltr select {
-    text-align: left;
-    transition: all 0.2s ease-in-out;
   }
 }

@@ -1,4 +1,5 @@
 // Cross-browser RTL compatibility utilities
+// FIXED: Removed non-standard viewport-meta mutations that caused layout issues
 
 export const detectRTLSupport = () => {
   if (typeof window === 'undefined') return false;
@@ -11,9 +12,13 @@ export const detectRTLSupport = () => {
 export const injectRTLPolyfills = () => {
   if (typeof window === 'undefined') return;
 
+  // Prevent duplicate injection
+  if (document.getElementById('rtl-polyfills-injected')) return;
+
   // Safari RTL fixes
   if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) {
     const style = document.createElement('style');
+    style.id = 'rtl-polyfills-injected';
     style.textContent = `
       [dir="rtl"] {
         -webkit-text-size-adjust: 100%;
@@ -24,11 +29,13 @@ export const injectRTLPolyfills = () => {
       }
     `;
     document.head.appendChild(style);
+    return;
   }
 
   // Firefox RTL fixes
   if (navigator.userAgent.includes('Firefox')) {
     const style = document.createElement('style');
+    style.id = 'rtl-polyfills-injected';
     style.textContent = `
       [dir="rtl"] {
         -moz-text-size-adjust: none;
@@ -38,11 +45,13 @@ export const injectRTLPolyfills = () => {
       }
     `;
     document.head.appendChild(style);
+    return;
   }
 
   // Chrome RTL optimizations
   if (navigator.userAgent.includes('Chrome')) {
     const style = document.createElement('style');
+    style.id = 'rtl-polyfills-injected';
     style.textContent = `
       [dir="rtl"] .arabic-text {
         font-display: swap;
@@ -53,22 +62,36 @@ export const injectRTLPolyfills = () => {
   }
 };
 
-export const addRTLViewportMeta = () => {
+/**
+ * FIX 2: Ensure viewport meta uses ONLY standard values
+ * Removes any non-standard parameters like 'direction-lockable=false'
+ */
+export const ensureStandardViewportMeta = () => {
   if (typeof window === 'undefined') return;
 
   const viewport = document.querySelector('meta[name="viewport"]');
   if (viewport) {
-    viewport.setAttribute('content', 
-      viewport.getAttribute('content') + ', direction-lockable=false'
-    );
+    // Reset to standard viewport values - NEVER add non-standard params
+    const standardContent = 'width=device-width, initial-scale=1, viewport-fit=cover';
+    const currentContent = viewport.getAttribute('content') || '';
+    
+    // Only update if it contains non-standard values
+    if (currentContent.includes('direction-lockable') || 
+        currentContent !== standardContent) {
+      viewport.setAttribute('content', standardContent);
+    }
   }
 };
 
 export const enableRTLScrollbarFix = () => {
   if (typeof window === 'undefined') return;
+  
+  // Prevent duplicate injection
+  if (document.getElementById('rtl-scrollbar-fix')) return;
 
   // Fix scrollbar position in RTL
   const style = document.createElement('style');
+  style.id = 'rtl-scrollbar-fix';
   style.textContent = `
     [dir="rtl"]::-webkit-scrollbar {
       width: 8px;
@@ -100,22 +123,87 @@ export const testRTLCompatibility = () => {
     gridAutoFlow: CSS.supports('grid-auto-flow', 'row-reverse'),
   };
 
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     console.log('RTL Browser Compatibility:', tests);
   }
   return tests;
 };
 
+/**
+ * FIX 4: Development-only overflow detector
+ * Logs elements that extend beyond viewport in RTL mode
+ */
+export const detectOverflowingElements = () => {
+  if (!import.meta.env.DEV) return [];
+  if (typeof window === 'undefined') return [];
+
+  const overflowingElements: Array<{ element: string; right: number; viewportWidth: number }> = [];
+  const viewportWidth = window.innerWidth;
+
+  document.querySelectorAll('*').forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    if (rect.right > viewportWidth + 1) {
+      overflowingElements.push({
+        element: `${el.tagName}.${el.className}`,
+        right: rect.right,
+        viewportWidth,
+      });
+    }
+  });
+
+  if (overflowingElements.length > 0) {
+    console.warn('🚨 RTL Overflow detected:', overflowingElements.slice(0, 10));
+  }
+
+  return overflowingElements;
+};
+
+/**
+ * Verify viewport measurements match hardware width
+ */
+export const verifyViewportIntegrity = () => {
+  if (typeof window === 'undefined') return null;
+
+  const measurements = {
+    innerWidth: window.innerWidth,
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+    isValid: true,
+    hasHorizontalOverflow: false,
+  };
+
+  // Check if scrollWidth exceeds viewport (indicates overflow)
+  measurements.hasHorizontalOverflow = measurements.scrollWidth > measurements.innerWidth + 1;
+  measurements.isValid = !measurements.hasHorizontalOverflow;
+
+  if (import.meta.env.DEV && measurements.hasHorizontalOverflow) {
+    console.warn('🚨 Viewport integrity issue:', measurements);
+    detectOverflowingElements();
+  }
+
+  return measurements;
+};
+
+// Initialization - runs once
+let initialized = false;
+
 export const initializeCrossBrowserRTL = () => {
   if (typeof window === 'undefined') return;
+  if (initialized) return;
+  
+  initialized = true;
 
   // Run all cross-browser fixes
   injectRTLPolyfills();
-  addRTLViewportMeta();
+  ensureStandardViewportMeta(); // FIX 2: Use standard viewport only
   enableRTLScrollbarFix();
   
   // Test compatibility in development
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     testRTLCompatibility();
+    // Delayed check for overflow after layout settles
+    setTimeout(() => {
+      verifyViewportIntegrity();
+    }, 500);
   }
 };
