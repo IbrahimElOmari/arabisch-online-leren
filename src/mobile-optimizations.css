@@ -76,7 +76,7 @@
   [dir="rtl"] .swipe-indicator { transform: scaleX(-1); }
   [dir="rtl"] .mobile-slide-in { animation: rtl-mobile-slide-in 0.3s ease-out; }
   [dir="rtl"] .mobile-slide-out { animation: rtl-mobile-slide-out 0.3s ease-out; }
-  [dir="rtl"] .mobile-bottom-nav { flex-direction: row-reverse; right: 0; left: 0; }
+  [dir="rtl"] .mobile-bottom-nav { right: 0; left: 0; }
   [dir="rtl"] .mobile-bottom-nav .nav-item { transform: none; }
   [dir="rtl"] [data-vaul-drawer][data-vaul-drawer-direction="left"] { right: 0 !important; left: auto !important; transform-origin: right center; }
   [dir="rtl"] [data-vaul-drawer][data-vaul-drawer-direction="right"] { left: 0 !important; right: auto !important; transform-origin: left center; }

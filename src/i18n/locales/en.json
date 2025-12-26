@@ -209,7 +209,9 @@
     "forgot_password": "Forgot password?",
     "sign_in": "Sign In",
     "sign_up": "Sign Up",
-    "sign_out": "Sign Out"
+    "sign_out": "Sign Out",
+    "loginAccount": "Log in to your account",
+    "createAccount": "Create an account to start learning"
   },
   "common": {
     "loading": "Loading...",

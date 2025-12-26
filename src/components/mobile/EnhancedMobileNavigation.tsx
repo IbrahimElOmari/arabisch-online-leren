@@ -188,7 +188,7 @@ export const EnhancedMobileSidebar = () => {
       
         <SheetContent 
           side={isRTL ? "right" : "left"}
-          className="fixed inset-y-0 mobile-sidebar-overlay w-screen max-w-none md:w-[85vw] md:max-w-sm p-0 mobile-sheet bg-card text-card-foreground"
+          className="fixed inset-y-0 mobile-sidebar-overlay w-[85vw] max-w-[320px] p-0 mobile-sheet bg-card text-card-foreground"
         >
         <div className="flex flex-col h-full">
           {/* Header */}
