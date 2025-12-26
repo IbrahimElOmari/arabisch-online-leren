@@ -1,0 +1,59 @@
+{
+  "enrollment": {
+    "title": "Kayıt ol",
+    "description": "Kayıt olmak için aşağıdaki formu doldurun",
+    "testMode": "TEST MODU",
+    "testModeDescription": "Ödeme sistemi test modunda. Gerçek ödeme işlemi yapılmayacak.",
+    "personalInfo": "Kişisel bilgiler",
+    "dateOfBirth": "Doğum tarihi",
+    "isMinor": "18 yaşından küçüğüm",
+    "parentInfo": "Ebeveyn/Vasi bilgileri",
+    "parentName": "Ebeveyn/vasi adı",
+    "parentEmail": "Ebeveyn/vasi e-postası",
+    "parentPhone": "Ebeveyn/vasi telefonu",
+    "emergencyContact": "Acil durum iletişim",
+    "emergencyContactName": "Ad",
+    "emergencyContactPhone": "Telefon",
+    "emergencyContactRelationship": "İlişki",
+    "relationshipPlaceholder": "örn. Ebeveyn, Kardeş, Arkadaş",
+    "paymentOptions": "Ödeme seçenekleri",
+    "oneTimePayment": "Tek seferlik ödeme",
+    "oneTimeDescription": "Bir kez ödeyin ve anında tam erişim elde edin",
+    "installmentPayment": "Aylık taksitler",
+    "installmentDescription": "{{months}} aylık ödeme",
+    "month": "ay",
+    "totalAmount": "Toplam",
+    "consent": "Şartları ve koşulları kabul ediyorum",
+    "consentDescription": "Bu kutuyu işaretleyerek hizmet şartlarımızı ve gizlilik politikamızı kabul ediyorsunuz.",
+    "processing": "İşleniyor...",
+    "proceed": "Ödemeye devam et",
+    "error": {
+      "generic": "Kayıt başarısız oldu. Lütfen tekrar deneyin.",
+      "missingParams": "Eksik ödeme parametreleri"
+    }
+  },
+  "payment": {
+    "processing": {
+      "title": "Ödeme işleniyor",
+      "description": "Ödemenizi işlerken lütfen bekleyin..."
+    },
+    "success": {
+      "title": "Ödeme başarılı",
+      "description": "Ödemeniz başarıyla işlendi.",
+      "nextStep": "Birkaç saniye içinde seviye belirleme testine yönlendirileceksiniz...",
+      "continue": "Seviye belirleme testine devam et"
+    },
+    "failed": {
+      "title": "Ödeme başarısız",
+      "description": "Ödemenizi işleyemedik.",
+      "back": "Modüllere geri dön",
+      "retry": "Tekrar dene"
+    },
+    "error": {
+      "title": "Ödeme hatası",
+      "description": "Ödeme işlenirken bir hata oluştu.",
+      "processing": "Ödeme işleme başarısız"
+    },
+    "testMode": "Bu simüle edilmiş bir ödemedir. Gerçek ücret alınmamıştır."
+  }
+}

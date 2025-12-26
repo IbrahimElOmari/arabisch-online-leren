@@ -1,0 +1,24 @@
+{
+  "placement": {
+    "title": "Test de placement",
+    "description": "Complétez ce test pour déterminer votre niveau en arabe",
+    "startTest": "Commencer le test",
+    "question": "Question",
+    "of": "sur",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "timeRemaining": "Temps restant",
+    "completed": {
+      "title": "Test terminé",
+      "description": "Votre test de placement a été soumis.",
+      "assignedLevel": "Votre niveau attribué",
+      "score": "Votre score",
+      "continue": "Continuer vers le tableau de bord"
+    },
+    "error": {
+      "loadFailed": "Échec du chargement du test de placement",
+      "submitFailed": "Échec de la soumission du test"
+    }
+  }
+}

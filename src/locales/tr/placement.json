@@ -1,0 +1,24 @@
+{
+  "placement": {
+    "title": "Seviye Belirleme Testi",
+    "description": "Arapça dilinizi seviyenizi belirlemek için bu testi tamamlayın",
+    "startTest": "Testi Başlat",
+    "question": "Soru",
+    "of": "/",
+    "next": "Sonraki",
+    "previous": "Önceki",
+    "submit": "Gönder",
+    "timeRemaining": "Kalan süre",
+    "completed": {
+      "title": "Test Tamamlandı",
+      "description": "Seviye belirleme testiniz gönderildi.",
+      "assignedLevel": "Atanan seviyeniz",
+      "score": "Puanınız",
+      "continue": "Panoya Devam Et"
+    },
+    "error": {
+      "loadFailed": "Seviye belirleme testi yüklenemedi",
+      "submitFailed": "Test gönderilemedi"
+    }
+  }
+}

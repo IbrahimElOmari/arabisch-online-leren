@@ -1,6 +1,20 @@
 // Input validation and sanitization utilities
 
+/**
+ * @deprecated Use Zod schemas from src/lib/schemas.ts and DOMPurify for HTML sanitization instead.
+ * This function is kept for backward compatibility but should not be used in new code.
+ * 
+ * For email/text input: Use Zod's .trim() and .email() validators
+ * For HTML content: Use DOMPurify.sanitize()
+ * 
+ * @see src/lib/schemas.ts for Zod schema examples
+ */
 export const sanitizeInput = (input: string): string => {
+  if (import.meta.env.DEV) {
+    console.warn(
+      '[DEPRECATED] sanitizeInput() is deprecated. Use Zod schemas from src/lib/schemas.ts instead.'
+    );
+  }
   // Enhanced XSS protection
   return input
     .replace(/[<>\"'&]/g, '')

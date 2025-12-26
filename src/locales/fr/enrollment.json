@@ -1,0 +1,59 @@
+{
+  "enrollment": {
+    "title": "Inscription à",
+    "description": "Remplissez le formulaire ci-dessous pour vous inscrire",
+    "testMode": "MODE TEST",
+    "testModeDescription": "Le système de paiement est en mode test. Aucun paiement réel ne sera traité.",
+    "personalInfo": "Informations personnelles",
+    "dateOfBirth": "Date de naissance",
+    "isMinor": "J'ai moins de 18 ans",
+    "parentInfo": "Informations parent/tuteur",
+    "parentName": "Nom du parent/tuteur",
+    "parentEmail": "Email du parent/tuteur",
+    "parentPhone": "Téléphone du parent/tuteur",
+    "emergencyContact": "Contact d'urgence",
+    "emergencyContactName": "Nom",
+    "emergencyContactPhone": "Téléphone",
+    "emergencyContactRelationship": "Relation",
+    "relationshipPlaceholder": "ex. Parent, Frère/Sœur, Ami",
+    "paymentOptions": "Options de paiement",
+    "oneTimePayment": "Paiement unique",
+    "oneTimeDescription": "Payez une fois et obtenez un accès complet immédiat",
+    "installmentPayment": "Versements mensuels",
+    "installmentDescription": "{{months}} paiements mensuels",
+    "month": "mois",
+    "totalAmount": "Total",
+    "consent": "J'accepte les conditions générales",
+    "consentDescription": "En cochant cette case, vous acceptez nos conditions de service et notre politique de confidentialité.",
+    "processing": "Traitement...",
+    "proceed": "Procéder au paiement",
+    "error": {
+      "generic": "L'inscription a échoué. Veuillez réessayer.",
+      "missingParams": "Paramètres de paiement manquants"
+    }
+  },
+  "payment": {
+    "processing": {
+      "title": "Traitement du paiement",
+      "description": "Veuillez patienter pendant que nous traitons votre paiement..."
+    },
+    "success": {
+      "title": "Paiement réussi",
+      "description": "Votre paiement a été traité avec succès.",
+      "nextStep": "Vous serez redirigé vers le test de placement dans quelques secondes...",
+      "continue": "Continuer vers le test de placement"
+    },
+    "failed": {
+      "title": "Paiement échoué",
+      "description": "Nous n'avons pas pu traiter votre paiement.",
+      "back": "Retour aux modules",
+      "retry": "Réessayer"
+    },
+    "error": {
+      "title": "Erreur de paiement",
+      "description": "Une erreur s'est produite lors du traitement du paiement.",
+      "processing": "Le traitement du paiement a échoué"
+    },
+    "testMode": "Ceci est un paiement simulé. Aucun frais réel n'a été effectué."
+  }
+}

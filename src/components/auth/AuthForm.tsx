@@ -5,7 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveForm, ResponsiveFormField } from '@/components/forms/ResponsiveForm';
 import { Eye, EyeOff, AlertTriangle } from 'lucide-react';
-import { sanitizeInput, validatePassword, validateEmail } from '@/utils/validation';
+import { validatePassword } from '@/utils/validation';
+import { emailSchema } from '@/lib/schemas';
 import { useRateLimit } from '@/hooks/useRateLimit';
 import { useState } from 'react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
@@ -62,13 +63,19 @@ export const AuthForm = ({
   };
 
   const handleEmailChange = (email: string) => {
-    const sanitized = sanitizeInput(email.toLowerCase().trim());
-    setFormData({ ...formData, emailOrName: sanitized });
-    
-    if (isSignUp && email && !validateEmail(email)) {
-      setEmailError('Voer een geldig e-mailadres in');
-    } else {
+    // Use Zod schema for validation and sanitization
+    const result = emailSchema.safeParse(email);
+    if (result.success) {
+      setFormData({ ...formData, emailOrName: result.data });
       setEmailError('');
+    } else {
+      // Still update the field but show error
+      setFormData({ ...formData, emailOrName: email.toLowerCase().trim() });
+      if (isSignUp && email) {
+        setEmailError(result.error.errors[0]?.message || 'Ongeldig e-mailadres');
+      } else {
+        setEmailError('');
+      }
     }
   };
 
@@ -192,8 +199,8 @@ export const AuthForm = ({
             if (isSignUp) {
               handleEmailChange(value);
             } else {
-              const sanitized = sanitizeInput(value.trim());
-              setFormData({...formData, emailOrName: sanitized});
+              // For login, just trim - no need for aggressive sanitization
+              setFormData({...formData, emailOrName: value.trim()});
             }
           }}
           placeholder={isSignUp ? "je@email.com" : "E-mail of volledige naam"}
