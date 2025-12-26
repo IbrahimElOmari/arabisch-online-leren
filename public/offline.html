@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#8B5CF6">
   <title>Offline - Arabisch Online Leren</title>
   <style>
     * {
@@ -11,74 +12,119 @@
       box-sizing: border-box;
     }
     
+    :root {
+      --primary: #8B5CF6;
+      --primary-dark: #7C3AED;
+      --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --text: #1f2937;
+      --text-muted: #6b7280;
+    }
+    
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--background);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #333;
+      color: var(--text);
     }
     
     .container {
-      background: white;
-      padding: 3rem 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      background: var(--card-bg);
+      padding: 2.5rem 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
       text-align: center;
-      max-width: 500px;
+      max-width: 480px;
       margin: 1rem;
+      backdrop-filter: blur(10px);
     }
     
     .icon {
       font-size: 4rem;
       margin-bottom: 1.5rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
     }
     
     h1 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      color: #667eea;
+      font-size: 1.75rem;
+      margin-bottom: 0.75rem;
+      color: var(--primary);
+      font-weight: 700;
     }
     
     p {
-      font-size: 1.1rem;
+      font-size: 1rem;
       line-height: 1.6;
-      color: #666;
-      margin-bottom: 2rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
     
     .retry-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--background);
       color: white;
       border: none;
-      padding: 1rem 2rem;
-      font-size: 1.1rem;
-      border-radius: 0.5rem;
+      padding: 0.875rem 1.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 0.75rem;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     
     .retry-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
     }
     
     .retry-btn:active {
       transform: translateY(0);
     }
     
+    .secondary-btn {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      padding: 0.875rem 1.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .secondary-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+    
     .features {
       margin-top: 2rem;
       padding-top: 2rem;
-      border-top: 1px solid #e0e0e0;
+      border-top: 1px solid #e5e7eb;
     }
     
     .features h2 {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       margin-bottom: 1rem;
-      color: #667eea;
+      color: var(--primary);
     }
     
     .features ul {
@@ -88,27 +134,179 @@
     
     .features li {
       padding: 0.5rem 0;
-      color: #666;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     
-    .features li:before {
-      content: "✓ ";
-      color: #667eea;
+    .features li::before {
+      content: "✓";
+      color: var(--primary);
       font-weight: bold;
-      margin-right: 0.5rem;
+    }
+    
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+      animation: blink 1.5s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .language-select {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      color: white;
+      cursor: pointer;
+    }
+    
+    /* RTL Support */
+    [dir="rtl"] .features ul {
+      text-align: right;
+    }
+    
+    [dir="rtl"] .features li::before {
+      content: none;
+    }
+    
+    [dir="rtl"] .features li::after {
+      content: "✓";
+      color: var(--primary);
+      font-weight: bold;
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        margin: 0.5rem;
+        padding: 1.5rem 1rem;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+      
+      .retry-btn, .secondary-btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
+  <script>
+    // Check connectivity and auto-reload
+    function checkConnection() {
+      if (navigator.onLine) {
+        window.location.reload();
+      }
+    }
+    
+    window.addEventListener('online', checkConnection);
+    
+    // Retry connection periodically
+    setInterval(checkConnection, 5000);
+    
+    // Language switching
+    function switchLanguage(lang) {
+      const texts = {
+        nl: {
+          title: 'Je bent offline',
+          message: 'Er is geen internetverbinding beschikbaar. Controleer je netwerk en probeer opnieuw.',
+          retry: 'Opnieuw proberen',
+          cached: 'Bekijk gecachete inhoud',
+          featuresTitle: 'Beschikbaar wanneer online:',
+          features: [
+            'Toegang tot al je lessen en materialen',
+            'Interactieve oefeningen en taken',
+            'Forum en communicatie met leerkrachten',
+            'Voortgang bijhouden en badges verzamelen'
+          ],
+          status: 'Verbinding verbroken'
+        },
+        ar: {
+          title: 'أنت غير متصل',
+          message: 'لا يتوفر اتصال بالإنترنت. تحقق من شبكتك وحاول مرة أخرى.',
+          retry: 'حاول مرة أخرى',
+          cached: 'عرض المحتوى المحفوظ',
+          featuresTitle: 'متاح عند الاتصال:',
+          features: [
+            'الوصول إلى جميع دروسك والمواد',
+            'تمارين ومهام تفاعلية',
+            'المنتدى والتواصل مع المعلمين',
+            'تتبع التقدم وجمع الشارات'
+          ],
+          status: 'غير متصل'
+        }
+      };
+      
+      const t = texts[lang] || texts.nl;
+      const isRTL = lang === 'ar';
+      
+      document.documentElement.setAttribute('lang', lang);
+      document.documentElement.setAttribute('dir', isRTL ? 'rtl' : 'ltr');
+      
+      document.querySelector('h1').textContent = t.title;
+      document.querySelector('.message').textContent = t.message;
+      document.querySelector('.retry-btn span').textContent = t.retry;
+      document.querySelector('.secondary-btn').textContent = t.cached;
+      document.querySelector('.features h2').textContent = t.featuresTitle;
+      document.querySelector('.status-text').textContent = t.status;
+      
+      const featuresList = document.querySelector('.features ul');
+      featuresList.innerHTML = t.features.map(f => `<li>${f}</li>`).join('');
+    }
+  </script>
 </head>
 <body>
+  <select class="language-select" onchange="switchLanguage(this.value)">
+    <option value="nl">🇳🇱 NL</option>
+    <option value="ar">🇸🇦 AR</option>
+  </select>
+  
   <div class="container">
+    <div class="status-indicator">
+      <span class="status-dot"></span>
+      <span class="status-text">Verbinding verbroken</span>
+    </div>
+    
     <div class="icon">📡</div>
     <h1>Je bent offline</h1>
-    <p>
+    <p class="message">
       Er is geen internetverbinding beschikbaar. Controleer je netwerk en probeer opnieuw.
     </p>
-    <button class="retry-btn" onclick="window.location.reload()">
-      Opnieuw proberen
-    </button>
+    
+    <div class="btn-group">
+      <button class="retry-btn" onclick="window.location.reload()">
+        <span>Opnieuw proberen</span>
+        ↻
+      </button>
+      <button class="secondary-btn" onclick="window.history.back()">
+        Bekijk gecachete inhoud
+      </button>
+    </div>
     
     <div class="features">
       <h2>Beschikbaar wanneer online:</h2>

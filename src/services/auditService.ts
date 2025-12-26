@@ -35,7 +35,7 @@ export const auditService = {
 
       if (error) throw error;
     } catch (error) {
-      console.error('Failed to log audit event:', error);
+      if (import.meta.env.DEV) console.error('Failed to log audit event:', error);
     }
   },
 

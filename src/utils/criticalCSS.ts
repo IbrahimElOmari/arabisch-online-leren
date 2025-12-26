@@ -104,7 +104,7 @@ export function initializeCriticalCSS(): void {
   preloadCriticalFonts();
   
   // Remove unused CSS classes in production
-  if (import.meta.env.PROD) {
+  if (import.meta.env.DEV) {
     // This would be handled by the build process
     console.log('Critical CSS optimizations initialized');
   }

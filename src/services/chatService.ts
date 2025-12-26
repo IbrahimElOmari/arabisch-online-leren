@@ -317,7 +317,7 @@ export class ChatService {
       });
 
       if (scanError) {
-        console.error('Virus scan failed:', scanError);
+        if (import.meta.env.DEV) console.error('Virus scan failed:', scanError);
         // Don't block upload on scan failure, but log it
       }
 
@@ -326,7 +326,7 @@ export class ChatService {
         throw new Error('File upload blocked: security threat detected');
       }
     } catch (scanError) {
-      console.error('Virus scan error:', scanError);
+      if (import.meta.env.DEV) console.error('Virus scan error:', scanError);
       // If scan fails completely, delete the file to be safe
       await supabase.storage.from('chat_attachments').remove([data.path]);
       throw new Error('File upload failed security check');

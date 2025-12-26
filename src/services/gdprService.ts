@@ -54,7 +54,7 @@ export const gdprService = {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Failed to download user data:', error);
+      if (import.meta.env.DEV) console.error('Failed to download user data:', error);
       throw error;
     }
   }
