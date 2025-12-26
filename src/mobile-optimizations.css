@@ -62,7 +62,7 @@
   [dir="rtl"] {
     width: 100% !important;
     max-width: 100vw !important;
-    overflow-x: hidden !important;
+    overflow-x: clip !important;
   }
   
   [dir="rtl"] body,
@@ -70,7 +70,7 @@
   [dir="rtl"] .min-h-screen {
     width: 100% !important;
     max-width: 100vw !important;
-    overflow-x: hidden !important;
+    overflow-x: clip !important;
   }
   
   [dir="rtl"] .swipe-indicator { transform: scaleX(-1); }

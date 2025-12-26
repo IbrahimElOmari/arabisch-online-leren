@@ -44,7 +44,13 @@
     "management": "Beheer",
     "logout": "Uitloggen",
     "pricing": "Prijzen",
-    "vision": "Visie"
+    "vision": "Visie",
+    "calendar": "Kalender",
+    "main": "Hoofdmenu",
+    "learning": "Leren",
+    "security": "Beveiliging",
+    "menu": "Menu",
+    "guest": "Gast"
   },
   "roles": {
     "admin": "Beheerder",

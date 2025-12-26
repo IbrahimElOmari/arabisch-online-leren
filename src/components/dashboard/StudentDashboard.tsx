@@ -156,7 +156,7 @@ const StudentDashboard = () => {
         setSelectedLevel(firstLevel);
       }
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.error('Error fetching enrolled classes:', error);
       }
       setEnrolledClasses([]);

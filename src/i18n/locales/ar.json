@@ -44,7 +44,13 @@
     "management": "الإدارة",
     "logout": "تسجيل الخروج",
     "pricing": "الأسعار",
-    "vision": "الرؤية"
+    "vision": "الرؤية",
+    "calendar": "التقويم",
+    "main": "الرئيسية",
+    "learning": "التعلم",
+    "security": "الأمان",
+    "menu": "القائمة",
+    "guest": "ضيف"
   },
   "roles": {
     "admin": "مدير",

@@ -203,10 +203,137 @@ export const verifyRTLLayout = (): { passed: boolean; issues: string[] } => {
   };
 };
 
+/**
+ * Check if main content is visible within viewport
+ * Useful for detecting if content is pushed offscreen in RTL mode
+ */
+export const checkMainContentVisibility = (): { visible: boolean; issues: string[] } => {
+  if (typeof window === 'undefined') {
+    return { visible: true, issues: [] };
+  }
+
+  const issues: string[] = [];
+  const main = document.querySelector('main');
+  
+  if (!main) {
+    return { visible: false, issues: ['No <main> element found'] };
+  }
+
+  const rect = main.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+
+  // Check if main is pushed left (negative x)
+  if (rect.x < -10) {
+    issues.push(`Main content pushed left: x=${Math.round(rect.x)}px`);
+  }
+
+  // Check if main is pushed right beyond viewport
+  if (rect.left > viewportWidth) {
+    issues.push(`Main content pushed offscreen right: left=${Math.round(rect.left)}px, viewport=${viewportWidth}px`);
+  }
+
+  // Check if main has zero or near-zero width
+  if (rect.width < 100) {
+    issues.push(`Main content has minimal width: ${Math.round(rect.width)}px`);
+  }
+
+  // Check if main content is visible in viewport
+  const isVisible = rect.x >= -10 && 
+                   rect.left < viewportWidth && 
+                   rect.width > 100 &&
+                   rect.height > 0;
+
+  if (!isVisible && issues.length === 0) {
+    issues.push('Main content not visible for unknown reason');
+  }
+
+  if (import.meta.env.DEV && issues.length > 0) {
+    console.warn('⚠️ Main content visibility issues:', issues);
+    console.log('Main bounding rect:', {
+      x: rect.x,
+      y: rect.y,
+      width: rect.width,
+      height: rect.height,
+      left: rect.left,
+      right: rect.right,
+    });
+  }
+
+  return { visible: isVisible, issues };
+};
+
+/**
+ * Detect which element (if any) is covering main content
+ * Useful for finding overlay/drawer issues
+ */
+export const detectOverlayOverMain = (): { blocking: boolean; element: string | null } => {
+  if (typeof window === 'undefined') {
+    return { blocking: false, element: null };
+  }
+
+  const main = document.querySelector('main');
+  if (!main) {
+    return { blocking: false, element: null };
+  }
+
+  const rect = main.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  // Get element at center of main
+  const elementAtCenter = document.elementFromPoint(centerX, centerY);
+
+  if (!elementAtCenter) {
+    return { blocking: false, element: null };
+  }
+
+  // Check if the element is main or a child of main
+  if (main.contains(elementAtCenter) || elementAtCenter === main) {
+    return { blocking: false, element: null };
+  }
+
+  // Something is covering main
+  let selector = elementAtCenter.tagName.toLowerCase();
+  if (elementAtCenter.id) selector += `#${elementAtCenter.id}`;
+  if (elementAtCenter.className && typeof elementAtCenter.className === 'string') {
+    selector += `.${elementAtCenter.className.split(' ').slice(0, 2).join('.')}`;
+  }
+
+  if (import.meta.env.DEV) {
+    console.warn('⚠️ Element blocking main content:', selector, elementAtCenter);
+  }
+
+  return { blocking: true, element: selector };
+};
+
 // Auto-run in development
 if (import.meta.env.DEV && typeof window !== 'undefined') {
   // Log on load and language change
   window.addEventListener('load', () => {
-    setTimeout(logRTLDebugInfo, 1000);
+    setTimeout(() => {
+      logRTLDebugInfo();
+      checkMainContentVisibility();
+    }, 1000);
   });
+
+  // Monitor dir/lang changes
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'attributes') {
+        const attr = mutation.attributeName;
+        if (attr === 'dir' || attr === 'lang') {
+          console.log(`📌 HTML ${attr} changed to:`, document.documentElement.getAttribute(attr));
+          setTimeout(() => {
+            checkMainContentVisibility();
+            const overlay = detectOverlayOverMain();
+            if (overlay.blocking) {
+              console.warn('⚠️ Overlay detected after attribute change:', overlay.element);
+            }
+          }, 100);
+        }
+      }
+    });
+  });
+
+  observer.observe(document.documentElement, { attributes: true });
 }
