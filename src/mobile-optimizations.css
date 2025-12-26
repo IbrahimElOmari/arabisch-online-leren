@@ -288,7 +288,13 @@
   direction: ltr;
 }
 
+/* mobile-nav-rtl: Only sets direction, NOT flex-direction (that caused content hiding) */
 .mobile-nav-rtl {
+  direction: rtl;
+}
+
+/* Separate class for bottom navigation that needs row-reverse */
+.mobile-bottom-nav-rtl {
   direction: rtl;
   flex-direction: row-reverse;
 }

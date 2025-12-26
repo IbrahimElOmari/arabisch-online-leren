@@ -1,16 +1,16 @@
 import { lazy } from 'react';
 import WithEnhancedErrorHandling from '@/components/error/EnhancedErrorHandling';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useMobileRTL } from '@/hooks/useMobileRTL';
 
 const StudentDashboard = lazy(() => import('@/components/dashboard/StudentDashboard'));
 
+/**
+ * EnhancedStudentDashboard
+ * FIX: Removed problematic getMobileNavClasses() wrapper that applied flex-direction: row-reverse
+ * to the entire dashboard, causing content to be hidden in RTL mobile mode.
+ */
 const EnhancedStudentDashboard = () => {
-  const isMobile = useIsMobile();
-  const { getMobileNavClasses } = useMobileRTL();
-
   return (
-    <div className={isMobile ? getMobileNavClasses() : undefined}>
+    <div>
       <WithEnhancedErrorHandling>
         <StudentDashboard />
       </WithEnhancedErrorHandling>
