@@ -340,10 +340,8 @@ All colors MUST be HSL.
       direction: rtl;
     }
     
-    /* Fix flex containers in RTL */
-    [dir="rtl"] .flex {
-      direction: inherit;
-    }
+    /* FIX: Removed problematic direction: inherit rule that caused layout issues */
+    /* Flex containers now use natural RTL flow without forced direction inheritance */
   }
 
   /* RTL Icon spacing fixes */
