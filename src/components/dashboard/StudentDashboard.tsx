@@ -214,7 +214,7 @@ const StudentDashboard = () => {
         maxWidth: '100%'
       }}
     >
-      {/* FIX: Removed @container class - not supported on all mobile browsers */}
+      {/* FIX: Removed container-query utility class - not supported on all mobile browsers */}
       <div 
         className="w-full space-y-4 md:space-y-6"
         style={{ 
