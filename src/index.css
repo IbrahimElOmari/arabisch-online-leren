@@ -29,7 +29,7 @@ body {
 }
 
 /* ===== CONTAINER QUERIES REMOVED - Using standard media queries ===== */
-/* All @container classes have been replaced with standard Tailwind breakpoints (sm:, md:, lg:) */
+/* All container-query utility classes have been replaced with standard Tailwind breakpoints (sm:, md:, lg:) */
 /* This ensures compatibility with all browsers including mobile Safari */
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
