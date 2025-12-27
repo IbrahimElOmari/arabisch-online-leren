@@ -72,7 +72,7 @@ export function AppSidebar() {
             <div className="flex items-center gap-2 px-2 py-4">
               <BookOpen className="h-6 w-6 text-primary" />
               {state !== 'collapsed' && (
-                <span className="font-bold text-lg">Leer Arabisch</span>
+                <span className="font-bold text-lg">{t('app.name', 'Leer Arabisch')}</span>
               )}
             </div>
           </SidebarGroupContent>
