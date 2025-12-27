@@ -1,13 +1,16 @@
 /**
  * RTL Debug Panel - DEV-only component for debugging RTL layout issues
  * Enable via URL param: ?rtlDebug=1
+ * 
+ * STEP 4 PROOF: This panel now includes drawer test functionality
+ * that verifies opening/closing the drawer does not affect scrollLeft/scrollWidth
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { X, Copy, RefreshCw, Bug } from 'lucide-react';
+import { X, Copy, RefreshCw, Bug, Menu } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface DebugData {
@@ -39,13 +42,21 @@ interface DebugData {
     isWithinViewport: boolean;
   };
   overlayElements: string[];
+  drawerTest?: {
+    passed: boolean;
+    beforeScroll: { scrollLeft: number; scrollWidth: number };
+    afterScroll: { scrollLeft: number; scrollWidth: number };
+    message: string;
+  };
 }
 
 export const RTLDebugPanel = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [debugData, setDebugData] = useState<DebugData | null>(null);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [drawerTestResult, setDrawerTestResult] = useState<DebugData['drawerTest'] | null>(null);
   const { toast } = useToast();
+  const testInProgress = useRef(false);
 
   const collectDebugData = useCallback((): DebugData => {
     const html = document.documentElement;
@@ -119,12 +130,90 @@ export const RTLDebugPanel = () => {
       },
       mainElement: mainData,
       overlayElements,
+      drawerTest: drawerTestResult || undefined,
     };
-  }, []);
+  }, [drawerTestResult]);
 
   const refreshDebugData = useCallback(() => {
     setDebugData(collectDebugData());
   }, [collectDebugData]);
+
+  // STEP 4 PROOF: Test drawer open/close effect on scroll
+  const runDrawerTest = useCallback(async () => {
+    if (testInProgress.current) return;
+    testInProgress.current = true;
+    
+    const scrollingElement = document.scrollingElement || document.documentElement;
+    const beforeScroll = {
+      scrollLeft: Math.round(scrollingElement.scrollLeft),
+      scrollWidth: Math.round(scrollingElement.scrollWidth),
+    };
+    
+    // Find and click the mobile menu trigger
+    const menuButton = document.querySelector('[data-testid="mobile-menu-trigger"]') || 
+                       document.querySelector('button[class*="md:hidden"]');
+    
+    if (menuButton && menuButton instanceof HTMLElement) {
+      // Open drawer
+      menuButton.click();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Log during-open values for debugging (not stored to avoid unused var warning)
+      console.log('[RTL Debug] During drawer open - scrollLeft:', scrollingElement.scrollLeft, 'scrollWidth:', scrollingElement.scrollWidth);
+      
+      // Find and click close button
+      const closeButton = document.querySelector('[data-radix-collection-item]') ||
+                          document.querySelector('button[class*="SheetClose"]') ||
+                          document.querySelector('[role="dialog"] button');
+      
+      if (closeButton && closeButton instanceof HTMLElement) {
+        closeButton.click();
+      } else {
+        // Click overlay to close
+        const overlay = document.querySelector('[data-radix-overlay]');
+        if (overlay && overlay instanceof HTMLElement) {
+          overlay.click();
+        }
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const afterScroll = {
+        scrollLeft: Math.round(scrollingElement.scrollLeft),
+        scrollWidth: Math.round(scrollingElement.scrollWidth),
+      };
+      
+      const passed = 
+        beforeScroll.scrollLeft === afterScroll.scrollLeft &&
+        beforeScroll.scrollWidth === afterScroll.scrollWidth;
+      
+      const result: DebugData['drawerTest'] = {
+        passed,
+        beforeScroll,
+        afterScroll,
+        message: passed 
+          ? '✓ PASSED: Drawer open/close does not affect scroll' 
+          : '✗ FAILED: Drawer changed scroll values',
+      };
+      
+      setDrawerTestResult(result);
+      toast({
+        title: passed ? 'Drawer Test Passed' : 'Drawer Test Failed',
+        description: result.message,
+        variant: passed ? 'default' : 'destructive',
+      });
+    } else {
+      setDrawerTestResult({
+        passed: false,
+        beforeScroll,
+        afterScroll: beforeScroll,
+        message: '⚠ No mobile menu button found (test only works on mobile viewport)',
+      });
+    }
+    
+    testInProgress.current = false;
+    refreshDebugData();
+  }, [toast, refreshDebugData]);
 
   const copyDebugReport = useCallback(() => {
     const data = collectDebugData();
@@ -302,6 +391,34 @@ export const RTLDebugPanel = () => {
                 </div>
               </div>
             )}
+
+            {/* Drawer Test - STEP 4 PROOF */}
+            {debugData.drawerTest && (
+              <div>
+                <div className="font-semibold mb-1">Drawer Test (Step 4)</div>
+                <div className="grid grid-cols-2 gap-1">
+                  <span className="text-muted-foreground">Result:</span>
+                  <Badge variant={debugData.drawerTest.passed ? 'default' : 'destructive'} className="text-xs">
+                    {debugData.drawerTest.passed ? 'PASS' : 'FAIL'}
+                  </Badge>
+                  <span className="text-muted-foreground">Before:</span>
+                  <span className="text-[10px]">
+                    L:{debugData.drawerTest.beforeScroll.scrollLeft} W:{debugData.drawerTest.beforeScroll.scrollWidth}
+                  </span>
+                  <span className="text-muted-foreground">After:</span>
+                  <span className="text-[10px]">
+                    L:{debugData.drawerTest.afterScroll.scrollLeft} W:{debugData.drawerTest.afterScroll.scrollWidth}
+                  </span>
+                </div>
+                <p className="text-[10px] mt-1 text-muted-foreground">{debugData.drawerTest.message}</p>
+              </div>
+            )}
+
+            {/* Test Drawer Button */}
+            <Button onClick={runDrawerTest} size="sm" variant="outline" className="w-full">
+              <Menu className="h-3 w-3 mr-1" />
+              Test Drawer (Step 4)
+            </Button>
 
             {/* Copy Button */}
             <Button onClick={copyDebugReport} size="sm" className="w-full">

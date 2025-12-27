@@ -30,7 +30,37 @@
     "learning": "Learning",
     "security": "Security",
     "menu": "Menu",
-    "guest": "Guest"
+    "guest": "Guest",
+    "navigation": "Navigation",
+    "platform": "Platform",
+    "login": "Login",
+    "forum_moderation": "Forum Moderation",
+    "lesson_organization": "Lesson Organization",
+    "offline_content": "Offline Content"
+  },
+  "app": {
+    "name": "Learn Arabic",
+    "version": "Arabic Learning Platform v1.0"
+  },
+  "levelDetail": {
+    "backToLevels": "Back to levels",
+    "preparation": "Preparation",
+    "archive": "Archive",
+    "evaluation": "Evaluation",
+    "tasksQuestions": "Tasks & Questions"
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "network": "Network error",
+    "not_found": "Not found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "pageNotFound": "Page Not Found",
+    "pageNotFoundDescription": "Sorry, the page you are looking for does not exist."
+  },
+  "navigation": {
+    "returnHome": "Return to Home",
+    "goBack": "Go Back"
   },
   "roles": {
     "admin": "Administrator",

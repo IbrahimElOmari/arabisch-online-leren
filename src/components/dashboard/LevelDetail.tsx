@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { TaskSystem } from '@/components/tasks/TaskSystem';
 import { LevelQuestions } from '@/components/tasks/LevelQuestions';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface LevelDetailProps {
   levelId: string;
@@ -27,12 +28,13 @@ interface LevelDetailProps {
 
 export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDetailProps) => {
   const [activeTab, setActiveTab] = useState('preparation');
+  const { t } = useTranslation();
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="outline" onClick={onBack}>
-          ← Terug naar niveaus
+          ← {t('levelDetail.backToLevels', 'Terug naar niveaus')}
         </Button>
         <div>
           <h2 className="text-2xl font-bold text-foreground">{levelName}</h2>
@@ -44,27 +46,27 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="preparation" className="flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
-            <span className="hidden sm:inline">Voorbereiding</span>
+            <span className="hidden sm:inline">{t('levelDetail.preparation', 'Voorbereiding')}</span>
           </TabsTrigger>
           <TabsTrigger value="archive" className="flex items-center gap-2">
             <Archive className="h-4 w-4" />
-            <span className="hidden sm:inline">Archief</span>
+            <span className="hidden sm:inline">{t('levelDetail.archive', 'Archief')}</span>
           </TabsTrigger>
           <TabsTrigger value="forum" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />
-            <span className="hidden sm:inline">Forum</span>
+            <span className="hidden sm:inline">{t('nav.forum', 'Forum')}</span>
           </TabsTrigger>
           <TabsTrigger value="calendar" className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            <span className="hidden sm:inline">Kalender</span>
+            <span className="hidden sm:inline">{t('nav.calendar', 'Kalender')}</span>
           </TabsTrigger>
           <TabsTrigger value="evaluation" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
-            <span className="hidden sm:inline">Evaluatie</span>
+            <span className="hidden sm:inline">{t('levelDetail.evaluation', 'Evaluatie')}</span>
           </TabsTrigger>
           <TabsTrigger value="tasks" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
-            <span className="hidden sm:inline">Taken & Vragen</span>
+            <span className="hidden sm:inline">{t('levelDetail.tasksQuestions', 'Taken & Vragen')}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -73,14 +75,14 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Video className="h-5 w-5" />
-                Voorbereidende Video
+                {t('levelDetail.preparationVideo', 'Voorbereidende Video')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center mb-4">
-                <p className="text-muted-foreground">YouTube video wordt hier geladen</p>
+                <p className="text-muted-foreground">{t('levelDetail.videoPlaceholder', 'YouTube video wordt hier geladen')}</p>
               </div>
-              <Badge variant="outline" className="mb-2">Les 1 - Introductie</Badge>
+              <Badge variant="outline" className="mb-2">{t('levelDetail.lesson1Intro', 'Les 1 - Introductie')}</Badge>
             </CardContent>
           </Card>
 
@@ -88,51 +90,51 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
-                Interactieve Vragen
+                {t('levelDetail.interactiveQuestions', 'Interactieve Vragen')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
-                <h4 className="font-medium">Vraag 1: Open vraag</h4>
+                <h4 className="font-medium">{t('levelDetail.question1Open', 'Vraag 1: Open vraag')}</h4>
                 <textarea 
                   className="w-full p-3 border border-input rounded-md resize-none"
                   rows={3}
-                  placeholder="Typ hier je antwoord..."
+                  placeholder={t('levelDetail.typeAnswer', 'Typ hier je antwoord...')}
                 />
               </div>
 
               <div className="space-y-3">
-                <h4 className="font-medium">Vraag 2: Enkelvoudige keuze</h4>
+                <h4 className="font-medium">{t('levelDetail.question2Single', 'Vraag 2: Enkelvoudige keuze')}</h4>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2">
                     <input type="radio" name="single" value="a" />
-                    <span>Optie A</span>
+                    <span>{t('levelDetail.optionA', 'Optie A')}</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input type="radio" name="single" value="b" />
-                    <span>Optie B</span>
+                    <span>{t('levelDetail.optionB', 'Optie B')}</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input type="radio" name="single" value="c" />
-                    <span>Optie C</span>
+                    <span>{t('levelDetail.optionC', 'Optie C')}</span>
                   </label>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <h4 className="font-medium">Vraag 3: Meervoudige keuze</h4>
+                <h4 className="font-medium">{t('levelDetail.question3Multiple', 'Vraag 3: Meervoudige keuze')}</h4>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2">
                     <input type="checkbox" />
-                    <span>Optie 1</span>
+                    <span>{t('levelDetail.option1', 'Optie 1')}</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input type="checkbox" />
-                    <span>Optie 2</span>
+                    <span>{t('levelDetail.option2', 'Optie 2')}</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input type="checkbox" />
-                    <span>Optie 3</span>
+                    <span>{t('levelDetail.option3', 'Optie 3')}</span>
                   </label>
                 </div>
               </div>
@@ -140,24 +142,24 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
               <div className="space-y-3">
                 <h4 className="font-medium flex items-center gap-2">
                   <Radio className="h-4 w-4" />
-                  Vraag 4: Gebaseerd op audio
+                  {t('levelDetail.question4Audio', 'Vraag 4: Gebaseerd op audio')}
                 </h4>
                 <div className="bg-muted p-4 rounded-lg">
                   <audio controls className="w-full">
                     <source src="#" type="audio/mpeg" />
-                    Je browser ondersteunt geen audio element.
+                    {t('levelDetail.audioNotSupported', 'Je browser ondersteunt geen audio element.')}
                   </audio>
                 </div>
                 <textarea 
                   className="w-full p-3 border border-input rounded-md resize-none"
                   rows={2}
-                  placeholder="Wat hoorde je in het audiofragment?"
+                  placeholder={t('levelDetail.whatDidYouHear', 'Wat hoorde je in het audiofragment?')}
                 />
               </div>
 
               <Button className="w-full">
                 <CheckCircle2 className="h-4 w-4 me-2" />
-                Antwoorden Indienen
+                {t('levelDetail.submitAnswers', 'Antwoorden Indienen')}
               </Button>
             </CardContent>
           </Card>
@@ -168,7 +170,7 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
-                Taken voor {levelName}
+                {t('levelDetail.tasksFor', 'Taken voor')} {levelName}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -180,7 +182,7 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Radio className="h-5 w-5" />
-                Vragen voor {levelName}
+                {t('levelDetail.questionsFor', 'Vragen voor')} {levelName}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -194,7 +196,7 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Archive className="h-5 w-5" />
-                Lessen Archief - {levelName}
+                {t('levelDetail.lessonsArchive', 'Lessen Archief')} - {levelName}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -204,11 +206,11 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
                     <div className="flex items-center gap-3">
                       <Video className="h-5 w-5 text-primary" />
                       <div>
-                        <h4 className="font-medium">Les {lessonNum}</h4>
-                        <p className="text-sm text-muted-foreground">Geüpload op 15 maart 2024</p>
+                        <h4 className="font-medium">{t('levelDetail.lesson', 'Les')} {lessonNum}</h4>
+                        <p className="text-sm text-muted-foreground">{t('levelDetail.uploadedOn', 'Geüpload op')} 15 maart 2024</p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">Bekijken</Button>
+                    <Button variant="outline" size="sm">{t('common.view', 'Bekijken')}</Button>
                   </div>
                 ))}
               </div>
@@ -221,7 +223,7 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MessageSquare className="h-5 w-5" />
-                Klas Forum
+                {t('levelDetail.classForum', 'Klas Forum')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -233,10 +235,10 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
                     </div>
                     <div>
                       <p className="font-medium">Ahmed</p>
-                      <p className="text-xs text-muted-foreground">2 uur geleden</p>
+                      <p className="text-xs text-muted-foreground">{t('levelDetail.hoursAgo', '2 uur geleden')}</p>
                     </div>
                   </div>
-                  <p className="text-sm">Heeft iemand hulp nodig bij de uitspraak van de letter ض?</p>
+                  <p className="text-sm">{t('levelDetail.exampleMessage1', 'Heeft iemand hulp nodig bij de uitspraak van de letter ض?')}</p>
                 </div>
                 
                 <div className="p-4 border border-border rounded-lg">
@@ -245,11 +247,11 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
                       F
                     </div>
                     <div>
-                      <p className="font-medium">Fatima (Leerkracht)</p>
-                      <p className="text-xs text-muted-foreground">1 dag geleden</p>
+                      <p className="font-medium">{t('levelDetail.teacherName', 'Fatima (Leerkracht)')}</p>
+                      <p className="text-xs text-muted-foreground">{t('levelDetail.dayAgo', '1 dag geleden')}</p>
                     </div>
                   </div>
-                  <p className="text-sm">Vergeet niet om jullie voorbereiding af te ronden voor de live les van morgen!</p>
+                  <p className="text-sm">{t('levelDetail.exampleMessage2', 'Vergeet niet om jullie voorbereiding af te ronden voor de live les van morgen!')}</p>
                 </div>
               </div>
               
@@ -257,9 +259,9 @@ export const LevelDetail = ({ levelId, levelName, className, onBack }: LevelDeta
                 <textarea 
                   className="w-full p-3 border border-input rounded-md resize-none"
                   rows={3}
-                  placeholder="Schrijf een bericht..."
+                  placeholder={t('levelDetail.writeMessage', 'Schrijf een bericht...')}
                 />
-                <Button className="mt-2">Bericht Plaatsen</Button>
+                <Button className="mt-2">{t('levelDetail.postMessage', 'Bericht Plaatsen')}</Button>
               </div>
             </CardContent>
           </Card>
