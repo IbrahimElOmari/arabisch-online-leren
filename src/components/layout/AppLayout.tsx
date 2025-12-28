@@ -112,7 +112,8 @@ export const AppLayout = () => {
           style={{ minWidth: 0 }}
           {...getNavigationAttributes()}
         >
-          {!isMobile && !debug.noSidebar && <AppSidebar />}
+          {/* Sidebar: renders as Sheet on mobile, fixed on desktop */}
+          {!debug.noSidebar && <AppSidebar />}
 
           <div
             className="flex-1 flex flex-col w-full max-w-[100vw] overflow-x-clip"
@@ -134,12 +135,8 @@ export const AppLayout = () => {
           </div>
         </div>
 
-        {isMobile && (
-          <>
-            {!debug.noSidebar && <AppSidebar />}
-            {!debug.noBottomNav && <EnhancedMobileBottomNav />}
-          </>
-        )}
+        {/* Mobile: bottom nav only - sidebar is already rendered as Sheet */}
+        {isMobile && !debug.noBottomNav && <EnhancedMobileBottomNav />}
       </div>
     </SidebarProvider>
   );

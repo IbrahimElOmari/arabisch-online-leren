@@ -317,6 +317,22 @@ html {
     border-right: none;
   }
 
+  /* FIX: Force sidebar width to 0 on mobile RTL to prevent main content push */
+  @media (max-width: 1023px) {
+    [dir="rtl"] .group\/sidebar-wrapper,
+    .rtl .group\/sidebar-wrapper {
+      --sidebar-width: 0 !important;
+      --sidebar-width-icon: 0 !important;
+    }
+
+    /* Desktop sidebar gap should not render on mobile */
+    [dir="rtl"] .group.peer.hidden,
+    .rtl .group.peer.hidden {
+      display: none !important;
+      width: 0 !important;
+    }
+  }
+
   /* ===== RTL GRID ===== */
   .rtl .grid,
   [dir="rtl"] .grid {
