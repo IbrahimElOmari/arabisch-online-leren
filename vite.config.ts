@@ -31,8 +31,10 @@ export default defineConfig(({ mode }) => ({
       workbox: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,avif}'],
-        navigateFallback: '/offline.html',
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api/, /\/rest\//, /\/functions\//],
         cleanupOutdatedCaches: true,
+        skipWaiting: true,
         clientsClaim: true,
         runtimeCaching: [
           {
@@ -46,10 +48,11 @@ export default defineConfig(({ mode }) => ({
           },
           {
             urlPattern: ({ url }) => url.origin.includes('supabase.co') && url.pathname.includes('/rest/v1/'),
-            handler: 'StaleWhileRevalidate',
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 5 }
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 5 },
+              networkTimeoutSeconds: 10
             }
           }
         ]

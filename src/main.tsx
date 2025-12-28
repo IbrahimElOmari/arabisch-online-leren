@@ -9,6 +9,7 @@ import { GlobalErrorBoundary } from "./components/system/GlobalErrorBoundary";
 import { initMonitoring } from "./lib/monitoring";
 import { initWebVitals } from "./utils/webVitals";
 import { initContainerQueryFallback } from "./utils/containerQueryFallback";
+import { initServiceWorkerManager } from "./utils/serviceWorkerManager";
 
 // Initialize optimizations
 if (import.meta.env.PROD) {
@@ -27,7 +28,8 @@ initContainerQueryFallback();
 // Initialize Web Vitals tracking
 initWebVitals();
 
-// Service worker is handled by VitePWA plugin
+// Initialize service worker manager for cache updates
+initServiceWorkerManager();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
