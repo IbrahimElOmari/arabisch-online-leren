@@ -40,6 +40,19 @@ interface DebugData {
     };
     isVisible: boolean;
     isWithinViewport: boolean;
+    ancestors?: Array<{
+      tag: string;
+      id?: string;
+      className?: string;
+      rect: { x: number; left: number; right: number; width: number };
+      computed: {
+        display: string;
+        position: string;
+        transform: string;
+        overflowX: string;
+        direction: string;
+      };
+    }>;
   };
   overlayElements: string[];
   drawerTest?: {
@@ -77,6 +90,32 @@ export const RTLDebugPanel = () => {
     if (main) {
       const rect = main.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
+
+      const ancestors: NonNullable<DebugData['mainElement']['ancestors']> = [];
+      let el: HTMLElement | null = main as HTMLElement;
+      for (let i = 0; el && i < 10; i++) {
+        const r = el.getBoundingClientRect();
+        const cs = window.getComputedStyle(el);
+        ancestors.push({
+          tag: el.tagName.toLowerCase(),
+          id: el.id || undefined,
+          className: el.className ? el.className.toString().slice(0, 160) : undefined,
+          rect: {
+            x: Math.round(r.x),
+            left: Math.round(r.left),
+            right: Math.round(r.right),
+            width: Math.round(r.width),
+          },
+          computed: {
+            display: cs.display,
+            position: cs.position,
+            transform: cs.transform,
+            overflowX: cs.overflowX,
+            direction: cs.direction,
+          },
+        });
+        el = el.parentElement as HTMLElement | null;
+      }
       
       mainData = {
         found: true,
@@ -88,6 +127,7 @@ export const RTLDebugPanel = () => {
         },
         isVisible: rect.left >= -10 && rect.right <= viewportWidth + 10,
         isWithinViewport: rect.left >= 0 && rect.right <= viewportWidth,
+        ancestors,
       };
       
       // Check for overlaying elements
