@@ -33,21 +33,18 @@ export const useAccessibilityRTL = () => {
   const getNavigationAttributes = () => ({
     role: 'navigation',
     'aria-label': getAriaLabel('navigation', 'Main navigation'),
-    dir: isRTL ? 'rtl' : 'ltr'
   });
 
   // Form accessibility
   const getFormAttributes = (fieldName: string) => ({
     'aria-describedby': `${fieldName}-description`,
     'aria-required': 'true',
-    dir: isRTL ? 'rtl' : 'ltr'
   });
 
   // Table accessibility
   const getTableAttributes = () => ({
     role: 'table',
     'aria-label': getAriaLabel('dataTable', 'Data table'),
-    dir: isRTL ? 'rtl' : 'ltr'
   });
 
   // Live regions for dynamic content
@@ -55,7 +52,6 @@ export const useAccessibilityRTL = () => {
     'aria-live': 'polite',
     'aria-atomic': 'true',
     role: 'status',
-    dir: isRTL ? 'rtl' : 'ltr'
   });
 
   // Dialog accessibility
@@ -63,14 +59,12 @@ export const useAccessibilityRTL = () => {
     role: 'dialog',
     'aria-modal': true,
     'aria-labelledby': `dialog-title-${title}`,
-    dir: isRTL ? 'rtl' : 'ltr'
   });
 
   // Button accessibility with RTL context
   const getButtonAttributes = (action: string) => ({
     'aria-label': getAriaLabel(`button.${action}`, action),
     type: 'button' as const,
-    dir: isRTL ? 'rtl' : 'ltr'
   });
 
   return {

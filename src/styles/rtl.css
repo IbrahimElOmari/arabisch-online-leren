@@ -74,14 +74,16 @@ html {
 
   /* ===== CRITICAL: RTL CONTAINER FIXES ===== */
   .rtl,
-  [dir="rtl"] {
+  html[dir="rtl"],
+  html.rtl-mode {
     width: 100%;
     max-width: 100vw;
     overflow-x: clip;
   }
   
   .rtl main,
-  [dir="rtl"] main {
+  html[dir="rtl"] main,
+  html.rtl-mode main {
     min-width: 0 !important;
     width: 100%;
     max-width: 100vw !important;
@@ -90,13 +92,13 @@ html {
   }
 
   .rtl .flex-1,
-  [dir="rtl"] .flex-1 {
+  html[dir="rtl"] .flex-1,
+  html.rtl-mode .flex-1 {
     min-width: 0 !important;
     flex-shrink: 1;
     width: 100%;
     max-width: 100vw;
   }
-
   /* Fix container widths in RTL */
   .rtl .container,
   .rtl .max-w-7xl,

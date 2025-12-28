@@ -104,7 +104,6 @@ export const AppLayout = () => {
     <SidebarProvider defaultOpen={false}>
       <div
         className="min-h-screen bg-background w-full max-w-[100vw] overflow-x-clip"
-        dir={isRTL ? 'rtl' : 'ltr'}
         style={{ minWidth: 0 }}
       >
         <div
