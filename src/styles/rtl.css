@@ -81,17 +81,18 @@ html {
     overflow-x: clip;
   }
   
-  .rtl main,
+  /* CRITICAL: Main element must always be visible and fill available space */
   html[dir="rtl"] main,
   html.rtl-mode main {
     min-width: 0 !important;
-    width: 100%;
+    width: 100% !important;
     max-width: 100vw !important;
     overflow-x: clip !important;
     box-sizing: border-box;
+    flex: 1 1 auto !important;
   }
 
-  .rtl .flex-1,
+  /* Flex-1 children must shrink and not push content off-screen */
   html[dir="rtl"] .flex-1,
   html.rtl-mode .flex-1 {
     min-width: 0 !important;
@@ -301,37 +302,35 @@ html {
   }
 
   /* ===== RTL SIDEBAR ===== */
-  /* FIX: Only apply sidebar ordering on desktop to prevent mobile content hiding */
-  @media (min-width: 769px) {
-    .rtl .app-sidebar,
-    [dir="rtl"] .app-sidebar {
-      order: 2;
-    }
+  /* REMOVED: order-based sidebar positioning - was causing main content to shift off-screen in RTL mobile */
+  /* Modern flexbox with RTL direction handles this automatically */
 
-    .rtl .app-sidebar ~ .flex-1,
-    [dir="rtl"] .app-sidebar ~ .flex-1 {
-      order: 1;
-    }
-  }
-
-  [dir="rtl"] [data-sidebar="sidebar"] {
+  html[dir="rtl"] [data-sidebar="sidebar"] {
     border-left: 1px solid hsl(var(--border));
     border-right: none;
   }
 
-  /* FIX: Force sidebar width to 0 on mobile RTL to prevent main content push */
-  @media (max-width: 1023px) {
-    [dir="rtl"] .group\/sidebar-wrapper,
-    .rtl .group\/sidebar-wrapper {
+  /* CRITICAL FIX: Force sidebar width to 0 on mobile to prevent main content push */
+  /* This CSS media query acts as a fallback even before JS hydrates */
+  @media (max-width: 768px) {
+    .group\/sidebar-wrapper {
       --sidebar-width: 0 !important;
       --sidebar-width-icon: 0 !important;
     }
 
-    /* Desktop sidebar gap should not render on mobile */
-    [dir="rtl"] .group.peer.hidden,
-    .rtl .group.peer.hidden {
+    /* Desktop sidebar gap element should not render on mobile */
+    .group.peer {
       display: none !important;
       width: 0 !important;
+    }
+    
+    /* Ensure main content takes full width on mobile */
+    html[dir="rtl"] main,
+    html.rtl-mode main {
+      flex: 1 1 100% !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      min-width: 0 !important;
     }
   }
 
