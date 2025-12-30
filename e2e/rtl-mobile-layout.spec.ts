@@ -113,6 +113,9 @@ test.describe('RTL Mobile Layout Fixes', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     
+    // Wait for layout to fully settle
+    await page.waitForTimeout(500);
+    
     // Check main content is within viewport
     const mainContent = page.locator('main');
     await expect(mainContent).toBeVisible();
@@ -122,10 +125,50 @@ test.describe('RTL Mobile Layout Fixes', () => {
     
     if (boundingBox) {
       const viewportWidth = 375;
-      // Content should start within viewport
-      expect(boundingBox.x).toBeGreaterThanOrEqual(-1);
+      // STRICT: Content should start within 10px of viewport left edge
+      expect(boundingBox.x).toBeGreaterThanOrEqual(-10);
+      expect(boundingBox.x).toBeLessThanOrEqual(10);
+      // STRICT: Content should use at least 90% of viewport width
+      expect(boundingBox.width).toBeGreaterThanOrEqual(viewportWidth * 0.9);
       // Content should not extend too far beyond viewport
-      expect(boundingBox.x + boundingBox.width).toBeLessThanOrEqual(viewportWidth + 50);
+      expect(boundingBox.x + boundingBox.width).toBeLessThanOrEqual(viewportWidth + 10);
+    }
+  });
+
+  test('FIX 4: Main element has correct computed styles in RTL mode', async ({ page }) => {
+    await page.evaluate(() => {
+      localStorage.setItem('language_preference', 'ar');
+    });
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500);
+    
+    const mainStyles = await page.evaluate(() => {
+      const main = document.querySelector('main');
+      if (!main) return null;
+      const computed = window.getComputedStyle(main);
+      const rect = main.getBoundingClientRect();
+      return {
+        left: rect.left,
+        width: rect.width,
+        transform: computed.transform,
+        translate: computed.translate || 'none',
+        marginLeft: computed.marginLeft,
+        marginRight: computed.marginRight,
+        position: computed.position,
+      };
+    });
+    
+    expect(mainStyles).not.toBeNull();
+    if (mainStyles) {
+      // Main should be at left edge
+      expect(mainStyles.left).toBeLessThanOrEqual(10);
+      // Main should be wide
+      expect(mainStyles.width).toBeGreaterThan(300);
+      // No transform offset
+      expect(mainStyles.transform).toBe('none');
+      // No translate offset
+      expect(mainStyles.translate).toBe('none');
     }
   });
 
@@ -267,24 +310,30 @@ test.describe('Dashboard RTL Tests', () => {
       const html = document.documentElement;
       const main = document.querySelector('main');
       const mainRect = main?.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
       
       return {
         scrollWidth: html.scrollWidth,
         clientWidth: html.clientWidth,
-        innerWidth: window.innerWidth,
+        innerWidth: viewportWidth,
         mainX: mainRect?.x ?? 0,
         mainWidth: mainRect?.width ?? 0,
         mainLeft: mainRect?.left ?? 0,
         mainRight: mainRect?.right ?? 0,
+        // Calculate utilization percentage
+        mainWidthPercent: mainRect ? (mainRect.width / viewportWidth) * 100 : 0,
       };
     });
     
     // scrollWidth should not exceed viewport
     expect(measurements.scrollWidth).toBeLessThanOrEqual(measurements.innerWidth + 1);
     
-    // Main content should be visible within viewport
+    // STRICT: Main content should start at left edge (within 10px tolerance)
     expect(measurements.mainX).toBeGreaterThanOrEqual(-10);
-    expect(measurements.mainWidth).toBeGreaterThan(100);
+    expect(measurements.mainX).toBeLessThanOrEqual(10);
+    
+    // STRICT: Main content should use at least 90% of viewport width
+    expect(measurements.mainWidthPercent).toBeGreaterThanOrEqual(90);
   });
 
   test('Language switch on dashboard maintains layout stability', async ({ page }) => {
