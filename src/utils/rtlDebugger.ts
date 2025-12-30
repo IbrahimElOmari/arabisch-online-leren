@@ -3,6 +3,41 @@
  * Development-only tools for diagnosing RTL layout issues
  */
 
+interface MainElementDebug {
+  found: boolean;
+  rect: {
+    x: number;
+    left: number;
+    right: number;
+    width: number;
+    height: number;
+  } | null;
+  isVisible: boolean;
+  isWithinViewport: boolean;
+  computed: {
+    position: string;
+    transform: string;
+    translate: string;
+    left: string;
+    right: string;
+    marginLeft: string;
+    marginRight: string;
+    marginInlineStart: string;
+    marginInlineEnd: string;
+    insetInlineStart: string;
+    insetInlineEnd: string;
+    display: string;
+    flex: string;
+    width: string;
+  } | null;
+  offset: {
+    offsetLeft: number;
+    offsetWidth: number;
+    clientWidth: number;
+    offsetParent: string | null;
+  } | null;
+}
+
 interface RTLDebugInfo {
   documentDir: string | null;
   documentLang: string | null;
@@ -16,6 +51,7 @@ interface RTLDebugInfo {
   meta: {
     viewportContent: string | null;
   };
+  mainElement: MainElementDebug;
   overflowingElements: Array<{
     selector: string;
     right: number;
@@ -31,10 +67,74 @@ export const gatherRTLDebugInfo = (): RTLDebugInfo | null => {
 
   const html = document.documentElement;
   const viewportMeta = document.querySelector('meta[name="viewport"]');
+  const viewportWidth = window.innerWidth;
+
+  // Gather main element debug info
+  const main = document.querySelector('main');
+  let mainElementDebug: MainElementDebug;
+  
+  if (main) {
+    const rect = main.getBoundingClientRect();
+    const computed = window.getComputedStyle(main);
+    const isVisible = rect.x >= -10 && rect.width > 100 && rect.height > 0;
+    const isWithinViewport = rect.left >= -10 && rect.left < viewportWidth;
+    
+    // Get offsetParent info
+    const offsetParent = main.offsetParent as HTMLElement | null;
+    let offsetParentSelector: string | null = null;
+    if (offsetParent) {
+      offsetParentSelector = offsetParent.tagName.toLowerCase();
+      if (offsetParent.id) offsetParentSelector += `#${offsetParent.id}`;
+      if (offsetParent.className) offsetParentSelector += `.${offsetParent.className.split(' ')[0]}`;
+    }
+    
+    mainElementDebug = {
+      found: true,
+      rect: {
+        x: Math.round(rect.x),
+        left: Math.round(rect.left),
+        right: Math.round(rect.right),
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+      },
+      isVisible,
+      isWithinViewport,
+      computed: {
+        position: computed.position,
+        transform: computed.transform,
+        translate: computed.translate || 'none',
+        left: computed.left,
+        right: computed.right,
+        marginLeft: computed.marginLeft,
+        marginRight: computed.marginRight,
+        marginInlineStart: computed.marginInlineStart || 'N/A',
+        marginInlineEnd: computed.marginInlineEnd || 'N/A',
+        insetInlineStart: computed.insetInlineStart || 'N/A',
+        insetInlineEnd: computed.insetInlineEnd || 'N/A',
+        display: computed.display,
+        flex: computed.flex,
+        width: computed.width,
+      },
+      offset: {
+        offsetLeft: main.offsetLeft,
+        offsetWidth: main.offsetWidth,
+        clientWidth: main.clientWidth,
+        offsetParent: offsetParentSelector,
+      },
+    };
+  } else {
+    mainElementDebug = {
+      found: false,
+      rect: null,
+      isVisible: false,
+      isWithinViewport: false,
+      computed: null,
+      offset: null,
+    };
+  }
 
   // Find elements that overflow the viewport
   const overflowingElements: RTLDebugInfo['overflowingElements'] = [];
-  const viewportWidth = window.innerWidth;
 
   document.querySelectorAll('*').forEach((el) => {
     const rect = el.getBoundingClientRect();
@@ -67,7 +167,8 @@ export const gatherRTLDebugInfo = (): RTLDebugInfo | null => {
     meta: {
       viewportContent: viewportMeta?.getAttribute('content') || null,
     },
-    overflowingElements: overflowingElements.slice(0, 10), // Limit to first 10
+    mainElement: mainElementDebug,
+    overflowingElements: overflowingElements.slice(0, 10),
   };
 };
 
@@ -86,6 +187,23 @@ export const logRTLDebugInfo = (): void => {
   console.log('HTML Classes:', info.htmlClasses);
   console.log('Viewport:', info.viewport);
   console.log('Meta Viewport:', info.meta.viewportContent);
+  
+  // Log main element details
+  console.group('📦 Main Element');
+  if (info.mainElement.found) {
+    console.log('Rect:', info.mainElement.rect);
+    console.log('Is Visible:', info.mainElement.isVisible);
+    console.log('Within Viewport:', info.mainElement.isWithinViewport);
+    console.log('Computed Styles:', info.mainElement.computed);
+    console.log('Offset Info:', info.mainElement.offset);
+    
+    if (!info.mainElement.isVisible || !info.mainElement.isWithinViewport) {
+      console.error('❌ MAIN ELEMENT NOT VISIBLE - Layout broken!');
+    }
+  } else {
+    console.warn('⚠️ No <main> element found');
+  }
+  console.groupEnd();
   
   if (info.viewport.hasHorizontalOverflow) {
     console.warn('⚠️ Horizontal overflow detected!');
