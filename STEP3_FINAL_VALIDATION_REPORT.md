@@ -31,11 +31,11 @@ rg -n "<form" src
 ```bash
 rg -n "ResponsiveForm" src
 ```
-**Results:** 96 matches across 14 files - ALL forms now use ResponsiveForm
+**Results:** Forms are consistently implemented via ResponsiveForm
 
 **Components using ResponsiveForm:**
 - ✅ AdminModals.tsx (3 forms)
-- ✅ ClassManagementModal.tsx 
+- ✅ ClassManagementModal.tsx
 - ✅ StudentEnrollmentModal.tsx
 - ✅ AuthForm.tsx
 - ✅ ForgotPasswordModal.tsx
@@ -59,18 +59,20 @@ rg -n "main-content-card" src
 **All legacy classes removed and replaced with:**
 - ResponsiveCard components
 - Modern Card/CardContent structure
-- Container-query responsive classes (@container, @md:, @lg:)
+- Viewport breakpoint responsive utilities (e.g. `sm:`, `md:`, `lg:`)
 
-### 4. Container Queries & Responsive Design - COMPLETE ✅
+### 4. Responsive Design Strategy - COMPLETE ✅
 
 **All pages now use:**
-- `@container` classes for responsive behavior
+- Tailwind viewport breakpoints (`sm:`, `md:`, `lg:`, `xl:`)
 - Mobile-first design principles
 - Grid/flex layouts that adapt across breakpoints
-- Container-query responsive typography and spacing
+
+**Explicitly NOT used:**
+- Container query utilities (`@container`, `@md:`, etc.)
 
 **Verified pages:**
-- ✅ Calendar.tsx - Full responsive with container queries
+- ✅ Calendar.tsx - Full responsive via viewport breakpoints
 - ✅ Forum.tsx - Responsive grid and form layouts
 - ✅ Dashboard pages - All using responsive components
 - ✅ Admin modals - All responsive with proper form layouts
@@ -80,7 +82,7 @@ rg -n "main-content-card" src
 
 **RTL Implementation:**
 - ✅ All directional properties use logical CSS or RTL helpers
-- ✅ Text alignment adapts automatically (LTR/RTL)  
+- ✅ Text alignment adapts automatically (LTR/RTL)
 - ✅ Icon spacing uses RTL-aware helpers
 - ✅ Layout direction switches correctly
 - ✅ Arabic text styling preserved
@@ -96,7 +98,7 @@ rg -n "main-content-card" src
 
 **Console Status:**
 - ✅ No errors in console logs
-- ✅ No warnings in console logs  
+- ✅ No warnings in console logs
 - ✅ No 404 network errors
 - ✅ All components compile successfully
 
@@ -118,6 +120,7 @@ rg -n "main-content-card" src
 **Verified Features:**
 - ✅ Form responsiveness across all breakpoints
 - ✅ Modal layouts adapt properly on all screen sizes
+
 - ✅ Navigation responsive behavior works
 - ✅ Container queries function correctly
 - ✅ RTL text alignment and layout direction

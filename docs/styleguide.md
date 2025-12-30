@@ -8,9 +8,11 @@ This style guide defines the design principles, component patterns, and responsi
 
 ### 1. Mobile-First Responsive Design
 - Start with mobile layouts (320px+)
-- Use container queries for component-level responsiveness
+- Use viewport breakpoints (Tailwind: `sm:`, `md:`, `lg:`, `xl:`) for responsiveness
 - Progressive enhancement for larger screens
 - Touch-friendly interactions
+
+> Note: Container queries (`@container`, `@md:`, etc.) are intentionally **not used** in this codebase.
 
 ### 2. RTL (Right-to-Left) Support
 - Use logical properties (ms-*, me-*, ps-*, pe-*)
@@ -27,26 +29,21 @@ This style guide defines the design principles, component patterns, and responsi
 ## Breakpoints
 
 ```css
-/* Container Query Breakpoints */
-@sm: 24rem (384px)
-@md: 32rem (512px)
-@lg: 48rem (768px)
-@xl: 64rem (1024px)
-
-/* Viewport Breakpoints */
+/* Viewport Breakpoints (Tailwind) */
 sm: 640px
 md: 768px
 lg: 1024px
 xl: 1280px
+2xl: 1536px
 ```
 
 ## Typography
 
 ### Headings
-- `text-xl @md:text-2xl` - Page titles
-- `text-lg @md:text-xl` - Section headers
-- `text-base @md:text-lg` - Card titles
-- `text-sm @md:text-base` - Body text
+- `text-xl md:text-2xl` - Page titles
+- `text-lg md:text-xl` - Section headers
+- `text-base md:text-lg` - Card titles
+- `text-sm md:text-base` - Body text
 
 ### Arabic Text
 - `arabic-text` class for Arabic content
@@ -60,11 +57,11 @@ xl: 1280px
 
 #### Basic Card
 ```tsx
-<Card className="@container">
-  <CardHeader className="p-4 @md:p-6">
-    <CardTitle className="text-lg @md:text-xl">Title</CardTitle>
+<Card>
+  <CardHeader className="p-4 md:p-6">
+    <CardTitle className="text-lg md:text-xl">Title</CardTitle>
   </CardHeader>
-  <CardContent className="space-y-3 @md:space-y-4">
+  <CardContent className="space-y-3 md:space-y-4">
     Content
   </CardContent>
 </Card>
@@ -79,14 +76,14 @@ xl: 1280px
 
 #### Auto-Responsive Grid
 ```tsx
-<div className="grid grid-cols-1 @md:grid-cols-2 @xl:grid-cols-3 gap-4 @md:gap-6">
+<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
   {/* Grid items */}
 </div>
 ```
 
 #### Dashboard Grid
 ```tsx
-<div className="@container">
+<div className="w-full">
   <ResponsiveGrid 
     cols={{ default: 1, md: 2, lg: 3 }}
     gap="md" 
@@ -113,25 +110,25 @@ xl: 1280px
 
 #### Form Layouts
 - **Single**: `max-w-md mx-auto` - Login, simple forms
-- **Double**: `grid-cols-1 @md:grid-cols-2` - Profile forms
-- **Auto**: `grid-cols-1 @sm:grid-cols-2 @lg:grid-cols-3` - Complex forms
+- **Double**: `grid-cols-1 md:grid-cols-2` - Profile forms
+- **Auto**: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3` - Complex forms
 
 ### Buttons
 
 #### Size Variants
 - **Touch**: `min-h-[44px]` - Mobile-optimized
-- **Small**: `text-xs @md:text-sm` - Compact buttons
-- **Default**: `text-sm @md:text-base` - Standard buttons
+- **Small**: `text-xs md:text-sm` - Compact buttons
+- **Default**: `text-sm md:text-base` - Standard buttons
 
 ### Navigation
 
 #### Tab Navigation
 ```tsx
-<TabsList className="grid grid-cols-3 @md:grid-cols-5 min-w-max">
-  <TabsTrigger className="text-xs @md:text-sm">
-    <Icon className="h-3 w-3 @md:h-4 @md:w-4" />
-    <span className="hidden @sm:inline">Full Label</span>
-    <span className="@sm:hidden">Short</span>
+<TabsList className="grid grid-cols-3 md:grid-cols-5 min-w-max">
+  <TabsTrigger className="text-xs md:text-sm">
+    <Icon className="h-3 w-3 md:h-4 md:w-4" />
+    <span className="hidden sm:inline">Full Label</span>
+    <span className="sm:hidden">Short</span>
   </TabsTrigger>
 </TabsList>
 ```
@@ -219,10 +216,9 @@ border-primary        // Accent borders
 
 ## Performance
 
-### Container Queries
-- Use `@container` on parent elements
-- Prefer container queries over viewport queries for components
-- Enable with `@tailwindcss/container-queries` plugin
+### Responsive Strategy
+- Use viewport breakpoints (`sm:`, `md:`, `lg:`, `xl:`)
+- Do not use container query utilities (`@container`, `@md:` etc.)
 
 ### Image Optimization
 ```tsx
@@ -242,7 +238,7 @@ border-primary        // Accent borders
 
 ### Responsive Testing
 - Test on mobile (375px), tablet (768px), desktop (1024px+)
-- Verify container query behavior
+- Verify responsive behavior across viewport breakpoints
 - Check horizontal scrolling
 
 ### RTL Testing
@@ -261,11 +257,11 @@ border-primary        // Accent borders
 ### Dashboard Layout
 ```tsx
 <div className="min-h-screen bg-background">
-  <div className="@container container mx-auto p-4 sm:p-6">
-    <div className="mb-6 @md:mb-8">
-      <h1 className="text-2xl @md:text-3xl font-bold">Title</h1>
+  <div className="container mx-auto p-4 sm:p-6">
+    <div className="mb-6 md:mb-8">
+      <h1 className="text-2xl md:text-3xl font-bold">Title</h1>
     </div>
-    <div className="grid grid-cols-1 @md:grid-cols-2 @xl:grid-cols-3 gap-4 @md:gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
       {/* Dashboard content */}
     </div>
   </div>
@@ -275,11 +271,11 @@ border-primary        // Accent borders
 ### Modal Layout
 ```tsx
 <Dialog>
-  <DialogContent className="w-full max-w-md @md:max-w-lg @lg:max-w-xl">
-    <DialogHeader className="text-center @md:text-left">
-      <DialogTitle className="text-lg @md:text-xl">Title</DialogTitle>
+  <DialogContent className="w-full max-w-md md:max-w-lg lg:max-w-xl">
+    <DialogHeader className="text-center md:text-left">
+      <DialogTitle className="text-lg md:text-xl">Title</DialogTitle>
     </DialogHeader>
-    <div className="space-y-4 @md:space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Modal content */}
     </div>
   </DialogContent>

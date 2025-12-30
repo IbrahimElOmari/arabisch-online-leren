@@ -2,23 +2,22 @@
 
 ## Completed Tasks ✅
 
-### 1. Container Query Plugin & Mobile-First Design
-- ✅ Added `@tailwindcss/container-queries` plugin to package.json and tailwind.config.ts
-- ✅ Created ResponsiveCard, ResponsiveGrid, and ResponsiveForm components with container query support
+### 1. Responsive Design (Viewport Breakpoints)
+- ✅ Implemented mobile-first design using Tailwind viewport breakpoints (`sm:`, `md:`, `lg:`, `xl:`)
+- ✅ Ensured **no container-query utilities** are used (`@container`, `@md:`, etc.)
+- ✅ ResponsiveCard, ResponsiveGrid, and ResponsiveForm components use viewport breakpoints only
 - ✅ Updated major pages (Dashboard, AdminLayout, StudentDashboard) with mobile-first approach
-- ✅ Implemented `@container` classes and responsive breakpoints (@sm, @md, @lg)
 
 ### 2. Calendar.tsx Fixed & Responsive
 - ✅ **CRITICAL FIX**: Removed duplicate JSX structure causing build errors (lines 339-457)
-- ✅ Fixed duplicate export statements at end of file  
-- ✅ Implemented mobile-first design with container queries
+- ✅ Fixed duplicate export statements at end of file
+- ✅ Implemented mobile-first design with viewport breakpoints
 - ✅ Added proper RTL support with useRTLLayout helpers
-- ✅ Event form uses responsive dialog sizing (w-full max-w-md @md:max-w-lg)
-- ✅ Calendar grid adapts: single column on mobile, 3-column grid on larger screens
+- ✅ Event form uses responsive dialog sizing (`w-full max-w-md md:max-w-lg`)
+- ✅ Calendar grid adapts: single column on mobile, multi-column on larger screens
 
 ### 3. Forum.tsx Mobile-First Refactor
-- ✅ Added @container support and RTL direction attribute
-- ✅ Converted header to responsive flex layout (flex-col @md:flex-row)
+- ✅ Uses viewport breakpoints only (e.g. `flex-col md:flex-row`)
 - ✅ Updated action buttons to use ResponsiveGrid layout
 - ✅ Class selector now uses proper responsive form field styling
 - ✅ Wrapped ForumMain in ResponsiveCard for consistent styling
@@ -34,8 +33,8 @@
 - ✅ Added proper RTL text alignment for form labels
 
 ### 6. Documentation & Testing Infrastructure
-- ✅ Created comprehensive docs/styleguide.md with responsive design patterns
-- ✅ Created e2e/responsive-ui.spec.ts for cross-browser responsive testing
+- ✅ Updated docs/styleguide.md to use viewport breakpoints only
+- ✅ Updated e2e/responsive-ui.spec.ts to assert no container-query utility classes are used
 - ✅ Created e2e/accessibility.spec.ts for accessibility validation
 
 ## Current Build Status 🔄
@@ -62,14 +61,14 @@
 ## Architecture Improvements ✨
 
 ### New Responsive Components
-- **ResponsiveCard**: Container-query aware cards with mobile-first sizing
-- **ResponsiveGrid**: Auto-adapting grids with configurable breakpoints  
+- **ResponsiveCard**: Mobile-first cards with viewport breakpoint sizing
+- **ResponsiveGrid**: Auto-adapting grids with configurable viewport breakpoints
 - **ResponsiveForm**: Mobile-first forms with responsive field layouts
 
 ### Design System Consistency
 - Proper semantic tokens from index.css and tailwind.config.ts
 - RTL-aware spacing and layout utilities
-- Container queries for component-level responsiveness
+- Viewport breakpoints for responsive layout
 
 ## Next Steps 🎯
 
