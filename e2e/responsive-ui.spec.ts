@@ -194,40 +194,24 @@ test.describe('Responsive UI Tests', () => {
     }
   });
 
-  test('Container query behavior', async ({ page }) => {
+  test('No container-query utility classes are used', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto('/dashboard');
 
-    // Test container with different sizes
-    const container = page.locator('.\\@container').first();
-    await expect(container).toBeVisible();
+    const offending = await page.evaluate(() => {
+      const bad: Array<{ tag: string; className: string }> = [];
 
-    // Check that container queries are working
-    const hasContainerStyles = await container.evaluate((el) => {
-      const styles = window.getComputedStyle(el);
-      return styles.containerType === 'inline-size' || styles.contain === 'layout style size';
-    });
-
-    // Note: This test may need adjustment based on browser support
-    if (hasContainerStyles) {
-      // Resize container and check responsive behavior
-      await page.addStyleTag({
-        content: '.\\@container { width: 400px !important; }'
+      document.querySelectorAll<HTMLElement>('[class]').forEach((el) => {
+        const classes = Array.from(el.classList);
+        if (classes.some((c) => c.startsWith('@'))) {
+          bad.push({ tag: el.tagName.toLowerCase(), className: el.className });
+        }
       });
 
-      // Wait for reflow
-      await page.waitForTimeout(100);
+      return bad;
+    });
 
-      // Check that styles adapted to container size
-      const adaptedElement = container.locator('.\\@md\\:grid-cols-2').first();
-      if (await adaptedElement.isVisible()) {
-        const gridColumns = await adaptedElement.evaluate((el) =>
-          window.getComputedStyle(el).gridTemplateColumns
-        );
-        // Should have single column at small container size
-        expect(gridColumns).not.toContain('1fr 1fr');
-      }
-    }
+    expect(offending).toEqual([]);
   });
 
   test('Performance on mobile devices', async ({ page }) => {
