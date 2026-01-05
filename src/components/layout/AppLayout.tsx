@@ -15,6 +15,7 @@ import EnhancedNotificationSystem from '@/components/notifications/EnhancedNotif
 import { EnhancedMobileBottomNav } from '@/components/mobile/EnhancedMobileNavigation';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { DashboardErrorBoundary } from '@/components/layout/DashboardErrorBoundary';
+import { initRTLMainVisibilityGuard, forceGuardCheck } from '@/utils/rtlMainVisibilityGuard';
 
 type RTLDebugFlags = {
   rtlDebug: boolean;
@@ -46,6 +47,17 @@ export const AppLayout = () => {
   // Usage (DEV): add query params e.g.
   //   ?rtlDebug=1&noSidebar=1&noBottomNav=1&noHeader=1
   const debug = useMemo(() => getDebugFlags(), []);
+
+  // Initialize RTL main visibility guard (production-safe failsafe)
+  useEffect(() => {
+    const cleanup = initRTLMainVisibilityGuard();
+    return cleanup;
+  }, []);
+
+  // Re-check guard when RTL/mobile state changes
+  useEffect(() => {
+    forceGuardCheck();
+  }, [isRTL, isMobile]);
 
   useEffect(() => {
     if (!import.meta.env.DEV || !debug.rtlDebug) return;

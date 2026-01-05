@@ -3,11 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Single import for each stylesheet - FIX: Removed duplicates */
-@import './styles/cross-browser.css';
-@import './styles/rtl.css';
-@import './styles/accessibility.css';
-@import './mobile-optimizations.css';
+/* CSS imports moved to src/main.tsx for guaranteed load order */
+/* Do NOT use @import here - they are processed after Tailwind which can cause cascade issues */
 
 /* ===== FIX 4: GLOBAL ANTI-OVERFLOW CONTRACT ===== */
 html {
