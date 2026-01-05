@@ -47,7 +47,7 @@ const Security = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-6">
+      <section className="max-w-7xl mx-auto p-6">
         <Tabs defaultValue="security" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="security" className={`${getFlexDirection()} items-center gap-2`}>
@@ -86,7 +86,7 @@ const Security = () => {
             </div>
           </TabsContent>
         </Tabs>
-      </main>
+      </section>
     </div>
   );
 };
