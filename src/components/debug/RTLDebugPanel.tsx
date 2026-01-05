@@ -2,16 +2,42 @@
  * RTL Debug Panel - DEV-only component for debugging RTL layout issues
  * Enable via URL param: ?rtlDebug=1
  * 
- * STEP 4 PROOF: This panel now includes drawer test functionality
- * that verifies opening/closing the drawer does not affect scrollLeft/scrollWidth
+ * ENHANCED: Now includes detailed computed styles, cache reset, and failsafe marker
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { X, Copy, RefreshCw, Bug, Menu } from 'lucide-react';
+import { X, Copy, RefreshCw, Bug, Menu, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+
+interface MainComputedStyles {
+  width: string;
+  maxWidth: string;
+  minWidth: string;
+  position: string;
+  left: string;
+  right: string;
+  transform: string;
+  translate: string;
+  marginLeft: string;
+  marginRight: string;
+  marginInlineStart: string;
+  marginInlineEnd: string;
+  insetInlineStart: string;
+  insetInlineEnd: string;
+  display: string;
+  flex: string;
+  alignSelf: string;
+}
+
+interface MainOffsetInfo {
+  offsetLeft: number;
+  offsetWidth: number;
+  clientWidth: number;
+  offsetParent: string | null;
+}
 
 interface DebugData {
   timestamp: string;
@@ -20,6 +46,7 @@ interface DebugData {
   htmlClasses: string;
   containerQuerySupport: boolean;
   noContainerQueriesClass: boolean;
+  rtlMainFixedClass: boolean;
   viewport: {
     width: number;
     height: number;
@@ -40,6 +67,9 @@ interface DebugData {
     };
     isVisible: boolean;
     isWithinViewport: boolean;
+    computed?: MainComputedStyles;
+    offset?: MainOffsetInfo;
+    safeguardActive?: boolean;
     ancestors?: Array<{
       tag: string;
       id?: string;
@@ -78,6 +108,7 @@ export const RTLDebugPanel = () => {
     
     const containerQuerySupport = CSS.supports?.('container-type', 'inline-size') ?? false;
     const noContainerQueriesClass = html.classList.contains('no-container-queries');
+    const rtlMainFixedClass = html.classList.contains('rtl-main-fixed');
     
     let mainData: DebugData['mainElement'] = {
       found: false,
@@ -87,15 +118,52 @@ export const RTLDebugPanel = () => {
     
     let overlayElements: string[] = [];
     
-    if (main) {
+    if (main && main instanceof HTMLElement) {
       const rect = main.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
+      const cs = window.getComputedStyle(main);
+
+      // Collect detailed computed styles
+      const computed: MainComputedStyles = {
+        width: cs.width,
+        maxWidth: cs.maxWidth,
+        minWidth: cs.minWidth,
+        position: cs.position,
+        left: cs.left,
+        right: cs.right,
+        transform: cs.transform,
+        translate: cs.translate || 'none',
+        marginLeft: cs.marginLeft,
+        marginRight: cs.marginRight,
+        marginInlineStart: cs.marginInlineStart || cs.getPropertyValue('margin-inline-start') || 'N/A',
+        marginInlineEnd: cs.marginInlineEnd || cs.getPropertyValue('margin-inline-end') || 'N/A',
+        insetInlineStart: cs.insetInlineStart || cs.getPropertyValue('inset-inline-start') || 'N/A',
+        insetInlineEnd: cs.insetInlineEnd || cs.getPropertyValue('inset-inline-end') || 'N/A',
+        display: cs.display,
+        flex: cs.flex,
+        alignSelf: cs.alignSelf,
+      };
+
+      // Collect offset info
+      const offset: MainOffsetInfo = {
+        offsetLeft: main.offsetLeft,
+        offsetWidth: main.offsetWidth,
+        clientWidth: main.clientWidth,
+        offsetParent: main.offsetParent 
+          ? `${main.offsetParent.tagName.toLowerCase()}${main.offsetParent.id ? '#' + main.offsetParent.id : ''}${main.offsetParent.className ? '.' + main.offsetParent.className.toString().split(' ')[0] : ''}`
+          : null,
+      };
+
+      // Check if mobile RTL safeguard is active
+      const safeguardActive = cs.position === 'relative' && 
+        (cs.translate === 'none' || cs.translate === '0px 0px' || !cs.translate) &&
+        cs.transform === 'none';
 
       const ancestors: NonNullable<DebugData['mainElement']['ancestors']> = [];
       let el: HTMLElement | null = main as HTMLElement;
       for (let i = 0; el && i < 10; i++) {
         const r = el.getBoundingClientRect();
-        const cs = window.getComputedStyle(el);
+        const elCs = window.getComputedStyle(el);
         ancestors.push({
           tag: el.tagName.toLowerCase(),
           id: el.id || undefined,
@@ -107,11 +175,11 @@ export const RTLDebugPanel = () => {
             width: Math.round(r.width),
           },
           computed: {
-            display: cs.display,
-            position: cs.position,
-            transform: cs.transform,
-            overflowX: cs.overflowX,
-            direction: cs.direction,
+            display: elCs.display,
+            position: elCs.position,
+            transform: elCs.transform,
+            overflowX: elCs.overflowX,
+            direction: elCs.direction,
           },
         });
         el = el.parentElement as HTMLElement | null;
@@ -127,6 +195,9 @@ export const RTLDebugPanel = () => {
         },
         isVisible: rect.left >= -10 && rect.right <= viewportWidth + 10,
         isWithinViewport: rect.left >= 0 && rect.right <= viewportWidth,
+        computed,
+        offset,
+        safeguardActive,
         ancestors,
       };
       
@@ -158,6 +229,7 @@ export const RTLDebugPanel = () => {
       htmlClasses: Array.from(html.classList).join(' ') || 'none',
       containerQuerySupport,
       noContainerQueriesClass,
+      rtlMainFixedClass,
       viewport: {
         width: window.innerWidth,
         height: window.innerHeight,
@@ -178,7 +250,36 @@ export const RTLDebugPanel = () => {
     setDebugData(collectDebugData());
   }, [collectDebugData]);
 
-  // STEP 4 PROOF: Test drawer open/close effect on scroll
+  // Reset cache and reload
+  const handleCacheReset = useCallback(async () => {
+    toast({
+      title: 'Resetting cache...',
+      description: 'Clearing all caches and reloading',
+    });
+    
+    try {
+      // Use the global reset function if available
+      if (typeof (window as any).forceServiceWorkerReset === 'function') {
+        await (window as any).forceServiceWorkerReset();
+      } else {
+        // Manual fallback
+        if ('caches' in window) {
+          const cacheNames = await caches.keys();
+          await Promise.all(cacheNames.map(name => caches.delete(name)));
+        }
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map(reg => reg.unregister()));
+        }
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Cache reset failed:', error);
+      window.location.reload();
+    }
+  }, [toast]);
+
+  // Test drawer open/close effect on scroll
   const runDrawerTest = useCallback(async () => {
     if (testInProgress.current) return;
     testInProgress.current = true;
@@ -189,19 +290,15 @@ export const RTLDebugPanel = () => {
       scrollWidth: Math.round(scrollingElement.scrollWidth),
     };
     
-    // Find and click the mobile menu trigger
     const menuButton = document.querySelector('[data-testid="mobile-menu-trigger"]') || 
                        document.querySelector('button[class*="md:hidden"]');
     
     if (menuButton && menuButton instanceof HTMLElement) {
-      // Open drawer
       menuButton.click();
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Log during-open values for debugging (not stored to avoid unused var warning)
       console.log('[RTL Debug] During drawer open - scrollLeft:', scrollingElement.scrollLeft, 'scrollWidth:', scrollingElement.scrollWidth);
       
-      // Find and click close button
       const closeButton = document.querySelector('[data-radix-collection-item]') ||
                           document.querySelector('button[class*="SheetClose"]') ||
                           document.querySelector('[role="dialog"] button');
@@ -209,7 +306,6 @@ export const RTLDebugPanel = () => {
       if (closeButton && closeButton instanceof HTMLElement) {
         closeButton.click();
       } else {
-        // Click overlay to close
         const overlay = document.querySelector('[data-radix-overlay]');
         if (overlay && overlay instanceof HTMLElement) {
           overlay.click();
@@ -267,7 +363,6 @@ export const RTLDebugPanel = () => {
   }, [collectDebugData, toast]);
 
   useEffect(() => {
-    // Check URL param
     const params = new URLSearchParams(window.location.search);
     const shouldShow = params.get('rtlDebug') === '1';
     
@@ -280,7 +375,6 @@ export const RTLDebugPanel = () => {
   useEffect(() => {
     if (!isVisible) return;
     
-    // Update on resize/scroll
     const handleUpdate = () => {
       setDebugData(collectDebugData());
     };
@@ -288,7 +382,6 @@ export const RTLDebugPanel = () => {
     window.addEventListener('resize', handleUpdate);
     window.addEventListener('scroll', handleUpdate);
     
-    // Periodic update
     const interval = setInterval(handleUpdate, 2000);
     
     return () => {
@@ -316,25 +409,28 @@ export const RTLDebugPanel = () => {
   }
 
   return (
-    <Card className="fixed bottom-20 right-4 z-[9999] w-80 max-h-[70vh] overflow-auto shadow-xl border-2 border-destructive/50 bg-background/95 backdrop-blur">
-      <CardHeader className="pb-2 flex flex-row items-center justify-between">
+    <Card className="fixed bottom-20 right-4 z-[9999] w-96 max-h-[80vh] overflow-auto shadow-xl border-2 border-destructive/50 bg-background/95 backdrop-blur text-xs">
+      <CardHeader className="pb-2 flex flex-row items-center justify-between sticky top-0 bg-background/95 z-10">
         <CardTitle className="text-sm flex items-center gap-2">
           <Bug className="h-4 w-4" />
           RTL Debug Panel
         </CardTitle>
         <div className="flex gap-1">
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={refreshDebugData}>
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={refreshDebugData} title="Refresh">
             <RefreshCw className="h-3 w-3" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={copyDebugReport}>
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={copyDebugReport} title="Copy Report">
             <Copy className="h-3 w-3" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setIsMinimized(true)}>
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleCacheReset} title="Reset Cache & Reload">
+            <Trash2 className="h-3 w-3" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setIsMinimized(true)} title="Minimize">
             <X className="h-3 w-3" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="text-xs space-y-3">
+      <CardContent className="space-y-3">
         {debugData && (
           <>
             {/* Direction & Language */}
@@ -347,20 +443,22 @@ export const RTLDebugPanel = () => {
                 </Badge>
                 <span className="text-muted-foreground">lang:</span>
                 <span>{debugData.documentLang}</span>
+                <span className="text-muted-foreground">classes:</span>
+                <span className="text-[10px] truncate">{debugData.htmlClasses}</span>
               </div>
             </div>
 
-            {/* Container Query Support */}
+            {/* Safeguard Status */}
             <div>
-              <div className="font-semibold mb-1">Container Queries</div>
+              <div className="font-semibold mb-1">Safeguards</div>
               <div className="grid grid-cols-2 gap-1">
-                <span className="text-muted-foreground">Support:</span>
-                <Badge variant={debugData.containerQuerySupport ? 'default' : 'destructive'} className="text-xs">
-                  {debugData.containerQuerySupport ? 'Yes' : 'No'}
+                <span className="text-muted-foreground">CSS Active:</span>
+                <Badge variant={debugData.mainElement.safeguardActive ? 'default' : 'destructive'} className="text-xs">
+                  {debugData.mainElement.safeguardActive ? 'Yes' : 'NO!'}
                 </Badge>
-                <span className="text-muted-foreground">Fallback:</span>
-                <Badge variant={debugData.noContainerQueriesClass ? 'default' : 'secondary'} className="text-xs">
-                  {debugData.noContainerQueriesClass ? 'Active' : 'Inactive'}
+                <span className="text-muted-foreground">JS Fixed:</span>
+                <Badge variant={debugData.rtlMainFixedClass ? 'default' : 'secondary'} className="text-xs">
+                  {debugData.rtlMainFixedClass ? 'Applied' : 'Not needed'}
                 </Badge>
               </div>
             </div>
@@ -384,8 +482,6 @@ export const RTLDebugPanel = () => {
                 </span>
                 <span className="text-muted-foreground">scrollWidth:</span>
                 <span>{debugData.scroll.scrollWidth}</span>
-                <span className="text-muted-foreground">clientWidth:</span>
-                <span>{debugData.scroll.clientWidth}</span>
                 <span className="text-muted-foreground">Overflow:</span>
                 <Badge variant={debugData.scroll.hasHorizontalOverflow ? 'destructive' : 'default'} className="text-xs">
                   {debugData.scroll.hasHorizontalOverflow ? 'Yes!' : 'No'}
@@ -393,21 +489,19 @@ export const RTLDebugPanel = () => {
               </div>
             </div>
 
-            {/* Main Element */}
+            {/* Main Element Rect */}
             <div>
-              <div className="font-semibold mb-1">Main Element</div>
+              <div className="font-semibold mb-1">Main Element (Rect)</div>
               {debugData.mainElement.found ? (
                 <div className="grid grid-cols-2 gap-1">
-                  <span className="text-muted-foreground">x:</span>
-                  <span className={debugData.mainElement.rect!.x !== 0 ? 'text-warning font-bold' : ''}>
+                  <span className="text-muted-foreground">x/left:</span>
+                  <span className={debugData.mainElement.rect!.x > 10 ? 'text-destructive font-bold' : 'text-green-600'}>
                     {debugData.mainElement.rect!.x}
                   </span>
-                  <span className="text-muted-foreground">left:</span>
-                  <span>{debugData.mainElement.rect!.left}</span>
-                  <span className="text-muted-foreground">right:</span>
-                  <span>{debugData.mainElement.rect!.right}</span>
                   <span className="text-muted-foreground">width:</span>
-                  <span>{debugData.mainElement.rect!.width}</span>
+                  <span className={debugData.mainElement.rect!.width < 300 ? 'text-destructive font-bold' : ''}>
+                    {debugData.mainElement.rect!.width}
+                  </span>
                   <span className="text-muted-foreground">Visible:</span>
                   <Badge variant={debugData.mainElement.isVisible ? 'default' : 'destructive'} className="text-xs">
                     {debugData.mainElement.isVisible ? 'Yes' : 'NO!'}
@@ -417,6 +511,56 @@ export const RTLDebugPanel = () => {
                 <Badge variant="destructive">NOT FOUND</Badge>
               )}
             </div>
+
+            {/* Main Element Computed Styles */}
+            {debugData.mainElement.computed && (
+              <div>
+                <div className="font-semibold mb-1">Main Computed Styles</div>
+                <div className="grid grid-cols-2 gap-0.5 text-[10px]">
+                  <span className="text-muted-foreground">position:</span>
+                  <span className={debugData.mainElement.computed.position !== 'relative' ? 'text-warning' : ''}>
+                    {debugData.mainElement.computed.position}
+                  </span>
+                  <span className="text-muted-foreground">left:</span>
+                  <span>{debugData.mainElement.computed.left}</span>
+                  <span className="text-muted-foreground">right:</span>
+                  <span>{debugData.mainElement.computed.right}</span>
+                  <span className="text-muted-foreground">transform:</span>
+                  <span className={debugData.mainElement.computed.transform !== 'none' ? 'text-destructive' : ''}>
+                    {debugData.mainElement.computed.transform}
+                  </span>
+                  <span className="text-muted-foreground">translate:</span>
+                  <span className={debugData.mainElement.computed.translate !== 'none' && debugData.mainElement.computed.translate !== '0px 0px' ? 'text-destructive' : ''}>
+                    {debugData.mainElement.computed.translate}
+                  </span>
+                  <span className="text-muted-foreground">marginL/R:</span>
+                  <span>{debugData.mainElement.computed.marginLeft} / {debugData.mainElement.computed.marginRight}</span>
+                  <span className="text-muted-foreground">marginInline:</span>
+                  <span>{debugData.mainElement.computed.marginInlineStart} / {debugData.mainElement.computed.marginInlineEnd}</span>
+                  <span className="text-muted-foreground">width:</span>
+                  <span>{debugData.mainElement.computed.width}</span>
+                  <span className="text-muted-foreground">flex:</span>
+                  <span>{debugData.mainElement.computed.flex}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Main Element Offset */}
+            {debugData.mainElement.offset && (
+              <div>
+                <div className="font-semibold mb-1">Main Offset Info</div>
+                <div className="grid grid-cols-2 gap-0.5 text-[10px]">
+                  <span className="text-muted-foreground">offsetLeft:</span>
+                  <span>{debugData.mainElement.offset.offsetLeft}</span>
+                  <span className="text-muted-foreground">offsetWidth:</span>
+                  <span>{debugData.mainElement.offset.offsetWidth}</span>
+                  <span className="text-muted-foreground">clientWidth:</span>
+                  <span>{debugData.mainElement.offset.clientWidth}</span>
+                  <span className="text-muted-foreground">offsetParent:</span>
+                  <span className="truncate">{debugData.mainElement.offset.offsetParent || 'null'}</span>
+                </div>
+              </div>
+            )}
 
             {/* Overlay Elements */}
             {debugData.overlayElements.length > 0 && (
@@ -432,44 +576,38 @@ export const RTLDebugPanel = () => {
               </div>
             )}
 
-            {/* Drawer Test - STEP 4 PROOF */}
+            {/* Drawer Test */}
             {debugData.drawerTest && (
               <div>
-                <div className="font-semibold mb-1">Drawer Test (Step 4)</div>
+                <div className="font-semibold mb-1">Drawer Test</div>
                 <div className="grid grid-cols-2 gap-1">
                   <span className="text-muted-foreground">Result:</span>
                   <Badge variant={debugData.drawerTest.passed ? 'default' : 'destructive'} className="text-xs">
                     {debugData.drawerTest.passed ? 'PASS' : 'FAIL'}
                   </Badge>
-                  <span className="text-muted-foreground">Before:</span>
-                  <span className="text-[10px]">
-                    L:{debugData.drawerTest.beforeScroll.scrollLeft} W:{debugData.drawerTest.beforeScroll.scrollWidth}
-                  </span>
-                  <span className="text-muted-foreground">After:</span>
-                  <span className="text-[10px]">
-                    L:{debugData.drawerTest.afterScroll.scrollLeft} W:{debugData.drawerTest.afterScroll.scrollWidth}
-                  </span>
                 </div>
                 <p className="text-[10px] mt-1 text-muted-foreground">{debugData.drawerTest.message}</p>
               </div>
             )}
 
-            {/* Test Drawer Button */}
-            <Button onClick={runDrawerTest} size="sm" variant="outline" className="w-full">
-              <Menu className="h-3 w-3 mr-1" />
-              Test Drawer (Step 4)
-            </Button>
-
-            {/* Copy Button */}
-            <Button onClick={copyDebugReport} size="sm" className="w-full">
-              <Copy className="h-3 w-3 mr-1" />
-              Copy Debug Report
-            </Button>
+            {/* Action Buttons */}
+            <div className="space-y-2 pt-2">
+              <Button onClick={runDrawerTest} size="sm" variant="outline" className="w-full">
+                <Menu className="h-3 w-3 mr-1" />
+                Test Drawer
+              </Button>
+              <Button onClick={handleCacheReset} size="sm" variant="destructive" className="w-full">
+                <Trash2 className="h-3 w-3 mr-1" />
+                Reset Cache & Reload
+              </Button>
+              <Button onClick={copyDebugReport} size="sm" className="w-full">
+                <Copy className="h-3 w-3 mr-1" />
+                Copy Full Report
+              </Button>
+            </div>
           </>
         )}
       </CardContent>
     </Card>
   );
 };
-
-export default RTLDebugPanel;
