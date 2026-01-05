@@ -88,7 +88,40 @@ function applyFix(main: HTMLElement): void {
 }
 
 /**
- * Run the visibility guard check
+ * Run synchronous visibility check - executes IMMEDIATELY without waiting
+ * This catches layout issues before the user sees them
+ */
+function runSynchronousCheck(): void {
+  const html = document.documentElement;
+  const isRTL = html.dir === 'rtl' || html.classList.contains('rtl-mode');
+  const isMobile = window.innerWidth <= 768;
+  
+  // Only run in RTL + mobile
+  if (!isRTL || !isMobile) return;
+  
+  const main = document.querySelector('main');
+  if (!main || !(main instanceof HTMLElement)) return;
+  
+  const rect = main.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+  
+  // Check if out of bounds - direct check, no waiting
+  if (rect.left > GUARD_CONFIG.maxLeftOffset || rect.width < viewportWidth * GUARD_CONFIG.minWidthPercent) {
+    if (import.meta.env.DEV) {
+      console.warn('[RTL Guard] Synchronous fix applied', {
+        left: Math.round(rect.left),
+        width: Math.round(rect.width),
+        viewportWidth,
+      });
+    }
+    
+    applyFix(main);
+    html.classList.add('rtl-main-fixed');
+  }
+}
+
+/**
+ * Run the visibility guard check (async version with RAF delays)
  */
 async function runGuardCheck(): Promise<void> {
   const html = document.documentElement;
@@ -156,7 +189,10 @@ export function initRTLMainVisibilityGuard(): () => void {
   
   guardActive = true;
   
-  // Run initial check
+  // CRITICAL: Run synchronous check FIRST (no waiting)
+  runSynchronousCheck();
+  
+  // Run async check as backup (with RAF delays)
   runGuardCheck();
   
   // Listen for relevant events
