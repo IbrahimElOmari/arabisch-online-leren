@@ -311,17 +311,27 @@ html {
   }
 
   /* CRITICAL FIX: Force sidebar width to 0 on mobile to prevent main content push */
-  /* This CSS media query acts as a fallback even before JS hydrates */
+  /* This CSS media query acts as a CSS-first fallback even before JS hydrates */
   @media (max-width: 768px) {
-    .group\/sidebar-wrapper {
+    /* Force sidebar wrapper CSS variables to 0 on mobile */
+    .group\/sidebar-wrapper,
+    [class*="sidebar-wrapper"] {
       --sidebar-width: 0 !important;
       --sidebar-width-icon: 0 !important;
     }
 
-    /* Desktop sidebar gap element should not render on mobile */
-    .group.peer {
-      display: none !important;
+    /* Target ALL possible sidebar gap/spacer div variations */
+    .group.peer,
+    .group\/sidebar-wrapper > .group.peer,
+    [data-state] > div[class*="w-[--sidebar-width]"],
+    div[class*="w-[--sidebar-width]"],
+    .peer[class*="w-[--sidebar-width]"],
+    [class*="sidebar"][class*="w-["] {
       width: 0 !important;
+      min-width: 0 !important;
+      max-width: 0 !important;
+      flex: 0 0 0 !important;
+      display: none !important;
     }
   }
 
