@@ -126,18 +126,21 @@ export const AppLayout = () => {
           {/* Sidebar: renders as Sheet on mobile, fixed on desktop */}
           {!debug.noSidebar && <AppSidebar />}
 
+          {/* Content column - CRITICAL: w-0 min-w-0 flex-1 prevents flex collapse */}
           <div
-            className="flex-1 flex flex-col w-full max-w-[100vw] overflow-x-clip"
-            style={{ minWidth: 0 }}
+            className="flex-1 flex flex-col w-0 min-w-0 max-w-[100vw] overflow-x-clip"
+            style={{ flex: '1 1 0%' }}
+            data-content-column
           >
             {!debug.noHeader && <Navigation />}
             <EnhancedNotificationSystem />
 
             <main
-              className="flex-1 p-4 w-full max-w-[100vw] overflow-x-clip"
-              style={{ minWidth: 0 }}
+              className="flex-1 p-4 w-full min-w-0 max-w-[100vw] overflow-x-clip"
+              style={{ flex: '1 1 100%' }}
               role="main"
               aria-label="Main content"
+              data-main="app"
             >
               <DashboardErrorBoundary>
                 <Outlet />

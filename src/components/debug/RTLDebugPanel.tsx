@@ -366,9 +366,21 @@ export const RTLDebugPanel = () => {
     const params = new URLSearchParams(window.location.search);
     const shouldShow = params.get('rtlDebug') === '1';
     
-    if (shouldShow && import.meta.env.DEV) {
+    // Show debug panel when rtlDebug=1 (also in production for debugging)
+    if (shouldShow) {
       setIsVisible(true);
       setDebugData(collectDebugData());
+      
+      // Expose global debug helpers for console access
+      (window as any).__rtlDebug = {
+        getReport: collectDebugData,
+        copyReport: () => {
+          const report = JSON.stringify(collectDebugData(), null, 2);
+          navigator.clipboard.writeText(report);
+          console.log('[RTL Debug] Report copied to clipboard');
+          return report;
+        },
+      };
     }
   }, [collectDebugData]);
 
@@ -391,8 +403,8 @@ export const RTLDebugPanel = () => {
     };
   }, [isVisible, collectDebugData]);
 
-  // Don't render in production
-  if (!import.meta.env.DEV || !isVisible) {
+  // Only render when explicitly enabled via URL param
+  if (!isVisible) {
     return null;
   }
 

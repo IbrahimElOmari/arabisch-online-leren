@@ -61,9 +61,9 @@ function getSnapshot(main: HTMLElement): MainRectSnapshot {
 }
 
 /**
- * Apply inline fix to main element
+ * Apply inline fix to main element and optionally its parent
  */
-function applyFix(main: HTMLElement): void {
+function applyFix(main: HTMLElement, fixParent: boolean = false): void {
   const fixStyles: Partial<CSSStyleDeclaration> = {
     position: 'relative',
     left: '0px',
@@ -85,6 +85,34 @@ function applyFix(main: HTMLElement): void {
   
   Object.assign(main.style, fixStyles);
   lastFixApplied = Date.now();
+  
+  // Also fix parent container if requested (content column)
+  if (fixParent && main.parentElement) {
+    const parent = main.parentElement;
+    parent.style.flex = '1 1 0%';
+    parent.style.minWidth = '0px';
+    parent.style.width = '100%';
+    parent.style.maxWidth = '100vw';
+  }
+}
+
+/**
+ * Get the correct main element - prefer the app's main, not page-level mains
+ */
+function getAppMain(): HTMLElement | null {
+  // Prefer main with our data attribute
+  const appMain = document.querySelector('main[data-main="app"]');
+  if (appMain instanceof HTMLElement) return appMain;
+  
+  // Fallback to main with role
+  const roleMain = document.querySelector('main[role="main"]');
+  if (roleMain instanceof HTMLElement) return roleMain;
+  
+  // Last resort: first main
+  const firstMain = document.querySelector('main');
+  if (firstMain instanceof HTMLElement) return firstMain;
+  
+  return null;
 }
 
 /**
@@ -99,23 +127,28 @@ function runSynchronousCheck(): void {
   // Only run in RTL + mobile
   if (!isRTL || !isMobile) return;
   
-  const main = document.querySelector('main');
-  if (!main || !(main instanceof HTMLElement)) return;
+  const main = getAppMain();
+  if (!main) return;
   
   const rect = main.getBoundingClientRect();
   const viewportWidth = window.innerWidth;
   
-  // Check if out of bounds - direct check, no waiting
-  if (rect.left > GUARD_CONFIG.maxLeftOffset || rect.width < viewportWidth * GUARD_CONFIG.minWidthPercent) {
+  // Check if out of bounds OR too narrow
+  const outOfBounds = rect.left > GUARD_CONFIG.maxLeftOffset;
+  const tooNarrow = rect.width < viewportWidth * GUARD_CONFIG.minWidthPercent;
+  
+  if (outOfBounds || tooNarrow) {
     if (import.meta.env.DEV) {
       console.warn('[RTL Guard] Synchronous fix applied', {
         left: Math.round(rect.left),
         width: Math.round(rect.width),
         viewportWidth,
+        reason: outOfBounds ? 'out-of-bounds' : 'too-narrow',
       });
     }
     
-    applyFix(main);
+    // Fix both main and its parent container
+    applyFix(main, true);
     html.classList.add('rtl-main-fixed');
   }
 }
@@ -131,8 +164,8 @@ async function runGuardCheck(): Promise<void> {
   // Only run in RTL + mobile
   if (!isRTL || !isMobile) return;
   
-  const main = document.querySelector('main');
-  if (!main || !(main instanceof HTMLElement)) return;
+  const main = getAppMain();
+  if (!main) return;
   
   const viewportWidth = window.innerWidth;
   
@@ -160,8 +193,8 @@ async function runGuardCheck(): Promise<void> {
     });
   }
   
-  // Apply fix
-  applyFix(main);
+  // Apply fix to main AND parent
+  applyFix(main, true);
   
   // Add marker class
   html.classList.add('rtl-main-fixed');
