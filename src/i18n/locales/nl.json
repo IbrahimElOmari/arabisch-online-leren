@@ -386,5 +386,34 @@
   "navigation": {
     "returnHome": "Terug naar home",
     "goBack": "Ga terug"
+  },
+  "management": {
+    "title": "Taken & Vragen Beheer",
+    "selectLevel": "Niveau Selecteren",
+    "selectLevelPlaceholder": "Selecteer een niveau",
+    "level": "Niveau",
+    "addNewTask": "Nieuwe Taak Toevoegen",
+    "addNewQuestion": "Nieuwe Vraag Toevoegen",
+    "taskTitle": "Taak titel",
+    "taskDescription": "Taak beschrijving",
+    "questionText": "Vraag tekst",
+    "type": "Type",
+    "text": "Tekst",
+    "file": "Bestand",
+    "scale": "Schaal",
+    "selectType": "Selecteer type",
+    "createTask": "Taak Aanmaken",
+    "createQuestion": "Vraag Aanmaken",
+    "existingTasks": "Bestaande Taken",
+    "existingQuestions": "Bestaande Vragen",
+    "loading": "Laden...",
+    "unknown": "Onbekend",
+    "taskCreatedTitle": "Taak succesvol aangemaakt",
+    "taskCreatedDescription": "De taak is succesvol aangemaakt en toegevoegd aan het niveau.",
+    "questionCreatedTitle": "Vraag succesvol aangemaakt",
+    "questionCreatedDescription": "De vraag is succesvol aangemaakt en toegevoegd aan het niveau.",
+    "errorTitle": "Er ging iets fout",
+    "taskErrorDescription": "Kon de taak niet aanmaken. Probeer het later opnieuw.",
+    "questionErrorDescription": "Kon de vraag niet aanmaken. Probeer het later opnieuw."
   }
 }

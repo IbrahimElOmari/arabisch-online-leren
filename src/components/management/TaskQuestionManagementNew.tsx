@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,6 +35,7 @@ interface Task {
 }
 
 const TaskQuestionManagementNew = () => {
+  const { t } = useTranslation();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [levelId, setLevelId] = useState<string>('level-1');
@@ -44,7 +46,7 @@ const TaskQuestionManagementNew = () => {
   const [newQuestionText, setNewQuestionText] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const { profile } = useAuth();
-	const { toast } = useToast()
+  const { toast } = useToast()
 
   useEffect(() => {
     if (levelId) {
@@ -69,7 +71,7 @@ const TaskQuestionManagementNew = () => {
       const tasksWithAuthor = data?.map(task => ({
         ...task,
         required_submission_type: task.required_submission_type || 'text' as 'text' | 'file',
-        author: { full_name: task.profiles?.full_name || 'Onbekend' }
+        author: { full_name: task.profiles?.full_name || t('management.unknown') }
       })) || [];
 
       setTasks(tasksWithAuthor);
@@ -123,21 +125,21 @@ const TaskQuestionManagementNew = () => {
         ]);
 
       if (error) throw error;
-			toast({
-				title: "Taak succesvol aangemaakt",
-				description: "De taak is succesvol aangemaakt en toegevoegd aan het niveau.",
-			})
+      toast({
+        title: t('management.taskCreatedTitle'),
+        description: t('management.taskCreatedDescription'),
+      })
       fetchTasks(levelId);
       setNewTaskTitle('');
       setNewTaskDescription('');
       setNewTaskType('text');
       setNewTaskGradingScale(10);
     } catch (error: any) {
-			toast({
-				variant: "destructive",
-				title: "Er ging iets fout",
-				description: "Kon de taak niet aanmaken. Probeer het later opnieuw.",
-			})
+      toast({
+        variant: "destructive",
+        title: t('management.errorTitle'),
+        description: t('management.taskErrorDescription'),
+      })
       console.error('Error creating task:', error);
     } finally {
       setLoading(false);
@@ -158,18 +160,18 @@ const TaskQuestionManagementNew = () => {
         ]);
 
       if (error) throw error;
-			toast({
-				title: "Vraag succesvol aangemaakt",
-				description: "De vraag is succesvol aangemaakt en toegevoegd aan het niveau.",
-			})
+      toast({
+        title: t('management.questionCreatedTitle'),
+        description: t('management.questionCreatedDescription'),
+      })
       fetchQuestions(levelId);
       setNewQuestionText('');
     } catch (error: any) {
-			toast({
-				variant: "destructive",
-				title: "Er ging iets fout",
-				description: "Kon de vraag niet aanmaken. Probeer het later opnieuw.",
-			})
+      toast({
+        variant: "destructive",
+        title: t('management.errorTitle'),
+        description: t('management.questionErrorDescription'),
+      })
       console.error('Error creating question:', error);
     } finally {
       setLoading(false);
@@ -184,21 +186,21 @@ const TaskQuestionManagementNew = () => {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>Taken & Vragen Beheer</CardTitle>
+          <CardTitle>{t('management.title')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="level">Niveau Selecteren</Label>
+              <Label htmlFor="level">{t('management.selectLevel')}</Label>
               <Select value={levelId} onValueChange={setLevelId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecteer een niveau" />
+                  <SelectValue placeholder={t('management.selectLevelPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="level-1">Niveau 1</SelectItem>
-                  <SelectItem value="level-2">Niveau 2</SelectItem>
-                  <SelectItem value="level-3">Niveau 3</SelectItem>
-                  <SelectItem value="level-4">Niveau 4</SelectItem>
+                  <SelectItem value="level-1">{t('management.level')} 1</SelectItem>
+                  <SelectItem value="level-2">{t('management.level')} 2</SelectItem>
+                  <SelectItem value="level-3">{t('management.level')} 3</SelectItem>
+                  <SelectItem value="level-4">{t('management.level')} 4</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -206,32 +208,32 @@ const TaskQuestionManagementNew = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="taskTitle">Nieuwe Taak Toevoegen</Label>
+              <Label htmlFor="taskTitle">{t('management.addNewTask')}</Label>
               <Input
                 type="text"
                 id="taskTitle"
-                placeholder="Taak titel"
+                placeholder={t('management.taskTitle')}
                 value={newTaskTitle}
                 onChange={(e) => setNewTaskTitle(e.target.value)}
               />
               <Textarea
                 className="mt-2"
-                placeholder="Taak beschrijving"
+                placeholder={t('management.taskDescription')}
                 value={newTaskDescription}
                 onChange={(e) => setNewTaskDescription(e.target.value)}
               />
-              <div className="mt-2 flex items-center space-x-2">
-                <Label htmlFor="taskType">Type:</Label>
+              <div className="mt-2 flex items-center gap-2 flex-wrap">
+                <Label htmlFor="taskType">{t('management.type')}:</Label>
                 <Select value={newTaskType} onValueChange={handleTaskTypeChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecteer type" />
+                  <SelectTrigger className="w-auto min-w-[120px]">
+                    <SelectValue placeholder={t('management.selectType')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="text">Tekst</SelectItem>
-                    <SelectItem value="file">Bestand</SelectItem>
+                    <SelectItem value="text">{t('management.text')}</SelectItem>
+                    <SelectItem value="file">{t('management.file')}</SelectItem>
                   </SelectContent>
                 </Select>
-                <Label htmlFor="gradingScale">Schaal:</Label>
+                <Label htmlFor="gradingScale">{t('management.scale')}:</Label>
                 <Input
                   type="number"
                   id="gradingScale"
@@ -245,16 +247,16 @@ const TaskQuestionManagementNew = () => {
                 onClick={createTask}
                 disabled={loading}
               >
-                {loading ? 'Laden...' : 'Taak Aanmaken'}
+                {loading ? t('management.loading') : t('management.createTask')}
               </Button>
             </div>
 
             <div>
-              <Label htmlFor="questionText">Nieuwe Vraag Toevoegen</Label>
+              <Label htmlFor="questionText">{t('management.addNewQuestion')}</Label>
               <Input
                 type="text"
                 id="questionText"
-                placeholder="Vraag tekst"
+                placeholder={t('management.questionText')}
                 value={newQuestionText}
                 onChange={(e) => setNewQuestionText(e.target.value)}
               />
@@ -263,7 +265,7 @@ const TaskQuestionManagementNew = () => {
                 onClick={createQuestion}
                 disabled={loading}
               >
-                {loading ? 'Laden...' : 'Vraag Aanmaken'}
+                {loading ? t('management.loading') : t('management.createQuestion')}
               </Button>
             </div>
           </div>
@@ -273,16 +275,18 @@ const TaskQuestionManagementNew = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle>Bestaande Taken</CardTitle>
+            <CardTitle>{t('management.existingTasks')}</CardTitle>
           </CardHeader>
           <CardContent>
             {tasks.map((task) => (
               <div key={task.id} className="flex items-center justify-between p-2 border rounded-md mb-2">
                 <div>
                   <p className="font-medium">{task.title}</p>
-                  <p className="text-sm text-muted-foreground">Type: {task.required_submission_type}, Schaal: {task.grading_scale}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t('management.type')}: {task.required_submission_type === 'text' ? t('management.text') : t('management.file')}, {t('management.scale')}: {task.grading_scale}
+                  </p>
                 </div>
-                <div className="space-x-2">
+                <div className="flex gap-1">
                   <Button size="icon" variant="ghost">
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -297,13 +301,13 @@ const TaskQuestionManagementNew = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Bestaande Vragen</CardTitle>
+            <CardTitle>{t('management.existingQuestions')}</CardTitle>
           </CardHeader>
           <CardContent>
             {questions.map((question) => (
               <div key={question.id} className="flex items-center justify-between p-2 border rounded-md mb-2">
                 <p className="font-medium">{question.vraag}</p>
-                <div className="space-x-2">
+                <div className="flex gap-1">
                   <Button size="icon" variant="ghost">
                     <Edit className="h-4 w-4" />
                   </Button>
