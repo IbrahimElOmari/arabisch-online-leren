@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
-import { nl } from 'date-fns/locale';
+import { nl, enUS, ar } from 'date-fns/locale';
 import { 
   Check, 
   CheckCheck, 
@@ -24,6 +24,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationListProps {
   onMarkAllAsRead?: () => void;
@@ -31,6 +32,19 @@ interface NotificationListProps {
   showAll?: boolean;
   className?: string;
 }
+
+// Get date-fns locale based on current language
+const getDateLocale = (lang: string) => {
+  switch (lang) {
+    case 'ar':
+      return ar;
+    case 'en':
+      return enUS;
+    case 'nl':
+    default:
+      return nl;
+  }
+};
 
 export function NotificationList({ 
   onMarkAllAsRead, 
@@ -42,6 +56,8 @@ export function NotificationList({
   const { isRTL } = useRTLLayout();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t, i18n } = useTranslation();
+  const dateLocale = getDateLocale(i18n.language);
 
   // Query for notifications
   const { 
@@ -66,8 +82,8 @@ export function NotificationList({
     },
     onError: (_error) => {
       toast({
-        title: "Fout",
-        description: "Kon melding niet als gelezen markeren",
+        title: t('notifications.error'),
+        description: t('notifications.markReadError'),
         variant: "destructive",
       });
     },
@@ -93,7 +109,7 @@ export function NotificationList({
     const icon = NotificationService.getNotificationIcon(notification.type);
     const timeAgo = formatDistanceToNow(new Date(notification.created_at), { 
       addSuffix: true, 
-      locale: nl 
+      locale: dateLocale 
     });
 
     const content = (
@@ -161,14 +177,14 @@ export function NotificationList({
                 }}
               >
                 <Check className="h-4 w-4 me-2" />
-                Als gelezen markeren
+                {t('notifications.markAsRead')}
               </DropdownMenuItem>
             )}
             {actionUrl && (
               <DropdownMenuItem asChild>
                 <Link to={actionUrl} onClick={onClose}>
                   <ExternalLink className="h-4 w-4 me-2" />
-                  Bekijk details
+                  {t('notifications.viewDetails')}
                 </Link>
               </DropdownMenuItem>
             )}
@@ -222,8 +238,8 @@ export function NotificationList({
   if (error) {
     return (
       <div className={cn("w-full p-4", className)}>
-        <div className="text-center text-destructive">
-          Fout bij laden van meldingen
+        <div className={cn("text-center text-destructive", isRTL && "arabic-text")}>
+          {t('notifications.loadError')}
         </div>
       </div>
     );
@@ -242,11 +258,11 @@ export function NotificationList({
       {/* Header */}
       {!showAll && (
         <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-semibold">
-            Meldingen
+          <h3 className={cn("font-semibold", isRTL && "arabic-text")}>
+            {t('notifications.title')}
             {unreadCount > 0 && (
               <Badge variant="secondary" className="ms-2">
-                {unreadCount} nieuw
+                {unreadCount} {t('notifications.new')}
               </Badge>
             )}
           </h3>
@@ -259,7 +275,7 @@ export function NotificationList({
               className="text-xs"
             >
               <CheckCheck className="h-4 w-4 me-1" />
-              Alles gelezen
+              {t('notifications.allRead')}
             </Button>
           )}
         </div>
@@ -280,7 +296,7 @@ export function NotificationList({
               className="w-full"
               onClick={() => setPage(prev => prev + 1)}
             >
-              Meer laden
+              {t('notifications.loadMore')}
             </Button>
           </div>
         )}
@@ -291,7 +307,7 @@ export function NotificationList({
         <div className="p-4 border-t">
           <Button variant="ghost" size="sm" className="w-full" asChild>
             <Link to="/notifications" onClick={onClose}>
-              Alle meldingen bekijken
+              {t('notifications.viewAll')}
             </Link>
           </Button>
         </div>

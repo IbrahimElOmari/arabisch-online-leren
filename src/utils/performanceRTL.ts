@@ -21,20 +21,25 @@ export const preloadArabicFonts = () => {
   });
 };
 
-// Critical CSS for RTL
+// Critical CSS for RTL - SAFE version (no global flex-direction overrides!)
 export const injectCriticalRTLCSS = () => {
   if (typeof window === 'undefined') return;
 
+  // CRITICAL: Do NOT add [dir="rtl"] .flex { flex-direction: row-reverse; }
+  // This breaks Tailwind's flex-col and causes unpredictable layout issues
   const criticalCSS = `
     [dir="rtl"] { direction: rtl; text-align: right; }
-    [dir="rtl"] .arabic-text { font-family: 'Amiri', serif; }
-    [dir="rtl"] .flex { flex-direction: row-reverse; }
+    [dir="rtl"] .arabic-text { font-family: 'Amiri', 'Noto Sans Arabic', serif; }
     .rtl-skeleton { animation: rtl-skeleton-loading 1.5s infinite; }
   `;
 
   const style = document.createElement('style');
-  style.textContent = criticalCSS;
-  document.head.appendChild(style);
+  style.id = 'rtl-critical-css';
+  // Prevent duplicate injection
+  if (!document.getElementById('rtl-critical-css')) {
+    style.textContent = criticalCSS;
+    document.head.appendChild(style);
+  }
 };
 
 // Lazy load non-critical RTL components
