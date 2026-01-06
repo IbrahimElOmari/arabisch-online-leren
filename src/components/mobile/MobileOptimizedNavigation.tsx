@@ -20,10 +20,12 @@ import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { useAgeTheme } from '@/contexts/AgeThemeContext';
 import { cn } from '@/lib/utils';
 import { useUserRole } from '@/hooks/useUserRole';
+import { useTranslation } from 'react-i18next';
+import { useRTL } from '@/contexts/RTLContext';
 
 interface NavigationItem {
   icon: React.ComponentType<any>;
-  label: string;
+  labelKey: string;
   href: string;
   badge?: number;
   roles: string[];
@@ -35,43 +37,45 @@ export const MobileOptimizedNavigation: React.FC = () => {
   const { themeAge } = useAgeTheme();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation();
+  const { isRTL } = useRTL();
 
   const navigationItems: NavigationItem[] = [
     {
       icon: Home,
-      label: 'Dashboard',
+      labelKey: 'mobile.dashboard',
       href: '/dashboard',
       roles: ['leerling', 'leerkracht', 'admin']
     },
     {
       icon: BookOpen,
-      label: 'Lessen',
+      labelKey: 'mobile.lessons',
       href: '/leerstof',
       roles: ['leerling', 'leerkracht', 'admin']
     },
     {
       icon: Trophy,
-      label: 'Taken',
+      labelKey: 'mobile.tasks',
       href: '/taken',
       badge: 3,
       roles: ['leerling', 'leerkracht', 'admin']
     },
     {
       icon: MessageSquare,
-      label: 'Forum',
+      labelKey: 'mobile.forum',
       href: '/forum',
       badge: 5,
       roles: ['leerling', 'leerkracht', 'admin']
     },
     {
       icon: Calendar,
-      label: 'Kalender',
+      labelKey: 'mobile.calendar',
       href: '/calendar',
       roles: ['leerling', 'leerkracht', 'admin']
     },
     {
       icon: User,
-      label: 'Profiel',
+      labelKey: 'mobile.profile',
       href: '/profile',
       roles: ['leerling', 'leerkracht', 'admin']
     }
@@ -131,14 +135,17 @@ export const MobileOptimizedNavigation: React.FC = () => {
         <Button 
           variant="ghost" 
           size="icon"
-          className="md:hidden fixed top-4 left-4 z-50 bg-background/80 backdrop-blur-sm border"
+          className={cn(
+            "md:hidden fixed top-4 z-50 bg-background/80 backdrop-blur-sm border",
+            isRTL ? "right-4" : "left-4"
+          )}
         >
           <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
       
       <SheetContent 
-        side="left" 
+        side={isRTL ? "right" : "left"} 
         className={cn("w-80 p-0 overflow-hidden", getThemeClasses())}
       >
         {/* Header */}
@@ -149,8 +156,8 @@ export const MobileOptimizedNavigation: React.FC = () => {
             </div>
             <div>
               <h2 className="font-semibold text-lg">Arabic Learning</h2>
-              <p className="text-sm text-muted-foreground">
-                Welkom, {profile?.full_name || 'Gebruiker'}!
+              <p className={cn("text-sm text-muted-foreground", isRTL && "arabic-text")}>
+                {t('mobile.welcome', { name: profile?.full_name || t('common.user') })}
               </p>
             </div>
           </div>
@@ -161,7 +168,9 @@ export const MobileOptimizedNavigation: React.FC = () => {
           <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
             <div className="flex items-center gap-3">
               <Bell className="h-5 w-5 text-primary" />
-              <span className="text-sm font-medium">Meldingen</span>
+              <span className={cn("text-sm font-medium", isRTL && "arabic-text")}>
+                {t('notifications.title')}
+              </span>
             </div>
             <Badge variant="secondary" className="h-6 w-6 p-0 flex items-center justify-center">
               3
@@ -183,7 +192,9 @@ export const MobileOptimizedNavigation: React.FC = () => {
                 <div className={getItemClasses(item.href)}>
                   <div className="flex items-center gap-3">
                     <IconComponent className="h-5 w-5" />
-                    <span className="font-medium">{item.label}</span>
+                    <span className={cn("font-medium", isRTL && "arabic-text")}>
+                      {t(item.labelKey)}
+                    </span>
                   </div>
                   {item.badge && item.badge > 0 && (
                     <Badge 
@@ -206,7 +217,9 @@ export const MobileOptimizedNavigation: React.FC = () => {
           <Link to="/settings" onClick={handleNavigation}>
             <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
               <Settings className="h-5 w-5" />
-              <span className="font-medium">Instellingen</span>
+              <span className={cn("font-medium", isRTL && "arabic-text")}>
+                {t('mobile.settings')}
+              </span>
             </div>
           </Link>
           
@@ -218,7 +231,9 @@ export const MobileOptimizedNavigation: React.FC = () => {
             className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-destructive/10 text-destructive transition-colors"
           >
             <LogOut className="h-5 w-5" />
-            <span className="font-medium">Uitloggen</span>
+            <span className={cn("font-medium", isRTL && "arabic-text")}>
+              {t('mobile.logout')}
+            </span>
           </button>
         </div>
       </SheetContent>

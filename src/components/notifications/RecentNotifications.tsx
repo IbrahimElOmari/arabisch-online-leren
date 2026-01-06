@@ -5,18 +5,36 @@ import { Bell, MessageCircle, Star, Trophy, Gift } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { nl } from 'date-fns/locale';
+import { nl, enUS, ar } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
+import { useRTL } from '@/contexts/RTLContext';
 
 interface RecentNotificationsProps {
   maxVisible?: number;
   compact?: boolean;
 }
 
+// Get date-fns locale based on current language
+const getDateLocale = (lang: string) => {
+  switch (lang) {
+    case 'ar':
+      return ar;
+    case 'en':
+      return enUS;
+    case 'nl':
+    default:
+      return nl;
+  }
+};
+
 export const RecentNotifications = ({ 
   maxVisible = 5, 
   compact = false 
 }: RecentNotificationsProps) => {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+  const { t, i18n } = useTranslation();
+  const { isRTL } = useRTL();
+  const dateLocale = getDateLocale(i18n.language);
 
   const getNotificationIcon = (message: string) => {
     if (message.includes('badge') || message.includes('Badge')) return Trophy;
@@ -38,9 +56,9 @@ export const RecentNotifications = ({
       <Card className="border-primary/20">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className={cn("flex items-center gap-2 text-lg", isRTL && "arabic-text")}>
               <Bell className="h-5 w-5" />
-              Meldingen
+              {t('notifications.title')}
             </CardTitle>
             {unreadCount > 0 && (
               <Badge variant="destructive">{unreadCount}</Badge>
@@ -64,11 +82,11 @@ export const RecentNotifications = ({
                   >
                     <IconComponent className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm">{notification.message}</p>
+                      <p className={cn("text-sm", isRTL && "arabic-text")}>{notification.message}</p>
                       <p className="text-xs text-muted-foreground">
                         {formatDistanceToNow(new Date(notification.created_at), { 
                           addSuffix: true, 
-                          locale: nl 
+                          locale: dateLocale 
                         })}
                       </p>
                     </div>
@@ -85,13 +103,13 @@ export const RecentNotifications = ({
                   onClick={markAllAsRead}
                   className="w-full mt-2"
                 >
-                  Alle als gelezen markeren
+                  {t('notifications.markAllAsRead')}
                 </Button>
               )}
             </>
           ) : (
-            <div className="text-center py-4 text-muted-foreground text-sm">
-              Geen nieuwe meldingen
+            <div className={cn("text-center py-4 text-muted-foreground text-sm", isRTL && "arabic-text")}>
+              {t('notifications.noNew')}
             </div>
           )}
         </CardContent>
@@ -102,16 +120,16 @@ export const RecentNotifications = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold flex items-center gap-2">
+        <h3 className={cn("text-xl font-semibold flex items-center gap-2", isRTL && "arabic-text")}>
           <Bell className="h-5 w-5" />
-          Recente Meldingen
+          {t('notifications.recentTitle')}
           {unreadCount > 0 && (
             <Badge variant="destructive">{unreadCount}</Badge>
           )}
         </h3>
         {unreadCount > 0 && (
           <Button variant="outline" size="sm" onClick={markAllAsRead}>
-            Alle markeren als gelezen
+            {t('notifications.markAllAsRead')}
           </Button>
         )}
       </div>
@@ -141,11 +159,11 @@ export const RecentNotifications = ({
                       <IconComponent className="h-4 w-4" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm leading-relaxed">{notification.message}</p>
+                      <p className={cn("text-sm leading-relaxed", isRTL && "arabic-text")}>{notification.message}</p>
                       <p className="text-xs text-muted-foreground mt-1">
                         {formatDistanceToNow(new Date(notification.created_at), { 
                           addSuffix: true, 
-                          locale: nl 
+                          locale: dateLocale 
                         })}
                       </p>
                     </div>
@@ -161,7 +179,9 @@ export const RecentNotifications = ({
           <Card>
             <CardContent className="text-center py-8">
               <Bell className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">Nog geen meldingen</p>
+              <p className={cn("text-muted-foreground", isRTL && "arabic-text")}>
+                {t('notifications.noNotifications')}
+              </p>
             </CardContent>
           </Card>
         )}

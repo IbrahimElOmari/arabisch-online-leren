@@ -315,7 +315,7 @@
     "returnHome": "العودة للرئيسية",
     "goBack": "رجوع"
   },
-  "management": {
+"management": {
     "title": "إدارة المهام والأسئلة",
     "selectLevel": "اختر المستوى",
     "selectLevelPlaceholder": "اختر مستوى",
@@ -343,5 +343,52 @@
     "errorTitle": "حدث خطأ",
     "taskErrorDescription": "تعذر إنشاء المهمة. حاول مرة أخرى.",
     "questionErrorDescription": "تعذر إنشاء السؤال. حاول مرة أخرى."
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "recentTitle": "الإشعارات الأخيرة",
+    "markAllAsRead": "تحديد الكل كمقروء",
+    "allRead": "الكل مقروء",
+    "noNew": "لا توجد إشعارات جديدة",
+    "noNotifications": "لا توجد إشعارات بعد",
+    "viewAll": "عرض جميع الإشعارات",
+    "loadMore": "تحميل المزيد",
+    "loadError": "فخطأ في تحميل الإشعارات",
+    "new": "جديد",
+    "markAsRead": "تحديد كمقروء",
+    "viewDetails": "عرض التفاصيل",
+    "error": "خطأ",
+    "markReadError": "تعذر تحديد الإشعار كمقروء"
+  },
+  "mobile": {
+    "welcome": "مرحباً، {{name}}!",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج",
+    "dashboard": "لوحة التحكم",
+    "lessons": "الدروس",
+    "tasks": "المهام",
+    "forum": "المنتدى",
+    "calendar": "التقويم",
+    "profile": "الملف الشخصي"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "close": "إغلاق",
+    "submit": "إرسال",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "search": "بحث",
+    "filter": "تصفية",
+    "sort": "ترتيب",
+    "view": "عرض",
+    "download": "تنزيل",
+    "upload": "رفع",
+    "welcome": "مرحباً",
+    "user": "مستخدم"
   }
 }

@@ -387,7 +387,7 @@
     "returnHome": "Terug naar home",
     "goBack": "Ga terug"
   },
-  "management": {
+"management": {
     "title": "Taken & Vragen Beheer",
     "selectLevel": "Niveau Selecteren",
     "selectLevelPlaceholder": "Selecteer een niveau",
@@ -415,5 +415,32 @@
     "errorTitle": "Er ging iets fout",
     "taskErrorDescription": "Kon de taak niet aanmaken. Probeer het later opnieuw.",
     "questionErrorDescription": "Kon de vraag niet aanmaken. Probeer het later opnieuw."
+  },
+  "notifications": {
+    "title": "Meldingen",
+    "recentTitle": "Recente Meldingen",
+    "markAllAsRead": "Alle als gelezen markeren",
+    "allRead": "Alles gelezen",
+    "noNew": "Geen nieuwe meldingen",
+    "noNotifications": "Nog geen meldingen",
+    "viewAll": "Alle meldingen bekijken",
+    "loadMore": "Meer laden",
+    "loadError": "Fout bij laden van meldingen",
+    "new": "nieuw",
+    "markAsRead": "Als gelezen markeren",
+    "viewDetails": "Bekijk details",
+    "error": "Fout",
+    "markReadError": "Kon melding niet als gelezen markeren"
+  },
+  "mobile": {
+    "welcome": "Welkom, {{name}}!",
+    "settings": "Instellingen",
+    "logout": "Uitloggen",
+    "dashboard": "Dashboard",
+    "lessons": "Lessen",
+    "tasks": "Taken",
+    "forum": "Forum",
+    "calendar": "Kalender",
+    "profile": "Profiel"
   }
 }

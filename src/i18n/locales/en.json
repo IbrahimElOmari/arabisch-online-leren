@@ -261,11 +261,67 @@
     "download": "Download",
     "upload": "Upload"
   },
-  "errors": {
+"errors": {
     "generic": "Something went wrong",
     "network": "Network error",
     "not_found": "Not found",
     "unauthorized": "Unauthorized",
     "forbidden": "Forbidden"
+  },
+  "management": {
+    "title": "Tasks & Questions Management",
+    "selectLevel": "Select Level",
+    "selectLevelPlaceholder": "Select a level",
+    "level": "Level",
+    "addNewTask": "Add New Task",
+    "addNewQuestion": "Add New Question",
+    "taskTitle": "Task title",
+    "taskDescription": "Task description",
+    "questionText": "Question text",
+    "type": "Type",
+    "text": "Text",
+    "file": "File",
+    "scale": "Scale",
+    "selectType": "Select type",
+    "createTask": "Create Task",
+    "createQuestion": "Create Question",
+    "existingTasks": "Existing Tasks",
+    "existingQuestions": "Existing Questions",
+    "loading": "Loading...",
+    "unknown": "Unknown",
+    "taskCreatedTitle": "Task created successfully",
+    "taskCreatedDescription": "The task has been created and added to the level.",
+    "questionCreatedTitle": "Question created successfully",
+    "questionCreatedDescription": "The question has been created and added to the level.",
+    "errorTitle": "Something went wrong",
+    "taskErrorDescription": "Could not create the task. Please try again.",
+    "questionErrorDescription": "Could not create the question. Please try again."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "recentTitle": "Recent Notifications",
+    "markAllAsRead": "Mark all as read",
+    "allRead": "All read",
+    "noNew": "No new notifications",
+    "noNotifications": "No notifications yet",
+    "viewAll": "View all notifications",
+    "loadMore": "Load more",
+    "loadError": "Error loading notifications",
+    "new": "new",
+    "markAsRead": "Mark as read",
+    "viewDetails": "View details",
+    "error": "Error",
+    "markReadError": "Could not mark notification as read"
+  },
+  "mobile": {
+    "welcome": "Welcome, {{name}}!",
+    "settings": "Settings",
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "lessons": "Lessons",
+    "tasks": "Tasks",
+    "forum": "Forum",
+    "calendar": "Calendar",
+    "profile": "Profile"
   }
 }
