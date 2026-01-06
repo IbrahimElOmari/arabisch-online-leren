@@ -120,16 +120,23 @@ export const AppLayout = () => {
       >
         <div
           className="flex min-h-screen w-full max-w-[100vw]"
-          style={{ minWidth: 0 }}
+          style={{ minWidth: 0, maxWidth: '100vw' }}
           {...getNavigationAttributes()}
         >
           {/* Sidebar: renders as Sheet on mobile, fixed on desktop */}
+          {/* On mobile, AppSidebar returns a Sheet (overlay) not a flex child */}
           {!debug.noSidebar && <AppSidebar />}
 
           {/* Content column - CRITICAL: w-0 min-w-0 flex-1 prevents flex collapse */}
+          {/* On mobile RTL this MUST take full width regardless of sidebar */}
           <div
             className="flex-1 flex flex-col w-0 min-w-0 max-w-[100vw] overflow-x-clip"
-            style={{ flex: '1 1 0%' }}
+            style={{ 
+              flex: '1 1 0%',
+              minWidth: 0,
+              maxWidth: '100vw',
+              width: isMobile ? '100%' : undefined,
+            }}
             data-content-column
           >
             {!debug.noHeader && <Navigation />}
@@ -137,7 +144,12 @@ export const AppLayout = () => {
 
             <main
               className="flex-1 p-4 w-full min-w-0 max-w-[100vw] overflow-x-clip"
-              style={{ flex: '1 1 100%' }}
+              style={{ 
+                flex: '1 1 100%',
+                minWidth: 0,
+                width: '100%',
+                maxWidth: '100vw',
+              }}
               role="main"
               aria-label="Main content"
               data-main="app"

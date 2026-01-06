@@ -15,14 +15,16 @@ interface MainRectSnapshot {
 }
 
 const GUARD_CONFIG = {
-  /** Maximum allowed left offset before triggering fix */
-  maxLeftOffset: 50,
+  /** Maximum allowed left offset before triggering fix - STRICTER threshold */
+  maxLeftOffset: 20,
   /** Minimum width as percentage of viewport */
   minWidthPercent: 0.5,
+  /** Maximum x position as percentage of viewport (10% = out of bounds) */
+  maxXPercent: 0.1,
   /** Delay before checking (allow layout to settle) */
-  checkDelayMs: 100,
+  checkDelayMs: 50,
   /** How many animation frames to wait */
-  rafFrames: 2,
+  rafFrames: 1,
 };
 
 let guardActive = false;
@@ -37,11 +39,14 @@ function isMainOutOfBounds(main: HTMLElement, viewportWidth: number): boolean {
   // Main is pushed off-screen to the right
   if (rect.left > viewportWidth) return true;
   
-  // Main is too narrow (collapsed)
+  // Main is too narrow (collapsed) - e.g. width 32px on 407px viewport
   if (rect.width < viewportWidth * GUARD_CONFIG.minWidthPercent) return true;
   
-  // Main is significantly offset
+  // Main is significantly offset (absolute threshold)
   if (rect.left > GUARD_CONFIG.maxLeftOffset) return true;
+  
+  // Main x position is more than 10% of viewport (relative threshold)
+  if (rect.x > viewportWidth * GUARD_CONFIG.maxXPercent) return true;
   
   return false;
 }
@@ -68,6 +73,8 @@ function applyFix(main: HTMLElement, fixParent: boolean = false): void {
     position: 'relative',
     left: '0px',
     right: '0px',
+    insetInlineStart: 'auto',
+    insetInlineEnd: 'auto',
     transform: 'none',
     translate: 'none',
     marginLeft: '0px',
@@ -81,6 +88,7 @@ function applyFix(main: HTMLElement, fixParent: boolean = false): void {
     boxSizing: 'border-box',
     visibility: 'visible',
     opacity: '1',
+    display: 'block',
   };
   
   Object.assign(main.style, fixStyles);
@@ -93,6 +101,15 @@ function applyFix(main: HTMLElement, fixParent: boolean = false): void {
     parent.style.minWidth = '0px';
     parent.style.width = '100%';
     parent.style.maxWidth = '100vw';
+    parent.style.flexDirection = 'column';
+    
+    // CRITICAL: Also fix grandparent (the main flex container)
+    if (parent.parentElement) {
+      const grandparent = parent.parentElement;
+      grandparent.style.width = '100%';
+      grandparent.style.maxWidth = '100vw';
+      grandparent.style.minWidth = '0px';
+    }
   }
 }
 
