@@ -360,7 +360,12 @@ html {
   /* ===== PHASE 2: DEFINITIVE MOBILE RTL MAIN ELEMENT FIX ===== */
   /* This selector matches html.rtl-mode (the class used by RTLContext) */
   /* AND html[dir="rtl"] (the attribute) for complete coverage */
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
+    /* NUCLEAR OPTION: Extremely specific selectors that win all specificity battles */
+    html[dir="rtl"] main[data-main="app"],
+    html[dir="rtl"] main[role="main"],
+    html.rtl-mode main[data-main="app"],
+    html.rtl-mode main[role="main"],
     html[dir="rtl"] main,
     html.rtl-mode main {
       /* CRITICAL: Reset ALL possible offset sources */
@@ -382,6 +387,7 @@ html {
       /* Reset logical insets */
       inset-inline-start: auto !important;
       inset-inline-end: auto !important;
+      inset: 0 auto auto 0 !important;
       
       /* Ensure full width flex sizing */
       flex: 1 1 100% !important;
@@ -396,6 +402,31 @@ html {
       /* Ensure visibility */
       visibility: visible !important;
       opacity: 1 !important;
+      display: block !important;
+      
+      /* Padding preserved */
+      padding: 1rem !important;
+    }
+    
+    /* Fix the content column wrapper (parent of main) */
+    html[dir="rtl"] [data-content-column],
+    html.rtl-mode [data-content-column] {
+      flex: 1 1 0% !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    /* Fix the main flex container (grandparent of main) */
+    html[dir="rtl"] .group\/sidebar-wrapper > div.flex,
+    html.rtl-mode .group\/sidebar-wrapper > div.flex,
+    html[dir="rtl"] div[class*="flex min-h-screen"],
+    html.rtl-mode div[class*="flex min-h-screen"] {
+      width: 100% !important;
+      max-width: 100vw !important;
+      min-width: 0 !important;
     }
   }
 
