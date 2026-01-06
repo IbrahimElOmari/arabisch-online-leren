@@ -310,6 +310,27 @@ html {
     border-right: none;
   }
 
+  /* CRITICAL FIX: Force sidebar gap to 0 when collapsed (desktop + mobile) */
+  /* This prevents layout shift in RTL mode regardless of screen size */
+  [data-state="collapsed"] [data-sidebar-gap],
+  [data-collapsible="offcanvas"] [data-sidebar-gap],
+  .group[data-state="collapsed"] > [data-sidebar-gap] {
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    flex: 0 0 0 !important;
+  }
+
+  /* RTL specific: ensure sidebar gap doesn't reserve space */
+  html[dir="rtl"] [data-state="collapsed"] [data-sidebar-gap],
+  html.rtl-mode [data-state="collapsed"] [data-sidebar-gap] {
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    flex: 0 0 0 !important;
+    display: none !important;
+  }
+
   /* CRITICAL FIX: Force sidebar width to 0 on mobile to prevent main content push */
   /* This CSS media query acts as a CSS-first fallback even before JS hydrates */
   @media (max-width: 768px) {
@@ -326,7 +347,8 @@ html {
     [data-state] > div[class*="w-[--sidebar-width]"],
     div[class*="w-[--sidebar-width]"],
     .peer[class*="w-[--sidebar-width]"],
-    [class*="sidebar"][class*="w-["] {
+    [class*="sidebar"][class*="w-["],
+    [data-sidebar-gap] {
       width: 0 !important;
       min-width: 0 !important;
       max-width: 0 !important;

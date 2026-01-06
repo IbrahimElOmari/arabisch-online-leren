@@ -314,5 +314,34 @@
   "navigation": {
     "returnHome": "العودة للرئيسية",
     "goBack": "رجوع"
+  },
+  "management": {
+    "title": "إدارة المهام والأسئلة",
+    "selectLevel": "اختر المستوى",
+    "selectLevelPlaceholder": "اختر مستوى",
+    "level": "المستوى",
+    "addNewTask": "إضافة مهمة جديدة",
+    "addNewQuestion": "إضافة سؤال جديد",
+    "taskTitle": "عنوان المهمة",
+    "taskDescription": "وصف المهمة",
+    "questionText": "نص السؤال",
+    "type": "النوع",
+    "text": "نص",
+    "file": "ملف",
+    "scale": "المقياس",
+    "selectType": "اختر النوع",
+    "createTask": "إنشاء المهمة",
+    "createQuestion": "إنشاء السؤال",
+    "existingTasks": "المهام الموجودة",
+    "existingQuestions": "الأسئلة الموجودة",
+    "loading": "جاري التحميل...",
+    "unknown": "غير معروف",
+    "taskCreatedTitle": "تم إنشاء المهمة بنجاح",
+    "taskCreatedDescription": "تم إنشاء المهمة وإضافتها إلى المستوى.",
+    "questionCreatedTitle": "تم إنشاء السؤال بنجاح",
+    "questionCreatedDescription": "تم إنشاء السؤال وإضافته إلى المستوى.",
+    "errorTitle": "حدث خطأ",
+    "taskErrorDescription": "تعذر إنشاء المهمة. حاول مرة أخرى.",
+    "questionErrorDescription": "تعذر إنشاء السؤال. حاول مرة أخرى."
   }
 }
