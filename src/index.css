@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap");
 /* Core Tailwind */
 @tailwind base;
 @tailwind components;
@@ -36,61 +39,61 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Enhanced Modern Color System for Arabic Learning */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    
+    --background: 0 0% 96%;
+    --foreground: 0 0% 9%;
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 9%;
+    --popover: 0 0% 89%;
+    --popover-foreground: 0 0% 9%;
+
     /* Brand Colors - Arabic Learning Theme */
-    --primary: 196 100% 35%;  /* Deep Blue - Knowledge & Trust */
-    --primary-foreground: 0 0% 98%;
+    --primary: 161 93% 30%;  /* Deep Blue - Knowledge & Trust */
+    --primary-foreground: 151 80% 95%;
     --primary-glow: 196 100% 45%; /* Lighter version for highlights */
-    
-    --secondary: 45 93% 47%; /* Golden - Arabic calligraphy inspired */
+
+    --secondary: 0 0% 32%; /* Golden - Arabic calligraphy inspired */
     --secondary-foreground: 0 0% 98%;
-    
-    --accent: 160 84% 39%; /* Emerald - Growth & Success */
-    --accent-foreground: 0 0% 98%;
-    
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    
+
+    --accent: 166 76% 96%; /* Emerald - Growth & Success */
+    --accent-foreground: 173 80% 40%;
+
+    --muted: 0 0% 63%;
+    --muted-foreground: 0 0% 9%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 85% 97%;
+
     --success: 142 76% 36%; /* Success Green */
     --success-foreground: 0 0% 98%;
-    
+
     --warning: 38 92% 50%; /* Warning Orange */
     --warning-foreground: 0 0% 98%;
-    
+
     --info: 199 89% 48%; /* Info Blue */
     --info-foreground: 0 0% 98%;
-    
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+
+    --border: 0 0% 83%;
+    --input: 0 0% 83%;
+    --ring: 161 93% 30%;
+    --chart-1: 158 64% 51%;
+    --chart-2: 141 69% 58%;
+    --chart-3: 172 66% 50%;
+    --chart-4: 82 77% 55%;
+    --chart-5: 0 0% 45%;
     --radius: 0.75rem;
-    
+
     /* Enhanced Design System Variables */
     --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
     --shadow-medium: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     --shadow-large: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     --shadow-glow: 0 0 20px hsl(var(--primary) / 0.3);
-    
+
     /* Enhanced Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 100%);
     --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--accent)) 100%);
     --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--secondary)) 100%);
     --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    
+
     /* Typography Scale */
     --font-size-xs: 0.75rem;   /* 12px */
     --font-size-sm: 0.875rem;  /* 14px */
@@ -99,7 +102,7 @@ All colors MUST be HSL.
     --font-size-xl: 1.25rem;   /* 20px */
     --font-size-2xl: 1.5rem;   /* 24px */
     --font-size-3xl: 1.875rem; /* 30px */
-    --font-size-4xl: 2.25rem;  /* 36px */
+    --font-size-4xl: 2.25rem;  /* 36px */  --sidebar: 0 0% 98%;  --sidebar-foreground: 0 0% 9%;  --sidebar-primary: 161 93% 30%;  --sidebar-primary-foreground: 151 80% 95%;  --sidebar-accent: 0 0% 32%;  --sidebar-accent-foreground: 0 0% 98%;  --sidebar-border: 0 0% 83%;  --sidebar-ring: 161 93% 30%;  --font-sans: 'Work Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;  --font-serif: 'Lora', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;  --font-mono: 'Inconsolata', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);  --tracking-normal: 0em;  --spacing: 0.25rem;
   }
 
   /* Playful Theme - Under 16 years 
@@ -111,26 +114,26 @@ All colors MUST be HSL.
     --primary: 280 100% 70%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 280 100% 80%;
-    
+
     /* Golden secondary for playful accents */
     --secondary: 45 100% 65%;
     --secondary-foreground: 45 100% 10%;
-    
+
     /* Sky blue accent */
     --accent: 195 100% 65%;
     --accent-foreground: 195 100% 10%;
-    
+
     /* Success green - bright and cheerful */
     --success: 120 80% 45%;
     --success-foreground: 0 0% 100%;
-    
+
     /* Softer borders for friendly feel */
     --border: 280 20% 85%;
     --ring: 280 100% 70%;
-    
+
     /* Increased border radius for rounded, playful look */
     --radius: 1rem;
-    
+
     /* Playful shadows with glow effect */
     --shadow-playful: 0 4px 20px hsl(280 100% 70% / 0.25);
     --shadow-hover: 0 8px 30px hsl(280 100% 70% / 0.35);
@@ -163,26 +166,26 @@ All colors MUST be HSL.
     --primary: 220 25% 25%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 220 25% 35%;
-    
+
     /* Light gray secondary */
     --secondary: 220 13% 95%;
     --secondary-foreground: 220 25% 25%;
-    
+
     /* Muted green accent for success/growth */
     --accent: 160 60% 45%;
     --accent-foreground: 0 0% 100%;
-    
+
     /* Professional success green */
     --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
-    
+
     /* Subtle borders */
     --border: 220 13% 90%;
     --ring: 220 25% 25%;
-    
+
     /* Subtle border radius for professional look */
     --radius: 0.5rem;
-    
+
     /* Professional shadows - subtle and clean */
     --shadow-professional: 0 2px 8px rgba(0, 0, 0, 0.08);
     --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
@@ -197,6 +200,48 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 87%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+  .dark {
+    --background: 0 0% 9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 14%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 25%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 158 64% 51%;
+    --primary-foreground: 165 91% 9%;
+    --secondary: 0 0% 45%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 45%;
+    --muted-foreground: 0 0% 98%;
+    --accent: 178 84% 10%;
+    --accent-foreground: 172 66% 50%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 85% 97%;
+    --border: 0 0% 32%;
+    --input: 0 0% 32%;
+    --ring: 158 64% 51%;
+    --chart-1: 156 71% 66%;
+    --chart-2: 141 76% 73%;
+    --chart-3: 170 76% 64%;
+    --chart-4: 81 84% 67%;
+    --chart-5: 0 0% 45%;
+    --sidebar: 0 0% 14%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 158 64% 51%;
+    --sidebar-primary-foreground: 165 91% 9%;
+    --sidebar-accent: 172 66% 50%;
+    --sidebar-accent-foreground: 178 84% 10%;
+    --sidebar-border: 0 0% 32%;
+    --sidebar-ring: 158 64% 51%;
+    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  }
   }
 
   .dark {
@@ -227,7 +272,7 @@ All colors MUST be HSL.
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-    
+
     /* Strengthened dark mode sidebar background */
     --sidebar-background: 215 28% 12%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -253,7 +298,6 @@ All colors MUST be HSL.
     background-size: 200px 200px;
     background-attachment: fixed;
   }
-
 
   .floating-content {
     @apply bg-card/95 backdrop-blur-sm border border-border rounded-lg;
@@ -285,7 +329,7 @@ All colors MUST be HSL.
       direction: ltr;
       flex-direction: row;
     }
-    
+
     /* Sidebar trigger icon flip */
     [dir="rtl"] .sidebar-trigger { transform: scaleX(-1); }
     [dir="ltr"] .sidebar-trigger { transform: scaleX(1); }
@@ -301,13 +345,13 @@ All colors MUST be HSL.
     margin-right: 0.75rem;
     margin-left: 0;
   }
-  
+
 /* RTL safe flex classes */
   .rtl-safe-flex-row {
     display: flex;
     flex-direction: row;
   }
-  
+
   [dir="rtl"] .rtl-safe-flex-row {
     flex-direction: row-reverse;
   }
@@ -345,11 +389,11 @@ All colors MUST be HSL.
   .navigation-header {
     z-index: 50;
   }
-  
+
   .mobile-sidebar-overlay {
     z-index: 60;
   }
-  
+
   .mobile-bottom-nav {
     z-index: 55;
     position: fixed;
@@ -357,12 +401,12 @@ All colors MUST be HSL.
     left: 0;
     right: 0;
   }
-  
+
   .app-sidebar {
     z-index: 40;
     position: relative;
   }
-  
+
   .modal-overlay {
     z-index: 70;
   }
@@ -395,4 +439,3 @@ All colors MUST be HSL.
     line-height: 1.5;
   }
 }
-
