@@ -17,6 +17,11 @@ import { initMonitoring } from "./lib/monitoring";
 import { initWebVitals } from "./utils/webVitals";
 import { initContainerQueryFallback } from "./utils/containerQueryFallback";
 import { initServiceWorkerManager } from "./utils/serviceWorkerManager";
+import { initRTLMainVisibilityGuard } from "./utils/rtlMainVisibilityGuard";
+
+// CRITICAL: Early RTL guard initialization
+// This runs BEFORE React renders to catch any layout issues immediately
+initRTLMainVisibilityGuard();
 
 // Initialize optimizations
 if (import.meta.env.PROD) {
