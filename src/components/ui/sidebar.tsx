@@ -144,6 +144,7 @@ const SidebarProvider = React.forwardRef<
               className
             )}
             ref={ref}
+            data-sidebar-wrapper="true"
             {...props}
           >
             {children}

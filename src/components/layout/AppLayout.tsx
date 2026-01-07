@@ -120,7 +120,8 @@ export const AppLayout = () => {
       >
         <div
           className="flex min-h-screen w-full max-w-[100vw]"
-          style={{ minWidth: 0, maxWidth: '100vw' }}
+          style={{ minWidth: 0, maxWidth: '100vw', width: '100%' }}
+          data-app-row="true"
           {...getNavigationAttributes()}
         >
           {/* Sidebar: renders as Sheet on mobile, fixed on desktop */}
