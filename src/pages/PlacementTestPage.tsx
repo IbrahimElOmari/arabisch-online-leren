@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { placementService } from '@/services/placementService';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -74,13 +75,30 @@ const PlacementTestPage = () => {
   };
 
   const handleSubmit = async () => {
-    if (!test) return;
+    if (!test || !moduleId) return;
 
     const answersArray = test.questions.map((_q: any, idx: number) => answers[idx] || null);
     
     try {
       setSubmitting(true);
-      await placementService.submitPlacementTest('enrollment-id', test.id, answersArray);
+      
+      // Get the user's enrollment for this module
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+      
+      const { data: enrollment, error: enrollmentError } = await supabase
+        .from('enrollments')
+        .select('id')
+        .eq('module_id', moduleId)
+        .eq('student_id', user.id)
+        .maybeSingle();
+      
+      if (enrollmentError) throw enrollmentError;
+      
+      // Use enrollment ID if exists, otherwise use user ID as fallback
+      const studentId = enrollment?.id || user.id;
+      
+      await placementService.submitPlacementTest(studentId, test.id, answersArray);
       setCompleted(true);
       toast({
         title: t('success', 'Success'),

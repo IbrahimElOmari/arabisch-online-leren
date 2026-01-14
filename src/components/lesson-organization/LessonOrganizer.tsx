@@ -179,8 +179,16 @@ export const LessonOrganizer = () => {
 
     setLoading(true);
     try {
-      // Update lesson orders in database (note: no order_index field exists)
-      // This would need to be implemented with a custom order field
+      // Update order_index for each lesson/task
+      const updates = lessons.map((lesson, index) => {
+        const table = lesson.type === 'video' ? 'lessen' : 'vragen';
+        return supabase
+          .from(table)
+          .update({ order_index: index })
+          .eq('id', lesson.id);
+      });
+      
+      await Promise.all(updates);
       toast.success(isRTL ? 'تم حفظ الترتيب بنجاح' : 'Volgorde succesvol opgeslagen');
     } catch (error) {
       console.error('Error saving order:', error);
