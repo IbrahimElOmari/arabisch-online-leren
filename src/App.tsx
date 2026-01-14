@@ -43,9 +43,17 @@ const BillingComingSoon = lazy(() => import('@/pages/BillingComingSoon'));
 const Profile = lazy(() => import('@/pages/Profile'));
 const AdminLayout = lazy(() => import('@/pages/admin/AdminLayout'));
 const UsersAdmin = lazy(() => import('@/pages/admin/UsersAdmin'));
+const ClassesAdmin = lazy(() => import('@/pages/admin/ClassesAdmin'));
+const LessonsAdmin = lazy(() => import('@/pages/admin/LessonsAdmin'));
+const TasksAdmin = lazy(() => import('@/pages/admin/TasksAdmin'));
+const ForumAdmin = lazy(() => import('@/pages/admin/ForumAdmin'));
+const SecurityAdmin = lazy(() => import('@/pages/admin/SecurityAdmin'));
 const Operations = lazy(() => import('@/pages/admin/Operations'));
 const AuditLogs = lazy(() => import('@/pages/admin/AuditLogs'));
 const PrivacyTools = lazy(() => import('@/pages/account/PrivacyTools'));
+
+// Teacher pages
+const NewClass = lazy(() => import('@/pages/teacher/NewClass'));
 
 // PR3: Module enrollment pages
 const ModuleCatalogPage = lazy(() => import('@/pages/ModuleCatalogPage'));
@@ -100,6 +108,11 @@ function App() {
                     <Route path="dashboard" element={<AppGate><Dashboard /></AppGate>} />
                     <Route path="admin" element={<AppGate><AdminLayout /></AppGate>}>
                       <Route path="users" element={<UsersAdmin />} />
+                      <Route path="classes" element={<ClassesAdmin />} />
+                      <Route path="lessons" element={<LessonsAdmin />} />
+                      <Route path="tasks" element={<TasksAdmin />} />
+                      <Route path="forum" element={<ForumAdmin />} />
+                      <Route path="security" element={<SecurityAdmin />} />
                       <Route path="operations" element={<Operations />} />
                       <Route path="audit" element={<AuditLogs />} />
                       <Route index element={<UsersAdmin />} />
@@ -125,12 +138,13 @@ function App() {
                     <Route path="enroll/module/:moduleId" element={<AppGate><EnrollmentPage /></AppGate>} />
                     <Route path="payment/test-checkout" element={<AppGate><PaymentReturnTestPage /></AppGate>} />
                     <Route path="payment/return" element={<AppGate><PaymentReturnTestPage /></AppGate>} />
-                    <Route path="placement-test" element={<AppGate><PlacementTestPage /></AppGate>} />
+                    <Route path="placement-test/:moduleId" element={<AppGate><PlacementTestPage /></AppGate>} />
                     <Route path="student-dashboard" element={<AppGate><StudentDashboard /></AppGate>} />
                     
                     {/* PR10: Teacher Tools routes */}
                     <Route path="teacher" element={<AppGate><TeacherDashboard /></AppGate>} />
                     <Route path="teacher/dashboard" element={<AppGate><TeacherDashboard /></AppGate>} />
+                    <Route path="teacher/classes/new" element={<AppGate><NewClass /></AppGate>} />
                     <Route path="teacher/classes/:classId" element={<AppGate><ClassDetailsPage /></AppGate>} />
                     
                     <Route path="pricing" element={<Pricing />} />

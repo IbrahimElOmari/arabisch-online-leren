@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Navigate } from 'react-router-dom';
 import { FullPageLoader } from '@/components/ui/LoadingSpinner';
@@ -8,6 +7,8 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Clock, CheckCircle } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const Taken = () => {
   const { user, authReady, loading: authLoading } = useAuth();
@@ -15,26 +16,66 @@ const Taken = () => {
   const { getNavigationAttributes } = useAccessibilityRTL();
   const { t } = useTranslation();
 
-  // Auth loading gate
+  const { data: tasks, isLoading } = useQuery({
+    queryKey: ['student-tasks', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return { upcoming: [], completed: [] };
+      
+      // Fetch student's answers to determine completed tasks
+      const { data: answers } = await supabase
+        .from('antwoorden')
+        .select('vraag_id, is_correct, punten, created_at')
+        .eq('student_id', user.id);
+      
+      const completedIds = new Set((answers || []).map(a => a.vraag_id));
+      
+      // Fetch questions/tasks from enrolled levels
+      const { data: enrollments } = await supabase
+        .from('inschrijvingen')
+        .select('class_id')
+        .eq('student_id', user.id);
+      
+      const classIds = (enrollments || []).map(e => e.class_id);
+      
+      if (classIds.length === 0) return { upcoming: [], completed: [] };
+      
+      const { data: levels } = await supabase
+        .from('niveaus')
+        .select('id')
+        .in('class_id', classIds);
+      
+      const levelIds = (levels || []).map(l => l.id);
+      
+      if (levelIds.length === 0) return { upcoming: [], completed: [] };
+      
+      const { data: vragen } = await supabase
+        .from('vragen')
+        .select('id, vraag_tekst, vraag_type, niveau_id')
+        .in('niveau_id', levelIds)
+        .limit(20);
+      
+      const upcoming = (vragen || [])
+        .filter(v => !completedIds.has(v.id))
+        .map(v => ({ id: v.id, title: v.vraag_tekst, type: v.vraag_type }));
+      
+      const completed = (answers || []).map(a => ({
+        id: a.vraag_id,
+        score: a.punten || 0,
+        completedDate: new Date(a.created_at).toLocaleDateString('nl-NL')
+      }));
+      
+      return { upcoming, completed };
+    },
+    enabled: !!user?.id,
+  });
+
   if (authLoading && !authReady) {
     return <FullPageLoader text="Laden..." />;
   }
 
-  // Redirect if no user
   if (authReady && !user) {
     return <Navigate to="/auth" replace />;
   }
-
-  const upcomingTasks = [
-    { id: 1, title: t('tasks.arabicAlphabet') || 'Arabisch Alfabet Oefening', dueDate: 'Morgen', difficulty: 'Beginner' },
-    { id: 2, title: t('tasks.basicVocabulary') || 'Basis Woordenschat Quiz', dueDate: '2 dagen', difficulty: 'Beginner' },
-    { id: 3, title: t('tasks.pronunciation') || 'Uitspraak Oefening', dueDate: '1 week', difficulty: 'Gemiddeld' }
-  ];
-
-  const completedTasks = [
-    { id: 4, title: t('tasks.introduction') || 'Introductie Arabisch', completedDate: 'Gisteren', score: 85 },
-    { id: 5, title: t('tasks.basicGreetings') || 'Basis Begroetingen', completedDate: '3 dagen geleden', score: 92 }
-  ];
 
   return (
     <div className="min-h-screen bg-background" {...getNavigationAttributes()}>
@@ -44,7 +85,6 @@ const Taken = () => {
         </h1>
         
         <div className="grid lg:grid-cols-2 gap-6">
-          {/* Upcoming Tasks */}
           <Card>
             <CardHeader>
               <CardTitle className={`flex items-center gap-2 ${getTextAlign()}`}>
@@ -53,28 +93,26 @@ const Taken = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {upcomingTasks.map((task) => (
-                <div key={task.id} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className={`flex justify-between items-start ${getFlexDirection('row')}`}>
-                    <div className="space-y-2">
-                      <h3 className={`font-medium ${getTextAlign()}`}>{task.title}</h3>
-                      <p className={`text-sm text-muted-foreground ${getTextAlign()}`}>
-                        {t('tasks.due') || 'Inleverdatum'}: {task.dueDate}
-                      </p>
-                      <span className="text-xs bg-secondary px-2 py-1 rounded-full">
-                        {task.difficulty}
-                      </span>
+              {isLoading ? (
+                <p className="text-muted-foreground">Laden...</p>
+              ) : tasks?.upcoming?.length === 0 ? (
+                <p className="text-muted-foreground">Geen openstaande taken</p>
+              ) : (
+                tasks?.upcoming?.map((task: any) => (
+                  <div key={task.id} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                    <div className={`flex justify-between items-start ${getFlexDirection('row')}`}>
+                      <div className="space-y-2">
+                        <h3 className={`font-medium ${getTextAlign()}`}>{task.title}</h3>
+                        <span className="text-xs bg-secondary px-2 py-1 rounded-full">{task.type}</span>
+                      </div>
+                      <Button variant="outline" size="sm">{t('tasks.start') || 'Starten'}</Button>
                     </div>
-                    <Button variant="outline" size="sm">
-                      {t('tasks.start') || 'Starten'}
-                    </Button>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </CardContent>
           </Card>
 
-          {/* Completed Tasks */}
           <Card>
             <CardHeader>
               <CardTitle className={`flex items-center gap-2 ${getTextAlign()}`}>
@@ -83,29 +121,28 @@ const Taken = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {completedTasks.map((task) => (
-                <div key={task.id} className="p-4 border rounded-lg bg-muted/30">
-                  <div className="space-y-2">
-                    <h3 className={`font-medium ${getTextAlign()}`}>{task.title}</h3>
-                    <p className={`text-sm text-muted-foreground ${getTextAlign()}`}>
-                      {t('tasks.completedOn') || 'Voltooid op'}: {task.completedDate}
-                    </p>
-                    <div className={`flex items-center gap-2 ${getFlexDirection('row')}`}>
+              {isLoading ? (
+                <p className="text-muted-foreground">Laden...</p>
+              ) : tasks?.completed?.length === 0 ? (
+                <p className="text-muted-foreground">Nog geen voltooide taken</p>
+              ) : (
+                tasks?.completed?.map((task: any) => (
+                  <div key={task.id} className="p-4 border rounded-lg bg-muted/30">
+                    <div className="space-y-2">
+                      <p className={`text-sm text-muted-foreground ${getTextAlign()}`}>
+                        Voltooid op: {task.completedDate}
+                      </p>
                       <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                        {t('tasks.score') || 'Score'}: {task.score}%
+                        Score: {task.score}
                       </span>
-                      <Button variant="ghost" size="sm">
-                        {t('tasks.review') || 'Bekijken'}
-                      </Button>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </CardContent>
           </Card>
         </div>
 
-        {/* Quick Actions */}
         <Card className="mt-6">
           <CardHeader>
             <CardTitle className={`flex items-center gap-2 ${getTextAlign()}`}>
@@ -117,15 +154,12 @@ const Taken = () => {
             <div className={`grid md:grid-cols-3 gap-4 ${getFlexDirection('row')}`}>
               <Button variant="outline" className="h-16 flex flex-col gap-1">
                 <span className="font-medium">{t('tasks.practiceWriting') || 'Schrijf Oefening'}</span>
-                <span className="text-xs text-muted-foreground">{t('tasks.improveHandwriting') || 'Verbeter je handschrift'}</span>
               </Button>
               <Button variant="outline" className="h-16 flex flex-col gap-1">
                 <span className="font-medium">{t('tasks.vocabularyReview') || 'Woordenschat Herhaling'}</span>
-                <span className="text-xs text-muted-foreground">{t('tasks.reviewWords') || 'Herhaal geleerde woorden'}</span>
               </Button>
               <Button variant="outline" className="h-16 flex flex-col gap-1">
                 <span className="font-medium">{t('tasks.listeningPractice') || 'Luister Oefening'}</span>
-                <span className="text-xs text-muted-foreground">{t('tasks.improveListening') || 'Verbeter luistervaardigheid'}</span>
               </Button>
             </div>
           </CardContent>

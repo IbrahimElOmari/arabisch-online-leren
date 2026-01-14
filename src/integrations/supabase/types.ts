@@ -2209,6 +2209,7 @@ export type Database = {
           id: string
           live_lesson_datetime: string | null
           live_lesson_url: string | null
+          order_index: number | null
           preparation_deadline: string | null
           status: string | null
           title: string
@@ -2222,6 +2223,7 @@ export type Database = {
           id?: string
           live_lesson_datetime?: string | null
           live_lesson_url?: string | null
+          order_index?: number | null
           preparation_deadline?: string | null
           status?: string | null
           title: string
@@ -2235,6 +2237,7 @@ export type Database = {
           id?: string
           live_lesson_datetime?: string | null
           live_lesson_url?: string | null
+          order_index?: number | null
           preparation_deadline?: string | null
           status?: string | null
           title?: string
@@ -4487,6 +4490,7 @@ export type Database = {
           interaction_config: Json | null
           niveau_id: string
           opties: Json | null
+          order_index: number | null
           question_type: string | null
           updated_at: string
           video_url: string | null
@@ -4504,6 +4508,7 @@ export type Database = {
           interaction_config?: Json | null
           niveau_id: string
           opties?: Json | null
+          order_index?: number | null
           question_type?: string | null
           updated_at?: string
           video_url?: string | null
@@ -4521,6 +4526,7 @@ export type Database = {
           interaction_config?: Json | null
           niveau_id?: string
           opties?: Json | null
+          order_index?: number | null
           question_type?: string | null
           updated_at?: string
           video_url?: string | null
