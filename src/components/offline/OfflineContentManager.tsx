@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Download, Trash2, HardDrive, Wifi, WifiOff, RefreshCw } from 'lucide-react';
 import { useRTLLayout } from '@/hooks/useRTLLayout';
 import { toast } from 'sonner';
@@ -12,7 +16,7 @@ interface ContentItem {
   id: string;
   title: string;
   type: 'video' | 'document' | 'quiz' | 'image';
-  size: number; // in bytes
+  size: number;
   url: string;
   isDownloaded: boolean;
   downloadProgress?: number;
@@ -27,17 +31,18 @@ interface OfflineStats {
   availableSpace?: number;
 }
 
+const OFFLINE_STORAGE_KEY = 'offline_content_ids';
+
 export const OfflineContentManager = () => {
   const { isRTL, getFlexDirection, getTextAlign } = useRTLLayout();
+  const { user } = useAuth();
   
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [contentItems, setContentItems] = useState<ContentItem[]>([]);
   const [downloading, setDownloading] = useState<Set<string>>(new Set());
-  const [stats, setStats] = useState<OfflineStats>({
-    totalItems: 0,
-    downloadedItems: 0,
-    totalSize: 0,
-    usedSpace: 0
+  const [downloadProgress, setDownloadProgress] = useState<Record<string, number>>({});
+  const [downloadedIds, setDownloadedIds] = useState<Set<string>>(() => {
+    const stored = localStorage.getItem(OFFLINE_STORAGE_KEY);
+    return stored ? new Set(JSON.parse(stored)) : new Set();
   });
 
   useEffect(() => {
@@ -53,76 +58,145 @@ export const OfflineContentManager = () => {
     };
   }, []);
 
+  // Fetch lessons from enrolled classes
+  const { data: lessonsData, isLoading: lessonsLoading, refetch: refetchLessons } = useQuery({
+    queryKey: ['offline-lessons', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+
+      // Get enrolled class IDs
+      const { data: enrollments } = await supabase
+        .from('inschrijvingen')
+        .select('class_id')
+        .eq('student_id', user.id);
+
+      const classIds = (enrollments || []).map(e => e.class_id);
+      
+      if (classIds.length === 0) return [];
+
+      // Fetch lessons from enrolled classes
+      const { data: lessons, error } = await supabase
+        .from('lessen')
+        .select('id, title, youtube_url, created_at')
+        .in('class_id', classIds)
+        .order('order_index');
+
+      if (error) throw error;
+      return lessons || [];
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch les_content (documents, etc.)
+  const { data: contentData, isLoading: contentLoading, refetch: refetchContent } = useQuery({
+    queryKey: ['offline-content', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+
+      // Get enrolled class IDs
+      const { data: enrollments } = await supabase
+        .from('inschrijvingen')
+        .select('class_id')
+        .eq('student_id', user.id);
+
+      const classIds = (enrollments || []).map(e => e.class_id);
+      
+      if (classIds.length === 0) return [];
+
+      // Get niveau IDs for enrolled classes
+      const { data: niveaus } = await supabase
+        .from('niveaus')
+        .select('id')
+        .in('class_id', classIds);
+
+      const niveauIds = (niveaus || []).map(n => n.id);
+      
+      if (niveauIds.length === 0) return [];
+
+      // Fetch les content
+      const { data: content, error } = await supabase
+        .from('les_content')
+        .select('id, title, content_type, url, description')
+        .in('niveau_id', niveauIds);
+
+      if (error) throw error;
+      return content || [];
+    },
+    enabled: !!user?.id,
+  });
+
+  // Transform data to ContentItem format
+  const contentItems: ContentItem[] = [
+    ...(lessonsData || []).map(lesson => ({
+      id: `lesson-${lesson.id}`,
+      title: lesson.title,
+      type: 'video' as const,
+      size: 15 * 1024 * 1024, // Estimated 15MB for video
+      url: lesson.youtube_url || '',
+      isDownloaded: downloadedIds.has(`lesson-${lesson.id}`),
+    })),
+    ...(contentData || []).map(content => ({
+      id: `content-${content.id}`,
+      title: content.title,
+      type: getContentType(content.content_type),
+      size: getEstimatedSize(content.content_type),
+      url: content.url || '',
+      isDownloaded: downloadedIds.has(`content-${content.id}`),
+    })),
+  ];
+
+  // Calculate stats
+  const stats: OfflineStats = {
+    totalItems: contentItems.length,
+    downloadedItems: contentItems.filter(item => item.isDownloaded).length,
+    totalSize: contentItems.reduce((sum, item) => sum + item.size, 0),
+    usedSpace: contentItems.filter(item => item.isDownloaded).reduce((sum, item) => sum + item.size, 0),
+  };
+
+  // Estimate available storage
   useEffect(() => {
-    loadContentItems();
-    loadOfflineStats();
+    const getStorageEstimate = async () => {
+      if ('storage' in navigator && 'estimate' in navigator.storage) {
+        try {
+          await navigator.storage.estimate();
+          // Storage estimate available - could be used to show available space
+        } catch (error) {
+          console.error('Storage estimation failed:', error);
+        }
+      }
+    };
+    getStorageEstimate();
   }, []);
 
-  const loadContentItems = () => {
-    // Mock data - in real app, fetch from API/database
-    const mockItems: ContentItem[] = [
-      {
-        id: '1',
-        title: 'Arabic Alphabet Lesson 1',
-        type: 'video',
-        size: 15 * 1024 * 1024, // 15MB
-        url: '/content/video1.mp4',
-        isDownloaded: false
-      },
-      {
-        id: '2', 
-        title: 'Grammar Rules PDF',
-        type: 'document',
-        size: 2 * 1024 * 1024, // 2MB
-        url: '/content/grammar.pdf',
-        isDownloaded: true,
-        lastAccessed: new Date()
-      },
-      {
-        id: '3',
-        title: 'Pronunciation Quiz',
-        type: 'quiz',
-        size: 512 * 1024, // 512KB
-        url: '/content/quiz1.json',
-        isDownloaded: false
-      },
-      {
-        id: '4',
-        title: 'Arabic Calligraphy Examples',
-        type: 'image',
-        size: 5 * 1024 * 1024, // 5MB
-        url: '/content/calligraphy.zip',
-        isDownloaded: true,
-        lastAccessed: new Date(Date.now() - 86400000) // 1 day ago
-      }
-    ];
-    
-    setContentItems(mockItems);
-  };
-
-  const loadOfflineStats = async () => {
-    const downloaded = contentItems.filter(item => item.isDownloaded);
-    const usedSpace = downloaded.reduce((sum, item) => sum + item.size, 0);
-    
-    // Estimate available storage
-    let availableSpace;
-    if ('storage' in navigator && 'estimate' in navigator.storage) {
-      try {
-        const estimate = await navigator.storage.estimate();
-        availableSpace = estimate.quota ? estimate.quota - (estimate.usage || 0) : undefined;
-      } catch (error) {
-        console.error('Storage estimation failed:', error);
-      }
+  function getContentType(type: string): 'video' | 'document' | 'quiz' | 'image' {
+    switch (type?.toLowerCase()) {
+      case 'video':
+        return 'video';
+      case 'quiz':
+      case 'test':
+        return 'quiz';
+      case 'image':
+      case 'afbeelding':
+        return 'image';
+      default:
+        return 'document';
     }
-    
-    setStats({
-      totalItems: contentItems.length,
-      downloadedItems: downloaded.length,
-      totalSize: contentItems.reduce((sum, item) => sum + item.size, 0),
-      usedSpace,
-      availableSpace
-    });
-  };
+  }
+
+  function getEstimatedSize(type: string): number {
+    switch (type?.toLowerCase()) {
+      case 'video':
+        return 15 * 1024 * 1024; // 15MB
+      case 'quiz':
+      case 'test':
+        return 512 * 1024; // 512KB
+      case 'image':
+      case 'afbeelding':
+        return 2 * 1024 * 1024; // 2MB
+      default:
+        return 1 * 1024 * 1024; // 1MB for documents
+    }
+  }
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 B';
@@ -141,22 +215,20 @@ export const OfflineContentManager = () => {
     setDownloading(prev => new Set(prev.add(item.id)));
     
     try {
-      // Simulate download with progress
+      // Simulate download with progress (in real app, would use fetch with progress)
       for (let progress = 0; progress <= 100; progress += 10) {
-        setContentItems(prev => prev.map(content => 
-          content.id === item.id 
-            ? { ...content, downloadProgress: progress }
-            : content
-        ));
-        await new Promise(resolve => setTimeout(resolve, 200)); // Simulate download time
+        setDownloadProgress(prev => ({ ...prev, [item.id]: progress }));
+        await new Promise(resolve => setTimeout(resolve, 200));
       }
       
-      // Mark as downloaded
-      setContentItems(prev => prev.map(content => 
-        content.id === item.id 
-          ? { ...content, isDownloaded: true, downloadProgress: undefined }
-          : content
-      ));
+      // Mark as downloaded in localStorage
+      const newDownloadedIds = new Set(downloadedIds);
+      newDownloadedIds.add(item.id);
+      setDownloadedIds(newDownloadedIds);
+      localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify([...newDownloadedIds]));
+      
+      // In a real app, you would store the content in IndexedDB or Cache API
+      // For now, we just track that it's "downloaded"
       
       toast.success(isRTL ? 'تم التحميل بنجاح' : 'Download voltooid');
     } catch (error) {
@@ -168,18 +240,19 @@ export const OfflineContentManager = () => {
         newSet.delete(item.id);
         return newSet;
       });
-      loadOfflineStats();
+      setDownloadProgress(prev => {
+        const { [item.id]: _, ...rest } = prev;
+        return rest;
+      });
     }
   };
 
   const deleteContent = (item: ContentItem) => {
-    setContentItems(prev => prev.map(content => 
-      content.id === item.id 
-        ? { ...content, isDownloaded: false, lastAccessed: undefined }
-        : content
-    ));
+    const newDownloadedIds = new Set(downloadedIds);
+    newDownloadedIds.delete(item.id);
+    setDownloadedIds(newDownloadedIds);
+    localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify([...newDownloadedIds]));
     
-    loadOfflineStats();
     toast.success(isRTL ? 'تم حذف المحتوى' : 'Content verwijderd');
   };
 
@@ -191,14 +264,14 @@ export const OfflineContentManager = () => {
   };
 
   const clearAllOfflineContent = () => {
-    setContentItems(prev => prev.map(content => ({
-      ...content,
-      isDownloaded: false,
-      lastAccessed: undefined
-    })));
-    
-    loadOfflineStats();
+    setDownloadedIds(new Set());
+    localStorage.removeItem(OFFLINE_STORAGE_KEY);
     toast.success(isRTL ? 'تم حذف جميع المحتوى المحفوظ' : 'Alle offline content gewist');
+  };
+
+  const refreshData = async () => {
+    await Promise.all([refetchLessons(), refetchContent()]);
+    toast.success(isRTL ? 'تم تحديث البيانات' : 'Gegevens vernieuwd');
   };
 
   const getItemIcon = (type: string) => {
@@ -210,6 +283,8 @@ export const OfflineContentManager = () => {
     };
     return iconMap[type as keyof typeof iconMap] || '📄';
   };
+
+  const isLoading = lessonsLoading || contentLoading;
 
   return (
     <div className="space-y-6">
@@ -298,7 +373,7 @@ export const OfflineContentManager = () => {
                   {isRTL ? 'المحتوى المتاح' : 'Beschikbare Content'}
                 </CardTitle>
                 
-                {isOnline && (
+                {isOnline && contentItems.length > 0 && (
                   <Button 
                     onClick={downloadAll}
                     className={`flex items-center gap-2 ${getFlexDirection()}`}
@@ -313,61 +388,75 @@ export const OfflineContentManager = () => {
             </CardHeader>
             
             <CardContent>
-              <div className="space-y-3">
-                {contentItems.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
-                    <div className={`flex items-center gap-3 flex-1 min-w-0 ${getFlexDirection()}`}>
-                      <div className="text-2xl">{getItemIcon(item.type)}</div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className={`font-medium truncate ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
-                          {item.title}
-                        </h4>
-                        <div className={`flex items-center gap-2 text-sm text-muted-foreground ${getFlexDirection()}`}>
-                          <span>{formatFileSize(item.size)}</span>
-                          {item.isDownloaded && (
-                            <Badge variant="secondary" className="bg-green-100 text-green-800">
-                              {isRTL ? 'محفوظ' : 'Offline'}
-                            </Badge>
+              {isLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map(i => (
+                    <Skeleton key={i} className="h-16 w-full" />
+                  ))}
+                </div>
+              ) : contentItems.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  {isRTL 
+                    ? 'لا يوجد محتوى متاح. سجل في دورة لرؤية المحتوى.'
+                    : 'Geen content beschikbaar. Schrijf je in voor een cursus om content te zien.'}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {contentItems.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
+                      <div className={`flex items-center gap-3 flex-1 min-w-0 ${getFlexDirection()}`}>
+                        <div className="text-2xl">{getItemIcon(item.type)}</div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className={`font-medium truncate ${getTextAlign()} ${isRTL ? 'arabic-text' : ''}`}>
+                            {item.title}
+                          </h4>
+                          <div className={`flex items-center gap-2 text-sm text-muted-foreground ${getFlexDirection()}`}>
+                            <span>{formatFileSize(item.size)}</span>
+                            {item.isDownloaded && (
+                              <Badge variant="secondary" className="bg-green-100 text-green-800">
+                                {isRTL ? 'محفوظ' : 'Offline'}
+                              </Badge>
+                            )}
+                          </div>
+                          {downloadProgress[item.id] !== undefined && (
+                            <Progress value={downloadProgress[item.id]} className="mt-2" />
                           )}
                         </div>
-                        {item.downloadProgress !== undefined && (
-                          <Progress value={item.downloadProgress} className="mt-2" />
+                      </div>
+
+                      <div className={`flex items-center gap-2 ${getFlexDirection()}`}>
+                        {!item.isDownloaded && isOnline && !downloading.has(item.id) && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => downloadContent(item)}
+                            className={`flex items-center gap-2 ${getFlexDirection()}`}
+                          >
+                            <Download className="h-4 w-4" />
+                            <span className={isRTL ? 'arabic-text' : ''}>
+                              {isRTL ? 'تحميل' : 'Download'}
+                            </span>
+                          </Button>
+                        )}
+                        
+                        {item.isDownloaded && (
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => deleteContent(item)}
+                            className={`flex items-center gap-2 ${getFlexDirection()}`}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span className={isRTL ? 'arabic-text' : ''}>
+                              {isRTL ? 'حذف' : 'Verwijderen'}
+                            </span>
+                          </Button>
                         )}
                       </div>
                     </div>
-
-                    <div className={`flex items-center gap-2 ${getFlexDirection()}`}>
-                      {!item.isDownloaded && isOnline && !downloading.has(item.id) && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => downloadContent(item)}
-                          className={`flex items-center gap-2 ${getFlexDirection()}`}
-                        >
-                          <Download className="h-4 w-4" />
-                          <span className={isRTL ? 'arabic-text' : ''}>
-                            {isRTL ? 'تحميل' : 'Download'}
-                          </span>
-                        </Button>
-                      )}
-                      
-                      {item.isDownloaded && (
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => deleteContent(item)}
-                          className={`flex items-center gap-2 ${getFlexDirection()}`}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          <span className={isRTL ? 'arabic-text' : ''}>
-                            {isRTL ? 'حذف' : 'Verwijderen'}
-                          </span>
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -393,7 +482,7 @@ export const OfflineContentManager = () => {
               
               <Button
                 variant="outline"
-                onClick={() => window.location.reload()}
+                onClick={refreshData}
                 className={`flex items-center gap-2 ${getFlexDirection()}`}
               >
                 <RefreshCw className="h-4 w-4" />
