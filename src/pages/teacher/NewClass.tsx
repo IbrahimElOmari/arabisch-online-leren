@@ -60,7 +60,7 @@ export default function NewClass() {
         className="mb-6"
         onClick={() => navigate(-1)}
       >
-        <ArrowLeft className="mr-2 h-4 w-4" />
+        <ArrowLeft className="me-2 h-4 w-4" />
         {t('common.back', 'Terug')}
       </Button>
 

@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
@@ -64,6 +65,19 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
   const [newTaskGradingScale, setNewTaskGradingScale] = useState<number>(10);
   const [newQuestionText, setNewQuestionText] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  
+  // Edit states
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [editTaskDialogOpen, setEditTaskDialogOpen] = useState(false);
+  const [editTaskTitle, setEditTaskTitle] = useState('');
+  const [editTaskDescription, setEditTaskDescription] = useState('');
+  const [editTaskType, setEditTaskType] = useState<'text' | 'file'>('text');
+  const [editTaskGradingScale, setEditTaskGradingScale] = useState(10);
+  
+  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
+  const [editQuestionDialogOpen, setEditQuestionDialogOpen] = useState(false);
+  const [editQuestionText, setEditQuestionText] = useState('');
+  
   const { profile } = useAuth();
   const { toast } = useToast();
 
@@ -107,10 +121,12 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
 
   // Reset niveau when class changes
   useEffect(() => {
-    setLevelId('');
-    setTasks([]);
-    setQuestions([]);
-  }, [selectedClassId]);
+    if (!classId) {
+      setLevelId('');
+      setTasks([]);
+      setQuestions([]);
+    }
+  }, [selectedClassId, classId]);
 
   // Fetch tasks and questions when niveau changes
   useEffect(() => {
@@ -180,7 +196,7 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
       toast({
         variant: "destructive",
         title: t('management.errorTitle'),
-        description: 'Selecteer eerst een niveau',
+        description: t('management.selectLevelFirst', 'Selecteer eerst een niveau'),
       });
       return;
     }
@@ -227,7 +243,7 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
       toast({
         variant: "destructive",
         title: t('management.errorTitle'),
-        description: 'Selecteer eerst een niveau',
+        description: t('management.selectLevelFirst', 'Selecteer eerst een niveau'),
       });
       return;
     }
@@ -263,30 +279,110 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
     }
   };
 
+  // Edit Task Functions
+  const openEditTaskDialog = (task: Task) => {
+    setEditingTask(task);
+    setEditTaskTitle(task.title);
+    setEditTaskDescription(task.description || '');
+    setEditTaskType(task.required_submission_type);
+    setEditTaskGradingScale(task.grading_scale);
+    setEditTaskDialogOpen(true);
+  };
+
+  const updateTask = async () => {
+    if (!editingTask) return;
+    
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .update({
+          title: editTaskTitle,
+          description: editTaskDescription || null,
+          required_submission_type: editTaskType,
+          grading_scale: editTaskGradingScale,
+        })
+        .eq('id', editingTask.id);
+      
+      if (error) throw error;
+      
+      toast({ title: t('management.taskUpdatedTitle', 'Taak bijgewerkt') });
+      fetchTasks(levelId);
+      setEditTaskDialogOpen(false);
+      setEditingTask(null);
+    } catch (error: any) {
+      toast({ 
+        variant: "destructive", 
+        title: t('management.errorTitle', 'Er ging iets fout'),
+        description: t('management.taskUpdateError', 'Kon taak niet bijwerken')
+      });
+      console.error('Error updating task:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Edit Question Functions
+  const openEditQuestionDialog = (question: Question) => {
+    setEditingQuestion(question);
+    setEditQuestionText(question.vraag);
+    setEditQuestionDialogOpen(true);
+  };
+
+  const updateQuestion = async () => {
+    if (!editingQuestion) return;
+    
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('vragen')
+        .update({
+          vraag_tekst: editQuestionText,
+        })
+        .eq('id', editingQuestion.id);
+      
+      if (error) throw error;
+      
+      toast({ title: t('management.questionUpdatedTitle', 'Vraag bijgewerkt') });
+      fetchQuestions(levelId);
+      setEditQuestionDialogOpen(false);
+      setEditingQuestion(null);
+    } catch (error: any) {
+      toast({ 
+        variant: "destructive", 
+        title: t('management.errorTitle', 'Er ging iets fout'),
+        description: t('management.questionUpdateError', 'Kon vraag niet bijwerken')
+      });
+      console.error('Error updating question:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const deleteTask = async (taskId: string) => {
-    if (!confirm('Weet je zeker dat je deze taak wilt verwijderen?')) return;
+    if (!confirm(t('management.confirmDeleteTask', 'Weet je zeker dat je deze taak wilt verwijderen?'))) return;
     
     try {
       const { error } = await supabase.from('tasks').delete().eq('id', taskId);
       if (error) throw error;
-      toast({ title: 'Taak verwijderd' });
+      toast({ title: t('management.taskDeletedTitle', 'Taak verwijderd') });
       fetchTasks(levelId);
     } catch (error: any) {
-      toast({ variant: "destructive", title: 'Kon taak niet verwijderen' });
+      toast({ variant: "destructive", title: t('management.taskDeleteError', 'Kon taak niet verwijderen') });
       console.error('Error deleting task:', error);
     }
   };
 
   const deleteQuestion = async (questionId: string) => {
-    if (!confirm('Weet je zeker dat je deze vraag wilt verwijderen?')) return;
+    if (!confirm(t('management.confirmDeleteQuestion', 'Weet je zeker dat je deze vraag wilt verwijderen?'))) return;
     
     try {
       const { error } = await supabase.from('vragen').delete().eq('id', questionId);
       if (error) throw error;
-      toast({ title: 'Vraag verwijderd' });
+      toast({ title: t('management.questionDeletedTitle', 'Vraag verwijderd') });
       fetchQuestions(levelId);
     } catch (error: any) {
-      toast({ variant: "destructive", title: 'Kon vraag niet verwijderen' });
+      toast({ variant: "destructive", title: t('management.questionDeleteError', 'Kon vraag niet verwijderen') });
       console.error('Error deleting question:', error);
     }
   };
@@ -312,9 +408,9 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
                 </SelectTrigger>
                 <SelectContent>
                   {classesLoading ? (
-                    <SelectItem value="loading" disabled>Laden...</SelectItem>
+                    <SelectItem value="loading" disabled>{t('common.loading', 'Laden...')}</SelectItem>
                   ) : classes?.length === 0 ? (
-                    <SelectItem value="empty" disabled>Geen klassen gevonden</SelectItem>
+                    <SelectItem value="empty" disabled>{t('management.noClasses', 'Geen klassen gevonden')}</SelectItem>
                   ) : (
                     classes?.map((klas) => (
                       <SelectItem key={klas.id} value={klas.id}>
@@ -337,17 +433,17 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
                 <SelectTrigger>
                   <SelectValue placeholder={
                     !selectedClassId 
-                      ? 'Selecteer eerst een klas' 
+                      ? t('management.selectClassFirst', 'Selecteer eerst een klas')
                       : niveausLoading 
-                        ? 'Laden...' 
+                        ? t('common.loading', 'Laden...')
                         : t('management.selectLevelPlaceholder')
                   } />
                 </SelectTrigger>
                 <SelectContent>
                   {niveausLoading ? (
-                    <SelectItem value="loading" disabled>Laden...</SelectItem>
+                    <SelectItem value="loading" disabled>{t('common.loading', 'Laden...')}</SelectItem>
                   ) : niveaus?.length === 0 ? (
-                    <SelectItem value="empty" disabled>Geen niveaus - maak eerst een niveau aan</SelectItem>
+                    <SelectItem value="empty" disabled>{t('management.noLevels', 'Geen niveaus - maak eerst een niveau aan')}</SelectItem>
                   ) : (
                     niveaus?.map((niveau) => (
                       <SelectItem key={niveau.id} value={niveau.id}>
@@ -403,7 +499,7 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
                   onClick={createTask}
                   disabled={loading || !newTaskTitle}
                 >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin me-2" /> : null}
                   {loading ? t('management.loading') : t('management.createTask')}
                 </Button>
               </div>
@@ -422,7 +518,7 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
                   onClick={createQuestion}
                   disabled={loading || !newQuestionText}
                 >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin me-2" /> : null}
                   {loading ? t('management.loading') : t('management.createQuestion')}
                 </Button>
               </div>
@@ -440,7 +536,7 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
             </CardHeader>
             <CardContent>
               {tasks.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Geen taken voor dit niveau</p>
+                <p className="text-sm text-muted-foreground">{t('management.noTasksForLevel', 'Geen taken voor dit niveau')}</p>
               ) : (
                 tasks.map((task) => (
                   <div key={task.id} className="flex items-center justify-between p-2 border rounded-md mb-2">
@@ -451,7 +547,7 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
                       </p>
                     </div>
                     <div className="flex gap-1">
-                      <Button size="icon" variant="ghost">
+                      <Button size="icon" variant="ghost" onClick={() => openEditTaskDialog(task)}>
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button size="icon" variant="ghost" onClick={() => deleteTask(task.id)}>
@@ -470,13 +566,13 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
             </CardHeader>
             <CardContent>
               {questions.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Geen vragen voor dit niveau</p>
+                <p className="text-sm text-muted-foreground">{t('management.noQuestionsForLevel', 'Geen vragen voor dit niveau')}</p>
               ) : (
                 questions.map((question) => (
                   <div key={question.id} className="flex items-center justify-between p-2 border rounded-md mb-2">
                     <p className="font-medium">{question.vraag}</p>
                     <div className="flex gap-1">
-                      <Button size="icon" variant="ghost">
+                      <Button size="icon" variant="ghost" onClick={() => openEditQuestionDialog(question)}>
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button size="icon" variant="ghost" onClick={() => deleteQuestion(question.id)}>
@@ -490,6 +586,100 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
           </Card>
         </div>
       )}
+
+      {/* Edit Task Dialog */}
+      <Dialog open={editTaskDialogOpen} onOpenChange={setEditTaskDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('management.editTask', 'Taak Bewerken')}</DialogTitle>
+            <DialogDescription>
+              {t('management.editTaskDescription', 'Wijzig de gegevens van de taak')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="editTaskTitle">{t('management.taskTitle')}</Label>
+              <Input
+                id="editTaskTitle"
+                value={editTaskTitle}
+                onChange={(e) => setEditTaskTitle(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="editTaskDescription">{t('management.taskDescription')}</Label>
+              <Textarea
+                id="editTaskDescription"
+                value={editTaskDescription}
+                onChange={(e) => setEditTaskDescription(e.target.value)}
+              />
+            </div>
+            <div className="flex items-center gap-4">
+              <div>
+                <Label>{t('management.type')}</Label>
+                <Select value={editTaskType} onValueChange={(v) => setEditTaskType(v as 'text' | 'file')}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="text">{t('management.text')}</SelectItem>
+                    <SelectItem value="file">{t('management.file')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>{t('management.scale')}</Label>
+                <Input
+                  type="number"
+                  className="w-20"
+                  value={editTaskGradingScale}
+                  onChange={(e) => setEditTaskGradingScale(Number(e.target.value))}
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditTaskDialogOpen(false)}>
+              {t('common.cancel', 'Annuleren')}
+            </Button>
+            <Button onClick={updateTask} disabled={loading || !editTaskTitle}>
+              {loading && <Loader2 className="h-4 w-4 animate-spin me-2" />}
+              {t('common.save', 'Opslaan')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Question Dialog */}
+      <Dialog open={editQuestionDialogOpen} onOpenChange={setEditQuestionDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('management.editQuestion', 'Vraag Bewerken')}</DialogTitle>
+            <DialogDescription>
+              {t('management.editQuestionDescription', 'Wijzig de vraagtekst')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="editQuestionText">{t('management.questionText')}</Label>
+              <Textarea
+                id="editQuestionText"
+                value={editQuestionText}
+                onChange={(e) => setEditQuestionText(e.target.value)}
+                rows={4}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditQuestionDialogOpen(false)}>
+              {t('common.cancel', 'Annuleren')}
+            </Button>
+            <Button onClick={updateQuestion} disabled={loading || !editQuestionText}>
+              {loading && <Loader2 className="h-4 w-4 animate-spin me-2" />}
+              {t('common.save', 'Opslaan')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -64,7 +64,7 @@ export default function ForumAdmin() {
               </div>
               <Link to="/forum-moderation">
                 <Button variant="destructive" size="sm">
-                  <Eye className="mr-2 h-4 w-4" />
+                  <Eye className="me-2 h-4 w-4" />
                   Bekijk Moderatie
                 </Button>
               </Link>

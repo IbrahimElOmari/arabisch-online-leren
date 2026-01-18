@@ -147,7 +147,7 @@ export const FeatureFlagsPanel = () => {
                   <CardTitle>{flag.flag_name}</CardTitle>
                   <CardDescription>
                     Key: <code className="text-xs bg-muted px-1 py-0.5 rounded">{flag.flag_key}</code>
-                    {flag.description && flag.description.length > 0 && <span className="ml-2">• {flag.description}</span>}
+                    {flag.description && flag.description.length > 0 && <span className="ms-2">• {flag.description}</span>}
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">

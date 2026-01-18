@@ -119,11 +119,11 @@ export default function ClassDetail() {
       <Tabs defaultValue="niveaus" className="space-y-4">
         <TabsList>
           <TabsTrigger value="niveaus">
-            <BookOpen className="h-4 w-4 mr-2" />
+            <BookOpen className="h-4 w-4 me-2" />
             {t('teacher.levels', 'Niveaus')}
           </TabsTrigger>
           <TabsTrigger value="taken">
-            <ClipboardList className="h-4 w-4 mr-2" />
+            <ClipboardList className="h-4 w-4 me-2" />
             {t('teacher.tasksQuestions', 'Taken & Vragen')}
           </TabsTrigger>
         </TabsList>
