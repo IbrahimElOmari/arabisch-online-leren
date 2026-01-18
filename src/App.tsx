@@ -64,7 +64,8 @@ const StudentDashboard = lazy(() => import('@/pages/StudentDashboard'));
 
 // PR10: Teacher Tools pages
 const TeacherDashboard = lazy(() => import('@/pages/TeacherDashboard'));
-const ClassDetailsPage = lazy(() => import('@/pages/ClassDetailsPage'));
+const ClassDetail = lazy(() => import('@/pages/teacher/ClassDetail'));
+const NiveauQuestionsPage = lazy(() => import('@/pages/teacher/NiveauQuestionsPage'));
 
 import { ENV_CONFIG } from '@/config/environment';
 import Maintenance from '@/pages/Maintenance';
@@ -145,7 +146,8 @@ function App() {
                     <Route path="teacher" element={<AppGate><TeacherDashboard /></AppGate>} />
                     <Route path="teacher/dashboard" element={<AppGate><TeacherDashboard /></AppGate>} />
                     <Route path="teacher/classes/new" element={<AppGate><NewClass /></AppGate>} />
-                    <Route path="teacher/classes/:classId" element={<AppGate><ClassDetailsPage /></AppGate>} />
+                    <Route path="teacher/classes/:classId" element={<AppGate><ClassDetail /></AppGate>} />
+                    <Route path="teacher/levels/:levelId/questions" element={<AppGate><NiveauQuestionsPage /></AppGate>} />
                     
                     <Route path="pricing" element={<Pricing />} />
                     <Route path="billing" element={<AppGate><Billing /></AppGate>} />
