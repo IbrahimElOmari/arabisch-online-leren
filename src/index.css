@@ -428,6 +428,29 @@ All colors MUST be HSL.
     }
   }
 
+  /* ===== TABLET RESPONSIVENESS FIXES ===== */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .sidebar-tablet-fix {
+      width: 280px;
+      position: fixed;
+      z-index: 50;
+    }
+    
+    .main-content-tablet {
+      margin-inline-start: 280px;
+    }
+    
+    /* TabsList wrapping on tablet */
+    [role="tablist"].grid-cols-7 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    
+    /* Card grid adjustments for tablet */
+    .tablet-grid-adjust {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   /* Typography scaling for different themes */
   .theme-playful .text-base {
     font-size: 1.125rem;

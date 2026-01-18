@@ -5,6 +5,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { useRTLLayout } from '@/hooks/useRTLLayout';
 
 interface Question {
   id: string;
@@ -25,6 +27,8 @@ interface AnswerMap {
 
 export const LevelQuestions = ({ levelId }: { levelId: string }) => {
   const { profile } = useAuth();
+  const { t } = useTranslation();
+  const { isRTL } = useRTLLayout();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<AnswerMap>({});
   const [openAnswers, setOpenAnswers] = useState<Record<string, string>>({});
@@ -66,24 +70,24 @@ export const LevelQuestions = ({ levelId }: { levelId: string }) => {
         }
       } catch (e) {
         console.error(e);
-        toast.error('Fout bij het laden van vragen');
+        toast.error(t('common.error'));
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [levelId, profile?.id]);
+  }, [levelId, profile?.id, t]);
 
   const submitAnswer = async (question: Question, answerValue: string) => {
     try {
-      if (!profile?.id) throw new Error('Niet ingelogd');
+      if (!profile?.id) throw new Error(t('auth.notLoggedIn'));
       const { error } = await supabase.from('antwoorden').insert({
         vraag_id: question.id,
         student_id: profile.id,
         antwoord: answerValue,
       });
       if (error) throw error;
-      toast.success('Antwoord ingediend');
+      toast.success(t('levelDetail.answerSubmitted'));
       // Refresh answers map
       setAnswers(prev => ({
         ...prev,
@@ -91,17 +95,19 @@ export const LevelQuestions = ({ levelId }: { levelId: string }) => {
       }));
     } catch (e: any) {
       console.error(e);
-      toast.error(e.message || 'Kon antwoord niet indienen');
+      toast.error(e.message || t('levelDetail.submitError'));
     }
   };
 
-  if (loading) return <div className="text-sm">Vragen laden...</div>;
+  if (loading) return <div className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{t('common.loading')}</div>;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" dir={isRTL ? 'rtl' : 'ltr'}>
       {questions.length === 0 && (
         <Card>
-          <CardContent className="py-6 text-sm text-muted-foreground">Geen vragen voor dit niveau</CardContent>
+          <CardContent className={`py-6 text-sm text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+            {t('levelDetail.noQuestions')}
+          </CardContent>
         </Card>
       )}
       {questions.map((q) => {
@@ -109,7 +115,7 @@ export const LevelQuestions = ({ levelId }: { levelId: string }) => {
         return (
           <Card key={q.id}>
             <CardHeader>
-              <CardTitle className="text-base">{q.vraag_tekst}</CardTitle>
+              <CardTitle className={`text-base ${isRTL ? 'text-right' : 'text-left'}`}>{q.vraag_tekst}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {q.vraag_type === 'multiple_choice' && Array.isArray(q.opties) ? (
@@ -118,7 +124,7 @@ export const LevelQuestions = ({ levelId }: { levelId: string }) => {
                     <Button
                       key={idx}
                       variant="outline"
-                      className="justify-start"
+                      className={`justify-start ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}
                       disabled={!!my}
                       onClick={() => submitAnswer(q, String(opt))}
                     >
@@ -129,10 +135,12 @@ export const LevelQuestions = ({ levelId }: { levelId: string }) => {
               ) : (
                 <div className="space-y-2">
                   <Textarea
-                    placeholder="Typ je antwoord..."
+                    placeholder={t('levelDetail.typeAnswer')}
                     value={openAnswers[q.id] || ''}
                     onChange={(e) => setOpenAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
                     disabled={!!my}
+                    dir={isRTL ? 'rtl' : 'ltr'}
+                    className={isRTL ? 'text-right' : 'text-left'}
                   />
                   {!my && (
                     <Button
@@ -141,20 +149,20 @@ export const LevelQuestions = ({ levelId }: { levelId: string }) => {
                         if (v) submitAnswer(q, v);
                       }}
                     >
-                      Indienen
+                      {t('common.submit')}
                     </Button>
                   )}
                 </div>
               )}
 
               {my && (
-                <div className="border-t pt-3 text-sm space-y-1">
-                  <div><strong>Jouw antwoord:</strong> {my.antwoord}</div>
+                <div className={`border-t pt-3 text-sm space-y-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <div><strong>{t('levelDetail.yourAnswer')}:</strong> {my.antwoord}</div>
                   {my.punten !== null && (
-                    <div><strong>Score:</strong> {my.punten}</div>
+                    <div><strong>{t('levelDetail.score')}:</strong> {my.punten}</div>
                   )}
                   {my.feedback && (
-                    <div><strong>Feedback:</strong> {my.feedback}</div>
+                    <div><strong>{t('levelDetail.feedback')}:</strong> {my.feedback}</div>
                   )}
                 </div>
               )}
