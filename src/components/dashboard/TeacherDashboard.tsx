@@ -230,7 +230,7 @@ const TeacherDashboard = () => {
 
         {selectedClass && (
           <Tabs defaultValue="tasks" className="w-full" dir={isRTL ? 'rtl' : 'ltr'}>
-            <TabsList className="grid w-full grid-cols-7">
+            <TabsList className="grid w-full grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-1 h-auto flex-wrap">
               <TabsTrigger value="tasks" className={`flex items-center gap-2 ${getFlexDirection()}`}>
                 <FileText className="h-4 w-4" />
                 <span className={isRTL ? 'arabic-text' : ''}>
