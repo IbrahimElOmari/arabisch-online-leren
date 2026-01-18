@@ -106,7 +106,7 @@ export function BanManagement() {
             disabled={!userId || !reason || banMutation.isPending}
             variant="destructive"
           >
-            <Ban className="h-4 w-4 mr-2" />
+            <Ban className="h-4 w-4 me-2" />
             Gebruiker Bannen
           </Button>
         </CardContent>

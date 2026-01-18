@@ -60,7 +60,7 @@ export const LanguageSelector = React.memo(() => {
               i18n.language === lang.code ? 'bg-accent' : ''
             }`}
           >
-            <span className="mr-2">{lang.flag}</span>
+            <span className="me-2">{lang.flag}</span>
             <span>{lang.label}</span>
           </DropdownMenuItem>
         ))}

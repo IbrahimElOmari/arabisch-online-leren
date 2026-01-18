@@ -126,7 +126,7 @@ const Taken = () => {
     <div className="min-h-screen bg-background" {...getNavigationAttributes()}>
       <div className="container mx-auto p-6">
         <h1 className={`text-3xl font-bold mb-8 ${getTextAlign()}`}>
-          {t('tasks.title') || 'Taken & Opdrachten'}
+          {t('tasks.title')}
         </h1>
         
         <div className="grid lg:grid-cols-2 gap-6">
@@ -135,14 +135,14 @@ const Taken = () => {
             <CardHeader>
               <CardTitle className={`flex items-center gap-2 ${getTextAlign()}`}>
                 <Clock className="h-5 w-5 text-primary" />
-                {t('tasks.upcoming') || 'Aankomende Taken'}
+                {t('tasks.upcoming')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {isLoading ? (
-                <p className="text-muted-foreground">Laden...</p>
+                <p className="text-muted-foreground">{t('common.loading')}</p>
               ) : tasks?.upcoming?.length === 0 ? (
-                <p className="text-muted-foreground">Geen openstaande taken</p>
+                <p className="text-muted-foreground">{t('tasks.noTasks', 'Geen openstaande taken')}</p>
               ) : (
                 tasks?.upcoming?.map((task) => (
                   <div key={task.id} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
@@ -155,10 +155,10 @@ const Taken = () => {
                         variant="default" 
                         size="sm"
                         onClick={() => handleStartTask(task)}
-                        className="ml-4"
+                        className="ms-4"
                       >
-                        {t('tasks.start') || 'Starten'}
-                        <ChevronRight className="h-4 w-4 ml-1" />
+                        {t('tasks.start')}
+                        <ChevronRight className="h-4 w-4 ms-1" />
                       </Button>
                     </div>
                   </div>
@@ -172,14 +172,14 @@ const Taken = () => {
             <CardHeader>
               <CardTitle className={`flex items-center gap-2 ${getTextAlign()}`}>
                 <CheckCircle className="h-5 w-5 text-green-500" />
-                {t('tasks.completed') || 'Afgeronde Taken'}
+                {t('tasks.completed')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {isLoading ? (
-                <p className="text-muted-foreground">Laden...</p>
+                <p className="text-muted-foreground">{t('common.loading')}</p>
               ) : tasks?.completed?.length === 0 ? (
-                <p className="text-muted-foreground">Nog geen voltooide taken</p>
+                <p className="text-muted-foreground">{t('tasks.noCompleted', 'Nog geen voltooide taken')}</p>
               ) : (
                 tasks?.completed?.map((task) => (
                   <div key={task.id} className="p-4 border rounded-lg bg-muted/30">
@@ -205,7 +205,7 @@ const Taken = () => {
                             className="text-primary hover:text-primary/80"
                             onClick={() => setShowFeedbackId(showFeedbackId === task.id ? null : task.id)}
                           >
-                            <MessageSquare className="h-4 w-4 mr-2" />
+                            <MessageSquare className="h-4 w-4 me-2" />
                             {showFeedbackId === task.id ? 'Feedback verbergen' : 'Bekijk feedback'}
                           </Button>
                           
@@ -230,19 +230,19 @@ const Taken = () => {
           <CardHeader>
             <CardTitle className={`flex items-center gap-2 ${getTextAlign()}`}>
               <BookOpen className="h-5 w-5 text-primary" />
-              {t('tasks.quickActions') || 'Snelle Acties'}
+              {t('tasks.quickActions')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className={`grid md:grid-cols-3 gap-4 ${getFlexDirection('row')}`}>
               <Button variant="outline" className="h-16 flex flex-col gap-1">
-                <span className="font-medium">{t('tasks.practiceWriting') || 'Schrijf Oefening'}</span>
+                <span className="font-medium">{t('tasks.practiceWriting')}</span>
               </Button>
               <Button variant="outline" className="h-16 flex flex-col gap-1">
-                <span className="font-medium">{t('tasks.vocabularyReview') || 'Woordenschat Herhaling'}</span>
+                <span className="font-medium">{t('tasks.vocabularyReview')}</span>
               </Button>
               <Button variant="outline" className="h-16 flex flex-col gap-1">
-                <span className="font-medium">{t('tasks.listeningPractice') || 'Luister Oefening'}</span>
+                <span className="font-medium">{t('tasks.listeningPractice')}</span>
               </Button>
             </div>
           </CardContent>
@@ -267,8 +267,8 @@ const Taken = () => {
           
           <div className="flex justify-end pt-4 border-t">
             <Button variant="outline" onClick={handleCloseQuestions}>
-              <X className="h-4 w-4 mr-2" />
-              Sluiten
+              <X className="h-4 w-4 me-2" />
+              {t('common.close')}
             </Button>
           </div>
         </DialogContent>

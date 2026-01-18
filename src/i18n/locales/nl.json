@@ -442,5 +442,15 @@
     "forum": "Forum",
     "calendar": "Kalender",
     "profile": "Profiel"
+  },
+  "tasks": {
+    "title": "Taken & Opdrachten",
+    "upcoming": "Aankomende Taken",
+    "completed": "Afgeronde Taken",
+    "start": "Starten",
+    "quickActions": "Snelle Acties",
+    "practiceWriting": "Schrijf Oefening",
+    "vocabularyReview": "Woordenschat Herhaling",
+    "listeningPractice": "Luister Oefening"
   }
 }

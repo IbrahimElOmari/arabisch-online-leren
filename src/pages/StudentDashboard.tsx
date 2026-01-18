@@ -208,8 +208,8 @@ const StudentDashboard = () => {
                             )}
                           </div>
                           {lesson.duration_minutes && (
-                            <div className="flex items-center text-sm text-muted-foreground ml-4">
-                              <Clock className="h-4 w-4 mr-1" />
+                            <div className="flex items-center text-sm text-muted-foreground ms-4">
+                              <Clock className="h-4 w-4 me-1" />
                               {lesson.duration_minutes} min
                             </div>
                           )}
