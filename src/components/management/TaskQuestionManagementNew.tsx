@@ -46,13 +46,18 @@ interface Klas {
   name: string;
 }
 
-const TaskQuestionManagementNew = () => {
+interface TaskQuestionManagementNewProps {
+  classId?: string;
+  preselectedLevelId?: string;
+}
+
+const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestionManagementNewProps) => {
   const { t } = useTranslation();
   
   const [tasks, setTasks] = useState<Task[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [selectedClassId, setSelectedClassId] = useState<string>('');
-  const [levelId, setLevelId] = useState<string>('');
+  const [selectedClassId, setSelectedClassId] = useState<string>(classId || '');
+  const [levelId, setLevelId] = useState<string>(preselectedLevelId || '');
   const [newTaskTitle, setNewTaskTitle] = useState<string>('');
   const [newTaskDescription, setNewTaskDescription] = useState<string>('');
   const [newTaskType, setNewTaskType] = useState<'text' | 'file'>('text');
@@ -61,6 +66,12 @@ const TaskQuestionManagementNew = () => {
   const [loading, setLoading] = useState(false);
   const { profile } = useAuth();
   const { toast } = useToast();
+
+  // Initialize from props
+  useEffect(() => {
+    if (classId) setSelectedClassId(classId);
+    if (preselectedLevelId) setLevelId(preselectedLevelId);
+  }, [classId, preselectedLevelId]);
 
   // Fetch teacher's classes
   const { data: classes, isLoading: classesLoading } = useQuery({
