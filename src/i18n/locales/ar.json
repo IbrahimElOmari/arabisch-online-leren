@@ -300,7 +300,10 @@
     "sort": "ترتيب",
     "view": "عرض",
     "download": "تنزيل",
-    "upload": "رفع"
+    "upload": "رفع",
+    "refresh": "تحديث",
+    "refreshed": "تم تحديث البيانات",
+    "refreshedDescription": "تم إعادة تحميل جميع البيانات"
   },
   "errors": {
     "generic": "حدث خطأ ما",

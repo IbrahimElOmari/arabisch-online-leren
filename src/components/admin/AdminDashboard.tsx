@@ -1,13 +1,21 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Activity, AlertCircle, Database, Clock } from 'lucide-react';
+import { Activity, AlertCircle, Database, Clock, RefreshCw } from 'lucide-react';
 import { useAdminMetrics } from '@/hooks/useAdminMetrics';
 import { useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { useQueryClient } from '@tanstack/react-query';
+import { cn } from '@/lib/utils';
 
 export const AdminDashboard = () => {
   const [period, setPeriod] = useState<'1h' | '24h' | '7d'>('24h');
   const { data: metrics, isLoading, error } = useAdminMetrics(period);
+  const queryClient = useQueryClient();
+
+  const handleRefreshMetrics = () => {
+    queryClient.invalidateQueries({ queryKey: ['admin-metrics'] });
+  };
 
   if (error) {
     return (
@@ -29,16 +37,27 @@ export const AdminDashboard = () => {
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
           <p className="text-muted-foreground">System monitoring and operations</p>
         </div>
-        <Select value={period} onValueChange={(v) => setPeriod(v as typeof period)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select period" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="1h">Last Hour</SelectItem>
-            <SelectItem value="24h">Last 24 Hours</SelectItem>
-            <SelectItem value="7d">Last 7 Days</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={handleRefreshMetrics} 
+            disabled={isLoading}
+            title="Refresh metrics"
+          >
+            <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
+          </Button>
+          <Select value={period} onValueChange={(v) => setPeriod(v as typeof period)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select period" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1h">Last Hour</SelectItem>
+              <SelectItem value="24h">Last 24 Hours</SelectItem>
+              <SelectItem value="7d">Last 7 Days</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {isLoading ? (
