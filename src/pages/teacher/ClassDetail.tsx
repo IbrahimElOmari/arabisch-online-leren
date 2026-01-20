@@ -4,10 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Users, BookOpen, ClipboardList } from 'lucide-react';
+import { ArrowLeft, Users, BookOpen, ClipboardList, Star } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NiveauManagement } from '@/components/teacher/NiveauManagement';
 import TaskQuestionManagementNew from '@/components/management/TaskQuestionManagementNew';
+import { TeacherGradingPanel } from '@/components/teacher/TeacherGradingPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function ClassDetail() {
@@ -48,10 +49,10 @@ export default function ClassDetail() {
   if (!klas) {
     return (
       <div className="container mx-auto p-6">
-        <p className="text-muted-foreground">Klas niet gevonden</p>
+        <p className="text-muted-foreground">{t('teacher.classNotFound', 'Klas niet gevonden')}</p>
         <Button variant="outline" onClick={() => navigate(-1)} className="mt-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Terug
+          <ArrowLeft className="h-4 w-4 me-2" />
+          {t('common.back', 'Terug')}
         </Button>
       </div>
     );
@@ -117,7 +118,7 @@ export default function ClassDetail() {
 
       {/* Tabs for different management sections */}
       <Tabs defaultValue="niveaus" className="space-y-4">
-        <TabsList>
+        <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="niveaus">
             <BookOpen className="h-4 w-4 me-2" />
             {t('teacher.levels', 'Niveaus')}
@@ -126,6 +127,10 @@ export default function ClassDetail() {
             <ClipboardList className="h-4 w-4 me-2" />
             {t('teacher.tasksQuestions', 'Taken & Vragen')}
           </TabsTrigger>
+          <TabsTrigger value="grading">
+            <Star className="h-4 w-4 me-2" />
+            {t('teacher.grading', 'Beoordeling')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="niveaus">
@@ -133,7 +138,12 @@ export default function ClassDetail() {
         </TabsContent>
 
         <TabsContent value="taken">
-          <TaskQuestionManagementNew />
+          {/* Pass classId to pre-filter tasks/questions for this class */}
+          <TaskQuestionManagementNew classId={classId} />
+        </TabsContent>
+
+        <TabsContent value="grading">
+          <TeacherGradingPanel classId={classId!} />
         </TabsContent>
       </Tabs>
     </div>

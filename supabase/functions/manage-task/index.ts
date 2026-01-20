@@ -186,8 +186,10 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
+        // TESTMODUS: Accepteer elke inschrijving (niet alleen paid)
+        // PRODUCTIE: Voeg terug: && enrollment.payment_status === 'paid'
         const hasAccess = taskCheck.niveaus?.klassen?.inschrijvingen?.some(
-          enrollment => enrollment.student_id === user.id && enrollment.payment_status === 'paid'
+          enrollment => enrollment.student_id === user.id
         );
 
         if (!hasAccess) {
