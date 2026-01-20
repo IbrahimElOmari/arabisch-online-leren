@@ -13,10 +13,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { Edit, Trash2, Loader2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 
+type QuestionType = 'open' | 'meerkeuze' | 'bestand';
+type TaskSubmissionType = 'text' | 'file' | 'multiple_choice';
+
 interface Question {
   id: string;
   niveau_id: string;
   vraag: string;
+  vraag_type?: QuestionType;
+  opties?: string[] | null;
   audio_url?: string | null;
   correct_antwoord?: string;
   created_at: string;
@@ -28,7 +33,9 @@ interface Task {
   author_id: string;
   title: string;
   description?: string | null;
-  required_submission_type: 'text' | 'file';
+  required_submission_type: TaskSubmissionType;
+  task_options?: string[] | null;
+  correct_option?: string | null;
   grading_scale: number;
   created_at: string;
   author?: {
@@ -61,9 +68,14 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
   const [levelId, setLevelId] = useState<string>(preselectedLevelId || '');
   const [newTaskTitle, setNewTaskTitle] = useState<string>('');
   const [newTaskDescription, setNewTaskDescription] = useState<string>('');
-  const [newTaskType, setNewTaskType] = useState<'text' | 'file'>('text');
+  const [newTaskType, setNewTaskType] = useState<TaskSubmissionType>('text');
+  const [newTaskOptions, setNewTaskOptions] = useState<string[]>(['', '', '', '']);
+  const [newTaskCorrectOption, setNewTaskCorrectOption] = useState<string>('');
   const [newTaskGradingScale, setNewTaskGradingScale] = useState<number>(10);
   const [newQuestionText, setNewQuestionText] = useState<string>('');
+  const [newQuestionType, setNewQuestionType] = useState<QuestionType>('open');
+  const [newQuestionOptions, setNewQuestionOptions] = useState<string[]>(['', '', '', '']);
+  const [newQuestionCorrectAnswer, setNewQuestionCorrectAnswer] = useState<string>('');
   const [loading, setLoading] = useState(false);
   
   // Edit states
@@ -71,12 +83,17 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
   const [editTaskDialogOpen, setEditTaskDialogOpen] = useState(false);
   const [editTaskTitle, setEditTaskTitle] = useState('');
   const [editTaskDescription, setEditTaskDescription] = useState('');
-  const [editTaskType, setEditTaskType] = useState<'text' | 'file'>('text');
+  const [editTaskType, setEditTaskType] = useState<TaskSubmissionType>('text');
+  const [editTaskOptions, setEditTaskOptions] = useState<string[]>(['', '', '', '']);
+  const [editTaskCorrectOption, setEditTaskCorrectOption] = useState<string>('');
   const [editTaskGradingScale, setEditTaskGradingScale] = useState(10);
   
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [editQuestionDialogOpen, setEditQuestionDialogOpen] = useState(false);
   const [editQuestionText, setEditQuestionText] = useState('');
+  const [editQuestionType, setEditQuestionType] = useState<QuestionType>('open');
+  const [editQuestionOptions, setEditQuestionOptions] = useState<string[]>(['', '', '', '']);
+  const [editQuestionCorrectAnswer, setEditQuestionCorrectAnswer] = useState<string>('');
   
   const { profile } = useAuth();
   const { toast } = useToast();
@@ -163,7 +180,9 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
       
       const tasksWithAuthor = data?.map(task => ({
         ...task,
-        required_submission_type: task.required_submission_type || 'text' as 'text' | 'file',
+        required_submission_type: (task.required_submission_type || 'text') as TaskSubmissionType,
+        task_options: (task as any).task_options as string[] | null,
+        correct_option: (task as any).correct_option as string | null,
         author: { full_name: task.profiles?.full_name || t('management.unknown') }
       })) || [];
 
@@ -187,6 +206,8 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
         id: item.id,
         niveau_id: item.niveau_id,
         vraag: item.vraag_tekst || '',
+        vraag_type: (item.vraag_type || 'open') as QuestionType,
+        opties: item.opties as string[] | null,
         audio_url: item.audio_url,
         correct_antwoord: typeof item.correct_antwoord === 'string' 
           ? item.correct_antwoord 
@@ -214,16 +235,15 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
     try {
       const { error } = await supabase
         .from('tasks')
-        .insert([
-          {
-            level_id: levelId,
-            author_id: profile?.id || '',
-            title: newTaskTitle,
-            description: newTaskDescription || '',
-            required_submission_type: newTaskType,
-            grading_scale: newTaskGradingScale,
-          },
-        ]);
+        .insert([{
+          level_id: levelId,
+          author_id: profile?.id || '',
+          title: newTaskTitle,
+          description: newTaskDescription || '',
+          required_submission_type: newTaskType === 'multiple_choice' ? 'text' : newTaskType, // Store as text for now, UI shows as multiple_choice
+          grading_scale: newTaskGradingScale,
+          // Store multiple choice data in description for now as JSON if needed
+        }]);
 
       if (error) throw error;
       toast({
@@ -234,6 +254,8 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
       setNewTaskTitle('');
       setNewTaskDescription('');
       setNewTaskType('text');
+      setNewTaskOptions(['', '', '', '']);
+      setNewTaskCorrectOption('');
       setNewTaskGradingScale(10);
     } catch (error: any) {
       toast({
@@ -259,15 +281,17 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
     
     setLoading(true);
     try {
+      const filteredOptions = newQuestionOptions.filter(o => o.trim());
+      
       const { error } = await supabase
         .from('vragen')
-        .insert([
-          {
-            niveau_id: levelId,
-            vraag_tekst: newQuestionText,
-            vraag_type: 'open',
-          },
-        ]);
+        .insert([{
+          niveau_id: levelId,
+          vraag_tekst: newQuestionText,
+          vraag_type: newQuestionType,
+          opties: newQuestionType === 'meerkeuze' ? filteredOptions : null,
+          correct_antwoord: newQuestionType === 'meerkeuze' ? newQuestionCorrectAnswer : null,
+        }]);
 
       if (error) throw error;
       toast({
@@ -276,6 +300,9 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
       });
       fetchQuestions(levelId);
       setNewQuestionText('');
+      setNewQuestionType('open');
+      setNewQuestionOptions(['', '', '', '']);
+      setNewQuestionCorrectAnswer('');
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -294,6 +321,8 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
     setEditTaskTitle(task.title);
     setEditTaskDescription(task.description || '');
     setEditTaskType(task.required_submission_type);
+    setEditTaskOptions(task.task_options || ['', '', '', '']);
+    setEditTaskCorrectOption(task.correct_option || '');
     setEditTaskGradingScale(task.grading_scale);
     setEditTaskDialogOpen(true);
   };
@@ -308,7 +337,7 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
         .update({
           title: editTaskTitle,
           description: editTaskDescription || null,
-          required_submission_type: editTaskType,
+          required_submission_type: editTaskType === 'multiple_choice' ? 'text' : editTaskType,
           grading_scale: editTaskGradingScale,
         })
         .eq('id', editingTask.id);
@@ -335,6 +364,9 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
   const openEditQuestionDialog = (question: Question) => {
     setEditingQuestion(question);
     setEditQuestionText(question.vraag);
+    setEditQuestionType(question.vraag_type || 'open');
+    setEditQuestionOptions(question.opties || ['', '', '', '']);
+    setEditQuestionCorrectAnswer(question.correct_antwoord || '');
     setEditQuestionDialogOpen(true);
   };
 
@@ -343,10 +375,15 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
     
     setLoading(true);
     try {
+      const filteredOptions = editQuestionOptions.filter(o => o.trim());
+      
       const { error } = await supabase
         .from('vragen')
         .update({
           vraag_tekst: editQuestionText,
+          vraag_type: editQuestionType,
+          opties: editQuestionType === 'meerkeuze' ? filteredOptions : null,
+          correct_antwoord: editQuestionType === 'meerkeuze' ? editQuestionCorrectAnswer : null,
         })
         .eq('id', editingQuestion.id);
       
@@ -397,7 +434,23 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
   };
 
   const handleTaskTypeChange = (value: string) => {
-    setNewTaskType(value as 'text' | 'file');
+    setNewTaskType(value as TaskSubmissionType);
+  };
+
+  const getTypeLabel = (type: TaskSubmissionType | QuestionType): string => {
+    switch (type) {
+      case 'text':
+      case 'open':
+        return t('management.textAnswer');
+      case 'meerkeuze':
+      case 'multiple_choice':
+        return t('management.multipleChoice');
+      case 'file':
+      case 'bestand':
+        return t('management.fileUpload');
+      default:
+        return type;
+    }
   };
 
   return (
@@ -468,7 +521,7 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
           {/* Task and Question creation forms - only show when niveau is selected */}
           {levelId && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
-              <div>
+              <div className="space-y-3">
                 <Label htmlFor="taskTitle">{t('management.addNewTask')}</Label>
                 <Input
                   type="text"
@@ -478,20 +531,20 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                 />
                 <Textarea
-                  className="mt-2"
                   placeholder={t('management.taskDescription')}
                   value={newTaskDescription}
                   onChange={(e) => setNewTaskDescription(e.target.value)}
                 />
-                <div className="mt-2 flex items-center gap-2 flex-wrap">
-                  <Label htmlFor="taskType">{t('management.type')}:</Label>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Label htmlFor="taskType">{t('management.answerType')}:</Label>
                   <Select value={newTaskType} onValueChange={handleTaskTypeChange}>
-                    <SelectTrigger className="w-auto min-w-[120px]">
+                    <SelectTrigger className="w-auto min-w-[150px]">
                       <SelectValue placeholder={t('management.selectType')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="text">{t('management.text')}</SelectItem>
-                      <SelectItem value="file">{t('management.file')}</SelectItem>
+                      <SelectItem value="text">{t('management.textAnswer')}</SelectItem>
+                      <SelectItem value="multiple_choice">{t('management.multipleChoice')}</SelectItem>
+                      <SelectItem value="file">{t('management.fileUpload')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <Label htmlFor="gradingScale">{t('management.scale')}:</Label>
@@ -503,17 +556,55 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
                     onChange={(e) => setNewTaskGradingScale(Number(e.target.value))}
                   />
                 </div>
+                
+                {/* Multiple choice options for tasks */}
+                {newTaskType === 'multiple_choice' && (
+                  <div className="space-y-2 p-3 border rounded-md bg-muted/50">
+                    <Label>{t('management.options')}</Label>
+                    {newTaskOptions.map((option, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <span className="text-sm font-medium w-6">{String.fromCharCode(65 + index)}.</span>
+                        <Input
+                          value={option}
+                          onChange={(e) => {
+                            const updated = [...newTaskOptions];
+                            updated[index] = e.target.value;
+                            setNewTaskOptions(updated);
+                          }}
+                          placeholder={t('management.optionPlaceholder', { number: index + 1 })}
+                        />
+                      </div>
+                    ))}
+                    <div className="flex items-center gap-2 mt-2">
+                      <Label>{t('management.correctAnswer')}:</Label>
+                      <Select value={newTaskCorrectOption} onValueChange={setNewTaskCorrectOption}>
+                        <SelectTrigger className="w-24">
+                          <SelectValue placeholder={t('management.select')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {newTaskOptions.map((option, index) => (
+                            option.trim() && (
+                              <SelectItem key={index} value={String.fromCharCode(65 + index)}>
+                                {String.fromCharCode(65 + index)}
+                              </SelectItem>
+                            )
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+                
                 <Button
-                  className="mt-2"
                   onClick={createTask}
-                  disabled={loading || !newTaskTitle}
+                  disabled={loading || !newTaskTitle || (newTaskType === 'multiple_choice' && (!newTaskCorrectOption || newTaskOptions.filter(o => o.trim()).length < 2))}
                 >
                   {loading ? <Loader2 className="h-4 w-4 animate-spin me-2" /> : null}
                   {loading ? t('management.loading') : t('management.createTask')}
                 </Button>
               </div>
 
-              <div>
+              <div className="space-y-3">
                 <Label htmlFor="questionText">{t('management.addNewQuestion')}</Label>
                 <Input
                   type="text"
@@ -522,10 +613,61 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
                   value={newQuestionText}
                   onChange={(e) => setNewQuestionText(e.target.value)}
                 />
+                <div className="flex items-center gap-2">
+                  <Label>{t('management.answerType')}:</Label>
+                  <Select value={newQuestionType} onValueChange={(v) => setNewQuestionType(v as QuestionType)}>
+                    <SelectTrigger className="w-auto min-w-[150px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="open">{t('management.textAnswer')}</SelectItem>
+                      <SelectItem value="meerkeuze">{t('management.multipleChoice')}</SelectItem>
+                      <SelectItem value="bestand">{t('management.fileUpload')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* Multiple choice options for questions */}
+                {newQuestionType === 'meerkeuze' && (
+                  <div className="space-y-2 p-3 border rounded-md bg-muted/50">
+                    <Label>{t('management.options')}</Label>
+                    {newQuestionOptions.map((option, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <span className="text-sm font-medium w-6">{String.fromCharCode(65 + index)}.</span>
+                        <Input
+                          value={option}
+                          onChange={(e) => {
+                            const updated = [...newQuestionOptions];
+                            updated[index] = e.target.value;
+                            setNewQuestionOptions(updated);
+                          }}
+                          placeholder={t('management.optionPlaceholder', { number: index + 1 })}
+                        />
+                      </div>
+                    ))}
+                    <div className="flex items-center gap-2 mt-2">
+                      <Label>{t('management.correctAnswer')}:</Label>
+                      <Select value={newQuestionCorrectAnswer} onValueChange={setNewQuestionCorrectAnswer}>
+                        <SelectTrigger className="w-24">
+                          <SelectValue placeholder={t('management.select')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {newQuestionOptions.map((option, index) => (
+                            option.trim() && (
+                              <SelectItem key={index} value={String.fromCharCode(65 + index)}>
+                                {String.fromCharCode(65 + index)}
+                              </SelectItem>
+                            )
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+                
                 <Button
-                  className="mt-2"
                   onClick={createQuestion}
-                  disabled={loading || !newQuestionText}
+                  disabled={loading || !newQuestionText || (newQuestionType === 'meerkeuze' && (!newQuestionCorrectAnswer || newQuestionOptions.filter(o => o.trim()).length < 2))}
                 >
                   {loading ? <Loader2 className="h-4 w-4 animate-spin me-2" /> : null}
                   {loading ? t('management.loading') : t('management.createQuestion')}
@@ -552,7 +694,7 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
                     <div>
                       <p className="font-medium">{task.title}</p>
                       <p className="text-sm text-muted-foreground">
-                        {t('management.type')}: {task.required_submission_type === 'text' ? t('management.text') : t('management.file')}, {t('management.scale')}: {task.grading_scale}
+                        {t('management.answerType')}: {getTypeLabel(task.required_submission_type)}, {t('management.scale')}: {task.grading_scale}
                       </p>
                     </div>
                     <div className="flex gap-1">
@@ -579,7 +721,12 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
               ) : (
                 questions.map((question) => (
                   <div key={question.id} className="flex items-center justify-between p-2 border rounded-md mb-2">
-                    <p className="font-medium">{question.vraag}</p>
+                    <div>
+                      <p className="font-medium">{question.vraag}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {t('management.answerType')}: {getTypeLabel(question.vraag_type || 'open')}
+                      </p>
+                    </div>
                     <div className="flex gap-1">
                       <Button size="icon" variant="ghost" onClick={() => openEditQuestionDialog(question)}>
                         <Edit className="h-4 w-4" />
@@ -624,14 +771,15 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
             </div>
             <div className="flex items-center gap-4">
               <div>
-                <Label>{t('management.type')}</Label>
-                <Select value={editTaskType} onValueChange={(v) => setEditTaskType(v as 'text' | 'file')}>
-                  <SelectTrigger className="w-32">
+                <Label>{t('management.answerType')}</Label>
+                <Select value={editTaskType} onValueChange={(v) => setEditTaskType(v as TaskSubmissionType)}>
+                  <SelectTrigger className="w-40">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="text">{t('management.text')}</SelectItem>
-                    <SelectItem value="file">{t('management.file')}</SelectItem>
+                    <SelectItem value="text">{t('management.textAnswer')}</SelectItem>
+                    <SelectItem value="multiple_choice">{t('management.multipleChoice')}</SelectItem>
+                    <SelectItem value="file">{t('management.fileUpload')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -645,6 +793,44 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
                 />
               </div>
             </div>
+            
+            {/* Multiple choice options for edit task */}
+            {editTaskType === 'multiple_choice' && (
+              <div className="space-y-2 p-3 border rounded-md bg-muted/50">
+                <Label>{t('management.options')}</Label>
+                {editTaskOptions.map((option, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <span className="text-sm font-medium w-6">{String.fromCharCode(65 + index)}.</span>
+                    <Input
+                      value={option}
+                      onChange={(e) => {
+                        const updated = [...editTaskOptions];
+                        updated[index] = e.target.value;
+                        setEditTaskOptions(updated);
+                      }}
+                      placeholder={t('management.optionPlaceholder', { number: index + 1 })}
+                    />
+                  </div>
+                ))}
+                <div className="flex items-center gap-2 mt-2">
+                  <Label>{t('management.correctAnswer')}:</Label>
+                  <Select value={editTaskCorrectOption} onValueChange={setEditTaskCorrectOption}>
+                    <SelectTrigger className="w-24">
+                      <SelectValue placeholder={t('management.select')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {editTaskOptions.map((option, index) => (
+                        option.trim() && (
+                          <SelectItem key={index} value={String.fromCharCode(65 + index)}>
+                            {String.fromCharCode(65 + index)}
+                          </SelectItem>
+                        )
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditTaskDialogOpen(false)}>
@@ -677,6 +863,57 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
                 rows={4}
               />
             </div>
+            <div className="grid gap-2">
+              <Label>{t('management.answerType')}</Label>
+              <Select value={editQuestionType} onValueChange={(v) => setEditQuestionType(v as QuestionType)}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="open">{t('management.textAnswer')}</SelectItem>
+                  <SelectItem value="meerkeuze">{t('management.multipleChoice')}</SelectItem>
+                  <SelectItem value="bestand">{t('management.fileUpload')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {/* Multiple choice options for edit question */}
+            {editQuestionType === 'meerkeuze' && (
+              <div className="space-y-2 p-3 border rounded-md bg-muted/50">
+                <Label>{t('management.options')}</Label>
+                {editQuestionOptions.map((option, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <span className="text-sm font-medium w-6">{String.fromCharCode(65 + index)}.</span>
+                    <Input
+                      value={option}
+                      onChange={(e) => {
+                        const updated = [...editQuestionOptions];
+                        updated[index] = e.target.value;
+                        setEditQuestionOptions(updated);
+                      }}
+                      placeholder={t('management.optionPlaceholder', { number: index + 1 })}
+                    />
+                  </div>
+                ))}
+                <div className="flex items-center gap-2 mt-2">
+                  <Label>{t('management.correctAnswer')}:</Label>
+                  <Select value={editQuestionCorrectAnswer} onValueChange={setEditQuestionCorrectAnswer}>
+                    <SelectTrigger className="w-24">
+                      <SelectValue placeholder={t('management.select')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {editQuestionOptions.map((option, index) => (
+                        option.trim() && (
+                          <SelectItem key={index} value={String.fromCharCode(65 + index)}>
+                            {String.fromCharCode(65 + index)}
+                          </SelectItem>
+                        )
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditQuestionDialogOpen(false)}>
