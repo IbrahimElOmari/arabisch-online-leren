@@ -1,20 +1,31 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Users, BookOpen, ClipboardList, Star } from 'lucide-react';
+import { ArrowLeft, Users, BookOpen, ClipboardList, Star, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NiveauManagement } from '@/components/teacher/NiveauManagement';
 import TaskQuestionManagementNew from '@/components/management/TaskQuestionManagementNew';
 import { TeacherGradingPanel } from '@/components/teacher/TeacherGradingPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ClassDetail() {
   const { t } = useTranslation();
   const { classId } = useParams<{ classId: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['class-detail', classId] });
+    toast({
+      title: t('common.refreshed', 'Data vernieuwd'),
+      description: t('common.refreshedDescription', 'Alle gegevens zijn opnieuw geladen'),
+    });
+  };
 
   // Fetch class details
   const { data: klas, isLoading } = useQuery({
@@ -67,16 +78,22 @@ export default function ClassDetail() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold">{klas.name}</h1>
-          {klas.description && (
-            <p className="text-muted-foreground">{klas.description}</p>
-          )}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold">{klas.name}</h1>
+            {klas.description && (
+              <p className="text-muted-foreground">{klas.description}</p>
+            )}
+          </div>
         </div>
+        <Button variant="outline" size="sm" onClick={handleRefresh}>
+          <RefreshCw className="h-4 w-4 me-2" />
+          {t('common.refresh', 'Vernieuwen')}
+        </Button>
       </div>
 
       {/* Stats */}

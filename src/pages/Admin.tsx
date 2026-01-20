@@ -7,10 +7,24 @@ import { FeatureFlagsPanel } from '@/components/admin/FeatureFlagsPanel';
 import { AuditViewer } from '@/components/admin/AuditViewer';
 import { NotificationsPanel } from '@/components/admin/NotificationsPanel';
 import { SystemHealthIndicator } from '@/components/admin/SystemHealthIndicator';
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
 
 const Admin = () => {
   const { user, authReady, loading: authLoading } = useAuth();
   const { isAdmin, isLoading: roleLoading } = useUserRole();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const handleGlobalRefresh = () => {
+    queryClient.invalidateQueries();
+    toast({
+      title: 'Dashboard vernieuwd',
+      description: 'Alle gegevens zijn opnieuw geladen',
+    });
+  };
 
   // Auth loading gate
   if (authLoading && !authReady) {
@@ -41,6 +55,9 @@ const Admin = () => {
             <p className="text-muted-foreground mt-1">System monitoring & management</p>
           </div>
           <div className="flex items-center gap-4">
+            <Button variant="outline" size="icon" onClick={handleGlobalRefresh} title="Vernieuwen">
+              <RefreshCw className="h-4 w-4" />
+            </Button>
             <SystemHealthIndicator />
             <NotificationsPanel />
           </div>

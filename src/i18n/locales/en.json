@@ -259,7 +259,10 @@
     "sort": "Sort",
     "view": "View",
     "download": "Download",
-    "upload": "Upload"
+    "upload": "Upload",
+    "refresh": "Refresh",
+    "refreshed": "Data refreshed",
+    "refreshedDescription": "All data has been reloaded"
   },
 "errors": {
     "generic": "Something went wrong",

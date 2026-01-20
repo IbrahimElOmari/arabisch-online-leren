@@ -374,7 +374,10 @@
     "sort": "Sorteren",
     "view": "Bekijken",
     "download": "Downloaden",
-    "upload": "Uploaden"
+    "upload": "Uploaden",
+    "refresh": "Vernieuwen",
+    "refreshed": "Data vernieuwd",
+    "refreshedDescription": "Alle gegevens zijn opnieuw geladen"
   },
   "errors": {
     "generic": "Er is iets misgegaan",

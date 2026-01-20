@@ -10,8 +10,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/components/auth/AuthProviderQuery';
 import { supabase } from '@/integrations/supabase/client';
-import { Edit, Trash2, Loader2 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { Edit, Trash2, Loader2, RefreshCw } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 type QuestionType = 'open' | 'meerkeuze' | 'bestand';
 type TaskSubmissionType = 'text' | 'file' | 'multiple_choice';
@@ -97,6 +97,20 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
   
   const { profile } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['teacher-classes'] });
+    queryClient.invalidateQueries({ queryKey: ['class-niveaus'] });
+    if (levelId) {
+      fetchTasks(levelId);
+      fetchQuestions(levelId);
+    }
+    toast({
+      title: t('common.refreshed', 'Data vernieuwd'),
+      description: t('common.refreshedDescription', 'Alle gegevens zijn opnieuw geladen'),
+    });
+  };
 
   // Initialize from props
   useEffect(() => {
@@ -456,8 +470,12 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>{t('management.title')}</CardTitle>
+          <Button variant="outline" size="sm" onClick={handleRefresh}>
+            <RefreshCw className="h-4 w-4 me-2" />
+            {t('common.refresh', 'Vernieuwen')}
+          </Button>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
