@@ -383,7 +383,27 @@
     "quickActions": "Quick Actions",
     "practiceWriting": "Writing Practice",
     "vocabularyReview": "Vocabulary Review",
-    "listeningPractice": "Listening Practice"
+    "listeningPractice": "Listening Practice",
+    "question": "Question",
+    "assignment": "Assignment",
+    "yourAnswer": "Your answer",
+    "typeAnswer": "Type your answer here...",
+    "uploadFile": "Upload file",
+    "submittedSuccess": "Submission sent successfully!",
+    "submitError": "Could not send submission",
+    "noTasks": "No pending tasks",
+    "noCompleted": "No completed tasks yet",
+    "completedOn": "Completed on",
+    "score": "Score",
+    "hideFeedback": "Hide feedback",
+    "viewFeedback": "View feedback",
+    "teacherFeedback": "Teacher feedback",
+    "answerQuestion": "Answer question",
+    "answerDescription": "Answer the question below and click 'Submit' to send your answer."
+  },
+  "teacher": {
+    "grading": "Grading",
+    "classNotFound": "Class not found"
   },
   "mobile": {
     "welcome": "Welcome, {{name}}!",

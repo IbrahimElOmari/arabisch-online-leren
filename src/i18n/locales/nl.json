@@ -308,6 +308,8 @@
       "title": "Leerkracht Dashboard",
       "subtitle": "Beheer uw klassen en leerlingen"
     },
+    "grading": "Beoordeling",
+    "classNotFound": "Klas niet gevonden",
     "stats": {
       "totalClasses": "Totaal Klassen",
       "totalStudents": "Totaal Leerlingen",
@@ -451,6 +453,22 @@
     "quickActions": "Snelle Acties",
     "practiceWriting": "Schrijf Oefening",
     "vocabularyReview": "Woordenschat Herhaling",
-    "listeningPractice": "Luister Oefening"
+    "listeningPractice": "Luister Oefening",
+    "question": "Vraag",
+    "assignment": "Opdracht",
+    "yourAnswer": "Jouw antwoord",
+    "typeAnswer": "Typ je antwoord hier...",
+    "uploadFile": "Upload bestand",
+    "submittedSuccess": "Inzending succesvol verstuurd!",
+    "submitError": "Kon inzending niet versturen",
+    "noTasks": "Geen openstaande taken",
+    "noCompleted": "Nog geen voltooide taken",
+    "completedOn": "Voltooid op",
+    "score": "Score",
+    "hideFeedback": "Feedback verbergen",
+    "viewFeedback": "Bekijk feedback",
+    "teacherFeedback": "Feedback van leerkracht",
+    "answerQuestion": "Vraag beantwoorden",
+    "answerDescription": "Beantwoord de vraag hieronder en klik op 'Indienen' om je antwoord te versturen."
   }
 }
