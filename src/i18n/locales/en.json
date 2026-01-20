@@ -268,7 +268,7 @@
     "unauthorized": "Unauthorized",
     "forbidden": "Forbidden"
   },
-  "management": {
+"management": {
     "title": "Tasks & Questions Management",
     "selectLevel": "Select Level",
     "selectLevelPlaceholder": "Select a level",
@@ -279,6 +279,14 @@
     "taskDescription": "Task description",
     "questionText": "Question text",
     "type": "Type",
+    "answerType": "Answer type",
+    "textAnswer": "Text (open answer)",
+    "multipleChoice": "Multiple choice",
+    "fileUpload": "File upload",
+    "options": "Answer options",
+    "optionPlaceholder": "Option {{number}}",
+    "correctAnswer": "Correct answer",
+    "select": "Select",
     "text": "Text",
     "file": "File",
     "scale": "Scale",
