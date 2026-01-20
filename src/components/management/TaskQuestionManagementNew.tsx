@@ -87,16 +87,25 @@ const TaskQuestionManagementNew = ({ classId, preselectedLevelId }: TaskQuestion
     if (preselectedLevelId) setLevelId(preselectedLevelId);
   }, [classId, preselectedLevelId]);
 
-  // Fetch teacher's classes
+  // Fetch classes - admin sees all, teacher sees own classes
+  const isAdmin = profile?.role === 'admin';
+  
   const { data: classes, isLoading: classesLoading } = useQuery({
-    queryKey: ['teacher-classes', profile?.id],
+    queryKey: ['teacher-classes', profile?.id, isAdmin],
     queryFn: async () => {
       if (!profile?.id) return [];
-      const { data, error } = await supabase
+      
+      let query = supabase
         .from('klassen')
         .select('id, name')
-        .eq('teacher_id', profile.id)
         .order('name');
+      
+      // Admin sees all classes, teacher sees only their own
+      if (!isAdmin) {
+        query = query.eq('teacher_id', profile.id);
+      }
+      
+      const { data, error } = await query;
       if (error) throw error;
       return data as Klas[];
     },
