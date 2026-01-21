@@ -1,4 +1,21 @@
 {
+  "cookies": {
+    "title": "Cookie Preferences",
+    "description": "We use cookies to improve your experience. Choose which cookies you accept.",
+    "essential": "Essential",
+    "essentialDesc": "Necessary for the website to function",
+    "analytics": "Analytics",
+    "analyticsDesc": "Helps us improve the website",
+    "marketing": "Marketing",
+    "marketingDesc": "For personalized advertisements",
+    "acceptAll": "Accept All",
+    "essentialOnly": "Essential Only",
+    "settings": "Settings",
+    "saveSettings": "Save",
+    "privacyLink": "Read our",
+    "privacyPolicy": "Privacy Policy",
+    "required": "required"
+  },
   "security": {
     "session": {
       "warningTitle": "Session Expiring Soon",

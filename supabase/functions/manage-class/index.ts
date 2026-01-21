@@ -46,15 +46,12 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    // Check if user is admin
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    // Check if user is admin using secure has_role RPC
+    const { data: isAdmin, error: roleError } = await supabase
+      .rpc('has_role', { _user_id: user.id, _role: 'admin' });
 
-    if (profileError || profile?.role !== 'admin') {
-      console.error('Profile error or not admin:', profileError, profile);
+    if (roleError || !isAdmin) {
+      console.error('Role check failed:', roleError);
       return new Response(JSON.stringify({ error: 'Unauthorized - Admin access required' }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
