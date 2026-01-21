@@ -1,4 +1,21 @@
 {
+  "cookies": {
+    "title": "Cookie Voorkeuren",
+    "description": "Wij gebruiken cookies om je ervaring te verbeteren. Kies welke cookies je accepteert.",
+    "essential": "Essentieel",
+    "essentialDesc": "Noodzakelijk voor de werking van de website",
+    "analytics": "Analytics",
+    "analyticsDesc": "Helpt ons de website te verbeteren",
+    "marketing": "Marketing",
+    "marketingDesc": "Voor gepersonaliseerde advertenties",
+    "acceptAll": "Alles Accepteren",
+    "essentialOnly": "Alleen Essentieel",
+    "settings": "Instellingen",
+    "saveSettings": "Opslaan",
+    "privacyLink": "Lees onze",
+    "privacyPolicy": "Privacyverklaring",
+    "required": "verplicht"
+  },
   "hero": {
     "topPlatform": "#1 Platform voor Arabisch Leren",
     "learnArabic": "Leer Arabisch",

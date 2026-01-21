@@ -11,6 +11,7 @@ import { AppGate } from '@/components/auth/AppGate';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { SessionMonitor } from '@/components/security/SessionMonitor';
 import { RTLDebugPanel } from '@/components/debug/RTLDebugPanel';
+import { CookieConsentBanner } from '@/components/gdpr/CookieConsentBanner';
 
 // Lazy load RTLProvider to avoid static/dynamic import conflicts
 const EnhancedRTLProvider = lazy(() => import('@/components/rtl/RTLProvider').then(m => ({ default: m.EnhancedRTLProvider })));
@@ -164,6 +165,7 @@ function App() {
               </div>
               <Toaster />
               <RTLDebugPanel />
+              <CookieConsentBanner />
             </Router>
               </AgeThemeProvider>
             </AuthProviderQuery>

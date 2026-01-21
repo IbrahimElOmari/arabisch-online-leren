@@ -1,4 +1,21 @@
 {
+  "cookies": {
+    "title": "تفضيلات ملفات تعريف الارتباط",
+    "description": "نستخدم ملفات تعريف الارتباط لتحسين تجربتك. اختر ملفات تعريف الارتباط التي تقبلها.",
+    "essential": "أساسي",
+    "essentialDesc": "ضروري لعمل الموقع",
+    "analytics": "التحليلات",
+    "analyticsDesc": "يساعدنا في تحسين الموقع",
+    "marketing": "التسويق",
+    "marketingDesc": "للإعلانات المخصصة",
+    "acceptAll": "قبول الكل",
+    "essentialOnly": "الأساسي فقط",
+    "settings": "الإعدادات",
+    "saveSettings": "حفظ",
+    "privacyLink": "اقرأ",
+    "privacyPolicy": "سياسة الخصوصية",
+    "required": "مطلوب"
+  },
   "hero": {
     "topPlatform": "#1 منصة لتعلم اللغة العربية",
     "learnArabic": "تعلم العربية",
