@@ -3212,6 +3212,65 @@ export type Database = {
         }
         Relationships: []
       }
+      spaced_repetition_cards: {
+        Row: {
+          arabic_word: string
+          audio_url: string | null
+          created_at: string | null
+          ease_factor: number | null
+          id: string
+          interval_days: number | null
+          last_reviewed_at: string | null
+          next_review_date: string | null
+          repetitions: number | null
+          student_id: string
+          translation: string
+          transliteration: string | null
+          updated_at: string | null
+          vocabulary_id: string
+        }
+        Insert: {
+          arabic_word: string
+          audio_url?: string | null
+          created_at?: string | null
+          ease_factor?: number | null
+          id?: string
+          interval_days?: number | null
+          last_reviewed_at?: string | null
+          next_review_date?: string | null
+          repetitions?: number | null
+          student_id: string
+          translation: string
+          transliteration?: string | null
+          updated_at?: string | null
+          vocabulary_id: string
+        }
+        Update: {
+          arabic_word?: string
+          audio_url?: string | null
+          created_at?: string | null
+          ease_factor?: number | null
+          id?: string
+          interval_days?: number | null
+          last_reviewed_at?: string | null
+          next_review_date?: string | null
+          repetitions?: number | null
+          student_id?: string
+          translation?: string
+          transliteration?: string | null
+          updated_at?: string | null
+          vocabulary_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spaced_repetition_cards_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       student_achievements: {
         Row: {
           achievement_id: string | null
