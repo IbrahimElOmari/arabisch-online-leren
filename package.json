@@ -67,6 +67,7 @@
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/react-query": "^5.62.13",
     "@tanstack/react-query-devtools": "^5.90.2",
+    "@testing-library/dom": "^10.4.1",
     "@tiptap/extension-image": "^3.10.1",
     "@tiptap/extension-link": "^3.10.1",
     "@tiptap/extension-table": "^3.10.1",

@@ -12,6 +12,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { SessionMonitor } from '@/components/security/SessionMonitor';
 import { RTLDebugPanel } from '@/components/debug/RTLDebugPanel';
 import { CookieConsentBanner } from '@/components/gdpr/CookieConsentBanner';
+import { HelpWidget } from '@/components/help/HelpWidget';
 
 // Lazy load RTLProvider to avoid static/dynamic import conflicts
 const EnhancedRTLProvider = lazy(() => import('@/components/rtl/RTLProvider').then(m => ({ default: m.EnhancedRTLProvider })));
@@ -166,6 +167,7 @@ function App() {
               <Toaster />
               <RTLDebugPanel />
               <CookieConsentBanner />
+              <HelpWidget />
             </Router>
               </AgeThemeProvider>
             </AuthProviderQuery>
