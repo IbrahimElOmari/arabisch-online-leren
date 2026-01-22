@@ -443,5 +443,31 @@
     "forum": "Forum",
     "calendar": "Calendar",
     "profile": "Profile"
+  },
+  "help": {
+    "title": "Help Center",
+    "openHelp": "Open help",
+    "openTooltip": "More information",
+    "searchPlaceholder": "Search help...",
+    "noResults": "No results found",
+    "categories": {
+      "gettingStarted": "Getting Started",
+      "account": "Account & Settings",
+      "learning": "Learning & Practice",
+      "contact": "Contact Support"
+    },
+    "tooltips": {
+      "dashboard_classes": "Here you can see all the classes you are enrolled in.",
+      "task_submit": "Upload your answer or type your response and click submit.",
+      "forum_post": "Start a new discussion or reply to existing posts.",
+      "spaced_repetition": "Practice vocabulary with the spaced repetition system for optimal retention.",
+      "pronunciation": "Record your pronunciation and compare with native speakers."
+    },
+    "articles": {
+      "howToEnroll": "How do I enroll in a course?",
+      "passwordReset": "How do I reset my password?",
+      "submitTask": "How do I submit a task?",
+      "contactTeacher": "How do I contact my teacher?"
+    }
   }
 }

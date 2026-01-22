@@ -498,5 +498,31 @@
     "teacherFeedback": "Feedback van leerkracht",
     "answerQuestion": "Vraag beantwoorden",
     "answerDescription": "Beantwoord de vraag hieronder en klik op 'Indienen' om je antwoord te versturen."
+  },
+  "help": {
+    "title": "Help Center",
+    "openHelp": "Open hulp",
+    "openTooltip": "Meer informatie",
+    "searchPlaceholder": "Zoek in help...",
+    "noResults": "Geen resultaten gevonden",
+    "categories": {
+      "gettingStarted": "Aan de slag",
+      "account": "Account & Instellingen",
+      "learning": "Leren & Oefenen",
+      "contact": "Contact Opnemen"
+    },
+    "tooltips": {
+      "dashboard_classes": "Hier zie je alle klassen waarin je bent ingeschreven.",
+      "task_submit": "Upload je antwoord of typ je response en klik op indienen.",
+      "forum_post": "Start een nieuwe discussie of reageer op bestaande berichten.",
+      "spaced_repetition": "Oefen vocabulaire met het spaced repetition systeem voor optimale retentie.",
+      "pronunciation": "Neem je uitspraak op en vergelijk met native speakers."
+    },
+    "articles": {
+      "howToEnroll": "Hoe schrijf ik me in voor een cursus?",
+      "passwordReset": "Hoe reset ik mijn wachtwoord?",
+      "submitTask": "Hoe dien ik een taak in?",
+      "contactTeacher": "Hoe neem ik contact op met mijn docent?"
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
+import { waitFor } from '@testing-library/dom';
 
 // Mock service worker and push manager
 const mockPushSubscription = {
