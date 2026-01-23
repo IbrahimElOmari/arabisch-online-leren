@@ -52,6 +52,7 @@ const ForumAdmin = lazy(() => import('@/pages/admin/ForumAdmin'));
 const SecurityAdmin = lazy(() => import('@/pages/admin/SecurityAdmin'));
 const Operations = lazy(() => import('@/pages/admin/Operations'));
 const AuditLogs = lazy(() => import('@/pages/admin/AuditLogs'));
+const AnalyticsDashboard = lazy(() => import('@/pages/admin/AnalyticsDashboard'));
 const PrivacyTools = lazy(() => import('@/pages/account/PrivacyTools'));
 
 // Teacher pages
@@ -118,6 +119,7 @@ function App() {
                       <Route path="security" element={<SecurityAdmin />} />
                       <Route path="operations" element={<Operations />} />
                       <Route path="audit" element={<AuditLogs />} />
+                      <Route path="analytics" element={<AnalyticsDashboard />} />
                       <Route index element={<UsersAdmin />} />
                     </Route>
                     <Route path="account/privacy" element={<AppGate><PrivacyTools /></AppGate>} />
