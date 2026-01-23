@@ -495,5 +495,27 @@
       "submitTask": "كيف أرسل مهمة؟",
       "contactTeacher": "كيف أتواصل مع معلمي؟"
     }
+  },
+  "analytics": {
+    "title": "لوحة التحليلات",
+    "subtitle": "رؤى أداء المنصة",
+    "educational": "تعليمي",
+    "financial": "مالي",
+    "funnel": "القمع",
+    "export": "تصدير",
+    "last7days": "آخر 7 أيام",
+    "last30days": "آخر 30 يوم",
+    "last90days": "آخر 90 يوم",
+    "allTime": "كل الوقت",
+    "totalStudents": "إجمالي الطلاب",
+    "activeStudents": "الطلاب النشطون",
+    "avgAccuracy": "متوسط الدقة",
+    "completionRate": "معدل الإكمال",
+    "progressByLevel": "التقدم حسب المستوى",
+    "engagementTrend": "اتجاه المشاركة",
+    "weakTopics": "المواضيع الضعيفة",
+    "strongTopics": "المواضيع القوية",
+    "funnelTitle": "قمع التحويل",
+    "conversionRates": "معدلات التحويل"
   }
 }
