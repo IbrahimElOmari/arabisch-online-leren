@@ -20,3 +20,9 @@ export * from './subscription.schema';
 
 // Analytics schemas
 export * from './analytics.schema';
+
+// Curriculum schemas
+export * from './curriculum.schema';
+
+// Chat schemas
+export * from './chat.schema';

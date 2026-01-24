@@ -1,0 +1,81 @@
+name: K6 Load Test
+
+on:
+  schedule:
+    # Weekly full load test on Sunday at 02:00 UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Test type to run'
+        required: true
+        default: 'load'
+        type: choice
+        options:
+          - smoke
+          - load
+          - stress
+          - spike
+
+concurrency:
+  group: load-test
+  cancel-in-progress: false
+
+jobs:
+  load-test:
+    name: Run K6 Load Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup K6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+
+      - name: Run Load Test
+        run: |
+          TEST_TYPE="${{ github.event.inputs.test_type || 'load' }}"
+          echo "Running $TEST_TYPE test..."
+          
+          k6 run tests/loadtest.k6.js \
+            --out json=results.json \
+            -e APP_URL=${{ secrets.APP_URL || 'https://arabisch-online-leren.lovable.app' }} \
+            -e SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            -e SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+        continue-on-error: true
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-load-test-results-${{ github.run_id }}
+          path: |
+            results.json
+            docs/performance/loadtest-latest.json
+          retention-days: 90
+
+      - name: Check Thresholds
+        run: |
+          if [ -f results.json ]; then
+            # Parse results and check for failures
+            FAILURES=$(cat results.json | grep -c '"ok":false' || echo "0")
+            if [ "$FAILURES" -gt "0" ]; then
+              echo "::warning::Some thresholds were not met"
+              exit 1
+            fi
+          fi
+
+      - name: Post Results to Slack
+        if: failure()
+        run: |
+          echo "Load test failed - would post to Slack in production"
+          # curl -X POST -H 'Content-type: application/json' \
+          #   --data '{"text":"⚠️ K6 Load Test Failed - Check GitHub Actions"}' \
+          #   ${{ secrets.SLACK_WEBHOOK_URL }}
