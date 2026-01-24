@@ -1,51 +1,56 @@
 {
-  "name": "تعلم العربية - Arabisch Leerplatform",
-  "short_name": "Arabisch",
+  "name": "Arabisch Online Leren",
+  "short_name": "Arabisch Leren",
   "description": "Online Arabic Learning Platform - Interactive lessons and exercises",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#0F172A",
   "theme_color": "#8B5CF6",
   "orientation": "any",
-  "lang": "ar",
-  "dir": "auto",
+  "lang": "nl",
+  "dir": "ltr",
   "icons": [
     {
-      "src": "/placeholder.svg",
+      "src": "/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/placeholder.svg", 
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "shortcuts": [
     {
       "name": "Dashboard",
-      "short_name": "Dashboard", 
-      "description": "Go to dashboard",
+      "short_name": "Dashboard",
+      "description": "Go to your learning dashboard",
       "url": "/dashboard",
-      "icons": [{ "src": "/placeholder.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "Forum",
       "short_name": "Forum",
-      "description": "Community forum", 
+      "description": "Community forum",
       "url": "/forum",
-      "icons": [{ "src": "/placeholder.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Lessen",
+      "short_name": "Lessen",
+      "description": "Browse lessons",
+      "url": "/leerstof",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
     }
   ],
-  "categories": ["education", "productivity"],
-  "screenshots": [
-    {
-      "src": "/placeholder.svg",
-      "sizes": "1280x720",
-      "type": "image/svg+xml",
-      "form_factor": "wide"
-    }
-  ]
+  "categories": ["education", "productivity"]
 }
