@@ -63,7 +63,7 @@
     "@storybook/addon-essentials": "^8.6.14",
     "@storybook/addon-themes": "^10.0.8",
     "@storybook/react-vite": "^10.0.8",
-    "@supabase/supabase-js": "^2.50.5",
+    "@supabase/supabase-js": "^2.93.2",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/react-query": "^5.62.13",
     "@tanstack/react-query-devtools": "^5.90.2",
